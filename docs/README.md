@@ -4,18 +4,20 @@
 
 `docs/` 只服务项目推进 workflow。
 
-当前正式目录只保留四类：
+当前正式目录只保留五类：
 
 1. `phase/`
 2. `fix/`
 3. `audit/`
-4. `archive/`
+4. `review/`
+5. `archive/`
 
 ## 2. workflow 入口
 
 - [phase/README.md](file:///home/dell/Projects/personal-software-company-os/docs/phase/README.md)
 - [fix/README.md](file:///home/dell/Projects/personal-software-company-os/docs/fix/README.md)
 - [audit/README.md](file:///home/dell/Projects/personal-software-company-os/docs/audit/README.md)
+- [review/README.md](file:///home/dell/Projects/personal-software-company-os/docs/review/README.md)
 - [archive/README.md](file:///home/dell/Projects/personal-software-company-os/docs/archive/README.md)
 
 ## 3. 当前最常用入口

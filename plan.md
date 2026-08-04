@@ -13,8 +13,8 @@
 
 - 原始方案文档 `PSCO_0.md ~ PSCO_4.md` 已完成第一轮共识回正
 - 根级真相源职责已完成第一轮去重
-- `docs/` 已收口到 `phase / fix / audit / archive`
-- 评审与交叉汇总文档已归类到 `docs/audit/`
+- `docs/` 已收口到 `phase / fix / audit / review / archive`
+- 评审与交叉汇总文档已归类到 `docs/review/`
 - `phase01_*` 三件套已建立
 - 当前项目技术路线已明确为 `Durable System Track`
 

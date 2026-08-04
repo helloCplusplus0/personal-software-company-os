@@ -2,7 +2,7 @@
 
 ## 1. 职责
 
-本目录承载沉默文档、旧规范和不直接服务当前 `phase / fix / audit` workflow 的历史资料。
+本目录承载沉默文档、旧规范和不直接服务当前 `phase / fix / audit / review` workflow 的历史资料。
 
 ## 2. 当前文档
 

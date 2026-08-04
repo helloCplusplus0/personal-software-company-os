@@ -28,12 +28,12 @@
 - `Feature / Opportunity / Experiment` 保留在长期理论模型中，但不进入 `v0.1` 主执行范围
 - 当前项目必须遵守统一技术栈方案，禁止越出 `TECH_STACK_BASELINE.md` 自由发挥
 - 当前项目技术路线已明确冻结为 `Durable System Track`
-- `docs/` 当前只服务 `phase / fix / audit / archive` workflow
+- `docs/` 当前只服务 `phase / fix / audit / review / archive` workflow
 
 ## 4. 当前状态
 
 - 原始方案文档 `PSCO_0.md ~ PSCO_4.md` 已完成第一轮共识回正
-- 专家评审与交叉汇总文档已归类到 `docs/audit/`
+- 专家评审与交叉汇总文档已归类到 `docs/review/`
 - 根目录保留真相源与主入口，不再作为散装文档堆放区
 - `phase01_*` 三件套已创建，当前处于 `/plan` 审核前状态
 

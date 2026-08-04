@@ -95,6 +95,12 @@
 - analysis 只允许进入四类结论之一：`keep-as-is / enter-fix / enter-improvement / escalate-phase`
 - 若结论为 `enter-improvement`，再进入对应 `/spec`、实现与验收
 
+### 4.4 review 归档链
+
+- 专家评审与交叉汇总文档统一归入 `docs/review/`，不进入 `docs/audit/`
+- `docs/audit/` 只承接内部审计工作流（`audit_issue` / `audit_analysis`）
+- 评审文档不直接承担当前阶段正式规则，作为最终共识与后续规格的上游输入参考
+
 ## 5. 协作规则
 
 - 开启新 `phase` 前，先同步 `AGENTS.md`、`plan.md`、`project_rules.md`、`architecture_map.md`、`docs/README.md`
@@ -130,6 +136,6 @@
 
 1. 原始方案文档已完成共识回正
 2. 根级真相源文档已建立并职责去重
-3. `docs/` 已按 `phase / fix / audit / archive` 收口
+3. `docs/` 已按 `phase / fix / audit / review / archive` 收口
 4. phase / fix / audit / 非 GPT-5.4 协作机制已继承并落到目录
 5. 当前阶段的非目标与冻结结论已写清

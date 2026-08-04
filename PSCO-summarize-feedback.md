@@ -284,6 +284,7 @@ v0.1 建议保留以下页面或主功能块：
 
 - `product_modules`
 - `product_repositories`
+- `module_repositories`
 - `decision_links`
 
 **派生视图：**

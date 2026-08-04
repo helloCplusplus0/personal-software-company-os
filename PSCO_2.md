@@ -305,7 +305,7 @@ Reason:
 ```text
 lodash
 
-react-router
+TanStack Router
 
 ```
 
@@ -829,7 +829,7 @@ Vite
 
 +
 
-React Router
+TanStack Router
 
 +
 

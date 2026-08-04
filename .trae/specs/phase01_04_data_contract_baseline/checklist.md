@@ -1,0 +1,13 @@
+- [x] `PostgreSQL` 已被明确冻结为 `v0.1` 当前唯一数据库主线
+- [x] `Local First` 已被明确保持为“数据所有权优先”，而不是切换到 `SQLite`
+- [x] `v0.1` 最小数据模型方向已被明确压缩为核心表、关系表与派生视图三层结构
+- [x] 核心表已至少明确到 `ventures（可选） / products / repositories / modules / module_releases / decisions`
+- [x] 关系表已至少明确到 `product_modules / product_repositories / module_repositories / decision_links`
+- [x] `Capability` 已被明确保持为派生结果层，而不是新的核心表主线
+- [x] `Repository Binding` 已被明确冻结为产品绑定、模块绑定与实现映射三类结构要求
+- [x] `MapModuleToRepository` 已具备显式数据载体（`module_repositories` 关系表）
+- [x] `Decision Record` 已被明确冻结为结构化记录，并具备最小字段要求
+- [x] `Decision` 与目标对象的结构化关联要求已被明确保留
+- [x] `Contract First` 已被明确冻结为当前 API 与跨语言边界的前提
+- [x] 当前长期合同方向已被明确保持为 `Protocol Buffers`
+- [x] 当前规格已明确不要求完整 `proto` 工具链，也未引入第二套跨语言合同主线

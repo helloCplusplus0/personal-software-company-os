@@ -52,7 +52,8 @@ docs/
 ├── README.md      # workflow 文档总入口
 ├── phase/         # 项目推进主线
 ├── fix/           # bug 修复与局部问题
-├── audit/         # 跨模块复核、路线仲裁、结构审计
+├── audit/         # 跨模块复核、路线仲裁、结构审计（内部审计工作流）
+├── review/        # 专家评审与交叉汇总文档（历史留档）
 └── archive/       # 沉默文档、旧规范、历史资料
 ```
 
@@ -73,16 +74,12 @@ docs/
 
 ### 4.3 audit
 
-以下评审与交叉汇总文档已统一归入 `docs/audit/`：
+本目录只承接内部审计工作流（`audit_issue` / `audit_analysis`），当前已建立模板：
 
-- `PSCO_Evaluation-GPT54.md`
-- `PSCO_Review_deepseek-v4-flash.md`
-- `PSCO-Design-Review-GLM-52.md`
-- `PSCO-evaluation-deepseek-v4-pro.md`
-- `PSCO-review-qwen37-pro.md`
-- `PSCO-summarize-feedback-dsv4flash.md`
-- `PSCO-summarize-feedback-GLM52.md`
-- `PSCO-summarize-feedback-GPT54.md`
+- `audit_issue_template.md`
+- `audit_analysis_template.md`
+
+> 专家评审与交叉汇总文档不归入 `docs/audit/`，统一归入 `docs/review/`。
 
 ### 4.4 archive
 
@@ -95,7 +92,18 @@ docs/
 
 ### 4.5 review
 
-以下文件当前只作为历史评审或迁移跳转保留，不作为正式技术基线入口：
+以下专家评审与交叉汇总文档统一归入 `docs/review/`：
+
+- `PSCO_Evaluation-GPT54.md`
+- `PSCO_Review_deepseek-v4-flash.md`
+- `PSCO-Design-Review-GLM-52.md`
+- `PSCO-evaluation-deepseek-v4-pro.md`
+- `PSCO-review-qwen37-pro.md`
+- `PSCO-summarize-feedback-dsv4flash.md`
+- `PSCO-summarize-feedback-GLM52.md`
+- `PSCO-summarize-feedback-GPT54.md`
+
+另保留迁移跳转文件：
 
 - `docs/review/Personal Software Company OS v2.0.md` -> `TECH_STACK_BASELINE.md`
 
@@ -103,5 +111,5 @@ docs/
 
 - 已迁移文档在根目录保留受控跳转文件，避免旧引用直接失效
 - 活动文档必须能从 `docs/README.md` 进入
-- 新文档创建时，必须先判断它属于 `phase / fix / audit / archive` 哪一类
+- 新文档创建时，必须先判断它属于 `phase / fix / audit / review / archive` 哪一类
 - 不再新增含义模糊、无法直接对应 workflow 的目录
