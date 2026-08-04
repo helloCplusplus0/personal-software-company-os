@@ -1,0 +1,23 @@
+# Checklist
+
+- [x] `Module List` 的最小搜索参数已明确为 `queryText / statusFilter`
+- [x] 列表搜索参数的归属已明确为路由搜索参数而非全局瞬时状态
+- [x] `Module List` 的读取状态与派生视图状态分层已明确
+- [x] 列表错误反馈位置已明确留在 `ModuleListPage` 内容区上下文
+- [x] `Module List` 的空状态主入口已明确为进入 `ModuleCreatePage`
+- [x] 从创建页或详情页返回列表时保留搜索参数上下文的规则已明确
+- [x] `Module Create` 的最小草稿状态与提交状态已明确
+- [x] `CreateModule` 提交失败后保留输入并在当前表单上下文展示错误的规则已明确
+- [x] `CreateModule` 成功后的默认回流路径已明确为新建模块对应的 `ModuleDetailPage`
+- [x] 创建成功后列表读模型需要重读的用户可见语义已明确
+- [x] `Release Create` 的 `moduleId` 上下文来源已明确为当前路由参数
+- [x] `Release Create` 的最小状态流与成功/失败回流规则已明确
+- [x] `ModuleBindingPanel` 的最小状态模型已明确
+- [x] 同一时刻只允许一个绑定面板或一种绑定模式打开的规则已明确
+- [x] 绑定动作成功后的详情页停留与重读规则已明确
+- [x] 绑定动作失败后的错误呈现位置与重试规则已明确
+- [x] 页面主动返回路径已明确为单值规则
+- [x] `ModuleDetailPage` 已明确为当前阶段统一回流宿主页
+- [x] 表单草稿、提交错误与面板开闭状态的局部归属边界已明确
+- [x] 本次设计结果足以直接进入实现
+- [x] 当前阶段未把 hook 命名、缓存细节或 store API 提前写成既成事实
