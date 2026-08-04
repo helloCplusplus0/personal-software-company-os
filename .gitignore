@@ -1,0 +1,66 @@
+# ==== 通用系统文件 ====
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# ==== 环境变量与密钥 ====
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+
+# ==== Node / 前端（React + Vite + TS）====
+node_modules/
+dist/
+dist-ssr/
+coverage/
+*.local
+.vite/
+.turbo/
+.nuxt/
+.eslintcache
+*.tsbuildinfo
+
+# ==== Go / 后端 ====
+bin/
+*.exe
+*.test
+*.out
+*.prof
+coverage.html
+
+# ==== 数据库 / 数据文件 ====
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.dump
+*.backup
+pgdata/
+data/
+
+# ==== 日志与临时文件 ====
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+tmp/
+temp/
+
+# ==== IDE 与编辑器 ====
+.idea/
+.vscode/
+*.iml
+*.sublime-*
+
+# ==== 构建产物 ====
+*.tar.gz
+*.zip
+build/
+out/
