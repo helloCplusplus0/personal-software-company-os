@@ -1,0 +1,9 @@
+- [x] `Product / Module / Release / Decision / Repository / Venture（可选）` 已被明确冻结为 `v0.1` 主执行范围
+- [x] `Decision` 已被明确保留在 MVP 中
+- [x] `Capability` 已被明确冻结为派生层，而不是重实体
+- [x] `Feature / Opportunity / Experiment` 已被明确冻结为后移对象
+- [x] MVP 核心动作已至少明确为 `CreateProduct / CreateModule / CreateRelease / RecordDecision / LinkDecisionToTarget`
+- [x] `Repository Binding` 已至少细化为 `BindRepositoryToProduct / BindModuleToProduct / MapModuleToRepository`
+- [x] 当前规格没有把其他长期理论对象误写成 `v0.1` 核心实体
+- [x] 当前规格没有把 `Repository Binding` 退回为泛化命名
+- [x] 当前规格与 `phase01_mvp_spec_convergence_shared_baseline.md` 和 `phase01_mvp_spec_convergence_architecture_plan.md` 保持一致
