@@ -7,8 +7,8 @@
 
 - 项目名称：`Personal Software Company OS`
 - 当前阶段：`phase02_module_registry_foundation (/plan)`
-- 当前主目标：在 `phase01-06` 正式 MVP 规格正文前提下，完成 `Module Registry` 最小可执行主线的阶段规划
-- 当前下一阶段入口：`phase02_module_registry_foundation`
+- 当前主目标：在 `phase01-06` 正式 MVP 规格正文前提下，按交付型 phase 结构推进 `Module Registry` 最小可执行主线；当前处于 `/plan`
+- 当前下一阶段入口：`phase03_decision_center_foundation`
 - 当前定位：PSCO 是个人软件公司的经营与资产系统，不是代码管理工具，不是 AI Chat 产品，也不是自动扫描系统
 
 ## 2. 当前唯一上游
@@ -39,7 +39,7 @@
 - `phase01_*` 三件套已完成规划收口，并作为 `phase01-06` 正式 MVP 规格正文的上游
 - 执行层唯一规格入口已冻结为 `.trae/specs/phase01_06_formal_mvp_spec/mvp_spec_v0.1.md`
 - `phase02_module_registry_foundation` 已正式进入 `/plan`
-- `phase02` 当前只承接 `Module Registry` 最小可执行主线，不重新解释 `v0.1` 边界
+- `phase02` 当前按交付型 phase 推进 `Module Registry` 最小可执行主线，不重新解释 `v0.1` 边界
 
 ## 5. 推荐阅读顺序
 

@@ -4,7 +4,7 @@
 
 本文档是 `phase02_module_registry_foundation` 的架构规划文档。
 
-目标不是直接进入实现，而是冻结 `Module Registry` 最小可执行主线的架构边界、交付范围、阶段输出物与实现前提，为后续 `dev_plan`、`shared_baseline` 与 `/spec` 提供唯一上游。
+目标不是把 `phase02` 做成纯文档冻结阶段，而是先在 `/plan` 中冻结 `Module Registry` 最小可执行主线的架构边界、交付范围、阶段输出物与实现前提，再继续进入 `/spec`、实现、验收与收口。
 
 ## 2. 上游输入
 
@@ -22,7 +22,7 @@
 
 `phase02` 的目标是：
 
-> 在 `phase01-06` 正式 MVP 规格正文前提下，建立 `Module Registry` 的最小可执行主线，使其成为 `v0.1` 第一条可实现、可验收、可继续扩展的执行入口。
+> 在 `phase01-06` 正式 MVP 规格正文前提下，交付 `Module Registry` 的最小可执行主线，使其成为 `v0.1` 第一条可实现、可验收、可继续扩展的执行入口。
 
 本阶段需要回答的核心问题：
 
@@ -32,6 +32,7 @@
 4. 如何在单一 `React Web` 交付策略下，同时满足 `PC` 与移动浏览器可用性
 5. 哪些能力必须进入 `phase02`，哪些必须后移到 `phase03+`
 6. 在不提前进入实现的前提下，当前阶段最少需要冻结哪些源码实现设计层结果，才能保证 `/spec` 与后续实现可直接落地
+7. 当前 `phase02` 结束时，仓库里最少要新增哪些可运行代码与验收结果，才算真正完成本阶段交付
 
 ## 4. 架构冻结结论
 
@@ -113,6 +114,17 @@
 - 后端 `Module Registry` 模块边界与接口分组前提
 - `PC / 移动浏览器` 双场景下的布局降级策略
 
+### 4.7 当前阶段交付模式
+
+`phase02` 必须按交付型 phase 推进，而不是只做文档冻结。
+
+这意味着：
+
+- 当前 `/plan` 只负责建立阶段上游与任务拆分
+- 后续必须继续进入 `/spec`
+- `/spec` 后必须继续进入实际源代码实现
+- 实现完成后必须进入验证、验收与收口
+
 ## 5. 当前阶段范围冻结
 
 ### 5.1 本阶段必须进入范围
@@ -143,26 +155,37 @@
 
 ## 6. 本阶段输出物
 
-本阶段必须产出：
+当前 `/plan` 步骤必须产出：
 
 1. `phase02_module_registry_foundation_architecture_plan.md`
 2. `phase02_module_registry_foundation_dev_plan.md`
 3. `phase02_module_registry_foundation_shared_baseline.md`
 
-本阶段通过审核后，下一步再进入：
+当前 `/plan` 通过审核后，下一步再进入：
 
 - `phase02` 对应 `/spec`
 
+整个 `phase02` 最终还必须产出：
+
+- `Module Registry` 对应的正式规格正文
+- `Module Registry` 前端最小可运行主线
+- `Module Registry` 后端与数据主线
+- 联调、验收与根级同步结果
+
 ## 7. 本阶段不做
 
-本阶段明确不做：
+本阶段明确不做的能力范围：
 
-- 代码实现
-- 运行时验证
-- 数据库 migration
-- 前端视觉打磨
-- 完整 API 合同细化
 - Product / Decision / Repository 的独立实现阶段规划
+- `Feature / Opportunity / Experiment`
+- 独立 `AI Assistant`
+- 独立 `React Native` 客户端
+- 完整 `PWA`
+
+补充说明：
+
+- 当前 `/plan` 步骤本身不直接写业务代码
+- 但整个 `phase02` 不是“禁止代码实现”，而是必须在后续子任务中完成代码交付
 
 ## 8. 通过标准
 
@@ -174,4 +197,4 @@
 4. 绑定动作、版本动作与 `Decision` 入口的交互归属已写清
 5. 源码设计层输出要求已进入本阶段规划
 6. 后移对象与非目标边界已无冲突
-7. 后续 `dev_plan` 与 `shared_baseline` 可以在此基础上继续展开
+7. 后续 `dev_plan` 与 `shared_baseline` 可以在此基础上继续展开 `/spec`、实现、验收与收口
