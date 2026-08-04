@@ -76,6 +76,7 @@
 - `CreateProduct`
 - `CreateModule`
 - `CreateRelease`
+- `CreateRepository`
 - `RecordDecision`
 - `BindRepositoryToProduct`
 - `BindModuleToProduct`
@@ -88,6 +89,7 @@
 
 - 首轮必须允许用户从零手动创建 `Product`
 - 首轮必须允许用户从零手动创建 `Module`
+- 首轮必须允许用户从零手动创建 `Repository`
 - 首轮必须允许用户记录 `Decision`
 - 首轮必须允许用户手动完成基础绑定关系
 

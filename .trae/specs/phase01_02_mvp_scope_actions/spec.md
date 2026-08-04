@@ -45,12 +45,20 @@
 - **AND** 不得把这些对象写成 `v0.1` 首轮必须承接的主范围
 
 ### Requirement: MVP 核心动作清单冻结
-系统 SHALL 至少冻结以下 MVP 核心动作：`CreateProduct`、`CreateModule`、`CreateRelease`、`RecordDecision`、`LinkDecisionToTarget`。
+系统 SHALL 至少冻结以下 MVP 核心动作：`CreateProduct`、`CreateModule`、`CreateRelease`、`CreateRepository`、`RecordDecision`、`LinkDecisionToTarget`。
 
 #### Scenario: 判断动作是否进入 MVP
 - **WHEN** 接手者查询 `v0.1` 的核心动作
-- **THEN** 必须至少包含 `CreateProduct`、`CreateModule`、`CreateRelease`、`RecordDecision`、`LinkDecisionToTarget`
+- **THEN** 必须至少包含 `CreateProduct`、`CreateModule`、`CreateRelease`、`CreateRepository`、`RecordDecision`、`LinkDecisionToTarget`
 - **AND** 不得将 MVP 动作重新退化为泛化的“信息登记”表述
+
+### Requirement: Repository 进入系统入口动作冻结
+系统 SHALL 明确 `Repository` 作为核心实体，必须提供显式进入动作 `CreateRepository`，使 `Repository` 基础资产可以建立。
+
+#### Scenario: Repository 建立入口
+- **WHEN** 接手者查询 `Repository` 如何进入 `v0.1` 系统
+- **THEN** 必须通过 `CreateRepository` 动作建立 `Repository` 基础资产
+- **AND** 不得把 `Repository` 的建立退化为仅依赖绑定动作间接隐式产生
 
 ### Requirement: Repository Binding 最小动作冻结
 系统 SHALL 将 `Product / Module / Repository` 之间的最小绑定动作冻结为 `BindRepositoryToProduct`、`BindModuleToProduct`、`MapModuleToRepository`。

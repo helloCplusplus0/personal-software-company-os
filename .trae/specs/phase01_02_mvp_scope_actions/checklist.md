@@ -2,7 +2,8 @@
 - [x] `Decision` 已被明确保留在 MVP 中
 - [x] `Capability` 已被明确冻结为派生层，而不是重实体
 - [x] `Feature / Opportunity / Experiment` 已被明确冻结为后移对象
-- [x] MVP 核心动作已至少明确为 `CreateProduct / CreateModule / CreateRelease / RecordDecision / LinkDecisionToTarget`
+- [x] MVP 核心动作已至少明确为 `CreateProduct / CreateModule / CreateRelease / CreateRepository / RecordDecision / LinkDecisionToTarget`
+- [x] `Repository` 已通过 `CreateRepository` 显式动作进入系统，不依赖绑定间接产生
 - [x] `Repository Binding` 已至少细化为 `BindRepositoryToProduct / BindModuleToProduct / MapModuleToRepository`
 - [x] 当前规格没有把其他长期理论对象误写成 `v0.1` 核心实体
 - [x] 当前规格没有把 `Repository Binding` 退回为泛化命名

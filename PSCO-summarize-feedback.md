@@ -257,9 +257,11 @@ v0.1 建议保留以下页面或主功能块：
 - `CreateProduct`
 - `CreateModule`
 - `CreateRelease`
+- `CreateRepository`
 - `RecordDecision`
 - `BindRepositoryToProduct`
 - `BindModuleToProduct`
+- `MapModuleToRepository`
 - `LinkDecisionToTarget`
 
 可选补充动作：

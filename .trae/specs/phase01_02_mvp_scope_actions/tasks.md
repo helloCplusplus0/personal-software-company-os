@@ -11,8 +11,9 @@
   - [x] SubTask 2.3: 验证派生层与后移层边界无冲突
 
 - [x] Task 3: 冻结 MVP 核心动作范围。将首轮必须承接的动作写成可执行清单。
-  - [x] SubTask 3.1: 明确 `CreateProduct / CreateModule / CreateRelease / RecordDecision / LinkDecisionToTarget` 为核心动作
-  - [x] SubTask 3.2: 验证核心动作与核心实体范围一致
+  - [x] SubTask 3.1: 明确 `CreateProduct / CreateModule / CreateRelease / CreateRepository / RecordDecision / LinkDecisionToTarget` 为核心动作
+  - [x] SubTask 3.2: 明确 `Repository` 通过 `CreateRepository` 显式进入系统
+  - [x] SubTask 3.3: 验证核心动作与核心实体范围一致
 
 - [x] Task 4: 冻结 Repository Binding 最小动作。将 `Product / Module / Repository` 之间的绑定关系细化到可执行动作。
   - [x] SubTask 4.1: 明确 `BindRepositoryToProduct`
