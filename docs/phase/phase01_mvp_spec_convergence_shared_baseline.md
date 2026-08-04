@@ -4,6 +4,8 @@
 
 本文档用于集中冻结 `phase01` 的共享基线，避免相同结论在 `architecture_plan`、`dev_plan`、后续 `/spec` 与根级真相源中重复发散。
 
+> 状态说明：`phase01` 已完成收口；本文档保留为规划侧共享基线。当前执行层唯一规格入口为 `.trae/specs/phase01_06_formal_mvp_spec/mvp_spec_v0.1.md`。
+
 ## 2. 当前单值基线
 
 ### 2.1 项目路线
@@ -15,6 +17,7 @@
 ### 2.2 正式技术主线
 
 - Web：`React + Vite + TypeScript`
+- Frontend Delivery：`v0.1` 只交付单一 `React Web` 客户端，同时覆盖 `PC` 与移动浏览器 UI；不引入独立 `React Native` 客户端，`PWA` 仅作可兼容增强方向
 - Router：`TanStack Router`
 - Data Fetching：`TanStack Query`
 - Client State：`Zustand`

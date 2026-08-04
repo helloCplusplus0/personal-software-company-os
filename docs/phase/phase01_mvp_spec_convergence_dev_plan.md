@@ -4,7 +4,9 @@
 
 本文档定义 `phase01_mvp_spec_convergence` 的执行顺序、子任务范围、DoD 与明确不做。
 
-`phase01` 当前仍处于 `/plan` 阶段，因此本文档是后续 `/spec` 与收口的唯一任务来源。
+本文档在 `phase01` 的 `/plan` 阶段定义后续 `/spec` 与收口的唯一任务来源。
+
+> 状态说明：上述表述描述的是 `phase01` 的规划时语境。当前 `phase01` 已完成收口；执行层唯一规格入口为 `.trae/specs/phase01_06_formal_mvp_spec/mvp_spec_v0.1.md`，本文档仅保留为规划任务上游。
 
 ## 2. 本阶段目标
 

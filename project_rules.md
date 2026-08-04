@@ -51,6 +51,8 @@
 
 - `PSCO` 当前项目已明确冻结为 `Durable System Track`
 - 当前项目正式运行主线为：`React Web + Go Backend + PostgreSQL`
+- `v0.1` 前端正式交付物冻结为单一 `React Web`，同时考虑 `PC` 与移动浏览器 UI
+- 当前项目不引入独立 `React Native` 客户端；`PWA` 仅作为可兼容增强方向，不是 `v0.1` 首轮阻断项
 - 当前项目中 `Rust` 只保留为未来计算扩展位，不进入 `v0.1` 首轮实现
 - 当前项目不得重新解释为 `Product Track`
 
@@ -87,6 +89,7 @@
   - `phase*_dev_plan.md`
   - `phase*_shared_baseline.md`
 - 第四步：阶段文档经复核通过后，再按 `dev_plan` 子任务顺序执行 `/spec`、实现、验收与收口
+- `phase01` 收口后，执行层规格一律以 `.trae/specs/phase01_06_formal_mvp_spec/mvp_spec_v0.1.md` 为准；根级文档只同步状态、入口与冻结结论，不复制正文
 
 ### 4.2 fix 推进链
 

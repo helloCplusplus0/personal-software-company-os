@@ -6,6 +6,8 @@
 
 目标不是直接进入实现，而是冻结本阶段的架构边界、技术路线、范围边界与输出物，为后续 `dev_plan`、`shared_baseline` 与 `/spec` 提供唯一上游。
 
+> 状态说明：`phase01` 已完成收口；本文档保留为规划侧上游。当前执行层唯一规格入口为 `.trae/specs/phase01_06_formal_mvp_spec/mvp_spec_v0.1.md`，根级状态以 `AGENTS.md` 与 `plan.md` 为准。
+
 ## 2. 上游输入
 
 本阶段唯一上游输入如下：
@@ -142,9 +144,7 @@ PSCO 当前项目正式冻结为：
 2. `phase01_mvp_spec_convergence_dev_plan.md`
 3. `phase01_mvp_spec_convergence_shared_baseline.md`
 
-本阶段通过审核后，下一步再进入：
-
-- `phase01` 对应 `/spec`
+本阶段已完成审核，并已进入 `phase01` 对应 `/spec` 收口。
 
 ## 7. 本阶段不做
 

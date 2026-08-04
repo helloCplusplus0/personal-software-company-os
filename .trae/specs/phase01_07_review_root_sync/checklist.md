@@ -1,0 +1,12 @@
+- [x] 已明确 `phase01-07` 需要完成 `phase01` 文档互链复核，而不是新增第二套规格边界
+- [x] 已明确 `phase01-06` 的正式 MVP 规格正文是执行层唯一规格入口
+- [x] 已明确根级状态回写的目标文档与同步边界
+- [x] 已明确根级回写只更新状态、入口与冻结结论，不复制正式规格正文
+- [x] 已明确 `plan.md` 中 `phase01` 的状态需要更新为与验收结果一致的表达
+- [x] 已明确 `phase02_module_registry_foundation` 的进入条件需要直接承接 `phase01-06` 正式 MVP 规格正文
+- [x] 已明确 `phase02` 不得重新引入后移对象、独立 `AI Assistant`、独立 `React Native` 客户端或完整 `PWA` 能力作为前置范围
+- [x] 已明确前端正式交付物为单一 `React Web`
+- [x] 已明确该前端方案同时考虑 `PC` 与移动浏览器 UI
+- [x] 已明确当前不引入独立 `React Native` 客户端，`PWA` 仅作为可兼容增强方向
+- [x] 已明确 `AGENTS.md`、`plan.md`、`architecture_map.md`、`project_rules.md` 与 `phase01` 文档需要保持单值一致
+- [x] 已明确后续 `phase02` 同时以根级状态入口和 `phase01-06` 正式规格正文作为合法入口，不再读取对话结论或零散子规格作为长期主入口

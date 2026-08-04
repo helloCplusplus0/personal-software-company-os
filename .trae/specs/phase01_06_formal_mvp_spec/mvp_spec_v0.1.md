@@ -11,6 +11,7 @@
 - 项目路线：`Durable System Track`
 - 正式运行主线：`React Web + Go Backend + PostgreSQL`
 - 前端：`React + Vite + TypeScript + TanStack Router + TanStack Query + Zustand + Tailwind CSS + shadcn/ui`
+- 前端交付策略：`v0.1` 只交付单一 `React Web` 客户端，同时覆盖 `PC` 与移动浏览器 UI；当前不引入独立 `React Native` 客户端，`PWA` 仅作为可兼容增强方向
 - 后端：`Go`，模块化单体优先，单进程、单主运行面优先
 - 数据库：`PostgreSQL` 为 `v0.1` 唯一数据库主线
 - 可选计算：`Rust` 仅作计算扩展位，不进入 `v0.1` 首轮实现
@@ -87,6 +88,7 @@
 - 首轮默认以低摩擦手动录入为主
 - 空状态服务于首轮录入路径
 - 独立 `AI Assistant` 工作台不纳入 `v0.1`
+- 前端交付维持单一 `React Web` 入口，不拆分独立原生客户端；页面交互同时考虑 `PC` 与移动浏览器可用性
 
 ---
 
@@ -230,6 +232,8 @@
 - AI 自动判断方案
 - 完整 PMM / PCP 正式标准
 - 独立 AI Assistant 工作台
+- 独立 `React Native` 客户端
+- 完整 `PWA` 能力落地
 
 ---
 

@@ -8,8 +8,9 @@
 
 ## 2. 当前状态
 
-- 当前阶段入口：`phase01_mvp_spec_convergence`
-- `phase01_*` 三件套已创建
+- 当前阶段已完成：`phase01_mvp_spec_convergence`
+- `phase01_*` 三件套已完成规划侧收口
+- 当前执行层规格入口：`.trae/specs/phase01_06_formal_mvp_spec/mvp_spec_v0.1.md`
 - 当前项目技术路线：`Durable System Track`
 
 ## 3. 规则
@@ -19,3 +20,4 @@
   - `phase*_dev_plan.md`
   - `phase*_shared_baseline.md`
 - `/plan` 通过后，才能继续 `/spec` 与实现
+- 已完成收口的 `phase`，后续实现应从正式 `/spec` 进入，而不是把三件套继续当作并列执行入口
