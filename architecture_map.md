@@ -43,7 +43,7 @@
 
 当前保留在根目录的历史参考文档：
 
-- `AGENTS-OLD.md`
+> 说明：`AGENTS-OLD.md` 已不存在于根目录，且不再作为当前项目技术栈来源；历史技术口径统一以 `TECH_STACK_BASELINE.md` 为准。
 
 ## 3. docs 目录结构
 

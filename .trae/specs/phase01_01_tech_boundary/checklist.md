@@ -7,4 +7,5 @@
 - [ ] `Rust` 已被明确限定为未来计算扩展位，不进入 `v0.1` 首轮实现
 - [ ] 当前项目不得重新解释为 `Product Track`
 - [ ] 当前项目不得继续沿用 `AGENTS-OLD.md` 作为技术栈来源
+- [ ] 当前项目不得把 `Drizzle` 写成当前 Go 主链的既定实现依赖
 - [ ] 当前阶段不默认引入微服务、Kubernetes、Docker 全流程、Kafka、Redis 缓存层与 Elasticsearch

@@ -4,6 +4,7 @@
   - [ ] SubTask 1.1: 明确当前项目正式运行主线为 `React Web + Go Backend + PostgreSQL`
   - [ ] SubTask 1.2: 明确当前项目不得重新解释为 `Product Track`
   - [ ] SubTask 1.3: 明确当前项目不得继续沿用 `AGENTS-OLD.md` 作为技术栈来源
+  - [ ] SubTask 1.4: 明确当前项目不得把 `Drizzle` 写成当前 Go 主链的既定实现依赖
 
 - [ ] Task 2: 冻结前端、后端、部署与跨语言合同边界。将当前项目后续实现必须遵守的系统边界写成可执行约束。
   - [ ] SubTask 2.1: 冻结前端统一基线为 `React + Vite + TypeScript + TanStack Router + TanStack Query + Zustand + Tailwind CSS + shadcn/ui`

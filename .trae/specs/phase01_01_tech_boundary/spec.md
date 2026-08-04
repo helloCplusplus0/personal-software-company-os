@@ -15,6 +15,7 @@
 - 明确 `Rust` 在 `v0.1` 中不进入首轮实现，仅保留未来计算扩展位
 - 明确当前项目不得重新解释为 `Product Track`
 - 明确当前项目不得继续沿用 `AGENTS-OLD.md` 作为技术栈来源
+- 明确当前项目不得把 `Drizzle` 写成当前 Go 主链的既定实现依赖
 
 ## Impact
 
@@ -80,3 +81,11 @@
 - **WHEN** 接手者查询当前项目技术栈来源
 - **THEN** 只能引用 `TECH_STACK_BASELINE.md`
 - **AND** 不得使用 `AGENTS-OLD.md` 作为当前项目的技术栈解释依据
+
+### Requirement: Go 主链数据访问依赖约束
+系统 SHALL 明确当前项目走 `Durable System Track` 时，Go 主链不得把 `Drizzle` 作为既定实现依赖；`Drizzle` 仅属于 `Product Track` 的 TS 生态 ORM 基线。
+
+#### Scenario: Go 主链 ORM 选择
+- **WHEN** 后续规格或实现讨论当前 Go 主链的数据访问/ORM 选型
+- **THEN** 不得把 `Drizzle` 写成当前 Go 主链的既定实现依赖
+- **AND** 需要对 Go 主链的数据访问层给出独立选型，而不是直接复用 `Product Track` 的 `Drizzle` 基线
