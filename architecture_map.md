@@ -65,10 +65,15 @@ docs/
   - `phase01_mvp_spec_convergence_architecture_plan.md`
   - `phase01_mvp_spec_convergence_dev_plan.md`
   - `phase01_mvp_spec_convergence_shared_baseline.md`
+- 当前已创建：
+  - `phase02_module_registry_foundation_architecture_plan.md`
+  - `phase02_module_registry_foundation_dev_plan.md`
+  - `phase02_module_registry_foundation_shared_baseline.md`
 - 当前已完成：
   - `.trae/specs/phase01_06_formal_mvp_spec/mvp_spec_v0.1.md`（`v0.1` 执行层唯一规格入口）
 - 当前项目技术路线已冻结为 `Durable System Track`
-- 下一阶段入口为 `phase02_module_registry_foundation`
+- 当前阶段已切换到 `phase02_module_registry_foundation (/plan)`
+- 下一阶段入口为 `phase03_decision_center_foundation`
 - `phase02` 必须直接承接正式 MVP 规格正文，不在根级文档重复正文内容
 
 ### 4.2 fix

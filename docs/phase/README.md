@@ -8,10 +8,17 @@
 
 ## 2. 当前状态
 
-- 当前阶段已完成：`phase01_mvp_spec_convergence`
+- 当前阶段：`phase02_module_registry_foundation (/plan)`
 - `phase01_*` 三件套已完成规划侧收口
+- `phase02_*` 三件套已建立，当前处于 `/plan`
 - 当前执行层规格入口：`.trae/specs/phase01_06_formal_mvp_spec/mvp_spec_v0.1.md`
 - 当前项目技术路线：`Durable System Track`
+
+## 2.1 当前活动文档
+
+- [phase02_module_registry_foundation_architecture_plan.md](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase02_module_registry_foundation_architecture_plan.md)
+- [phase02_module_registry_foundation_dev_plan.md](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase02_module_registry_foundation_dev_plan.md)
+- [phase02_module_registry_foundation_shared_baseline.md](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase02_module_registry_foundation_shared_baseline.md)
 
 ## 3. 规则
 

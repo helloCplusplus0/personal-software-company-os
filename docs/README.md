@@ -26,5 +26,8 @@
 - [阶段路线图](file:///home/dell/Projects/personal-software-company-os/plan.md)
 - [项目规则](file:///home/dell/Projects/personal-software-company-os/project_rules.md)
 - [目录与迁移落点](file:///home/dell/Projects/personal-software-company-os/architecture_map.md)
+- [当前阶段 architecture_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase02_module_registry_foundation_architecture_plan.md)
+- [当前阶段 dev_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase02_module_registry_foundation_dev_plan.md)
+- [当前阶段 shared_baseline](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase02_module_registry_foundation_shared_baseline.md)
 - [执行层正式 MVP 规格入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase01_06_formal_mvp_spec/mvp_spec_v0.1.md)
 - [最终共识](file:///home/dell/Projects/personal-software-company-os/PSCO-summarize-feedback.md)

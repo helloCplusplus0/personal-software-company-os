@@ -6,8 +6,8 @@
 ## 1. 项目定位
 
 - 项目名称：`Personal Software Company OS`
-- 当前阶段：`phase01_mvp_spec_convergence (completed)`
-- 当前主目标：以 `phase01-06` 正式 MVP 规格正文作为执行层唯一规格入口，进入 `phase02_module_registry_foundation`
+- 当前阶段：`phase02_module_registry_foundation (/plan)`
+- 当前主目标：在 `phase01-06` 正式 MVP 规格正文前提下，完成 `Module Registry` 最小可执行主线的阶段规划
 - 当前下一阶段入口：`phase02_module_registry_foundation`
 - 当前定位：PSCO 是个人软件公司的经营与资产系统，不是代码管理工具，不是 AI Chat 产品，也不是自动扫描系统
 
@@ -38,7 +38,8 @@
 - 根目录保留真相源与主入口，不再作为散装文档堆放区
 - `phase01_*` 三件套已完成规划收口，并作为 `phase01-06` 正式 MVP 规格正文的上游
 - 执行层唯一规格入口已冻结为 `.trae/specs/phase01_06_formal_mvp_spec/mvp_spec_v0.1.md`
-- `phase02_module_registry_foundation` 进入前提是直接承接该正式规格正文，不重新解释 `v0.1` 边界
+- `phase02_module_registry_foundation` 已正式进入 `/plan`
+- `phase02` 当前只承接 `Module Registry` 最小可执行主线，不重新解释 `v0.1` 边界
 
 ## 5. 推荐阅读顺序
 
@@ -50,7 +51,10 @@
 6. `PSCO-summarize-feedback.md`
 7. `docs/README.md`
 8. `.trae/specs/phase01_06_formal_mvp_spec/mvp_spec_v0.1.md`
-9. 当前目标对应的 `phase / fix / audit` 文档
+9. `docs/phase/phase02_module_registry_foundation_architecture_plan.md`
+10. `docs/phase/phase02_module_registry_foundation_dev_plan.md`
+11. `docs/phase/phase02_module_registry_foundation_shared_baseline.md`
+12. 当前目标对应的 `phase / fix / audit` 文档
 
 ## 6. 接手提醒
 
