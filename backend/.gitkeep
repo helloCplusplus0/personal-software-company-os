@@ -1,0 +1,10 @@
+# Backend
+# 后端代码目录（Go Core）
+# 结构示例：
+#   cmd/          - 主入口
+#   internal/     - 内部业务逻辑
+#     domain/     - 领域模型
+#     application/- 应用服务
+#     infrastructure/ - 持久化与外部集成
+#     interfaces/ - API、CLI
+#   pkg/          - 可复用包
