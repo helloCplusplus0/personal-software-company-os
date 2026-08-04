@@ -1,0 +1,10 @@
+- [x] `Dashboard / Module Registry / Product Registry / Decision Center / Repository Binding` 已被明确冻结为 `v0.1` 页面范围
+- [x] `Dashboard` 已被明确冻结为最小聚合反馈页面，而不是复杂驾驶舱
+- [x] `Module Registry`、`Product Registry`、`Decision Center`、`Repository Binding` 已各自具备明确最小职责
+- [x] 每个 MVP 页面都能够映射到已冻结的 MVP 核心动作（含 `CreateRelease` 由 `Module Registry` 承载）
+- [x] 首轮冷启动路径已覆盖 `Product / Repository / Module / Decision` 基础资产建立与基础绑定关系
+- [x] 空状态已被明确要求服务于首轮录入路径
+- [x] 低摩擦手动录入已被明确冻结为首轮默认输入路径
+- [x] 独立 `AI Assistant` 工作台未被纳入 `v0.1`
+- [x] `Feature / Opportunity / Experiment` 页面未被纳入 `v0.1`
+- [x] 当前规格与 `phase01_mvp_spec_convergence_shared_baseline.md`、`phase01_mvp_spec_convergence_architecture_plan.md` 和最终共识保持一致
