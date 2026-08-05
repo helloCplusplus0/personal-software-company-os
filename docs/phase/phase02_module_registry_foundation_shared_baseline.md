@@ -93,6 +93,11 @@
 - `decisions`
 - `decision_links`
 
+候选读取前提（只读，不要求写入主线，由 `phase02-08` 收口）：
+
+- `products`
+- `repositories`
+
 ### 5.1 最小读写模型
 
 - 列表读取至少承接：`name / description / status / latest_release / product_bind_count / repository_bind_count`

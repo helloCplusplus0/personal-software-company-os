@@ -1,0 +1,22 @@
+# Checklist
+
+- [x] `Module Registry` 的后端模块归属边界已明确
+- [x] `CreateModule / CreateRelease / BindModuleToProduct / MapModuleToRepository` 的写入拥有者已明确
+- [x] `ModuleListRead` 与 `ModuleDetailRead` 的读组已明确
+- [x] `ModuleCreateWrite / ModuleReleaseWrite / ModuleBindingWrite` 的写组已明确
+- [x] `ModuleDetailRead` 作为统一详情读模型宿主的结论已明确
+- [x] `Product` 侧只提供候选读取与关系校验的连接边界已明确
+- [x] `Repository` 侧只提供候选读取与关系校验的连接边界已明确
+- [x] `Decision` 侧作为 `ModuleDetailRead` 内嵌附属读取承接、不设独立读接口组的结论已明确（与 `phase02-05` 单值性一致）
+- [x] `phase02` 阶段 `Product / Repository` 跨模块候选读取由 `Module Registry` 临时承接并通过接口边界与独立代码落点隔离的结论已明确
+- [x] 后端模块根包与 `handler / service / repository / candidate` 四子包组织已明确
+- [x] 读组文件落点（`handler/query_handler.go` + `service/query_service.go`）已明确
+- [x] 写组文件落点（`handler/command_handler.go` + `service/command_service.go`）已明确
+- [x] 数据访问层文件落点（`repository/module_store.go` + `release_store.go` + `binding_store.go`）已明确
+- [x] 跨模块候选读取文件落点（`candidate/product_candidate_read.go` + `repository_candidate_read.go`）已明确
+- [x] `Decision` 读取不设独立文件落点、内嵌于 `service/query_service.go` 的结论已明确
+- [x] 后端模块内部的分层语义已明确
+- [x] 合同边界与存储模型解耦的要求已明确
+- [x] 当前阶段未把 Go HTTP/RPC 框架、ORM 或数据访问层具体工具提前写成既成事实
+- [x] `products / repositories` 作为候选读取前提已同步到 `shared_baseline` 数据矩阵
+- [x] 设计结果足以直接进入实现，深度与 `phase02-06` 文件落点层对齐
