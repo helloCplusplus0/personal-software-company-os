@@ -178,6 +178,25 @@ DoD：
 - 数据主线与已冻结边界一致
 - 不引入超出当前阶段的新对象解释或第二套数据主线
 
+补充说明：
+
+- `phase02-11` 不替代 `Protocol Buffers` 最小合同落地；后者由新增的 `phase02-11A` 单独承接
+
+### phase02-11A 落实 Module Registry 最小 Protocol Buffers 合同主线
+
+范围：
+
+- 基于 `phase02-09` 已冻结的页面动作、最小读写模型与接口分组，落地 `Module Registry` 最小 `.proto` 合同源
+- 落地 `ModuleListRead / ModuleDetailRead / ModuleCreateWrite / ModuleReleaseWrite / ModuleBindingWrite / Candidate Read` 的消息结构、服务接口、包名与版本语义
+- 明确当前阶段 `.proto` 合同与现有 `chi + JSON HTTP` 过渡传输层的衔接关系
+
+DoD：
+
+- `Module Registry` 最小 `.proto` 合同已落地为单一合同源
+- 合同字段语义、字段编号与 `phase02-09` 正式规格正文一致
+- 当前阶段允许保留 `chi + JSON HTTP` 作为过渡传输层，但不得形成与 `.proto` 并列的第二套合同源
+- 后续实现与验收不得再按“`Protocol Buffers` 只作为长期方向、不在当前阶段落地”的旧口径推进
+
 ### phase02-12 联调、验证与验收
 
 范围：
@@ -233,7 +252,8 @@ DoD：
 9. `phase02-09`
 10. `phase02-10`
 11. `phase02-11`
-12. `phase02-12`
-13. `phase02-13`
+12. `phase02-11A`
+13. `phase02-12`
+14. `phase02-13`
 
 不允许跳过前置收敛与设计，直接进入 `Module Registry` 实现；也不允许只完成文档冻结而不完成本阶段的代码交付、验收与收口。

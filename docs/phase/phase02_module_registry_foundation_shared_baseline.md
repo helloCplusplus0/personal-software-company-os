@@ -27,7 +27,7 @@
 - UI：`Tailwind CSS + shadcn/ui`
 - Backend：`Go`
 - Database：`PostgreSQL`
-- Contract：`Protocol Buffers`（长期方向）
+- Contract：`Protocol Buffers`（当前阶段必须落地 `Module Registry` 最小 `.proto` 合同源；完整传输层迁移可后续推进）
 - Deployment：`Caddy + systemd`
 - Runtime Policy：`Single Server First`
 
@@ -110,12 +110,14 @@
 
 - `BindModuleToProduct` 与 `MapModuleToRepository` 在 `phase02` 中按 `Module Detail` 的直接写入动作处理
 - `LinkDecisionToTarget` 在 `phase02` 中只作为只读展示或跳转入口，不扩写为当前阶段独立写入主线
+- 当前阶段允许保留 `chi + JSON HTTP` 作为过渡传输层，但不得形成与 `.proto` 并列的第二套合同源
 
 ## 5.3 当前阶段源码设计层基线
 
 - 前端必须明确页面分层、最小路由结构与组件职责
 - 前端必须明确列表、详情、创建、版本登记的状态模型
 - 后端必须明确 `Module Registry` 模块边界与读写接口分组
+- 当前阶段必须为 `Module Registry` 落地最小 `.proto` 合同源
 - 当前阶段不提前冻结 Go 数据访问层具体工具
 
 ## 6. 当前阶段冷启动矩阵

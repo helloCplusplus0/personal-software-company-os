@@ -1,6 +1,0 @@
-# Database
-# 数据库相关目录
-# 结构示例：
-#   migrations/   - 数据库迁移脚本
-#   seeds/        - 种子数据
-#   schemas/      - schema 定义

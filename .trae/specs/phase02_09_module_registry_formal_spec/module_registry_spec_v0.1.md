@@ -16,7 +16,7 @@
 - 前端交付策略：单一 `React Web` 客户端，同时覆盖 `PC` 与移动浏览器 UI；不引入独立 `React Native` 客户端，`PWA` 仅作可兼容增强方向
 - 后端：`Go`，模块化单体优先
 - 数据库：`PostgreSQL` 为唯一数据库主线
-- 合同：`Contract First`，跨语言长期标准为 `Protocol Buffers`
+- 合同：`Contract First`，跨语言标准为 `Protocol Buffers`；当前阶段必须为 `Module Registry` 落地最小 `.proto` 合同源
 - 部署：`Caddy + systemd`，运行方式 `Single Server First`
 
 > 约束：不得重新解释为 `Product Track`；不得把 `Rust` 写成当前阶段必需项；`Local First` 当前解释为数据所有权优先，不等于切换到 `SQLite`。
@@ -148,8 +148,10 @@
 ### 6.1 合同边界
 
 - 遵守 `Contract First`，以结构化合同优先
-- 长期跨语言合同方向冻结为 `Protocol Buffers`
-- 当前阶段不要求完整 `proto` 工具链落地
+- 跨语言合同标准冻结为 `Protocol Buffers`
+- 当前阶段必须落地 `Module Registry` 最小 `.proto` 合同源
+- 当前阶段不要求完成完整 `proto` 工具链驱动的传输层迁移
+- 当前阶段允许保留 `chi + JSON HTTP` 作为过渡传输层，但不得形成与 `.proto` 并列的第二套合同源
 - 不得引入与 `Protocol Buffers` 冲突的第二套跨语言合同主线
 
 ### 6.2 接口分组
@@ -206,8 +208,9 @@
 ### 6.5 合同与存储解耦
 
 - 不得直接将 `modules`、`module_releases`、`product_modules`、`module_repositories` 的存储模型原样暴露为外部合同
+- `.proto` 必须作为当前阶段唯一合同源；若同时存在 `JSON HTTP` 过渡接口，其消息语义必须从 `.proto` 派生或与 `.proto` 严格对齐
 - 必须允许后续在 `Contract First` 路线下独立演进接口消息结构
-- 不得复用已删除字段编号或字段语义，必须保持与 `Protocol Buffers` 长期方向兼容
+- 不得复用已删除字段编号或字段语义，必须保持与当前 `.proto` 合同主线兼容
 
 ---
 
@@ -446,8 +449,9 @@ backend/internal/moduleregistry/
 5. 前端实现设计层结果（页面文件落点、路由树、组件树、状态模型、布局降级）已冻结到可直接进入实现的深度
 6. 后端实现设计层结果（模块边界、文件落点、分层语义、候选读取临时承接）已冻结到可直接进入实现的深度
 7. `Decision` 边界已收口为 `ModuleDetailRead` 内嵌附属读取，不设独立读接口组
-8. 非目标矩阵已明确
-9. 本文档与 `mvp_spec_v0.1.md` 及根级真相源互链一致，无第二套边界
+8. `Module Registry` 最小 `.proto` 合同源已落地，且过渡传输层未形成第二套合同源
+9. 非目标矩阵已明确
+10. 本文档与 `mvp_spec_v0.1.md` 及根级真相源互链一致，无第二套边界
 
 ---
 

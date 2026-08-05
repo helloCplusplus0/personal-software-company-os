@@ -41,7 +41,9 @@ coverage.html
 *.dump
 *.backup
 pgdata/
-data/
+/data/
+# 注：使用 /data/ 仅忽略项目根级 data/ 目录，
+# 不影响 frontend/src/.../data/ 等源码目录
 
 # ==== 日志与临时文件 ====
 logs/
