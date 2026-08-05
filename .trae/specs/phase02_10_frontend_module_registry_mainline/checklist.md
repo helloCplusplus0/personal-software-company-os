@@ -1,0 +1,15 @@
+- [x] 已明确 `phase02-10` 的直接上游规格入口是 `phase02-09` 的 `module_registry_spec_v0.1.md`
+- [x] 已明确前端实现范围包含 `Module List / Module Create / Module Detail / Release Create`
+- [x] 已明确前端实现必须承接列表、创建、详情、版本登记与关联面板的最小交互
+- [x] 已明确路由、页面文件落点、组件归属与 URL 语义必须遵守 `phase02-09` 正式规格正文
+- [x] 已明确在 `phase02-11` 完成前允许使用最小前端数据适配层或 mock 数据承接运行与演示
+- [x] 已明确前端数据适配层不得发明第二套对象字段、状态含义或返回路径语义
+- [x] 已明确 `ModuleListPage` 必须承接空状态入口、列表读取与筛选参数 `queryText / statusFilter`
+- [x] 已明确 `ModuleCreatePage` 必须承接最小表单、提交失败停留与成功回流到 `ModuleDetailPage`
+- [x] 已明确 `ReleaseCreatePage` 必须承接最小版本登记表单并成功回流到当前模块详情页
+- [x] 已明确 `ModuleDetailPage` 必须承接摘要、版本、绑定面板与 `Decision` 只读入口
+- [x] 已明确绑定动作成功后停留在当前 `ModuleDetailPage` 并重新读取绑定结果
+- [x] 已明确从创建页或详情页返回列表时必须恢复 `queryText` 与 `statusFilter`
+- [x] 已明确列表、表单与绑定错误必须停留在当前页面或当前面板上下文
+- [x] 已明确单一 `React Web` 页面体系必须同时覆盖 PC 与移动浏览器布局，不引入第二套移动端 UI 架构
+- [x] 已明确 `phase02-10` 的实现验收以"前端主线可运行、核心动作可走通、无第二套移动端 UI 架构"为准

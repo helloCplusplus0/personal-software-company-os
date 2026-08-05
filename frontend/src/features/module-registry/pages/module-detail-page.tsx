@@ -1,0 +1,108 @@
+import { useParams, Link, useNavigate } from '@tanstack/react-router'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { fetchModuleDetail } from '../data/module-registry-adapter'
+import { ModuleSummaryCard } from '../components/module-summary-card'
+import { ModuleReleaseListSection } from '../components/module-release-list-section'
+import { ModuleBindingPanel } from '../components/module-binding-panel'
+import { ModuleDecisionEntryPanel } from '../components/module-decision-entry-panel'
+import { Button } from '@/components/ui/button'
+import { ArrowLeft } from 'lucide-react'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useModuleListSearchStore } from '../stores/module-list-search-store'
+
+/**
+ * ModuleDetailPage — Module Detail
+ *
+ * §8.4 统一回流宿主：承接创建完成后的落点、版本登记后的回流以及绑定动作后的停留上下文
+ * §5.7 详情读取：核心字段、版本列表、产品绑定、仓库映射与 Decision 入口
+ * §6.3 Decision 读取内嵌于 ModuleDetailRead，不设独立读接口组
+ *
+ * 布局降级（§8.5）：
+ * - PC：分区式详情布局，摘要、版本与关联入口可同时可见
+ * - 移动：摘要、版本、关联、Decision 入口按垂直顺序重排
+ */
+export function ModuleDetailPage() {
+  const { moduleId } = useParams({ from: '/modules/$moduleId' })
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  // §7.4 从 store 读取最后一次列表搜索上下文，返回列表时恢复
+  const lastSearch = useModuleListSearchStore((s) => s.lastSearch)
+
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ['module-detail', moduleId],
+    queryFn: () => fetchModuleDetail(moduleId),
+    enabled: Boolean(moduleId),
+  })
+
+  // 绑定成功后重新读取详情（§6.4 关系写入后重新读取绑定结果）
+  const invalidateDetail = () => {
+    queryClient.invalidateQueries({ queryKey: ['module-detail', moduleId] })
+    queryClient.invalidateQueries({ queryKey: ['module-list'] })
+  }
+
+  if (isError) {
+    return (
+      <div className="space-y-4">
+        <Button variant="ghost" size="sm" onClick={() => navigate({ to: '/modules', search: lastSearch })}>
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          返回列表
+        </Button>
+        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4">
+          <p className="text-sm text-destructive">详情读取失败：{(error as Error).message}</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (isLoading || !data) {
+    return (
+      <div className="space-y-4">
+        <Button variant="ghost" size="sm" asChild>
+          <Link to="/modules" search={lastSearch}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            返回列表
+          </Link>
+        </Button>
+        <Skeleton className="h-32 w-full" />
+        <Skeleton className="h-48 w-full" />
+        <Skeleton className="h-48 w-full" />
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* 返回列表 — §7.4 恢复原有搜索参数 */}
+      <Button variant="ghost" size="sm" asChild>
+        <Link to="/modules" search={lastSearch}>
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          返回列表
+        </Link>
+      </Button>
+
+      {/* PC：分区式布局；移动端：垂直顺序重排 */}
+      <div className="grid gap-4 lg:grid-cols-3">
+        {/* 摘要主区 — 占 1 列（PC）/ 全宽（移动） */}
+        <div className="lg:col-span-1">
+          <ModuleSummaryCard module={data.module} />
+        </div>
+
+        {/* 版本列表区 + 关联动作区 — 占 2 列（PC）/ 全宽（移动） */}
+        <div className="space-y-4 lg:col-span-2">
+          <ModuleReleaseListSection
+            releases={data.releases}
+            moduleId={moduleId}
+          />
+          <ModuleBindingPanel
+            moduleId={moduleId}
+            productBindings={data.product_bindings}
+            repositoryMappings={data.repository_mappings}
+            onBindingSuccess={invalidateDetail}
+          />
+          {/* §6.3 Decision 入口：只读展示，不设独立读接口组 */}
+          <ModuleDecisionEntryPanel decisionLinks={data.decision_links} />
+        </div>
+      </div>
+    </div>
+  )
+}
