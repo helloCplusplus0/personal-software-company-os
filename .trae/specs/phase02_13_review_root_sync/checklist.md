@@ -1,0 +1,12 @@
+- [x] 已明确 `phase02-13` 需要完成 `phase02` 文档互链复核，而不是新增第二套规格边界
+- [x] 已明确 `phase02-09` 的 `module_registry_spec_v0.1.md` 仍是 `Module Registry` 当前阶段唯一规格入口
+- [x] 已明确 `phase02-11A` 的 `.proto` 合同共识需要进入根级同步范围，不再保留旧口径
+- [x] 已明确根级状态回写的目标文档与同步边界
+- [x] 已明确根级回写只更新状态、入口、完成标志与冻结结论，不复制 phase 正文或验收报告
+- [x] 已明确 `plan.md` 中 `phase02` 的状态需要更新为与验收结果一致的表达
+- [x] 已明确 `phase02` 完成标志必须与 `phase02-12` 的运行证据一致
+- [x] 已明确 `phase03_decision_center_foundation` 的进入条件需要直接承接 `phase02` 已交付结果
+- [x] 已明确 `phase03` 不重复实现 `Module Registry` 主线，而是推进 `Decision Center` 最小闭环
+- [x] 已明确 `AGENTS.md`、`plan.md`、`docs/README.md`、`architecture_map.md` 与 `phase02` 文档需要保持单值一致
+- [x] 已明确后续接手者需要先读根级状态入口，再读 `phase02-09` 与 `phase02-12` 作为 `Module Registry` 已交付边界
+- [x] 已明确本次收口不得遗留“phase02 仍处于 /plan”或其他旧阶段表达
