@@ -1,0 +1,14 @@
+- [x] 已明确 `phase02-09` 需要产出单一的 `Module Registry` 正式规格正文，而不是继续以 `phase02-01 ~ 08` 作为长期并列入口
+- [x] 已明确正式规格正文目标文件为 `module_registry_spec_v0.1.md`
+- [x] 已明确正式规格正文至少完整覆盖页面、动作、数据读写、API、空状态、非目标、实现设计层结果与 Done 标准
+- [x] 已明确正式规格正文必须完整继承 `mvp_spec_v0.1.md` 与 `phase02-01 ~ 08` 的冻结结论
+- [x] 已明确正式规格正文中的页面与动作章节必须完整承接 `Module Registry / List`、`Module Create`、`Module Detail`、`Release Create` 及其动作归属
+- [x] 已明确正式规格正文中的空状态与冷启动章节必须承接首轮模块登记路径、默认回流路径与错误呈现原则
+- [x] 已明确正式规格正文中的数据与 API 章节必须承接直接承接数据、最小读取前提、候选读取前提与最小读写接口分组
+- [x] 已明确正式规格正文中的 `Decision` 边界必须保持为 `ModuleDetailRead` 的附属读取承接，不设独立读接口组
+- [x] 已明确正式规格正文中的前端实现设计章节必须承接页面分层、路由结构、状态模型与布局降级策略
+- [x] 已明确正式规格正文中的后端实现设计章节必须承接模块边界、接口分组、分层语义与文件落点，且不提前冻结 Go 数据访问层具体工具
+- [x] 已明确正式规格正文中的非目标矩阵与 Done 标准必须显式存在
+- [x] 已明确正式规格正文被定位为后续 `phase02-10 / 11 / 12 / 13` 与 `phase03` 的直接上游规格入口
+- [x] 已明确正式规格正文必须与 `AGENTS.md`、`plan.md`、`TECH_STACK_BASELINE.md`、`project_rules.md`、`architecture_map.md`、`PSCO-summarize-feedback.md` 及当前 `phase02` 阶段文档互链一致
+- [x] 已实际产出 `module_registry_spec_v0.1.md`，完整收敛 `phase02-01 ~ 08` 的冻结结论且无第二套边界
