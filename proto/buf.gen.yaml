@@ -1,0 +1,34 @@
+# buf.gen.yaml — PSCO Proto 代码生成配置
+#
+# 上游规格：phase02-11A spec §"生成链与实现边界"
+#
+# 生成产物落点：
+#   - Go:    backend/internal/gen/proto/（通过 go_package 选项解析子路径）
+#   - TS:    frontend/src/gen/proto/
+#
+# 执行方式：在 proto/ 目录执行 make gen，或直接执行 buf generate。
+# 生成产物已加入 .gitignore，不进入版本控制（由 CI 或本地 make gen 重新生成）。
+
+version: v2
+
+# managed mode 自动设置 go_package，避免在每个 .proto 文件中手写
+managed:
+  enabled: true
+  override:
+    - file_option: go_package_prefix
+      value: github.com/psco/backend/internal/gen/proto
+
+plugins:
+  # Go 消息类型（protoc-gen-go）
+  # 当前阶段只生成消息类型，不生成 gRPC 服务桩。
+  # service 定义在 .proto 合同源中已冻结，后续迁移到 gRPC / Connect 时再加回 grpc/go 插件。
+  - remote: buf.build/protocolbuffers/go
+    out: ../backend/internal/gen/proto
+    opt: paths=source_relative
+
+  # TypeScript 消息类型（@bufbuild/es）
+  - remote: buf.build/bufbuild/es
+    out: ../frontend/src/gen/proto
+    opt:
+      - target=ts
+      - import_extension=js

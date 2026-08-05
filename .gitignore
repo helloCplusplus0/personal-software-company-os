@@ -66,3 +66,8 @@ temp/
 *.zip
 build/
 out/
+
+# ==== Proto 生成产物 ====
+# .proto 是合同源，生成产物不进入版本控制
+backend/internal/gen/
+frontend/src/gen/

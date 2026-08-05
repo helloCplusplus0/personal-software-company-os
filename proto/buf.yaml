@@ -1,0 +1,20 @@
+# buf.yaml — PSCO Proto 合同模块配置
+#
+# 上游规格：phase02-11A spec §"Proto 包名与版本语义"
+#
+# 本配置定义 proto/ 目录为 buf 模块根，buf lint 与 buf breaking 基于此配置运行。
+# 使用 LINT_DEFAULT 可以在后续增加 lint 规则，当前阶段不阻断生成。
+
+version: v2
+modules:
+  - path: .
+lint:
+  use:
+    - STANDARD
+  except:
+    # 允许在 service 命名中使用首字母大写的 RPC 方法名（如 ListModules）
+    - SERVICE_SUFFIX
+breaking:
+  use:
+    - WIRE_JSON
+  # 当前阶段允许新增字段（向后兼容），但禁止删除或修改已有字段编号

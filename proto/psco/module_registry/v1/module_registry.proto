@@ -1,0 +1,276 @@
+// PSCO Module Registry 最小 Protocol Buffers 合同源
+//
+// 文档定位：本文件是 Module Registry 当前阶段唯一合同定义入口（phase02-11A）。
+// 上游规格：
+//   - phase02-09 module_registry_spec_v0.1.md §5.4 / §5.5 / §5.7 / §6.2 / §6.3 / §6.5
+//   - phase02-11A spec §"Module Registry 最小 Proto 合同源"
+//
+// 过渡传输层说明：
+//   当前阶段保留 chi + JSON HTTP 作为过渡传输层（phase02-11 已实现）。
+//   JSON 请求与响应语义必须从本 .proto 派生或严格对齐，不得形成第二套合同源。
+//   HTTP 路径、状态码与中间件策略不属于本合同本体，由过渡传输层独立承载。
+//
+// 字段编号规则：
+//   - 每个字段拥有稳定编号，不得复用已删除字段编号或字段语义
+//   - 新增字段必须使用新的递增编号，不得插入到已有编号之间
+//   - reserved 关键字用于标记已删除或预留的编号区间
+//
+// 生成入口：
+//   在 proto/ 目录执行 make gen，或直接执行 buf generate。
+//   生成产物：
+//     - Go:    backend/internal/gen/proto/psco/module_registry/v1/
+//     - TS:    frontend/src/gen/proto/psco/module_registry/v1/
+
+syntax = "proto3";
+
+package psco.module_registry.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// Go 包路径（生成代码落点）
+option go_package = "github.com/psco/backend/internal/gen/proto/psco/module_registry/v1;moduleregistryv1";
+
+// ============================================================================
+// 枚举
+// ============================================================================
+
+// ModuleStatus — §5.5 冻结为 active / archived。
+// UNSPECIFIED 表示未指定，在列表筛选中表示"不过滤"。
+enum ModuleStatus {
+  MODULE_STATUS_UNSPECIFIED = 0;
+  MODULE_STATUS_ACTIVE = 1;
+  MODULE_STATUS_ARCHIVED = 2;
+}
+
+// ReleaseStatus — 与 ModuleStatus 对齐，冻结为 active / archived。
+enum ReleaseStatus {
+  RELEASE_STATUS_UNSPECIFIED = 0;
+  RELEASE_STATUS_ACTIVE = 1;
+  RELEASE_STATUS_ARCHIVED = 2;
+}
+
+// ============================================================================
+// 核心对象（§5.4）
+// ============================================================================
+
+// Module 核心对象 — §5.4 最小字段：id / name / description / status / created_at。
+message Module {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  ModuleStatus status = 4;
+  google.protobuf.Timestamp created_at = 5;
+}
+
+// Release 核心对象 — §5.4 最小字段：id / module_id / version / status / released_at。
+message Release {
+  string id = 1;
+  string module_id = 2;
+  string version = 3;
+  ReleaseStatus status = 4;
+  google.protobuf.Timestamp released_at = 5;
+}
+
+// ============================================================================
+// 读组消息结构
+// ============================================================================
+
+// ModuleListItem — §5.7 列表读取模型。
+// 至少承接 name / description / status / latest_release / product_bind_count / repository_bind_count。
+message ModuleListItem {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  ModuleStatus status = 4;
+  // latest_release 为空表示模块尚无版本登记（§5.6 版本准入规则）
+  optional string latest_release = 5;
+  int32 product_bind_count = 6;
+  int32 repository_bind_count = 7;
+}
+
+// ProductBinding — 详情读取中的产品绑定关系（剥离 module_id）。
+message ProductBinding {
+  string product_id = 1;
+  string product_name = 2;
+}
+
+// RepositoryMapping — 详情读取中的仓库映射关系（剥离 module_id）。
+message RepositoryMapping {
+  string repository_id = 1;
+  string repository_name = 2;
+}
+
+// DecisionLink — §6.3 Decision 附属读取模型。
+// 内嵌于 ModuleDetailRead，不设独立读接口组。
+message DecisionLink {
+  string decision_id = 1;
+  string decision_title = 2;
+}
+
+// ModuleDetail — §5.7 详情读取模型。
+// 统一承接模块核心字段、版本列表、产品绑定、仓库映射与相关 Decision 入口。
+message ModuleDetail {
+  Module module = 1;
+  repeated Release releases = 2;
+  repeated ProductBinding product_bindings = 3;
+  repeated RepositoryMapping repository_mappings = 4;
+  // §6.3 Decision 附属读取内嵌于此，不设独立 Proto 服务
+  repeated DecisionLink decision_links = 5;
+}
+
+// ============================================================================
+// 候选读取消息结构（§6.2 phase02 由 Module Registry 临时承接）
+// ============================================================================
+
+// ProductCandidate — ProductBindingCandidateRead 返回项。
+// 只承接候选读取所需最小字段，不得借机把 Product 扩写为独立写入主线。
+message ProductCandidate {
+  string id = 1;
+  string name = 2;
+}
+
+// RepositoryCandidate — RepositoryBindingCandidateRead 返回项。
+// 只承接候选读取所需最小字段，不得借机把 Repository 扩写为独立写入主线。
+message RepositoryCandidate {
+  string id = 1;
+  string name = 2;
+}
+
+// ============================================================================
+// 写组请求消息结构（§5.7）
+// ============================================================================
+
+// CreateModuleRequest — §5.7 创建写入最小字段：name / description / status。
+message CreateModuleRequest {
+  string name = 1;
+  string description = 2;
+  ModuleStatus status = 3;
+}
+
+// CreateReleaseRequest — §5.7 版本写入最小字段：version / status / released_at。
+// module_id 在 RPC 请求中显式承接；在 HTTP 过渡层中由 URL 路径参数隐式承接。
+message CreateReleaseRequest {
+  string module_id = 1;
+  string version = 2;
+  ReleaseStatus status = 3;
+  google.protobuf.Timestamp released_at = 4;
+}
+
+// BindModuleToProductRequest — §4.1 BindModuleToProduct。
+message BindModuleToProductRequest {
+  string module_id = 1;
+  string product_id = 2;
+}
+
+// MapModuleToRepositoryRequest — §4.1 MapModuleToRepository。
+message MapModuleToRepositoryRequest {
+  string module_id = 1;
+  string repository_id = 2;
+}
+
+// ============================================================================
+// 读组请求与响应消息
+// ============================================================================
+
+// ListModulesRequest — 列表读取筛选参数（§8.4 query_text / status_filter）。
+// status_filter 为 UNSPECIFIED 时表示不过滤。
+message ListModulesRequest {
+  string query_text = 1;
+  ModuleStatus status_filter = 2;
+}
+
+// ListModulesResponse — 列表读取响应。
+message ListModulesResponse {
+  repeated ModuleListItem modules = 1;
+}
+
+// GetModuleDetailRequest — 详情读取请求。
+message GetModuleDetailRequest {
+  string module_id = 1;
+}
+
+// GetModuleDetailResponse — 详情读取响应。
+message GetModuleDetailResponse {
+  ModuleDetail module_detail = 1;
+}
+
+// CreateModuleResponse — 创建模块响应，返回新建模块。
+message CreateModuleResponse {
+  Module module = 1;
+}
+
+// CreateReleaseResponse — 版本登记响应，返回新建版本。
+message CreateReleaseResponse {
+  Release release = 1;
+}
+
+// BindModuleToProductResponse — 产品绑定响应（当前阶段无返回体）。
+message BindModuleToProductResponse {}
+
+// MapModuleToRepositoryResponse — 仓库映射响应（当前阶段无返回体）。
+message MapModuleToRepositoryResponse {}
+
+// ListProductCandidatesRequest — Product 候选读取请求（无参数）。
+message ListProductCandidatesRequest {}
+
+// ListProductCandidatesResponse — Product 候选读取响应。
+message ListProductCandidatesResponse {
+  repeated ProductCandidate products = 1;
+}
+
+// ListRepositoryCandidatesRequest — Repository 候选读取请求（无参数）。
+message ListRepositoryCandidatesRequest {}
+
+// ListRepositoryCandidatesResponse — Repository 候选读取响应。
+message ListRepositoryCandidatesResponse {
+  repeated RepositoryCandidate repositories = 1;
+}
+
+// ============================================================================
+// 服务接口
+// ============================================================================
+
+// ModuleRegistryService — Module Registry 当前阶段完整动作矩阵的 RPC 合同。
+//
+// 接口分组对齐 §6.2：
+//   - 读组：ListModules / GetModuleDetail
+//   - 写组：CreateModule / CreateRelease / BindModuleToProduct / MapModuleToRepository
+//   - 候选读取：ListProductCandidates / ListRepositoryCandidates
+//
+// Decision 读取边界（§6.3）：
+//   Decision 附属读取内嵌于 GetModuleDetail 的返回中，不设独立 RPC。
+//
+// 过渡传输层映射：
+//   当前阶段由 chi + JSON HTTP 承接，RPC 到 HTTP 的映射约定见 proto/README.md。
+//   后续阶段可迁移到 gRPC / Connect 而不需要修改本合同源。
+service ModuleRegistryService {
+  // --- 读组 ---
+
+  // ModuleListRead — 列表读取
+  rpc ListModules(ListModulesRequest) returns (ListModulesResponse);
+
+  // ModuleDetailRead — 详情读取（含 Decision 内嵌附属读取）
+  rpc GetModuleDetail(GetModuleDetailRequest) returns (GetModuleDetailResponse);
+
+  // --- 写组 ---
+
+  // ModuleCreateWrite — 创建模块
+  rpc CreateModule(CreateModuleRequest) returns (CreateModuleResponse);
+
+  // ModuleReleaseWrite — 版本登记
+  rpc CreateRelease(CreateReleaseRequest) returns (CreateReleaseResponse);
+
+  // ModuleBindingWrite (product) — 绑定产品
+  rpc BindModuleToProduct(BindModuleToProductRequest) returns (BindModuleToProductResponse);
+
+  // ModuleBindingWrite (repository) — 映射仓库
+  rpc MapModuleToRepository(MapModuleToRepositoryRequest) returns (MapModuleToRepositoryResponse);
+
+  // --- 候选读取（phase02 由 Module Registry 临时承接） ---
+
+  // ProductBindingCandidateRead — Product 候选读取
+  rpc ListProductCandidates(ListProductCandidatesRequest) returns (ListProductCandidatesResponse);
+
+  // RepositoryBindingCandidateRead — Repository 候选读取
+  rpc ListRepositoryCandidates(ListRepositoryCandidatesRequest) returns (ListRepositoryCandidatesResponse);
+}
