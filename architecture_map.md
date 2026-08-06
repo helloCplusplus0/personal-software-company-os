@@ -69,13 +69,17 @@ docs/
   - `phase02_module_registry_foundation_architecture_plan.md`
   - `phase02_module_registry_foundation_dev_plan.md`
   - `phase02_module_registry_foundation_shared_baseline.md`
+- 当前已创建：
+  - `phase03_decision_center_foundation_architecture_plan.md`
+  - `phase03_decision_center_foundation_dev_plan.md`
+  - `phase03_decision_center_foundation_shared_baseline.md`
 - 当前已完成：
   - `.trae/specs/phase01_06_formal_mvp_spec/mvp_spec_v0.1.md`（`v0.1` 执行层唯一规格入口）
   - `.trae/specs/phase02_09_module_registry_formal_spec/module_registry_spec_v0.1.md`（`Module Registry` 当前阶段唯一规格入口）
   - `.trae/specs/phase02_12_module_registry_integration_validation_acceptance/acceptance_report.md`（`phase02` 联调验收通过结论）
 - 当前项目技术路线已冻结为 `Durable System Track`
 - `phase02_module_registry_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
-- 当前下一阶段入口为 `phase03_decision_center_foundation`
+- `phase03_decision_center_foundation` 已正式进入 `/plan`
 - `phase02` 直接承接正式 MVP 规格正文，不在根级文档重复正文内容
 - `phase03` 将直接承接 `phase02` 已交付的 `Module Registry` 主线与 `.proto` 合同结果
 

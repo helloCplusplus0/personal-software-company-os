@@ -5,8 +5,8 @@
 ## 1. 当前状态
 
 - 当前阶段：`phase03_decision_center_foundation`
-- 当前状态：`next`
-- 当前目标：在 `phase02` 已交付的 `Module Registry` 主线前提下，推进 `Decision Center` 最小闭环
+- 当前状态：`/plan`
+- 当前目标：完成 `Decision Center` 三件套规划，作为后续 `/spec`、实现、验收与收口的直接上游
 - 当前下一阶段入口：`phase03_decision_center_foundation`
 
 ## 2. 当前进度概览
@@ -46,7 +46,7 @@
 - 目标：交付 Decision Center 最小闭环
 - 进入条件：直接承接 `phase02` 已交付的 `Module Registry` 主线，以 `.trae/specs/phase02_09_module_registry_formal_spec/module_registry_spec_v0.1.md`、`.trae/specs/phase02_11a_module_registry_proto_contract/` 与 `.trae/specs/phase02_12_module_registry_integration_validation_acceptance/acceptance_report.md` 为直接上游输入
 - 交付要求：作为交付型 phase 推进，不得只停留在规格冻结
-- 状态：`next`
+- 状态：`/plan`
 
 ### phase04：`phase04_product_and_repository_binding_foundation`
 
@@ -62,16 +62,17 @@
 
 ## 4. 当前阶段完成标志
 
-当以下条件同时满足时，`phase02_module_registry_foundation` 结束，并进入 `phase03_decision_center_foundation`：
+当以下条件同时满足时，`phase03_decision_center_foundation` 结束，并进入 `phase04_product_and_repository_binding_foundation`：
 
-1. `phase02` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口` 全链路
-2. `Module Registry` 已具备可运行、可验收的前后端最小主线
-3. `Module Registry` 的页面、动作、数据、API、空状态与实现设计已单值化
-4. `phase02` 已明确只承接已冻结的 `v0.1` 范围，不重新解释后移对象边界
+1. `phase03` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口` 全链路
+2. `Decision Center` 已具备可运行、可验收的前后端最小主线
+3. `Decision` 的页面、动作、数据、API、合同与验收基线已单值化
+4. `phase03` 已明确只承接已冻结的 `v0.1` 范围，不重新解释后移对象边界
 5. 单一 `React Web` 同时覆盖 `PC` 与移动浏览器的交付策略已写清并落实到实现
-6. `phase03` 的进入条件已清楚
+6. `Decision -> Module` 的最小闭环已完整打通
+7. `phase04` 的进入条件已清楚
 
-当前结论：以上条件已满足，项目当前下一阶段入口为 `phase03_decision_center_foundation`。
+当前结论：`phase03` 当前处于 `/plan`，完成标志如上，后续进入 `/spec`、实现、验收与收口后再切换到 `phase04`。
 
 ## 5. 说明
 

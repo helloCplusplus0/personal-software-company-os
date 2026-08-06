@@ -1,0 +1,15 @@
+- [x] `Decision Center / List`、`Decision Create`、`Decision Detail` 已被明确冻结为当前阶段页面主线
+- [x] 列表页职责已明确为决策读取、筛选入口、创建入口与进入详情入口
+- [x] 创建页职责已明确为 `RecordDecision` 的唯一页面级承接入口
+- [x] 详情页职责已明确为详情读取、已关联目标展示、`Decision -> Module` 候选读取与 `LinkDecisionToTarget` 的最小承接页
+- [x] `Decision Center` 主线中的最小跳转关系已明确
+- [x] `Module Detail` 的 `Decision` 入口已冻结为两个单值触点（记录决策触点指向带上下文的 `Decision Create`，查看相关决策触点指向 `Decision Center / List`）
+- [x] `Module Detail` 当前阶段未被扩写为第二个 `Decision` 工作台
+- [x] `Decision -> Module` 候选读取已明确归属于 `Decision Detail` 的附属读取能力
+- [x] `Decision Center / List` 最小页面级信息区块已冻结（列表工具栏区 + 列表内容区 + 空状态区）
+- [x] `Decision Create` 最小页面级信息区块已冻结（结构化表单区 + 来源上下文区 + 提交取消操作区）
+- [x] `Decision Detail` 最小页面级信息区块已冻结（核心字段区 + 已关联目标区 + 候选读取及目标关联区）
+- [x] `PC / 移动浏览器` 的信息密度策略已明确，且仍采用单一 `React Web` 交付
+- [x] 当前阶段未引入第二套移动端 UI 方案、独立 `React Native` 客户端或完整 `PWA`
+- [x] 当前阶段未把独立 `AI Assistant` 一级导航纳入 `phase03` 页面主线
+- [x] 本次规格与 `phase01-06` 正式 MVP 规格正文及 `phase03` 三件套保持一致

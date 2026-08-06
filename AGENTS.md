@@ -6,8 +6,8 @@
 ## 1. 项目定位
 
 - 项目名称：`Personal Software Company OS`
-- 当前阶段：`phase03_decision_center_foundation (next)`
-- 当前主目标：在 `phase02` 已交付的 `Module Registry` 主线前提下，进入 `Decision Center` 最小闭环的下一阶段准备
+- 当前阶段：`phase03_decision_center_foundation (/plan)`
+- 当前主目标：在 `phase02` 已交付的 `Module Registry` 主线前提下，完成 `Decision Center` 三件套规划并冻结最小闭环
 - 当前下一阶段入口：`phase03_decision_center_foundation`
 - 当前定位：PSCO 是个人软件公司的经营与资产系统，不是代码管理工具，不是 AI Chat 产品，也不是自动扫描系统
 
@@ -42,7 +42,7 @@
 - `Module Registry` 最小主线已形成可运行交付物，并完成前后端、数据、Proto 合同与联调验收
 - `phase02-09` 的 `module_registry_spec_v0.1.md` 已冻结为 `Module Registry` 当前阶段唯一规格收敛入口
 - `phase02-11A` 已将 `Protocol Buffers` 落地为当前阶段最小 `.proto` 合同源
-- 当前项目下一阶段入口已切换为 `phase03_decision_center_foundation`
+- `phase03_decision_center_foundation` 已正式进入 `/plan`
 
 ## 5. 推荐阅读顺序
 
@@ -56,9 +56,9 @@
 8. `.trae/specs/phase01_06_formal_mvp_spec/mvp_spec_v0.1.md`
 9. `.trae/specs/phase02_09_module_registry_formal_spec/module_registry_spec_v0.1.md`
 10. `.trae/specs/phase02_12_module_registry_integration_validation_acceptance/acceptance_report.md`
-11. `docs/phase/phase02_module_registry_foundation_architecture_plan.md`
-12. `docs/phase/phase02_module_registry_foundation_dev_plan.md`
-13. `docs/phase/phase02_module_registry_foundation_shared_baseline.md`
+11. `docs/phase/phase03_decision_center_foundation_architecture_plan.md`
+12. `docs/phase/phase03_decision_center_foundation_dev_plan.md`
+13. `docs/phase/phase03_decision_center_foundation_shared_baseline.md`
 14. 当前目标对应的 `phase / fix / audit` 文档
 
 ## 6. 接手提醒
