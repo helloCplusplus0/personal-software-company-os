@@ -6,9 +6,9 @@
 ## 1. 项目定位
 
 - 项目名称：`Personal Software Company OS`
-- 当前阶段：`phase03_decision_center_foundation (/plan)`
-- 当前主目标：在 `phase02` 已交付的 `Module Registry` 主线前提下，完成 `Decision Center` 三件套规划并冻结最小闭环
-- 当前下一阶段入口：`phase03_decision_center_foundation`
+- 当前阶段：`phase04_product_and_repository_binding_foundation`
+- 当前主目标：以 `phase03-10` 正式规格、`phase03-11` 合同主线与 `phase03-14` 验收结论为直接上游，启动 `Product / Repository / Module Binding` 最小主线的下一阶段规划
+- 当前下一阶段入口：`phase04_product_and_repository_binding_foundation`
 - 当前定位：PSCO 是个人软件公司的经营与资产系统，不是代码管理工具，不是 AI Chat 产品，也不是自动扫描系统
 
 ## 2. 当前唯一上游
@@ -42,7 +42,12 @@
 - `Module Registry` 最小主线已形成可运行交付物，并完成前后端、数据、Proto 合同与联调验收
 - `phase02-09` 的 `module_registry_spec_v0.1.md` 已冻结为 `Module Registry` 当前阶段唯一规格收敛入口
 - `phase02-11A` 已将 `Protocol Buffers` 落地为当前阶段最小 `.proto` 合同源
-- `phase03_decision_center_foundation` 已正式进入 `/plan`
+- `phase03_decision_center_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
+- `Decision Center` 最小主线已形成可运行交付物，并完成正式规格、`.proto` 合同、前后端实现与联调验收收口
+- `.trae/specs/phase03_10_decision_center_formal_spec/decision_center_spec_v0.1.md` 已冻结为 `Decision Center` 当前阶段唯一规格收敛入口
+- `.trae/specs/phase03_11_decision_center_proto_mainline/` 已将 `Decision Center` 最小 `.proto` 合同接入仓库既有 `proto/` 主线
+- `.trae/specs/phase03_14_decision_center_integration_validation_acceptance/` 已给出 `phase03` 联调验收与收口结论入口
+- 当前阶段入口已切换为 `phase04_product_and_repository_binding_foundation`
 
 ## 5. 推荐阅读顺序
 
@@ -56,10 +61,13 @@
 8. `.trae/specs/phase01_06_formal_mvp_spec/mvp_spec_v0.1.md`
 9. `.trae/specs/phase02_09_module_registry_formal_spec/module_registry_spec_v0.1.md`
 10. `.trae/specs/phase02_12_module_registry_integration_validation_acceptance/acceptance_report.md`
-11. `docs/phase/phase03_decision_center_foundation_architecture_plan.md`
-12. `docs/phase/phase03_decision_center_foundation_dev_plan.md`
-13. `docs/phase/phase03_decision_center_foundation_shared_baseline.md`
-14. 当前目标对应的 `phase / fix / audit` 文档
+11. `.trae/specs/phase03_10_decision_center_formal_spec/decision_center_spec_v0.1.md`
+12. `.trae/specs/phase03_11_decision_center_proto_mainline/`
+13. `.trae/specs/phase03_14_decision_center_integration_validation_acceptance/`
+14. `docs/phase/phase03_decision_center_foundation_architecture_plan.md`
+15. `docs/phase/phase03_decision_center_foundation_dev_plan.md`
+16. `docs/phase/phase03_decision_center_foundation_shared_baseline.md`
+17. 当前目标对应的 `phase / fix / audit` 文档
 
 ## 6. 接手提醒
 

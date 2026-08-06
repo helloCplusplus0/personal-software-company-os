@@ -4,10 +4,10 @@
 
 ## 1. 当前状态
 
-- 当前阶段：`phase03_decision_center_foundation`
-- 当前状态：`/plan`
-- 当前目标：完成 `Decision Center` 三件套规划，作为后续 `/spec`、实现、验收与收口的直接上游
-- 当前下一阶段入口：`phase03_decision_center_foundation`
+- 当前阶段：`phase04_product_and_repository_binding_foundation`
+- 当前状态：`phase03` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，当前入口切换至 `phase04`
+- 当前目标：以 `phase03-10` 正式规格、`phase03-11` 合同主线与 `phase03-14` 验收结论为直接上游，启动 `Product / Repository / Module Binding` 最小主线的下一阶段规划
+- 当前下一阶段入口：`phase04_product_and_repository_binding_foundation`
 
 ## 2. 当前进度概览
 
@@ -23,6 +23,11 @@
 - `Module Registry` 最小主线已形成可运行、可验收交付物
 - `.trae/specs/phase02_09_module_registry_formal_spec/module_registry_spec_v0.1.md` 已冻结为 `Module Registry` 当前阶段唯一规格收敛入口
 - `.trae/specs/phase02_12_module_registry_integration_validation_acceptance/acceptance_report.md` 已给出通过验收结论
+- `phase03_decision_center_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
+- `Decision Center` 最小主线已形成可运行、可验收交付物
+- `.trae/specs/phase03_10_decision_center_formal_spec/decision_center_spec_v0.1.md` 已冻结为 `Decision Center` 当前阶段唯一规格收敛入口
+- `.trae/specs/phase03_11_decision_center_proto_mainline/` 已将 `Decision Center` 最小 `.proto` 合同落地为仓库主线
+- `.trae/specs/phase03_14_decision_center_integration_validation_acceptance/` 已形成 `phase03` 联调验收与收口结论入口
 
 ## 3. Phase 路线预览
 
@@ -46,13 +51,16 @@
 - 目标：交付 Decision Center 最小闭环
 - 进入条件：直接承接 `phase02` 已交付的 `Module Registry` 主线，以 `.trae/specs/phase02_09_module_registry_formal_spec/module_registry_spec_v0.1.md`、`.trae/specs/phase02_11a_module_registry_proto_contract/` 与 `.trae/specs/phase02_12_module_registry_integration_validation_acceptance/acceptance_report.md` 为直接上游输入
 - 交付要求：作为交付型 phase 推进，不得只停留在规格冻结
-- 状态：`/plan`
+- 状态：`completed`
+- 当前收口结果：已交付 `Decision Center` 正式规格正文、最小 `.proto` 合同主线、后端与数据主线、前端主线与联调验收收口结果
 
 ### phase04：`phase04_product_and_repository_binding_foundation`
 
 - 目标：交付 Product / Repository / Module Binding 主线
+- 进入条件：直接承接 `.trae/specs/phase03_10_decision_center_formal_spec/decision_center_spec_v0.1.md`、`.trae/specs/phase03_11_decision_center_proto_mainline/` 与 `.trae/specs/phase03_14_decision_center_integration_validation_acceptance/`，以 `phase03` 已完成的 `Decision Center` 交付物作为唯一上游输入
+- 范围约束：不得回退重做 `Decision Center`，而是以前一阶段已冻结并验收的能力为前提，推进 `Product / Repository / Module Binding` 最小主线
 - 交付要求：作为交付型 phase 推进，不得只停留在规格冻结
-- 状态：`draft`
+- 状态：`current`
 
 ### phase05：`phase05_dashboard_feedback_foundation`
 
@@ -60,19 +68,19 @@
 - 交付要求：作为交付型 phase 推进，不得只停留在规格冻结
 - 状态：`draft`
 
-## 4. 当前阶段完成标志
+## 4. phase04 进入条件
 
-当以下条件同时满足时，`phase03_decision_center_foundation` 结束，并进入 `phase04_product_and_repository_binding_foundation`：
+当以下条件同时满足时，当前阶段入口切换为 `phase04_product_and_repository_binding_foundation`：
 
 1. `phase03` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口` 全链路
-2. `Decision Center` 已具备可运行、可验收的前后端最小主线
-3. `Decision` 的页面、动作、数据、API、合同与验收基线已单值化
-4. `phase03` 已明确只承接已冻结的 `v0.1` 范围，不重新解释后移对象边界
-5. 单一 `React Web` 同时覆盖 `PC` 与移动浏览器的交付策略已写清并落实到实现
-6. `Decision -> Module` 的最小闭环已完整打通
-7. `phase04` 的进入条件已清楚
+2. `.trae/specs/phase03_10_decision_center_formal_spec/decision_center_spec_v0.1.md` 已冻结为 `Decision Center` 当前阶段唯一正式规格入口
+3. `.trae/specs/phase03_11_decision_center_proto_mainline/` 已将 `Decision Center` 最小 `.proto` 合同落地为仓库合同主线
+4. `.trae/specs/phase03_12_decision_center_backend_data_mainline/` 与 `.trae/specs/phase03_13_decision_center_frontend_mainline/` 已完成前后端实现收口
+5. `.trae/specs/phase03_14_decision_center_integration_validation_acceptance/` 已形成联调验收与问题收口结论
+6. `Decision -> Module` 的最小闭环已在同一环境中被验证可运行
+7. `phase04` 已明确只承接 `phase03` 已交付主线，不重复实现 `Decision Center`
 
-当前结论：`phase03` 当前处于 `/plan`，完成标志如上，后续进入 `/spec`、实现、验收与收口后再切换到 `phase04`。
+当前结论：以上进入条件已满足，仓库根级入口已从 `phase03_decision_center_foundation` 切换到 `phase04_product_and_repository_binding_foundation`。
 
 ## 5. 说明
 
