@@ -10,7 +10,7 @@
 
 - 实现 `backend/internal/decisioncenter/` 后端模块的全部文件（handler / service / repository / candidate / 支撑文件）
 - 实现 `database/migrations/0004_decision_center_mainline.sql`，将 `decisions` 表从 `phase02` 只读前提原位升级为结构化主线
-- 实现 `database/migrations/0005_decision_source_context.sql`，为 `decisions` 表新增 `source_module_id` 字段以承接入口上下文来源（`phase03-10 §5.11`"持续到完成或放弃"要求跨刷新持久化）
+- 实现 `database/migrations/0005_decision_source_context.sql`，为 `decisions` 表新增 `source_module_id` 字段以承接入口上下文来源（`phase03-10 §5.11`“持续到正式关联完成”要求跨刷新持久化）
 - 实现 `database/seeds/seed_decision_mainline_baseline.sql` 基线种子（含 `decisions` + `decision_links`，基线 `Decision 1` 带 `source_module_id` 演示来源上下文）
 - 更新 `database/seeds/seed_readonly_prereqs.sql` 中 `decisions` seed 从 `title-only` 升级为结构化字段插入
 - 实现 `database/scripts/reset_decision_mainline.sh` 重置脚本
@@ -213,7 +213,7 @@
 
 ### Requirement: source_context 入口上下文来源必须持久化承接
 
-系统 SHALL 通过 `decisions.source_module_id` 字段承接 `phase03-10 §5.11` 冻结的入口上下文来源 `Module` 标识，支持"持续到用户完成正式 `LinkDecisionToTarget` 或主动放弃关联"的跨刷新承接语义，`DecisionDetailRead` 必须通过 `source_context` 持久化返回来源 `Module` 标识，不得固化为空值或仅由前端路由状态承接。
+系统 SHALL 通过 `decisions.source_module_id` 字段承接 `phase03-10 §5.11` 冻结的入口上下文来源 `Module` 标识，支持“持续到用户完成正式 `LinkDecisionToTarget`”的跨刷新承接语义（当前阶段不提供“主动放弃关联”出口，`source_context` 作为入口历史记录保留），`DecisionDetailRead` 必须通过 `source_context` 持久化返回来源 `Module` 标识，不得固化为空值或仅由前端路由状态承接。
 
 #### Scenario: source_module_id 字段持久化
 

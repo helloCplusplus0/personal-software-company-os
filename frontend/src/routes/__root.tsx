@@ -27,6 +27,9 @@ function RootComponent() {
               <Link to="/modules" className="text-lg font-semibold text-foreground hover:text-primary transition-colors">
                 PSCO Module Registry
               </Link>
+              <Link to="/decisions" className="text-lg font-semibold text-foreground hover:text-primary transition-colors">
+                Decision Center
+              </Link>
             </nav>
           </div>
         </header>

@@ -224,7 +224,7 @@
 - **正式关联结果**：只有在 `Decision Detail` 中完成 `LinkDecisionToTarget` 后，才能视为正式建立 `Decision -> Module` 关联
 - 在正式关联写入前，`Decision List` 的 `link_count / linked_module_summary` 不得将该预填来源计入已关联结果
 - 带 `Module` 上下文进入 `Decision Create` 后，创建成功默认进入新建 `Decision` 的 `Decision Detail`，不得回流到 `Decision Center / List`
-- 该入口上下文中的 `Module` 必须带入 `Decision Detail` 作为显式待关联目标继续承接，持续到用户完成正式 `LinkDecisionToTarget` 或主动放弃关联
+- 该入口上下文中的 `Module` 必须带入 `Decision Detail` 作为显式待关联目标继续承接，持续到用户完成正式 `LinkDecisionToTarget`；当前阶段不提供“主动放弃关联”出口，`source_context` 作为入口历史记录保留，待关联目标仅在正式关联写入后消失
 - 无特定目标上下文进入创建页时（直接从 `Decision Center / List` 进入），必须承接"无特定来源目标"的语义，不得伪造默认 `Module` 目标
 
 ---
@@ -550,7 +550,7 @@
 - `DecisionDetailPageShell`
   - `DecisionDetailSummaryCard`（只承接决策核心字段、结构化模板字段与最小来源上下文展示）
   - `DecisionLinkedTargetsSection`（只承接已建立的 `Decision -> Module` 关联结果）
-  - `DecisionPendingLinkTargetCard`（只承接入口上下文中尚未完成正式关联的待关联 `Module`，必须作为显式待关联目标持续展示，直到用户完成 `LinkDecisionToTarget` 或主动放弃关联）
+  - `DecisionPendingLinkTargetCard`（只承接入口上下文中尚未完成正式关联的待关联 `Module`，必须作为显式待关联目标持续展示，直到用户完成正式 `LinkDecisionToTarget`；当前阶段不提供“主动放弃关联”出口，仅在正式关联写入后由详情页 reread 驱动消失）
   - `DecisionModuleCandidatePanel`（只承接 `Decision -> Module` 候选读取与目标选择）
   - `DecisionLinkActions`（只承接 `LinkDecisionToTarget` 的最小写入触点）
 
@@ -586,7 +586,7 @@
 #### Decision Detail
 
 - 读取状态：`pending`、`success`、`error`
-- 待关联目标承接状态：必须继续承接"存在待关联 `Module`"的显式状态，持续到用户完成 `LinkDecisionToTarget` 或主动放弃关联；不得在进入 `DecisionDetailPage` 后静默丢失该上下文
+- 待关联目标承接状态：必须继续承接“存在待关联 `Module`”的显式状态，持续到用户完成正式 `LinkDecisionToTarget`；当前阶段不提供“主动放弃关联”出口，待关联目标仅在正式关联写入后消失；不得在进入 `DecisionDetailPage` 后静默丢失该上下文
 - 候选读取状态：`pending`、`ready`、`empty`、`error`；候选空结果必须进入 `empty`，不得将空结果误解释为资源不存在
 - 关联写入状态：`idle`、`submitting`、`submit-success`、`submit-error`；只归属于当前详情页上下文，不升级为跨路由全局状态
 - 关联成功后用户必须停留在当前 `DecisionDetailPage`，当前详情页必须承接最新的已关联目标读取结果；若本次关联目标正是入口上下文中的待关联 `Module`，待关联目标状态必须被清除

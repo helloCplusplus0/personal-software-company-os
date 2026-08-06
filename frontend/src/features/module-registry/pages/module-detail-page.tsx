@@ -99,8 +99,12 @@ export function ModuleDetailPage() {
             repositoryMappings={data.repository_mappings}
             onBindingSuccess={invalidateDetail}
           />
-          {/* §6.3 Decision 入口：只读展示，不设独立读接口组 */}
-          <ModuleDecisionEntryPanel decisionLinks={data.decision_links} />
+          {/* §6.3 Decision 入口：phase03-13 升级为正式入口触点 */}
+          <ModuleDecisionEntryPanel
+            moduleId={data.module.id}
+            moduleName={data.module.name}
+            decisionLinks={data.decision_links}
+          />
         </div>
       </div>
     </div>
