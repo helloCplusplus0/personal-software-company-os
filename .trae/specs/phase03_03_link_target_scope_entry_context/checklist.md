@@ -1,0 +1,16 @@
+- [x] `LinkDecisionToTarget` 当前阶段目标范围已明确冻结为 `Module` 唯一必交付写入目标
+- [x] `Decision -> Module` 直接闭环已明确包含候选读取、目标选择、关联写入与读模型回流
+- [x] `Decision Detail` 已明确为当前阶段唯一承接正式 `LinkDecisionToTarget` 写入的页面上下文
+- [x] `Product / Repository` 当前阶段已明确只保留受控连接位，而未扩写为正式写入主线
+- [x] `Module Detail` 发起记录决策时的入口上下文已明确单值指向带上下文的 `Decision Create`
+- [x] 从 `Module Detail` 进入时，入口上下文至少承接当前 `Module` 的目标标识与可展示名称
+- [x] 从 `Decision Center / List` 直接进入 `Decision Create` 时，已明确承接“无特定来源目标”的语义
+- [x] 入口上下文与正式关联结果的边界已明确，不会把预填来源误当成已落库关联
+- [x] 正式关联写入前，`Decision List` 的 `link_count / linked_module_summary` 不会计入预填来源
+- [x] 从 `Module Detail` 带上下文创建成功后，已明确默认必须进入新建 `Decision` 的 `Decision Detail`，不得回流到 `Decision Center / List`
+- [x] 入口上下文中的 `Module` 已明确必须在 `Decision Detail` 中作为显式待关联目标继续承接
+- [x] 在候选读取面板中，该 `Module` 已明确必须作为首选候选或显式待确认目标出现
+- [x] 显式待关联状态已明确必须持续到用户完成正式 `LinkDecisionToTarget` 或主动放弃关联
+- [x] 当前阶段未新增 `Decision -> Product` 或 `Decision -> Repository` 的正式写入闭环
+- [x] 当前阶段未为 `Product / Repository` 扩写新的页面主线、写入动作或验收主线
+- [x] 本次规格与 `phase03` 三件套、`phase03-01`、`phase03-02` 规格保持一致
