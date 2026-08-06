@@ -1,0 +1,16 @@
+- [x] 已明确 `phase03-10` 需要产出单一的 `Decision Center` 正式规格正文，而不是继续以 `phase03-01 ~ 09` 作为长期并列入口
+- [x] 已明确正式规格正文目标文件为 `decision_center_spec_v0.1.md`
+- [x] 已明确正式规格正文至少完整覆盖页面、动作、数据读写、API、合同、验收基线、非目标、实现设计层结果与 Done 标准
+- [x] 已明确正式规格正文必须完整继承 `mvp_spec_v0.1.md`、`module_registry_spec_v0.1.md`、`phase02-12` 验收结论与 `phase03-01 ~ 09` 的冻结结论
+- [x] 已明确正式规格正文中的页面与动作章节必须完整承接 `Decision Center / List`、`Decision Create`、`Decision Detail` 与 `Module Detail` 入口关系
+- [x] 已明确正式规格正文中的模板与状态章节必须完整承接最小结构化模板、`alternatives` 结构、`status` 枚举与最小读模型
+- [x] 已明确正式规格正文中的目标范围与入口上下文章节必须完整承接 `Decision -> Module` 直接闭环与显式待关联目标承接规则
+- [x] 已明确正式规格正文中的数据与 API 章节必须承接直接承接数据、最小读取前提、候选读取前提、最小读写接口分组与错误语义
+- [x] 已明确正式规格正文中的前端实现设计章节必须承接页面分层、路由结构、组件职责、状态模型、返回路径与布局降级策略
+- [x] 已明确正式规格正文中的后端实现设计章节必须承接模块边界、接口分组、支撑文件落点与 candidate 接线策略
+- [x] 已明确正式规格正文中的合同章节必须承接 `.proto` 包名、服务矩阵、核心消息结构、字段编号、跨包 enum 策略与 RPC -> HTTP 映射
+- [x] 已明确正式规格正文中的验收基线章节必须承接环境建立顺序、重置脚本、基线 seed、冷启动路径与异常路径前提
+- [x] 已明确正式规格正文中的非目标矩阵与 Done 标准必须显式存在
+- [x] 已明确正式规格正文被定位为后续 `phase03-11 / 12 / 13 / 14 / 15` 与 `phase04` 的直接上游规格入口
+- [x] 已明确正式规格正文必须与 `AGENTS.md`、`plan.md`、`TECH_STACK_BASELINE.md`、`project_rules.md`、`architecture_map.md`、`PSCO-summarize-feedback.md`、`phase03` 三件套、`phase02` 正式规格与验收结果互链一致
+- [x] 已实际产出 `decision_center_spec_v0.1.md`，完整收敛 `phase03-01 ~ 09` 的冻结结论且无第二套边界
