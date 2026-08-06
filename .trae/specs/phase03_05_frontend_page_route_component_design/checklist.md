@@ -1,0 +1,19 @@
+- [x] `Decision Center` 当前阶段的页面集合已明确到页面文件级
+- [x] `Decision List / Decision Create / Decision Detail` 的最小路由结构与 URL 语义已明确
+- [x] `DecisionListRoute` 的 `/decisions` 已明确承接 `queryText` 与 `statusFilter` 作为路由搜索参数
+- [x] `DecisionCreateRoute` 在 `RecordDecision` 成功后进入 `DecisionDetailRoute` 的导航关系已明确，且从 `Module Detail` 带上下文创建成功后默认进入 `DecisionDetailRoute` 的 `phase03-03` 冻结结论已显式承接
+- [x] 最小路由树已明确到预期的 `frontend/src/routes/decisions/*` 文件落点
+- [x] `Module Detail` 到 `DecisionCreateRoute` 与 `DecisionListRoute` 的入口关系已明确
+- [x] `Module Detail` 侧现有入口（`$moduleId.tsx` 与 `module-decision-entry-panel.tsx`）到新 `DecisionCreateRoute` / `DecisionListRoute` 的文件落点映射已明确
+- [x] 列表、模板表单、目标关联面板的组件树已明确
+- [x] `DecisionPendingLinkTargetCard` 已明确承接从 `Module Detail` 带入的待关联 `Module` 的显式状态，持续到用户完成或放弃关联（承接 `phase03-03` 冻结结论）
+- [x] 页面专属组件与共享组件的边界已明确
+- [x] `Decision Detail` 已明确为读取、已关联目标、待关联目标承接、候选读取与目标关联写入的复合详情页
+- [x] `PC` 端的高信息密度布局策略已明确到页面结构层
+- [x] `PC` 端详情页的分区布局已明确（含待关联目标区）
+- [x] 移动浏览器的裁剪、折叠与垂直重排策略已明确到页面结构层（含待关联目标区）
+- [x] 移动浏览器下创建页的来源上下文区、表单区与动作区布局已明确
+- [x] 当前阶段未引入第二套移动端 UI 架构
+- [x] 当前阶段未引入独立 `React Native` 客户端
+- [x] 当前阶段未把完整 `PWA` 写成前置范围
+- [x] 本次设计结果已明确到可直接进入实现，而不是只停留在一致性复述
