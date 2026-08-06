@@ -1,0 +1,18 @@
+- [x] `Decision Center` 当前阶段的数据读写范围已明确
+- [x] 当前阶段写入范围已明确只承接 `RecordDecision` 与 `LinkDecisionToTarget`
+- [x] 当前阶段读取范围已明确只承接列表读取、详情读取、`Decision -> Module` 候选读取与创建后的最小回流读取
+- [x] 当前阶段读取前提已明确只包含 `decisions`、`decision_links` 与 `modules`
+- [x] 创建后的最小回流读取已明确由 `DecisionDetailRead` 承接
+- [x] `Decision Center / List`、`Decision Create`、`Decision Detail` 的最小接口承接前提已明确
+- [x] `DecisionListRead`、`DecisionDetailRead`、`DecisionModuleCandidateRead` 的最小读接口分组已明确
+- [x] `DecisionWrite` 与 `DecisionLinkWrite` 的最小写接口分组已明确
+- [x] `RecordDecision` 的必填缺失已明确返回校验失败语义并归属到 `DecisionWrite`
+- [x] `RecordDecision` 的字段值非法（含 `status` 越界、必填空白、`alternatives` 条目空白）已明确返回校验失败语义并归属到 `DecisionWrite`
+- [x] `Decision -> Module` 候选读取空结果已明确返回空列表语义，而不是资源不存在
+- [x] `Decision` 不存在导致的详情或候选读取失败已明确返回资源不存在语义并归属到 `DecisionDetailRead`
+- [x] `LinkDecisionToTarget` 的目标类型越界已明确返回校验失败语义并归属到 `DecisionLinkWrite`
+- [x] `LinkDecisionToTarget` 的目标不存在已明确返回资源不存在语义并归属到 `DecisionLinkWrite`
+- [x] `LinkDecisionToTarget` 的重复关联已明确返回重复冲突语义并归属到 `DecisionLinkWrite`
+- [x] 当前阶段未新增 `Decision -> Product / Repository` 的正式写入闭环
+- [x] 当前阶段未提前冻结聚合查询、趋势分析、`pending_decision_signals` 或 `Dashboard` 反馈接口
+- [x] 本次规格与 `Contract First`、`phase03` 三件套、`phase03-01`、`phase03-02`、`phase03-03` 保持一致
