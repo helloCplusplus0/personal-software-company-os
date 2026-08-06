@@ -2,9 +2,10 @@
  * Module Registry 数据适配层 — 切换入口
  *
  * phase02-11 后端与数据主线完成后，前端可在 mock 适配层与真实 API 适配层之间切换。
+ * 进入 phase03 联调后，默认复核入口已经切到真实 API 主线；mock 仅保留给局部演示。
  * 切换由 Vite 环境变量 VITE_USE_REAL_API 控制：
- *   - VITE_USE_REAL_API=true  → 使用真实后端 API（api-adapter.ts）
- *   - 未设置 / false          → 使用 mock 数据（mock-adapter.ts，phase02-10 默认行为）
+ *   - VITE_USE_REAL_API=true   → 使用真实后端 API（api-adapter.ts，当前联调默认值）
+ *   - VITE_USE_REAL_API=false  → 使用 mock 数据（mock-adapter.ts，仅历史 phase02 演示）
  *
  * 切换不改变任何函数签名，页面与组件代码无需修改。
  * 上游规格：phase02-11 spec §"前端临时适配层必须能切换到真实后端"
@@ -12,8 +13,9 @@
  *
  * 使用方式（本地联调）：
  *   1. 启动后端：./backend/bin/psco-server（需 .env 配置 DATABASE_URL）
- *   2. 在 frontend/.env 设置 VITE_USE_REAL_API=true
- *   3. 重启 Vite dev server：npm run dev
+ *   2. 使用 frontend/.env.example 的默认值：VITE_USE_REAL_API=true
+ *   3. VITE_API_BASE_URL 保持为空，开发期间通过 Vite /api proxy 同源转发到 :8081
+ *   4. 重启 Vite dev server：npm run dev
  */
 import type {
   Module,

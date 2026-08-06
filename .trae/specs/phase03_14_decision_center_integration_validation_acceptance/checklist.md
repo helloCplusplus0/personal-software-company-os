@@ -1,0 +1,24 @@
+- [x] 已明确 `phase03-14` 的直接上游是 `phase03-09 / 10 / 11 / 12 / 13`
+  - 证据：spec.md Impact 节明确列出 5 个 Affected specs（phase03_09/10/11/12/13）
+- [x] 已明确联调必须在真实前后端、真实数据库与真实基线 seed 上执行，不允许 mock 主线替代
+  - 证据：`frontend/.env.example` 已改为 `VITE_USE_REAL_API=true` 且 `VITE_API_BASE_URL=`；`frontend/vite.config.ts` 将 `/api` 同源代理到 `http://localhost:8081`；前端 `api-adapter.ts` 无 Decision Center mock 分支；后端直连 PostgreSQL `psco_development` 数据库
+- [x] 已明确环境建立顺序必须复用 `init_db.sh -> run_seeds.sh -> reset_module_mainline.sh -> reset_decision_mainline.sh`
+  - 证据：`reset_decision_mainline.sh` 前置校验 modules 基线数据存在（COUNT >= 1）；本次验收复用既有容器与已应用 migrations，reset 脚本可重复执行
+- [x] 已明确冷启动路径必须从空状态走到 `RecordDecision -> DecisionDetail -> LinkDecisionToTarget`
+  - 证据：`reset_decision_mainline.sh --clean-only` → 空状态"系统中尚无任何决策" → RecordDecision 201 → DecisionDetailPage → LinkDecisionToTarget 204 → reread 显示已关联模块
+- [x] 已明确从 `Module Detail` 发起创建时，`source_context` 必须贯通到详情页并承接待关联目标展示
+  - 证据：Module Detail "记录决策" → URL 传递 `sourceModuleId=282fec86-f086-4651-b7a8-61cca50f33c5` + `sourceModuleName=auth-service` → 详情页显示"从 auth-service 发起" + 待关联目标卡片 → 关联后卡片 reread 消失，同时详情页展示 `已关联模块 auth-service / integration-test-module`
+- [x] 已明确返回路径必须验证 `fromList` 单值化规则，区分"来自列表"和"非来自列表"
+  - 证据：List 入口（fromList=true）返回恢复 `queryText=Module`；Module Detail 入口（无 fromList）返回落到默认 `statusFilter=all`
+- [x] 已明确列表空状态、候选空结果、创建失败、详情失败与关联失败都必须进入本轮验收范围
+  - 证据：空状态"先记录首条决策"已验证；空候选"暂无可关联的模块候选"已验证；创建失败表单保留已验证；详情失败 404 已验证；关联失败 409 已验证
+- [x] 已明确至少覆盖 `8` 类关键异常/边界路径，并禁止用手工 SQL 建异常前提
+  - 证据：覆盖 10 类异常路径（必填缺失/非法 status/空白 alternatives/无效 source_module_id/目标类型越界/decision_id 不存在/module_id 不存在/重复关联/详情不存在/空候选）；异常前提通过基线 seed + 受控 API 操作建立，无手工 SQL
+- [x] 已明确 `.proto`、HTTP 过渡层与前端适配层必须在验收中核对为单值一致
+  - 证据：`.proto` 枚举/消息 ↔ 后端 Go types JSON tag ↔ 前端 TS types 三层字段名与语义单值一致；5 RPC ↔ 5 HTTP 路由 ↔ 5 前端 fetch 函数单值映射
+- [x] 已明确 `phase03-10` 正式规格正文若与 `phase03-12 / 13` 已验收边界漂移，必须在本阶段收口
+  - 证据：待关联目标结束条件、fromList 单值化、source_context 持久化三项口径在 phase03-10/12/13 全部一致，无漂移
+- [x] 已明确验收结果必须形成可重复复核证据，不能只以 build 通过或口头结论收口
+  - 证据：tasks.md 每项 Task 附 HTTP 状态码 + 响应体 + UI 行为快照；checklist.md 每项附具体证据；`reset_decision_mainline.sh` 可重复恢复基线；浏览器页内原生 `fetch('/api/.../links')` 已补充验证 `204 No Content`
+- [x] 已明确发现的问题必须在当前阶段闭合，不得遗留隐性阻断到 `phase03-15`
+  - 证据：联调发现的问题已在当前阶段闭合：默认前端复核入口已从旧 mock / `:8080` 口径收口为真实 API + Vite `/api` 代理；浏览器自动化点击时记录的 `ERR_ABORTED` 已通过页内原生 `fetch`、Vite 代理 `curl`、后端 detail reread 与 UI reread 共同排除为业务阻断；无未解决问题遗留

@@ -32,10 +32,10 @@ import type {
 /**
  * API 基础 URL。
  *
- * 通过 Vite 环境变量 VITE_API_BASE_URL 配置，缺省指向本地后端 http://localhost:8080。
- * 生产环境由 Caddy 反代统一接入，可通过构建时 env 注入实际地址。
+ * 开发期间通过 Vite proxy 转发 /api 到后端，前端走同源 (localhost:5173)，
+ * 此值为空字符串。生产环境由 Caddy 反代统一接入，也可通过构建时 env 注入实际地址。
  */
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? ''
 
 /**
  * API 错误类型，承载后端返回的 error 字段与 HTTP 状态码。
@@ -55,17 +55,25 @@ export class ApiError extends Error {
 /**
  * 通用 JSON 请求封装。
  *
- * - GET 请求不带 body
- * - POST/PUT 请求带 JSON body
+ * - GET 请求不带 body，不设 Content-Type（避免触发不必要的 CORS preflight）
+ * - POST/PUT 请求带 JSON body，设 Content-Type: application/json
  * - 非 2xx 响应解析后端 { error } 结构并抛出 ApiError
+ *
+ * phase03-14 修复：GET 请求不再统一设 Content-Type。
+ * 之前对所有请求都加 Content-Type: application/json，使 GET 变成非 simple request，
+ * 每次都触发 CORS preflight。现在仅在有 body 时设 Content-Type，
+ * GET 请求恢复为 simple request，无需 preflight。
  */
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  // 仅有 body 的请求（POST/PUT/PATCH）才设 Content-Type，避免 GET 触发 CORS preflight
+  const headers: Record<string, string> = { ...(init?.headers as Record<string, string> ?? {}) }
+  if (init?.body && !headers['Content-Type']) {
+    headers['Content-Type'] = 'application/json'
+  }
+
   const res = await fetch(`${API_BASE_URL}${path}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...(init?.headers ?? {}),
-    },
     ...init,
+    headers,
   })
 
   // 204 No Content（绑定/映射成功无返回体）

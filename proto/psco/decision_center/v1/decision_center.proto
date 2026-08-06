@@ -200,7 +200,7 @@ message ListDecisionModuleCandidatesResponse {
 //
 // source_module_id（编号 9）：入口上下文来源 Module 标识（可选，§5.11）。
 // 从 Module Detail 带上下文进入 Decision Create 时传入，后端持久化后通过
-// DecisionDetailRead.source_context 返回，支持"持续到完成或放弃"的跨刷新承接。
+// DecisionDetailRead.source_context 返回，支持"持续到正式关联完成"的跨刷新承接（当前阶段不提供主动放弃出口）。
 // 无来源时为空字符串，不参与 §5.5 结构化模板字段冻结。
 message CreateDecisionRequest {
   string title = 1;

@@ -70,7 +70,7 @@ func (s *QueryService) ListDecisions(ctx context.Context, q decisioncenter.ListQ
 // source_context 承接语义（phase03-10 §5.11）：
 //   - 从 Module Detail 带上下文进入 Decision Create 时，source_module_id 被持久化
 //   - DecisionDetailRead 通过 source_context 返回来源 Module 的最小标识
-//   - 支持"持续到用户完成正式 LinkDecisionToTarget 或主动放弃关联"的跨刷新承接
+//   - 支持"持续到用户完成正式 LinkDecisionToTarget"的跨刷新承接（当前阶段不提供主动放弃关联出口）
 //   - 无来源时 source_module_id / source_module_name 均为空字符串
 //   - 入口上下文中的预填 Module 在正式 LinkDecisionToTarget 写入前不计入 linked_modules
 func (s *QueryService) GetDecisionDetail(ctx context.Context, decisionID string) (*decisioncenter.DecisionDetail, error) {

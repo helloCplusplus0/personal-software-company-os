@@ -81,6 +81,7 @@ export function DecisionModuleCandidatePanel({ decisionId }: DecisionModuleCandi
         </Badge>
       </div>
       <Button
+        type="button"
         size="sm"
         variant="outline"
         disabled={linkMutation.isPending}
@@ -112,7 +113,7 @@ export function DecisionModuleCandidatePanel({ decisionId }: DecisionModuleCandi
               <AlertCircle className="h-4 w-4" />
               <p className="text-sm">候选读取失败：{(error as Error).message}</p>
             </div>
-            <Button variant="outline" size="sm" className="mt-2" onClick={() => refetch()}>
+            <Button type="button" variant="outline" size="sm" className="mt-2" onClick={() => refetch()}>
               重试
             </Button>
           </div>

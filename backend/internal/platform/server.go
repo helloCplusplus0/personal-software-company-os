@@ -85,11 +85,18 @@ func (s *Server) Shutdown(ctx context.Context) error {
 //
 // phase02 本地开发：前端 Vite dev server (默认 5173) 与后端 (8080) 跨端口，
 // 需要允许前端Origin 携带凭据访问。生产部署由 Caddy 反代统一处理 CORS。
+//
+// phase03-14 修复：新增 Access-Control-Max-Age 头。
+// 未设置该头时 Chrome 默认仅缓存 preflight 5 秒，过期后 POST 请求会被中止
+// (net::ERR_ABORTED) 再重新 preflight，在控制台产生 error 日志。
+// 设置 600 秒缓存可避免开发期间的频繁 re-preflight 与中止告警。
 func corsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		// 缓存 preflight 结果 10 分钟，避免 preflight 过期后 POST 被中止重发
+		w.Header().Set("Access-Control-Max-Age", "600")
 		if r.Method == http.MethodOptions {
 			w.WriteHeader(http.StatusNoContent)
 			return
