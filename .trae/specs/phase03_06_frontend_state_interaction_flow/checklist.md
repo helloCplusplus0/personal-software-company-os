@@ -1,0 +1,24 @@
+- [x] `Decision List` 的最小搜索参数已明确为 `queryText / statusFilter`
+- [x] 列表搜索参数的默认来源已明确为路由搜索参数而非全局瞬时状态
+- [x] URL 中无 `queryText / statusFilter` 时的默认值已明确（空字符串 / 全部状态）
+- [x] 刷新 `DecisionListRoute` 后恢复筛选上下文的规则已明确
+- [x] `Decision List` 的读取状态与派生视图状态分层已明确
+- [x] 列表错误反馈位置已明确留在 `DecisionListPage` 内容区上下文
+- [x] `Decision List` 的空状态主入口已明确为进入 `DecisionCreatePage`
+- [x] 从创建页或详情页返回列表时按来源列表上下文存在性决定恢复原参数或落到默认参数的规则已明确
+- [x] `Decision Create` 的来源上下文状态、最小草稿状态与提交状态已明确
+- [x] `RecordDecision` 提交失败后保留输入与来源上下文并在当前表单上下文展示错误的规则已明确
+- [x] `RecordDecision` 成功后的默认回流路径已明确为新建 `Decision` 对应的 `DecisionDetailPage`
+- [x] `Decision Detail` 的最小读取状态已明确
+- [x] 入口上下文形成的待关联 `Module` 持续承接规则已明确
+- [x] 候选读取的最小状态流与空结果语义已明确
+- [x] `LinkDecisionToTarget` 的最小状态流已明确
+- [x] 关联成功后停留详情页、刷新已关联目标并清除待关联状态的规则已明确
+- [x] 关联失败后保留当前候选选择与错误反馈位置的规则已明确
+- [x] 页面主动返回路径已明确为单值规则，并按来源列表上下文存在性决定恢复或默认
+- [x] 从创建成功后的 `DecisionDetailPage` 返回列表时恢复原有 `queryText / statusFilter` 或落到默认参数的规则已明确
+- [x] `DecisionCreatePage` 必须持有"来源列表上下文存在/不存在"的最小页面状态已明确
+- [x] `DecisionDetailPage` 必须持有"来源列表上下文存在/不存在"的最小页面状态已明确，且进入路径与上下文继承规则已单值化
+- [x] 表单草稿、提交错误、待关联目标与候选读取状态的局部归属边界已明确
+- [x] 本次设计结果足以直接进入实现
+- [x] 当前阶段未把 hook 命名、缓存细节或 store API 提前写成既成事实
