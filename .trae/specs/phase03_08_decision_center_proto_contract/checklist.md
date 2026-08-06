@@ -1,0 +1,27 @@
+- [x] 已明确 `Decision Center` 当前阶段必须落地最小 `.proto` 合同设计
+- [x] 已明确 `.proto` 是当前阶段唯一合同源，`chi + JSON HTTP` 只能作为过渡传输层
+- [x] 已明确 Proto 包名（`psco.decision_center.v1`）、版本语义（`v1`）与文件落点（`proto/psco/decision_center/v1/decision_center.proto`）
+- [x] 已明确 `DecisionListRead / DecisionDetailRead / DecisionWrite / DecisionLinkWrite / DecisionModuleCandidateRead` 的服务接口需要进入 Proto 合同
+- [x] 已明确 `DecisionDetailRead` 只承接详情本体、最小来源上下文与已建立关联结果，不并入候选读取
+- [x] 已明确 `DecisionModuleCandidateRead` 通过独立 request / response 承接候选读取
+- [x] 已明确 `DecisionStatus` 与 `DecisionLinkTargetType` 的最小枚举语义
+- [x] 已明确当前阶段 `LinkDecisionToTarget` 唯一正式允许的目标类型是 `Module`
+- [x] 已明确核心消息结构至少覆盖列表项、详情对象、已关联目标、最小来源上下文与候选读取
+- [x] 已明确核心读模型消息字段语义来源（`Decision` / `DecisionListItem` / `DecisionDetail` / `LinkedModule` / `linked_module_summary`）
+- [x] 已明确 `alternatives` 合同建模为 `repeated string`，不得引入嵌套 `message`
+- [x] 已明确 `SourceContext` 字段结构（`source_module_id` + `source_module_name`，含无来源时空值语义），收口 `phase03-02` 后移前提
+- [x] 已明确候选读取消息字段语义（`module_id` + `module_name` + `status`，复用 `ModuleStatus`，排序语义不进入合同本体）
+- [x] 已明确写组 request 字段语义（`CreateDecisionRequest` 模板字段 + `LinkDecisionToTargetRequest` 的 `decision_id / target_type / module_id`）
+- [x] 已明确字段语义与页面动作单值映射（`ListDecisions / GetDecisionDetail / CreateDecision / LinkDecisionToTarget / ListDecisionModuleCandidates` ↔ 各页面动作）
+- [x] 已明确枚举字段编号（`DecisionStatus` 0-4 / `DecisionLinkTargetType` 0-1）
+- [x] 已明确核心对象字段编号（`Decision` / `DecisionListItem` / `LinkedModule` / `SourceContext` / `DecisionDetail` / `DecisionModuleCandidate`）
+- [x] 已明确读组 request / response 字段编号
+- [x] 已明确写组 request / response 字段编号与返回语义（`CreateDecisionResponse` 只含 `decision_id=1`，`LinkDecisionToTargetResponse` 空响应）
+- [x] 已明确 `ModuleStatus` 跨包依赖策略（`import psco.module_registry.v1.ModuleStatus`，不本地重定义，仅限枚举复用）
+- [x] 已明确字段编号必须稳定、不可复用，并要求删除字段后使用 `reserved`
+- [x] 已明确 RPC → HTTP 映射矩阵
+- [x] 已明确 HTTP 路径参数与 Proto request 字段之间的显式组装策略
+- [x] 已明确错误语义由合同承接、状态码由过渡层映射
+- [x] 已明确当前阶段最小校验链为 `buf build / lint / generate / breaking`
+- [x] 已明确 `buf breaking` 必须直接对照仓库主线 `.git` 基准，且不得吞掉失败退出码
+- [x] 已明确后续新增接口必须优先修改 `.proto`，不得先扩张 JSON 结构
