@@ -1,0 +1,23 @@
+- [x] `Decision Center` 的后端模块归属边界已明确
+- [x] `RecordDecision / LinkDecisionToTarget / DecisionListRead / DecisionDetailRead / DecisionModuleCandidateRead` 的拥有者已明确
+- [x] `DecisionListRead / DecisionDetailRead / DecisionModuleCandidateRead` 的读组已明确
+- [x] `DecisionWrite / DecisionLinkWrite` 的写组已明确
+- [x] `DecisionDetailRead` 作为统一详情读模型宿主的结论已明确
+- [x] `DecisionLinkWrite` 成功后回流路径单值指向 `DecisionDetailRead`，未设计第二套并列回流读取入口
+- [x] `DecisionModuleCandidateRead` 作为独立候选读取子组的结论已明确
+- [x] 接口命名沿用 `phase03-04` 已冻结的 `*Read / *Write` 命名体系，未引入第二套命名
+- [x] `Module Registry` 侧只提供候选读取与目标校验的连接边界已明确
+- [x] `ModuleCandidateRead` 接口与实现由 `Decision Center` 的 `candidate/` 子包自己定义和拥有，`Module Registry` 不暴露专门服务契约
+- [x] `ModuleCandidateRead` 的具体接线在应用装配点完成，不得在 `service/` 或 `handler/` 内部自行构造
+- [x] 当前阶段未把 `Module Registry` 的主线写入提前并入 `Decision Center`
+- [x] 当前阶段未把 `Product / Repository` 扩写为正式后端连接主线
+- [x] 后端模块根包与 `handler / service / repository / candidate` 四子包组织已明确
+- [x] 读组文件落点（`handler/query_handler.go` + `service/query_service.go`）已明确
+- [x] 写组文件落点（`handler/command_handler.go` + `service/command_service.go`）已明确
+- [x] 数据访问层文件落点（`repository/decision_store.go` + `link_store.go`）已明确
+- [x] 跨模块候选读取文件落点（`candidate/module_candidate_read.go`）已明确
+- [x] 支撑文件落点（`errors.go` + `types.go` + `validate.go` + `handler/response.go`）已明确，与现有 `moduleregistry` 同构
+- [x] 后端模块内部的分层语义已明确
+- [x] 合同边界与存储模型解耦的要求已明确
+- [x] 当前阶段未把 Go HTTP/RPC 框架、ORM 或数据访问层具体工具提前写成既成事实
+- [x] 设计结果足以直接进入实现，深度与 `phase02-08` 文件落点层对齐（含支撑文件）
