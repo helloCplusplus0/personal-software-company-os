@@ -1,0 +1,32 @@
+- [x] 已明确 `Decision Center` 联调环境必须可重复建立，复用 `phase02` 独立数据库与初始化入口
+- [x] 已明确启动顺序（`init_db` -> 后端 migration -> `run_seeds` -> `reset_module_mainline` -> `reset_decision_mainline` -> 前端），`run_seeds` 必须在 migration 完成后执行
+- [x] 已明确不得新建第二个数据库或第二套 `init_db` 入口
+- [x] 已明确 `decisions` 表原位升级 migration 文件落点（`database/migrations/0004_decision_center_mainline.sql`）
+- [x] 已明确 `ALTER TABLE` 原位添加字段（`context / problem / alternatives / choice / reason / impact / status`），不新建替代表
+- [x] 已明确 `alternatives` 存储方式为 `TEXT[]`（`DEFAULT '{}'`），对齐 `.proto` `repeated string`
+- [x] 已明确 `status` 的 `CHECK` 约束（`proposed / active / superseded / archived`）与列表读取索引
+- [x] 已明确必填字段 `NOT NULL` 约束（无 `DEFAULT` 字段按三步流程添加）与空字符串校验归属（service 层）
+- [x] 已明确不得删除原有 `title / created_at` 字段、不得破坏 `decision_links` 外键
+- [x] 已明确现有示例 `Decision` 数据兼容回填策略（保留 `title / created_at`，占位文本回填必填字段）
+- [x] 已明确 `alternatives` 回填为 `'{}'`、`impact` 回填为 `''`、`status` 回填为 `'proposed'`
+- [x] 已明确回填必须可重复执行（`WHERE` 条件幂等）
+- [x] 已明确既有 `decision_links` 兼容性保证
+- [x] 已明确重置脚本落点（`database/scripts/reset_decision_mainline.sh`）与三种模式（`--clean-only / --restore-only / 默认`）
+- [x] 已明确重置脚本复用 `resolve_psql` 模式与环境变量参数
+- [x] 已明确清空范围（`DELETE FROM decisions`，级联清空 `decision_links`，不影响 `modules / products / repositories`）
+- [x] 已明确前置校验（数据库存在 + `modules` 基线存在）
+- [x] 已明确基线 seed 文件落点（`database/seeds/seed_decision_mainline_baseline.sql`）与"清空 + 恢复"职责
+- [x] 已明确基线 `Decision` 数据覆盖维度（`3` 条、覆盖 `proposed / active / archived|superseded`）
+- [x] 已明确 `alternatives` 数组与空数组覆盖、`impact` 空字符串覆盖
+- [x] 已明确保留 `phase02` 原有 `title` 以兼容 `decision_links`
+- [x] 已明确基线 `decision_links` 数据（至少 `2` 条、通过 `name` 查找不硬编码 `UUID`、含 `1` 条无关联 `Decision`）
+- [x] 已明确 `seed_readonly_prereqs.sql` 中 `decisions` seed 更新为结构化字段
+- [x] 已明确异常路径验证清单（必填缺失 / 字段值非法含 alternatives 空白与非法 status / 目标类型越界 / 目标不存在 / 重复关联 / 候选空结果 / 详情不存在）
+- [x] 已明确异常路径通过 `API` 层测试触发，不通过 `seed` 异常数据
+- [x] 已明确异常前提数据由基线 `seed` 提供，不新建单独 `fixture SQL` 文件
+- [x] 已明确冷启动验收路径 `8` 步（`clean-only` -> 空状态 -> `Create` -> `Record` -> `Detail` -> 候选 -> `Link` -> 重新读取）
+- [x] 已明确冷启动路径不依赖任何手工 `SQL`
+- [x] 已明确冷启动前提是 `reset_module_mainline.sh` 已建立 `modules` 基线
+- [x] 已明确空状态验收前提（空状态入口 + 主动作进入 `Create`）
+- [x] 已明确当前阶段不冻结 `Go ORM / SQL Builder`、前端测试框架、`API` 测试工具选型
+- [x] 已明确验收环境前置规划不得后移到 `phase03-14` 验收时手工补 `SQL`
