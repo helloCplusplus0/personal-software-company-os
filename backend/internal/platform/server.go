@@ -28,7 +28,8 @@ type Server struct {
 //  1. 应用基础中间件（RequestID / Logger / Recoverer / CORS）
 //  2. 注册健康检查端点
 //  3. 通过 mountModuleRegistry 把 Module Registry 路由挂到 /api 下
-//  4. 构造 http.Server
+//  4. 通过 mountDecisionCenter 把 Decision Center 路由挂到 /api 下（phase03-12）
+//  5. 构造 http.Server
 func NewServer(cfg Config, pool *pgxpool.Pool) *Server {
 	r := chi.NewRouter()
 
@@ -43,9 +44,10 @@ func NewServer(cfg Config, pool *pgxpool.Pool) *Server {
 	// 健康检查
 	r.Get("/healthz", healthz)
 
-	// 装配 Module Registry 模块路由到 /api
+	// 装配业务模块路由到 /api
 	r.Route("/api", func(r chi.Router) {
 		mountModuleRegistry(r, pool)
+		mountDecisionCenter(r, pool)
 	})
 
 	return &Server{

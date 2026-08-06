@@ -19,8 +19,18 @@ INSERT INTO repositories (name) VALUES ('main-repo') ON CONFLICT (name) DO NOTHI
 INSERT INTO repositories (name) VALUES ('mirror-repo') ON CONFLICT (name) DO NOTHING;
 
 -- decisions 只读入口前提（对齐前端 mock 数据）
--- title 唯一性通过 ON CONFLICT 在插入重复时跳过（title 无 UNIQUE 约束，此处靠应用层幂等；
--- 若需严格幂等，可在 decisions.name 上加 UNIQUE 约束，但 phase02 不强求）
-INSERT INTO decisions (title)
-SELECT '关于 auth-service 技术选型的决策'
+-- phase03-12 升级：从 title-only 升级为结构化字段插入
+-- 必须保持原有 title（关于 auth-service 技术选型的决策）以兼容 phase02 decision_links
+-- 必须补全 context / problem / choice / reason / status 必填字段
+-- alternatives 设为 '{}'，impact 设为 ''（对齐 phase03-10 §5.5 创建可选语义）
+-- 上游规格：phase03-09 spec §"seed_readonly_prereqs.sql decisions seed 更新"
+INSERT INTO decisions (title, context, problem, alternatives, choice, reason, impact, status)
+SELECT '关于 auth-service 技术选型的决策',
+       'phase02 只读前提占位上下文',
+       'phase02 只读前提占位问题',
+       '{}',
+       'phase02 只读前提占位选择',
+       'phase02 只读前提占位理由',
+       '',
+       'proposed'
 WHERE NOT EXISTS (SELECT 1 FROM decisions WHERE title = '关于 auth-service 技术选型的决策');
