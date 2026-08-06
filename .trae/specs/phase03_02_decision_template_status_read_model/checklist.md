@@ -1,0 +1,20 @@
+- [x] `Decision` 最小结构化模板已冻结为 `title / context / problem / alternatives / choice / reason / impact / status`
+- [x] `Decision` 字段级 `required / optional` 规则已明确
+- [x] `title / context / problem / choice / reason / status` 已明确为必填
+- [x] `alternatives / impact` 已明确为可选
+- [x] 必填字段去首尾空白后不得为空字符串的规则已明确
+- [x] `alternatives` 已明确为按顺序保留的文本条目集合，而不是嵌套对象结构
+- [x] `alternatives` 允许空集合，且单个条目去首尾空白后不得为空字符串
+- [x] `Decision.status` 已冻结为 `proposed / active / superseded / archived`
+- [x] 四个状态的当前阶段语义已明确
+- [x] `RecordDecision` 的最小创建校验前提已明确
+- [x] `Decision List` 最小展示字段已明确为 `title / status / created_at / link_count / linked_module_summary`
+- [x] `link_count` 计算口径已明确（仅统计 `decision_links` 中已建立的 `Decision -> Module` 有效关联数，不混入 `Product / Repository`）
+- [x] `linked_module_summary` 计算口径已明确（按 `module_name` 升序取前 `3` 个名称，超出 `3` 个时末尾附加 `+N`）
+- [x] 无关联时空值语义已明确（`link_count` 返回 `0`，`linked_module_summary` 返回空字符串，不返回 `null`）
+- [x] `Decision Detail` 最小展示字段已明确为 `title / context / problem / alternatives / choice / reason / impact / status / created_at`
+- [x] `Decision Detail` 还需展示已关联目标结果的要求已明确
+- [x] `Decision Detail` 必须展示最小来源上下文的要求已明确，并区分从 `Module Detail` 带上下文进入与从列表直接进入两种来源
+- [x] 来源上下文的具体字段结构与入口上下文冻结归属 `phase03-03`，本阶段不提前定义
+- [x] 当前阶段未引入超出 `v0.1` 的复杂审批、投票或自动化字段
+- [x] 本次规格与 `phase01-06` 正式 MVP 规格正文及 `phase03` 三件套保持一致
