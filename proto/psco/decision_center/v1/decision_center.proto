@@ -1,0 +1,279 @@
+// PSCO Decision Center 最小 Protocol Buffers 合同源
+//
+// 文档定位：本文件是 Decision Center 当前阶段唯一合同定义入口（phase03-11 落地）。
+// 上游规格：
+//   - phase03-08 Decision Center 最小 Proto 合同设计 Spec §"Decision Center 最小 Proto 合同源"
+//                / §"Proto 包名与版本语义" / §"最小消息结构必须覆盖当前动作矩阵"
+//                / §"核心消息字段语义必须单值映射上游读模型" / §"枚举与字段语义必须单值化"
+//                / §"字段编号方案与合同边界策略冻结" / §"服务接口必须对齐已冻结接口分组"
+//                / §"详情读取与候选读取必须保持消息边界分离" / §"错误语义必须在合同设计中保留显式映射前提"
+//   - phase03-10 decision_center_spec_v0.1.md §7 合同设计（Proto 主线）
+//
+// 落点要求：
+//   - 本文件落地到现有 proto/ 工作区，复用同一 buf workspace
+//   - 不新增第二套 buf.yaml / buf.gen.yaml / Makefile 或并列 proto 根目录
+//   - 与 Module Registry 在同一个 buf workspace 内共同通过校验
+//
+// 过渡传输层说明：
+//   当前阶段保留 chi + JSON HTTP 作为过渡传输层（phase03-12/13 实现）。
+//   JSON 请求与响应语义必须从本 .proto 派生或严格对齐，不得形成第二套合同源。
+//   HTTP 路径、状态码与中间件策略不属于本合同本体，由过渡传输层独立承载。
+//   URL 路径参数（如 decisionId / moduleId）由 handler 在进入业务层前组装为
+//   对应 Proto request 字段，该组装行为只属于过渡传输层，不构成第二套合同定义。
+//
+// 字段编号规则：
+//   - 每个字段拥有稳定编号，不得复用已删除字段编号或字段语义
+//   - 新增字段必须使用新的递增编号，不得插入到已有编号之间
+//   - reserved 关键字用于标记已删除或预留的编号区间
+//   - 后续版本删除字段或废弃字段名时必须使用 reserved 保留字段号
+//
+// 跨包依赖策略：
+//   - DecisionModuleCandidate.status 通过 import 直接复用
+//     psco.module_registry.v1.ModuleStatus
+//   - 不得在 psco.decision_center.v1 中重定义本地等价枚举
+//   - 该 import 仅限于复用 ModuleStatus 枚举类型，不得因此引入对
+//     Module Registry service 或其他消息结构的合同依赖
+//
+// 生成入口：
+//   在 proto/ 目录执行 make gen，或直接执行 buf generate。
+//   生成产物：
+//     - Go:    backend/internal/gen/proto/psco/decision_center/v1/
+//     - TS:    frontend/src/gen/proto/psco/decision_center/v1/
+//
+// 当前阶段边界：
+//   - 只生成消息类型，不生成 gRPC 服务桩
+//   - service 定义在 .proto 合同源中已冻结，后续迁移到 gRPC / Connect 时再加回 grpc/connect 插件
+//   - 不要求完成完整 gRPC / Connect 传输层迁移
+//   - 不要求立即用生成类型替换全部现有手写 DTO
+
+syntax = "proto3";
+
+package psco.decision_center.v1;
+
+import "google/protobuf/timestamp.proto";
+// 跨包 import：复用 Module Registry 的 ModuleStatus 枚举，避免引入第二套状态语义。
+// 该 import 仅限于 ModuleStatus 枚举类型，不引入 Module Registry service 依赖。
+import "psco/module_registry/v1/module_registry.proto";
+
+// Go 包路径（生成代码落点）
+option go_package = "github.com/psco/backend/internal/gen/proto/psco/decision_center/v1;decisioncenterv1";
+
+// ============================================================================
+// 枚举
+// ============================================================================
+
+// DecisionStatus — §5.6 冻结为 proposed / active / superseded / archived。
+// UNSPECIFIED 表示未指定，在列表筛选 status_filter 中表示"不过滤"。
+// JSON 过渡层中的字符串语义必须与该枚举单值对应。
+enum DecisionStatus {
+  DECISION_STATUS_UNSPECIFIED = 0;
+  DECISION_STATUS_PROPOSED = 1;
+  DECISION_STATUS_ACTIVE = 2;
+  DECISION_STATUS_SUPERSEDED = 3;
+  DECISION_STATUS_ARCHIVED = 4;
+}
+
+// DecisionLinkTargetType — 当前阶段唯一允许的正式目标类型为 MODULE。
+// UNSPECIFIED 表示未指定，不得作为合法写入值。
+// Product / Repository 不提前写成当前阶段正式可用枚举值。
+enum DecisionLinkTargetType {
+  DECISION_LINK_TARGET_TYPE_UNSPECIFIED = 0;
+  DECISION_LINK_TARGET_TYPE_MODULE = 1;
+}
+
+// ============================================================================
+// 核心对象（§5.4 / §5.5）
+// ============================================================================
+
+// Decision 核心对象 — §5.4 / §5.5 最小结构化模板字段。
+// alternatives 建模为 repeated string，按输入顺序保留，不得引入嵌套 message。
+message Decision {
+  string id = 1;
+  string title = 2;
+  string context = 3;
+  string problem = 4;
+  repeated string alternatives = 5;
+  string choice = 6;
+  string reason = 7;
+  string impact = 8;
+  DecisionStatus status = 9;
+  google.protobuf.Timestamp created_at = 10;
+}
+
+// ============================================================================
+// 读组消息结构
+// ============================================================================
+
+// DecisionListItem — §5.8 列表读取模型。
+// 至少承接 id / title / status / created_at / link_count / linked_module_summary。
+// linked_module_summary 建模为 string，承接 +N 摘要语义，不拆成结构化列表字段。
+message DecisionListItem {
+  string id = 1;
+  string title = 2;
+  DecisionStatus status = 3;
+  google.protobuf.Timestamp created_at = 4;
+  int32 link_count = 5;
+  string linked_module_summary = 6;
+}
+
+// LinkedModule — 已关联 Module 的最小展示结构。
+// 对齐 §5.9 linked_module_summary 计算口径的生成基础。
+message LinkedModule {
+  string module_id = 1;
+  string module_name = 2;
+}
+
+// SourceContext — §5.11 入口上下文最小来源标识。
+// 无来源时 source_module_id 与 source_module_name 均为空字符串，
+// 不得内嵌完整 Module 对象，只承接最小来源标识。
+message SourceContext {
+  string source_module_id = 1;
+  string source_module_name = 2;
+}
+
+// DecisionDetail — §5.8 详情读取模型。
+// 统一承接 Decision 全部字段、已关联 Module 列表与最小来源上下文。
+// 候选读取结果不内嵌于此，必须通过 ListDecisionModuleCandidates 独立承接。
+message DecisionDetail {
+  Decision decision = 1;
+  repeated LinkedModule linked_modules = 2;
+  SourceContext source_context = 3;
+}
+
+// DecisionModuleCandidate — §5.10 候选读取返回项。
+// status 复用 psco.module_registry.v1.ModuleStatus，不重定义本地等价枚举。
+// 候选读取排序语义（active 优先 -> module_name 升序，已关联不得再次出现）
+// 由 service/repository 层承接，不进入 .proto 合同本体。
+message DecisionModuleCandidate {
+  string module_id = 1;
+  string module_name = 2;
+  psco.module_registry.v1.ModuleStatus status = 3;
+}
+
+// ============================================================================
+// 读组请求与响应消息
+// ============================================================================
+
+// ListDecisionsRequest — 列表读取筛选参数（§6.2 query_text / status_filter）。
+// status_filter 为 UNSPECIFIED 时表示不过滤。
+message ListDecisionsRequest {
+  string query_text = 1;
+  DecisionStatus status_filter = 2;
+}
+
+// ListDecisionsResponse — 列表读取响应。
+message ListDecisionsResponse {
+  repeated DecisionListItem decisions = 1;
+}
+
+// GetDecisionDetailRequest — 详情读取请求。
+message GetDecisionDetailRequest {
+  string decision_id = 1;
+}
+
+// GetDecisionDetailResponse — 详情读取响应。
+message GetDecisionDetailResponse {
+  DecisionDetail decision_detail = 1;
+}
+
+// ListDecisionModuleCandidatesRequest — Module 候选读取请求。
+// decision_id 用于排除已建立关联的目标，避免重复关联。
+message ListDecisionModuleCandidatesRequest {
+  string decision_id = 1;
+}
+
+// ListDecisionModuleCandidatesResponse — Module 候选读取响应。
+// 无可关联候选时返回空列表，不返回错误。
+message ListDecisionModuleCandidatesResponse {
+  repeated DecisionModuleCandidate candidates = 1;
+}
+
+// ============================================================================
+// 写组请求与响应消息（§5.8）
+// ============================================================================
+
+// CreateDecisionRequest — RecordDecision 写入最小字段。
+// 对齐 §5.5 模板字段与必填规则：
+//   - 创建必填：title / context / problem / choice / reason / status
+//   - 创建可选：alternatives / impact
+// 必填校验由过渡传输层 / service 层承接，.proto 不承载 required 语义。
+message CreateDecisionRequest {
+  string title = 1;
+  string context = 2;
+  string problem = 3;
+  repeated string alternatives = 4;
+  string choice = 5;
+  string reason = 6;
+  string impact = 7;
+  DecisionStatus status = 8;
+}
+
+// CreateDecisionResponse — 创建响应，只返回新建 Decision 标识。
+// 对齐 phase03-07 "返回新建 Decision 标识以支持前端回流到 DecisionDetailPage"。
+// 不返回完整 Decision 对象，避免形成脱离 DecisionDetailRead 的第二套回流读取路径。
+message CreateDecisionResponse {
+  string decision_id = 1;
+}
+
+// LinkDecisionToTargetRequest — LinkDecisionToTarget 写入最小字段。
+// decision_id 在 RPC 请求中显式承接；在 HTTP 过渡层中由 URL 路径参数隐式承接。
+// target_type 当前阶段只允许 MODULE，不得接受 PRODUCT / REPOSITORY。
+message LinkDecisionToTargetRequest {
+  string decision_id = 1;
+  DecisionLinkTargetType target_type = 2;
+  string module_id = 3;
+}
+
+// LinkDecisionToTargetResponse — 关联写入响应，必须为空响应（无字段）。
+// 对齐 phase03-07 "详情页重新读取当前已关联目标结果"的回流语义，
+// 不返回 link 结果或 detail reread 标识，
+// 避免形成脱离 DecisionDetailRead 的第二套回流读取路径。
+message LinkDecisionToTargetResponse {}
+
+// ============================================================================
+// 服务接口
+// ============================================================================
+
+// DecisionCenterService — Decision Center 当前阶段完整动作矩阵的 RPC 合同。
+//
+// 接口分组对齐 §6.2：
+//   - 读组：ListDecisions / GetDecisionDetail / ListDecisionModuleCandidates
+//   - 写组：CreateDecision / LinkDecisionToTarget
+//
+// 详情与候选读取边界（§6.3）：
+//   GetDecisionDetail 只承接详情本体、最小来源上下文与已建立关联结果；
+//   ListDecisionModuleCandidates 通过独立 request/response 承接候选读取，
+//   不得把候选结果直接塞进详情响应。
+//
+// 关系写入后的读取语义（§6.4）：
+//   LinkDecisionToTarget 提交成功后，默认后端语义为"详情页重新读取当前已关联目标结果"，
+//   不额外设计脱离 DecisionDetailRead 的回流读取路径。
+//
+// 错误语义（§6.5）：
+//   合同设计为校验失败、资源不存在、重复冲突与空结果语义保留稳定承接空间；
+//   空候选结果必须表现为正常空列表响应，不得设计为空错误；
+//   HTTP 状态码映射继续由过渡传输层负责，不写进 .proto 合同本体。
+//
+// 过渡传输层映射：
+//   当前阶段由 chi + JSON HTTP 承接，RPC 到 HTTP 的映射约定见 proto/README.md。
+//   后续阶段可迁移到 gRPC / Connect 而不需要修改本合同源。
+service DecisionCenterService {
+  // --- 读组 ---
+
+  // DecisionListRead — 列表读取
+  rpc ListDecisions(ListDecisionsRequest) returns (ListDecisionsResponse);
+
+  // DecisionDetailRead — 详情读取（不含候选读取结果）
+  rpc GetDecisionDetail(GetDecisionDetailRequest) returns (GetDecisionDetailResponse);
+
+  // DecisionModuleCandidateRead — Module 候选读取
+  rpc ListDecisionModuleCandidates(ListDecisionModuleCandidatesRequest) returns (ListDecisionModuleCandidatesResponse);
+
+  // --- 写组 ---
+
+  // DecisionWrite — RecordDecision
+  rpc CreateDecision(CreateDecisionRequest) returns (CreateDecisionResponse);
+
+  // DecisionLinkWrite — LinkDecisionToTarget
+  rpc LinkDecisionToTarget(LinkDecisionToTargetRequest) returns (LinkDecisionToTargetResponse);
+}

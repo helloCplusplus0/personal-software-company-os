@@ -1,0 +1,12 @@
+- [x] 已明确 `Decision Center` 必须落地到现有 `proto/` 工作区，而不是新增第二套 proto 根目录
+- [x] 已明确 `decision_center.proto` 的正式文件落点、包名与版本语义
+- [x] 已明确 `Decision Center` 必须复用现有 `proto/buf.yaml`、`proto/buf.gen.yaml` 与 `proto/Makefile`
+- [x] 已明确 `buf build / lint / generate / breaking` 是当前阶段唯一受控工具链入口
+- [x] 已明确 `buf breaking` 的 Git 基准路径与失败退出码不得被绕过或吞掉
+- [x] 已明确 `DecisionModuleCandidate.status` 必须通过跨包 import 复用 `psco.module_registry.v1.ModuleStatus`
+- [x] 已明确 Go 与 TypeScript 生成产物的正式落点
+- [x] 已明确当前阶段可以保留 `chi + JSON HTTP` 过渡传输层，但不得形成第二套合同源
+- [x] 已明确 DTO / handler / adapter 与 `.proto` 的关系是单向承接而不是并列定义
+- [x] 已明确 URL 路径参数到 Proto request 字段的组装只属于适配层差异
+- [x] 已明确当前阶段不要求完整 gRPC / Connect 迁移，也不要求立刻替换全部手写 DTO
+- [x] 已明确本 spec 可直接作为 `phase03-12 / 13 / 14` 的合同主线与工具链上游
