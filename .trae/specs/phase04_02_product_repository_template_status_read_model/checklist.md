@@ -1,0 +1,39 @@
+- [x] `Product` 最小结构化模板已冻结为 `name / description / status`
+  - 依据：`spec.md` §ADDED Requirements「Product 最小结构化模板冻结」Scenario L32-35；与 `shared_baseline` §5.1 L144（`Product`：`name / description / status`）一致
+- [x] `Repository` 最小结构化模板已冻结为 `name / url / provider / status`
+  - 依据：`spec.md` §ADDED Requirements「Repository 最小结构化模板冻结」Scenario L43-46；与 `shared_baseline` §5.1 L145（`Repository`：`name / url / provider / status`）一致
+- [x] `Product / Repository` 字段级 `required / optional` 规则已明确
+  - 依据：`spec.md` §ADDED Requirements「Product 字段级必填规则冻结」L48-57 +「Repository 字段级必填规则冻结」L59-68
+- [x] `Product.name / description / status` 已明确为必填
+  - 依据：`spec.md` §ADDED Requirements「Product 字段级必填规则冻结」Scenario L54-57；与 `shared_baseline` §5.1 L163-164（创建必填 `Product`：`name / description / status`）一致
+- [x] `Repository.name / url / provider / status` 已明确为必填
+  - 依据：`spec.md` §ADDED Requirements「Repository 字段级必填规则冻结」Scenario L65-68；与 `shared_baseline` §5.1 L164-165（创建必填 `Repository`：`name / url / provider / status`）一致
+- [x] 必填字段去首尾空白后不得为空字符串的规则已明确
+  - 依据：`spec.md` §ADDED Requirements L57 + L68；与 `shared_baseline` §5.1 L167（空字符串不得视为合法必填值；写入前必须完成去首尾空白后的最小非空校验）一致
+- [x] `Product.status` 与 `Repository.status` 已冻结为 `active / archived`
+  - 依据：`spec.md` §ADDED Requirements「Product / Repository 状态枚举冻结」Scenario L98-100；与 `shared_baseline` §5.1 L149-151（最小持久化枚举 `active` / `archived`）一致；与 `phase02-09` §5.5（Module 状态 `active / archived`）语义模式一致
+- [x] 两个状态的当前阶段语义已明确
+  - 依据：`spec.md` §ADDED Requirements「Product / Repository 状态语义冻结」Scenario: active 状态语义 L108-109 + Scenario: archived 状态语义 L113-117
+- [x] 创建写入继续按"显式提交 status"处理的规则已明确
+  - 依据：`spec.md` §ADDED Requirements「status 创建写入与默认值语义冻结」Scenario: 创建写入 status 提交语义 L125-128；与 `shared_baseline` §5.1 L154（创建写入继续按"显式提交 status"处理）一致
+- [x] "默认 active"只表示预填并显式提交，不表示服务端隐式补默认值的规则已明确
+  - 依据：`spec.md` §ADDED Requirements「status 创建写入与默认值语义冻结」Scenario: 默认 active 语义 L132-134；与 `shared_baseline` §5.1 L154（默认 `active` 只表示预填并显式提交）一致
+- [x] 列表 `statusFilter` 已明确为 `all / active / archived`，且 `all` 只存在于 UI/路由层
+  - 依据：`spec.md` §ADDED Requirements「statusFilter 语义冻结」Scenario L142-145；与 `shared_baseline` §5.1 L155-159（`statusFilter` 统一为 `all / active / archived`，`all` 不得写入数据库/合同/后端模型）一致
+- [x] `Repository.provider` 已明确为必填字符串字段，且当前阶段不采用受控枚举
+  - 依据：`spec.md` §ADDED Requirements「Repository.provider 语义冻结」Scenario L153-157 — 必填字符串，不采用受控枚举，只要求最小非空校验
+- [x] `Repository Binding / List` 当前阶段不引入 `providerFilter` 的结论已明确
+  - 依据：`spec.md` §ADDED Requirements「Repository 列表不引入 providerFilter」Scenario L165-168 + §MODIFIED Requirements「Repository List 筛选结构解释」L257-259；与 `phase04-01` spec L184-185（工具栏冻结为 `queryText` + `statusFilter` + `CreateRepository`，`providerFilter` 留给 `phase04-02 / phase04-06` 单值化）一致 — `phase04-02` 单值化结论为不引入
+- [x] `Product List` 最小展示字段已明确为 `name / description / status / created_at / module_bind_count / repository_bind_count`
+  - 依据：`spec.md` §ADDED Requirements「Product List 最小展示模型冻结」Scenario L176-179；与 `shared_baseline` §5.1 L124（产品列表读取至少承接字段集合）一致
+- [x] `Product Detail` 最小展示字段与已绑定模块、已绑定仓库展示模型已明确
+  - 依据：`spec.md` §ADDED Requirements「Product Detail 最小展示模型冻结」三个 Scenario L187-203；与 `shared_baseline` §5.1 L125（产品详情读取至少承接核心对象字段、已绑定模块列表、已绑定仓库列表）一致
+- [x] `Repository List` 最小展示字段已明确为 `name / url / provider / status / created_at / product_bind_count / module_bind_count`
+  - 依据：`spec.md` §ADDED Requirements「Repository List 最小展示模型冻结」Scenario L211-214；与 `shared_baseline` §5.1 L126（仓库列表读取至少承接字段集合）一致
+- [x] `Repository Detail / Workspace` 最小展示字段与已绑定产品、已映射模块展示模型已明确
+  - 依据：`spec.md` §ADDED Requirements「Repository Detail / Workspace 最小展示模型冻结」三个 Scenario L222-237；与 `shared_baseline` §5.1 L127（仓库详情读取至少承接核心对象字段、已绑定产品列表、已映射模块列表）一致
+- [x] 当前阶段未引入超出 `v0.1` 的复杂生命周期、自动扫描字段或远程导入字段
+  - 依据：`spec.md` §REMOVED Requirements「复杂生命周期、自动扫描字段或远程导入字段前置」L263-264 + §ADDED Requirements L100（不得引入 `draft / syncing / disconnected / retired / imported`）+ L35/L46（不得引入超出 `v0.1` 的前置字段）；与 `shared_baseline` §5.1 L168（不引入自动导入来源字段、扫描状态字段或复杂同步字段）一致
+- [x] 本次规格与 `phase01-06` 正式 MVP 规格正文及 `phase04` 三件套保持一致
+  - 依据（phase01-06）：`mvp_spec_v0.1.md` §5.4 Product = `id / name / description / status / created_at`、Repository = `id / name / url / provider / status / created_at` — `spec.md` 创建写入字段（`name / description / status` 与 `name / url / provider / status`）是 MVP 完整对象字段的创建写入子集，一致
+  - 依据（phase04 三件套）：`dev_plan` §3 phase04-02 范围四项 + DoD 七项 → `spec.md` 15 个 ADDED + 2 个 MODIFIED + 1 个 REMOVED 全覆盖；`shared_baseline` §5.1 最小读写模型/字段冻结/状态语义/字段级冻结 → `spec.md` 对应 Requirement 全一致；`architecture_plan` §4.6 源码设计层输出要求含"产品与仓库最小结构化模板、状态语义与最小读模型" → `spec.md` 已冻结
