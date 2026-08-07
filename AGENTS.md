@@ -6,9 +6,9 @@
 ## 1. 项目定位
 
 - 项目名称：`Personal Software Company OS`
-- 当前阶段：`phase04_product_and_repository_binding_foundation`
-- 当前主目标：以 `phase03-10` 正式规格、`phase03-11` 合同主线与 `phase03-14` 验收结论为直接上游，完成 `Product / Repository / Module Binding` 最小主线的 `phase04` 三件套规划
-- 当前下一阶段入口：`phase04_product_and_repository_binding_foundation`
+- 当前阶段：`phase05_dashboard_feedback_foundation`
+- 当前主目标：以 `phase04-10` 正式规格、`phase04-11` 合同主线与 `phase04-14` 验收结论为直接上游，推进 `Dashboard + Feedback` 最小闭环进入 `/plan`
+- 当前下一阶段入口：`phase05_dashboard_feedback_foundation`
 - 当前定位：PSCO 是个人软件公司的经营与资产系统，不是代码管理工具，不是 AI Chat 产品，也不是自动扫描系统
 
 ## 2. 当前唯一上游
@@ -47,9 +47,13 @@
 - `.trae/specs/phase03_10_decision_center_formal_spec/decision_center_spec_v0.1.md` 已冻结为 `Decision Center` 当前阶段唯一规格收敛入口
 - `.trae/specs/phase03_11_decision_center_proto_mainline/` 已将 `Decision Center` 最小 `.proto` 合同接入仓库既有 `proto/` 主线
 - `.trae/specs/phase03_14_decision_center_integration_validation_acceptance/` 已给出 `phase03` 联调验收与收口结论入口
-- 当前阶段入口已切换为 `phase04_product_and_repository_binding_foundation`
-- `phase04_product_and_repository_binding_foundation` 已正式进入 `/plan`
-- `phase04` 三件套已建立，用于冻结 `Product Registry + Repository Binding` 的最小主线边界、执行顺序与共享基线
+- `phase04_product_and_repository_binding_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
+- `Product Registry + Repository Binding` 最小主线已形成可运行交付物，并完成正式规格、`.proto` 合同、前后端实现与联调验收收口
+- `.trae/specs/phase04_10_product_repository_binding_formal_spec/product_repository_binding_spec_v0.1.md` 已冻结为 `Product / Repository / Binding` 当前阶段唯一规格收敛入口
+- `.trae/specs/phase04_11_product_repository_binding_proto_mainline/` 已将 `Product / Repository / Binding` 最小 `.proto` 合同接入仓库既有 `proto/` 主线
+- `.trae/specs/phase04_14_product_repository_binding_integration_validation_acceptance/acceptance_report.md` 已给出 `phase04` 联调验收与收口结论入口
+- 当前阶段入口已切换为 `phase05_dashboard_feedback_foundation`
+- `phase05_dashboard_feedback_foundation` 已成为当前下一阶段入口，下一步应先进入 `/plan`
 
 ## 5. 推荐阅读顺序
 
@@ -69,10 +73,13 @@
 14. `docs/phase/phase03_decision_center_foundation_architecture_plan.md`
 15. `docs/phase/phase03_decision_center_foundation_dev_plan.md`
 16. `docs/phase/phase03_decision_center_foundation_shared_baseline.md`
-17. `docs/phase/phase04_product_and_repository_binding_foundation_architecture_plan.md`
-18. `docs/phase/phase04_product_and_repository_binding_foundation_dev_plan.md`
-19. `docs/phase/phase04_product_and_repository_binding_foundation_shared_baseline.md`
-20. 当前目标对应的 `phase / fix / audit` 文档
+17. `.trae/specs/phase04_10_product_repository_binding_formal_spec/product_repository_binding_spec_v0.1.md`
+18. `.trae/specs/phase04_11_product_repository_binding_proto_mainline/`
+19. `.trae/specs/phase04_14_product_repository_binding_integration_validation_acceptance/acceptance_report.md`
+20. `docs/phase/phase04_product_and_repository_binding_foundation_architecture_plan.md`
+21. `docs/phase/phase04_product_and_repository_binding_foundation_dev_plan.md`
+22. `docs/phase/phase04_product_and_repository_binding_foundation_shared_baseline.md`
+23. 当前目标对应的 `phase / fix / audit` 文档
 
 ## 6. 接手提醒
 

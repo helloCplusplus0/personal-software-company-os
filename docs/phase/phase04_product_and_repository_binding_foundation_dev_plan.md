@@ -4,6 +4,8 @@
 
 本文档定义 `phase04_product_and_repository_binding_foundation` 的执行顺序、子任务范围、DoD 与明确不做。
 
+当前根级真相源已完成 `phase04` 收口并切换到 `phase05_dashboard_feedback_foundation`。本文档保留为 `phase04` 的执行规划与任务拆分记录；文中“当前阶段”均指 `phase04` 当时上下文，不覆盖项目当前已进入 `phase05` 的根级状态。
+
 `phase04` 继续遵守交付型 phase 原则：不是只把 `Product` 与 `Repository` 写成两份规格，而是要完成 `/plan -> /spec -> 实现 -> 验收 -> 收口` 全链路，并最终交付 `Product Registry + Repository Binding` 最小可执行闭环。
 
 相较于 `phase02` 与 `phase03`，本阶段在任务拆分上显式吸取以下经验：

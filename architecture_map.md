@@ -84,15 +84,19 @@ docs/
   - `.trae/specs/phase03_10_decision_center_formal_spec/decision_center_spec_v0.1.md`（`Decision Center` 当前阶段唯一规格入口）
   - `.trae/specs/phase03_11_decision_center_proto_mainline/`（`Decision Center` 最小 `.proto` 合同主线入口）
   - `.trae/specs/phase03_14_decision_center_integration_validation_acceptance/`（`phase03` 联调验收与收口结论入口）
+  - `.trae/specs/phase04_10_product_repository_binding_formal_spec/product_repository_binding_spec_v0.1.md`（`phase04` 正式规格收口入口，同时作为 `phase05` 直接上游）
+  - `.trae/specs/phase04_11_product_repository_binding_proto_mainline/`（`phase04` 最小 `.proto` 合同收口入口，同时作为 `phase05` 直接上游）
+  - `.trae/specs/phase04_14_product_repository_binding_integration_validation_acceptance/acceptance_report.md`（`phase04` 联调验收与收口结论入口，同时作为 `phase05` 直接上游）
 - 当前项目技术路线已冻结为 `Durable System Track`
 - `phase02_module_registry_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - `phase03_decision_center_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
-- `phase04_product_and_repository_binding_foundation` 已正式进入 `/plan`
+- `phase04_product_and_repository_binding_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
+- `phase04` 三件套保留为该阶段 `/plan` 的规划与冻结记录，不再承担项目当前阶段状态说明
 - `phase02` 直接承接正式 MVP 规格正文，不在根级文档重复正文内容
 - `phase03` 直接承接 `phase02` 已交付的 `Module Registry` 主线与 `.proto` 合同结果，并已完成 `Decision Center` 正式规格、合同、实现与联调验收收口
-- `phase04` 直接承接 `phase03` 已交付的 `Decision Center` 主线与联调验收结果，并已建立 `Product Registry + Repository Binding` 三件套
-- 当前阶段入口已切换为 `phase04_product_and_repository_binding_foundation`
-- `phase04` 将直接承接 `phase03-10` 正式规格、`phase03-11` 合同主线与 `phase03-14` 验收结论，不在根级文档重复正文内容
+- `phase04` 直接承接 `phase03` 已交付的 `Decision Center` 主线与联调验收结果，并已完成 `Product Registry + Repository Binding` 正式规格、合同、实现与联调验收收口
+- 当前阶段入口已切换为 `phase05_dashboard_feedback_foundation`
+- `phase05` 将直接承接 `phase04-10` 正式规格、`phase04-11` 合同主线与 `phase04-14` 验收结论；当前尚未建立 `docs/phase/` 三件套，进入 `/plan` 后再创建
 
 ### 4.2 fix
 

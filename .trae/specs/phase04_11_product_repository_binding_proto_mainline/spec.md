@@ -1,5 +1,7 @@
 # Phase04-11 Product / Repository / Binding 最小 Protocol Buffers 合同主线 Spec
 
+> 状态说明：`phase04` 已完成收口，项目当前根级阶段已切换到 `phase05_dashboard_feedback_foundation`。本文件保留为 `phase04-11` 的合同主线规格说明，不单独承担根级当前阶段状态表达。
+
 ## Why
 
 `phase04-08` 已经冻结了 `Product / Repository / Binding` 的最小 `.proto` 合同设计，`phase04-10` 又把这些结论收口进当前阶段正式规格正文。但截至现在，仓库主线里仍只有 `Module Registry` 与 `Decision Center` 已进入现有 `proto/` workspace，`Product Registry` 与 `Repository Binding` 还没有真正落地到仓库内的单一合同源、生成入口与 `buf` 校验链中。若继续围绕手写 DTO / JSON HTTP 结构推进实现，后续很容易再次长出并列合同源。

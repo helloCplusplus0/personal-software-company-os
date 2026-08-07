@@ -4,6 +4,8 @@
 
 本文档是 `phase04_product_and_repository_binding_foundation` 的架构规划文档。
 
+当前根级真相源已完成 `phase04` 收口并切换到 `phase05_dashboard_feedback_foundation`。本文档保留为 `phase04` 的架构规划与冻结记录；文中“当前阶段”均指 `phase04` 当时上下文，不覆盖项目当前已进入 `phase05` 的根级状态。
+
 `phase04` 的目标不是零散补几个 `Product` 与 `Repository` 表单，而是在 `phase02` 已交付 `Module Registry`、`phase03` 已交付 `Decision Center` 的基础上，把 `Product Registry + Repository Binding` 提升为当前阶段的正式主线，并把 `phase02` 中临时承接的绑定动作回收到正确归属。
 
 ## 2. 上游输入

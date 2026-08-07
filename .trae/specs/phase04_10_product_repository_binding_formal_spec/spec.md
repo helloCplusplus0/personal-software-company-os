@@ -1,5 +1,7 @@
 # Phase04-10 产出首份 Product / Repository / Binding 正式规格文档 Spec
 
+> 状态说明：`phase04` 已完成收口，项目当前根级阶段已切换到 `phase05_dashboard_feedback_foundation`。本文件保留为 `phase04-10` 的规格说明与追踪入口，不单独承担根级当前阶段状态表达。
+
 ## Why
 
 `phase04-01` 到 `phase04-09` 已分别冻结了 `Product Registry` 与 `Repository Binding` 的页面边界、模板与状态语义、三类绑定关系与上下文入口、数据与错误边界、前后端实现设计、最小 `.proto` 合同，以及联调验收环境、重置基线与兼容迁移设计。但这些结论目前仍分散在多个子规格中，后续实现、验收与 `phase05` 如果继续直接引用这些零散结论，仍会回到多入口、多解释和实现前临场拼装状态。

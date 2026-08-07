@@ -11,6 +11,8 @@
 - 当前项目：`PSCO`
 - 当前 phase：`phase04_product_and_repository_binding_foundation`
 - 当前技术路线：`Durable System Track`
+- 当前根级阶段状态：`phase04` 已完成收口，项目当前入口已切换为 `phase05_dashboard_feedback_foundation`
+- 本文档保留为 `phase04` 的共享冻结基线；文中“当前阶段”均指 `phase04` 当时上下文，不覆盖根级当前阶段状态
 
 ### 2.2 当前阶段唯一执行层上游
 

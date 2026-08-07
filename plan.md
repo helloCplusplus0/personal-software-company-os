@@ -4,10 +4,10 @@
 
 ## 1. 当前状态
 
-- 当前阶段：`phase04_product_and_repository_binding_foundation`
-- 当前状态：`phase03` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，当前入口切换至 `phase04`
-- 当前目标：以 `phase03-10` 正式规格、`phase03-11` 合同主线与 `phase03-14` 验收结论为直接上游，完成 `Product / Repository / Module Binding` 最小主线的 `phase04` 三件套规划
-- 当前下一阶段入口：`phase04_product_and_repository_binding_foundation`
+- 当前阶段：`phase05_dashboard_feedback_foundation`
+- 当前状态：`phase04` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，当前下一阶段入口切换至 `phase05`
+- 当前目标：以 `phase04-10` 正式规格、`phase04-11` 合同主线与 `phase04-14` 验收结论为直接上游，推进 `Dashboard + Feedback` 最小闭环进入 `/plan`
+- 当前下一阶段入口：`phase05_dashboard_feedback_foundation`
 
 ## 2. 当前进度概览
 
@@ -28,8 +28,12 @@
 - `.trae/specs/phase03_10_decision_center_formal_spec/decision_center_spec_v0.1.md` 已冻结为 `Decision Center` 当前阶段唯一规格收敛入口
 - `.trae/specs/phase03_11_decision_center_proto_mainline/` 已将 `Decision Center` 最小 `.proto` 合同落地为仓库主线
 - `.trae/specs/phase03_14_decision_center_integration_validation_acceptance/` 已形成 `phase03` 联调验收与收口结论入口
-- `phase04_product_and_repository_binding_foundation` 已正式进入 `/plan`
-- `phase04` 三件套已建立，用于冻结 `Product Registry + Repository Binding` 的最小主线边界、执行顺序与共享基线
+- `phase04_product_and_repository_binding_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
+- `Product Registry + Repository Binding` 最小主线已形成可运行、可验收交付物
+- `.trae/specs/phase04_10_product_repository_binding_formal_spec/product_repository_binding_spec_v0.1.md` 已冻结为 `Product / Repository / Binding` 当前阶段唯一规格收敛入口
+- `.trae/specs/phase04_11_product_repository_binding_proto_mainline/` 已将 `Product / Repository / Binding` 最小 `.proto` 合同落地为仓库主线
+- `.trae/specs/phase04_14_product_repository_binding_integration_validation_acceptance/acceptance_report.md` 已形成 `phase04` 联调验收与收口结论入口
+- `phase05_dashboard_feedback_foundation` 已成为当前下一阶段入口，下一步应先进入 `/plan`
 
 ## 3. Phase 路线预览
 
@@ -62,27 +66,30 @@
 - 进入条件：直接承接 `.trae/specs/phase03_10_decision_center_formal_spec/decision_center_spec_v0.1.md`、`.trae/specs/phase03_11_decision_center_proto_mainline/` 与 `.trae/specs/phase03_14_decision_center_integration_validation_acceptance/`，以 `phase03` 已完成的 `Decision Center` 交付物作为唯一上游输入
 - 范围约束：不得回退重做 `Decision Center`，而是以前一阶段已冻结并验收的能力为前提，推进 `Product / Repository / Module Binding` 最小主线
 - 交付要求：作为交付型 phase 推进，不得只停留在规格冻结
-- 状态：`current`
+- 状态：`completed`
+- 当前收口结果：已交付 `Product / Repository / Binding` 正式规格正文、最小 `.proto` 合同主线、后端与数据主线、前端主线与联调验收收口结果
 
 ### phase05：`phase05_dashboard_feedback_foundation`
 
-- 目标：交付 Dashboard 最小反馈闭环
+- 目标：交付 Dashboard + Feedback 最小闭环
+- 进入条件：直接承接 `.trae/specs/phase04_10_product_repository_binding_formal_spec/product_repository_binding_spec_v0.1.md`、`.trae/specs/phase04_11_product_repository_binding_proto_mainline/` 与 `.trae/specs/phase04_14_product_repository_binding_integration_validation_acceptance/acceptance_report.md`，以 `phase04` 已完成的 `Product Registry + Repository Binding` 交付物作为唯一上游输入
+- 范围约束：不得重复实现 `Product Registry`、`Repository Binding` 与三类绑定动作主线，而是以 `phase04` 已冻结页面、动作、数据、合同与联调结论为前提推进 `Dashboard + Feedback`
 - 交付要求：作为交付型 phase 推进，不得只停留在规格冻结
-- 状态：`draft`
+- 状态：`current`
 
-## 4. phase04 进入条件
+## 4. phase05 进入条件
 
-当以下条件同时满足时，当前阶段入口切换为 `phase04_product_and_repository_binding_foundation`：
+当以下条件同时满足时，当前阶段入口切换为 `phase05_dashboard_feedback_foundation`：
 
-1. `phase03` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口` 全链路
-2. `.trae/specs/phase03_10_decision_center_formal_spec/decision_center_spec_v0.1.md` 已冻结为 `Decision Center` 当前阶段唯一正式规格入口
-3. `.trae/specs/phase03_11_decision_center_proto_mainline/` 已将 `Decision Center` 最小 `.proto` 合同落地为仓库合同主线
-4. `.trae/specs/phase03_12_decision_center_backend_data_mainline/` 与 `.trae/specs/phase03_13_decision_center_frontend_mainline/` 已完成前后端实现收口
-5. `.trae/specs/phase03_14_decision_center_integration_validation_acceptance/` 已形成联调验收与问题收口结论
-6. `Decision -> Module` 的最小闭环已在同一环境中被验证可运行
-7. `phase04` 已明确只承接 `phase03` 已交付主线，不重复实现 `Decision Center`
+1. `phase04` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口` 全链路
+2. `.trae/specs/phase04_10_product_repository_binding_formal_spec/product_repository_binding_spec_v0.1.md` 已冻结为 `Product / Repository / Binding` 当前阶段唯一正式规格入口
+3. `.trae/specs/phase04_11_product_repository_binding_proto_mainline/` 已将 `Product / Repository / Binding` 最小 `.proto` 合同落地为仓库合同主线
+4. `.trae/specs/phase04_12_product_repository_binding_backend_data_mainline/` 与 `.trae/specs/phase04_13_product_repository_binding_frontend_mainline/` 已完成前后端实现收口
+5. `.trae/specs/phase04_14_product_repository_binding_integration_validation_acceptance/acceptance_report.md` 已形成联调验收与问题收口结论
+6. `Product / Repository / Module Binding` 的最小闭环已在同一环境中被验证可运行
+7. `phase05` 已明确只承接 `phase04` 已交付主线，不重复实现 `Product Registry`、`Repository Binding` 与三类绑定动作主线
 
-当前结论：以上进入条件已满足，仓库根级入口已从 `phase03_decision_center_foundation` 切换到 `phase04_product_and_repository_binding_foundation`。
+当前结论：以上进入条件已满足，仓库根级入口已从 `phase04_product_and_repository_binding_foundation` 切换到 `phase05_dashboard_feedback_foundation`。
 
 ## 5. 说明
 
