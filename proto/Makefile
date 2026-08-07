@@ -3,6 +3,8 @@
 # 上游规格：phase02-11A spec §"生成链与实现边界"
 #           phase03-08 spec §"生成链与校验链必须冻结"（补全 build 受控入口）
 #           phase03-11 spec §"buf 工具链入口必须可运行且复用现有入口"
+#           phase04-08 spec §"合同演进与 breaking check 规则必须冻结"
+#           phase04-11 spec §"buf 工具链入口必须可运行且复用现有入口"
 #
 # 使用方式：
 #   make build     — 编译 proto 文件为 buf image，验证合同源可被正确解析与编译

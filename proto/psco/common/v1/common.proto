@@ -1,0 +1,78 @@
+// PSCO Common 最小 Protocol Buffers 合同源
+//
+// 文档定位：本文件承接跨 Product / Repository 共享且不会引入业务 owner 歧义的最小公共枚举（phase04-11 落地）。
+// 上游规格：
+//   - phase04-08 Product / Repository / Binding 最小 Proto 合同设计 Spec
+//                §"公共 active / archived 状态枚举必须单值化"
+//   - phase04-10 product_repository_binding_spec_v0.1.md §合同设计（Proto 主线）
+//   - phase04-11 Product / Repository / Binding 最小 Protocol Buffers 合同主线 Spec
+//
+// 落点要求：
+//   - 本文件落地到现有 proto/ 工作区，复用同一 buf workspace
+//   - 不新增第二套 buf.yaml / buf.gen.yaml / Makefile 或并列 proto 根目录
+//   - 与 Module Registry / Decision Center / Product Registry / Repository Binding
+//     在同一个 buf workspace 内共同通过校验
+//
+// 边界约束：
+//   - common.proto 只允许承接跨 Product / Repository 共享且不会引入业务 owner 歧义的最小公共枚举
+//   - 不得在此文件中定义具体业务消息、服务接口或跨模块关系摘要
+//   - Product / Repository 的服务接口与各自拥有的消息分别落在
+//     product_registry.proto 与 repository_binding.proto 中
+//
+// 过渡传输层说明：
+//   当前阶段保留 chi + JSON HTTP 作为过渡传输层（phase04-12/13 实现）。
+//   JSON 请求与响应语义必须从本 .proto 派生或严格对齐，不得形成第二套合同源。
+//   HTTP 路径、状态码与中间件策略不属于本合同本体，由过渡传输层独立承载。
+//
+// 字段编号规则：
+//   - 每个枚举值拥有稳定编号，不得复用已删除枚举值编号
+//   - 新增枚举值必须使用新的递增编号，不得插入到已有编号之间
+//   - reserved 关键字用于标记已删除或预留的编号区间
+//
+// 生成入口：
+//   在 proto/ 目录执行 make gen，或直接执行 buf generate。
+//   生成产物：
+//     - Go:    backend/internal/gen/proto/psco/common/v1/
+//     - TS:    frontend/src/gen/proto/psco/common/v1/
+
+syntax = "proto3";
+
+package psco.common.v1;
+
+// Go 包路径（生成代码落点）
+option go_package = "github.com/psco/backend/internal/gen/proto/psco/common/v1;commonv1";
+
+// ============================================================================
+// 共享枚举
+// ============================================================================
+
+// ActiveArchivedStatus — Product 与 Repository 共享的 active / archived 状态语义。
+//
+// 冻结为单一枚举，避免在 product_registry.proto 与 repository_binding.proto 中
+// 出现两套等价枚举，也避免形成跨包循环依赖。
+//
+// UNSPECIFIED 语义：
+//   - 在列表读取 status_filter 字段中表示"不过滤"，对应 UI/路由层的 all
+//     （all 只存在于 UI/路由层，不得写入数据库、HTTP 持久化 DTO 或 .proto 持久化字段）
+//   - 在 status_filter 之外的字段（如 CreateProductRequest.status /
+//     CreateRepositoryRequest.status）中不允许作为合法写入值，由 service 层校验拒绝
+//   - 该 UNSPECIFIED = 不过滤语义与现有 psco.module_registry.v1.ModuleStatus
+//     与 psco.decision_center.v1.DecisionStatus 的 UNSPECIFIED 语义一致
+//
+// 复用范围：
+//   - Product / Repository 自身的 status
+//   - 列表项 status
+//   - 详情/候选中 Product / Repository 摘要的 status
+//     （如 BoundRepositorySummary.repository_status /
+//           BoundProductSummary.product_status /
+//           RepositoryProductCandidate.product_status）
+//   - 写组 request 中的 status（CreateProductRequest.status / CreateRepositoryRequest.status）
+//
+// 不在覆盖范围：
+//   - Module 摘要的 module_status 通过 import 复用
+//     psco.module_registry.v1.ModuleStatus，不在此枚举覆盖范围内
+enum ActiveArchivedStatus {
+  ACTIVE_ARCHIVED_STATUS_UNSPECIFIED = 0;
+  ACTIVE_ARCHIVED_STATUS_ACTIVE = 1;
+  ACTIVE_ARCHIVED_STATUS_ARCHIVED = 2;
+}

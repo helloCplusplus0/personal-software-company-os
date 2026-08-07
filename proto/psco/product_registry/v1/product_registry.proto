@@ -1,0 +1,265 @@
+// PSCO Product Registry 最小 Protocol Buffers 合同源
+//
+// 文档定位：本文件是 Product Registry 当前阶段唯一合同定义入口（phase04-11 落地）。
+// 上游规格：
+//   - phase04-08 Product / Repository / Binding 最小 Proto 合同设计 Spec
+//                §"Proto 包名、目录与版本语义必须冻结"
+//                / §"Product Registry 最小消息结构必须覆盖当前动作矩阵"
+//                / §"字段语义与页面动作必须单值映射"
+//                / §"字段编号方案必须在当前阶段冻结"
+//                / §"服务接口必须对齐 phase04-07 已冻结的接口分组"
+//                / §"详情读取与候选读取必须保持消息边界分离"
+//                / §"错误语义必须在合同设计中保留显式映射前提"
+//                / §"chi + JSON HTTP 必须从 Proto 单向承接"
+//                / §"RPC 到 HTTP 的映射矩阵必须明确"
+//                / §"合同演进与 breaking check 规则必须冻结"
+//   - phase04-10 product_repository_binding_spec_v0.1.md §合同设计（Proto 主线）
+//   - phase04-11 Product / Repository / Binding 最小 Protocol Buffers 合同主线 Spec
+//
+// 落点要求：
+//   - 本文件落地到现有 proto/ 工作区，复用同一 buf workspace
+//   - 不新增第二套 buf.yaml / buf.gen.yaml / Makefile 或并列 proto 根目录
+//   - 与 Module Registry / Decision Center / Repository Binding
+//     在同一个 buf workspace 内共同通过校验
+//
+// 过渡传输层说明：
+//   当前阶段保留 chi + JSON HTTP 作为过渡传输层（phase04-12/13 实现）。
+//   JSON 请求与响应语义必须从本 .proto 派生或严格对齐，不得形成第二套合同源。
+//   HTTP 路径、状态码与中间件策略不属于本合同本体，由过渡传输层独立承载。
+//   URL 路径参数（如 productId）由 handler 在进入业务层前组装为
+//   对应 Proto request 字段，该组装行为只属于过渡传输层，不构成第二套合同定义。
+//
+// 字段编号规则：
+//   - 每个字段拥有稳定编号，不得复用已删除字段编号或字段语义
+//   - 新增字段必须使用新的递增编号，不得插入到已有编号之间
+//   - reserved 关键字用于标记已删除或预留的编号区间
+//   - 后续版本删除字段或废弃字段名时必须使用 reserved 保留字段号
+//
+// 跨包依赖策略：
+//   - BoundModuleSummary.module_status / ProductModuleCandidate.module_status
+//     通过 import 直接复用 psco.module_registry.v1.ModuleStatus
+//   - Product / Repository 相关 status 复用 psco.common.v1.ActiveArchivedStatus
+//   - 不得在 psco.product_registry.v1 中重定义本地等价枚举
+//   - 该 import 仅限于复用枚举类型，不得因此引入对
+//     Module Registry service 或其他消息结构的合同依赖
+//
+// 排序规则边界：
+//   - 列表读取与候选读取的排序语义（phase04-04 冻结的列表读取与三条候选读取均按 created_at 降序）
+//     由 service / repository 层承接，不进入 .proto 合同本体
+//   - .proto 合同只定义消息结构与字段，不定义 order_by 字段或排序注解
+//   - 该边界承接现有 psco.decision_center.v1.decision_center.proto 已建立模式
+//
+// 生成入口：
+//   在 proto/ 目录执行 make gen，或直接执行 buf generate。
+//   生成产物：
+//     - Go:    backend/internal/gen/proto/psco/product_registry/v1/
+//     - TS:    frontend/src/gen/proto/psco/product_registry/v1/
+//
+// 当前阶段边界：
+//   - 只生成消息类型，不生成 gRPC 服务桩
+//   - service 定义在 .proto 合同源中已冻结，后续迁移到 gRPC / Connect 时再加回 grpc/connect 插件
+//   - 不要求完成完整 gRPC / Connect 传输层迁移
+//   - 不要求立即用生成类型替换全部现有手写 DTO
+
+syntax = "proto3";
+
+package psco.product_registry.v1;
+
+import "google/protobuf/timestamp.proto";
+// 跨包 import：复用 Module Registry 的 ModuleStatus 枚举，避免引入第二套状态语义。
+// 该 import 仅限于 ModuleStatus 枚举类型，不引入 Module Registry service 依赖。
+import "psco/module_registry/v1/module_registry.proto";
+// 跨包 import：复用 Common 的 ActiveArchivedStatus 枚举，避免引入第二套 active/archived 语义。
+// 该 import 仅限于 ActiveArchivedStatus 枚举类型，不引入其他合同依赖。
+import "psco/common/v1/common.proto";
+
+// Go 包路径（生成代码落点）
+option go_package = "github.com/psco/backend/internal/gen/proto/psco/product_registry/v1;productregistryv1";
+
+// ============================================================================
+// 核心对象（phase04-04 冻结的数据范围）
+// ============================================================================
+
+// Product 核心对象 — 最小字段：id / name / description / status / created_at。
+message Product {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  psco.common.v1.ActiveArchivedStatus status = 4;
+  google.protobuf.Timestamp created_at = 5;
+}
+
+// ============================================================================
+// 读组消息结构
+// ============================================================================
+
+// ProductListItem — 列表读取模型。
+// 至少承接 id / name / description / status / created_at / module_bind_count / repository_bind_count。
+message ProductListItem {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  psco.common.v1.ActiveArchivedStatus status = 4;
+  google.protobuf.Timestamp created_at = 5;
+  int32 module_bind_count = 6;
+  int32 repository_bind_count = 7;
+}
+
+// BoundModuleSummary — 详情读取中的已绑定 Module 摘要。
+// module_status 通过 import 复用 psco.module_registry.v1.ModuleStatus。
+message BoundModuleSummary {
+  string module_id = 1;
+  string module_name = 2;
+  psco.module_registry.v1.ModuleStatus module_status = 3;
+}
+
+// BoundRepositorySummary — 详情读取中的已绑定 Repository 摘要。
+// repository_status 复用 psco.common.v1.ActiveArchivedStatus。
+message BoundRepositorySummary {
+  string repository_id = 1;
+  string repository_name = 2;
+  string provider = 3;
+  psco.common.v1.ActiveArchivedStatus repository_status = 4;
+}
+
+// ProductDetail — 详情读取模型。
+// 统一承接 Product 核心字段、已绑定 Module 列表与已绑定 Repository 列表。
+// 候选读取结果不内嵌于此，必须通过 ListProductModuleCandidates 独立承接。
+message ProductDetail {
+  Product product = 1;
+  repeated BoundModuleSummary bound_modules = 2;
+  repeated BoundRepositorySummary bound_repositories = 3;
+}
+
+// ============================================================================
+// 候选读取消息结构
+// ============================================================================
+
+// ProductModuleCandidate — Module 候选读取返回项。
+// module_status 通过 import 复用 psco.module_registry.v1.ModuleStatus。
+// 候选读取排序语义（phase04-04 冻结按 created_at 降序）
+// 由 service/repository 层承接，不进入 .proto 合同本体。
+message ProductModuleCandidate {
+  string module_id = 1;
+  string module_name = 2;
+  psco.module_registry.v1.ModuleStatus module_status = 3;
+}
+
+// ============================================================================
+// 读组请求与响应消息
+// ============================================================================
+
+// ListProductsRequest — 列表读取筛选参数（query_text / status_filter）。
+// status_filter 为 UNSPECIFIED 时表示不过滤（对应 UI/路由层的 all）。
+message ListProductsRequest {
+  string query_text = 1;
+  psco.common.v1.ActiveArchivedStatus status_filter = 2;
+}
+
+// ListProductsResponse — 列表读取响应。
+message ListProductsResponse {
+  repeated ProductListItem products = 1;
+}
+
+// GetProductDetailRequest — 详情读取请求。
+message GetProductDetailRequest {
+  string product_id = 1;
+}
+
+// GetProductDetailResponse — 详情读取响应。
+// 只承接详情本体、已绑定模块列表与已绑定仓库列表，不内嵌候选读取结果。
+message GetProductDetailResponse {
+  ProductDetail product_detail = 1;
+}
+
+// ListProductModuleCandidatesRequest — Module 候选读取请求。
+// product_id 用于排除已建立绑定的目标，避免重复绑定。
+message ListProductModuleCandidatesRequest {
+  string product_id = 1;
+}
+
+// ListProductModuleCandidatesResponse — Module 候选读取响应。
+// 无可关联候选时返回空列表，不返回错误。
+message ListProductModuleCandidatesResponse {
+  repeated ProductModuleCandidate candidates = 1;
+}
+
+// ============================================================================
+// 写组请求与响应消息
+// ============================================================================
+
+// CreateProductRequest — 创建写入最小字段：name / description / status。
+// status 必填且必须属于 active / archived，UNSPECIFIED 不允许作为合法写入值，
+// 由 service 层校验拒绝。
+message CreateProductRequest {
+  string name = 1;
+  string description = 2;
+  psco.common.v1.ActiveArchivedStatus status = 3;
+}
+
+// CreateProductResponse — 创建响应，只返回新建 Product 标识。
+// 支撑前端成功后进入新 Product Detail，不返回完整 Product 对象。
+message CreateProductResponse {
+  string product_id = 1;
+}
+
+// BindModuleToProductRequest — 绑定 Module 到 Product 写入最小字段。
+// product_id 在 RPC 请求中显式承接；在 HTTP 过渡层中由 URL 路径参数隐式承接。
+message BindModuleToProductRequest {
+  string product_id = 1;
+  string module_id = 2;
+}
+
+// BindModuleToProductResponse — 绑定响应（当前阶段无返回体）。
+message BindModuleToProductResponse {}
+
+// ============================================================================
+// 服务接口
+// ============================================================================
+
+// ProductRegistryService — Product Registry 当前阶段完整动作矩阵的 RPC 合同。
+//
+// 接口分组对齐 phase04-07：
+//   - 读组：ListProducts / GetProductDetail
+//   - 写组：CreateProduct / BindModuleToProduct
+//   - 候选读取：ListProductModuleCandidates
+//
+// 详情与候选读取边界：
+//   GetProductDetail 只承接详情本体、已绑定模块列表与已绑定仓库列表；
+//   ListProductModuleCandidates 通过独立 request/response 承接候选读取，
+//   不得把候选结果直接塞进详情响应。
+//
+// 关系写入后的读取语义：
+//   BindModuleToProduct 提交成功后，默认后端语义为"详情页重新读取当前已绑定结果"，
+//   不额外设计脱离 ProductDetailRead 的回流读取路径。
+//
+// 错误语义：
+//   合同设计为校验失败、资源不存在、重复冲突与空结果语义保留稳定承接空间；
+//   空候选结果必须表现为正常空列表响应，不得设计为空错误；
+//   HTTP 状态码映射继续由过渡传输层负责，不写进 .proto 合同本体。
+//
+// 过渡传输层映射：
+//   当前阶段由 chi + JSON HTTP 承接，RPC 到 HTTP 的映射约定见 proto/README.md。
+//   后续阶段可迁移到 gRPC / Connect 而不需要修改本合同源。
+service ProductRegistryService {
+  // --- 读组 ---
+
+  // ProductListRead — 列表读取
+  rpc ListProducts(ListProductsRequest) returns (ListProductsResponse);
+
+  // ProductDetailRead — 详情读取（不含候选读取结果）
+  rpc GetProductDetail(GetProductDetailRequest) returns (GetProductDetailResponse);
+
+  // --- 写组 ---
+
+  // ProductCreateWrite — 创建 Product
+  rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse);
+
+  // ProductModuleBindingWrite — 绑定 Module 到 Product
+  rpc BindModuleToProduct(BindModuleToProductRequest) returns (BindModuleToProductResponse);
+
+  // --- 候选读取 ---
+
+  // ProductModuleCandidateRead — Module 候选读取
+  rpc ListProductModuleCandidates(ListProductModuleCandidatesRequest) returns (ListProductModuleCandidatesResponse);
+}
