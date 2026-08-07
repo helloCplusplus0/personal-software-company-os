@@ -1,0 +1,23 @@
+- [x] `Product Registry` 与 `Repository Binding` 的后端模块边界已单值化
+- [x] 列表读取、详情读取、创建写入、绑定写入与候选读取的接口分组已明确
+- [x] 方向级 API 矩阵已冻结（`Product Registry` 5 接口 + `Repository Binding` 7 接口），承接 `phase02-09` §6.2 与 `phase03-10` §6.2 模式
+- [x] `BindModuleToProduct`、`BindRepositoryToProduct`、`MapModuleToRepository` 的 canonical write owner 与 reread owner 已明确
+- [x] 与 `Module Registry` 的服务侧连接边界已冻结为最小只读协作
+- [x] `ProductDetailRead` 的“已绑定仓库列表”跨模块读取边界已冻结为 `ProductRepositorySummaryRead`（owner = `Repository Binding`、接口定义在 `types.go`、实现在 `repository/binding_store.go`、装配点注入），承接 `phase04-04` 详情读取数据范围与 `phase04-03` `product_repositories` owner 冻结
+- [x] `ProductDetailRead` 的“已绑定模块列表”跨模块读取边界已冻结为 `ProductModuleSummaryRead`（owner = `Product Registry`、接口定义在 `types.go`、实现在 `repository/binding_store.go`、装配点注入、字段范围 `module_id / module_name / module_status`），承接 `phase04-04` 详情读取数据范围与 `phase04-03` `product_modules` owner 冻结
+- [x] `RepositoryDetailRead` 的“已绑定产品列表”跨模块读取边界已冻结为 `RepositoryProductSummaryRead`（owner = `Repository Binding`、接口定义在 `types.go`、实现在 `repository/binding_store.go`、装配点注入、字段范围 `product_id / product_name / product_status`），承接 `phase04-04` 详情读取数据范围与 `phase04-03` `product_repositories` owner 冻结
+- [x] `RepositoryDetailRead` 的“已映射模块列表”跨模块读取边界已冻结为 `RepositoryModuleSummaryRead`（owner = `Repository Binding`、接口定义在 `types.go`、实现在 `repository/binding_store.go`、装配点注入、字段范围 `module_id / module_name / module_status`），承接 `phase04-04` 详情读取数据范围与 `phase04-03` `module_repositories` owner 冻结
+- [x] 四条跨模块关系摘要读取链路 owner 确定原则已统一冻结为“owner = 关系表 owner”，与候选读取的“消费方拥有跨模块读”模式在 owner 确定原则上一致，差别仅在文件落点（关系摘要读取落 `repository/binding_store.go`，候选读取落 `candidate/` 子包）
+- [x] `Decision Center` 未被扩写为当前阶段的并列绑定主线
+- [x] `phase02` 旧候选读取与旧绑定写入接口的兼容策略已明确，且未保留第二业务 owner
+- [x] `phase02` 历史绑定数据（`product_modules` / `module_repositories`）兼容前提已冻结，承接 `phase04-03`
+- [x] `Module Detail` 旧入口后端 endpoint 兼容策略已明确（不为 `Module Detail` 提供新绑定写入 endpoint，旧 endpoint 仅作兼容适配层委派）
+- [x] `backend/internal/productregistry/` 与 `backend/internal/repositorybinding/` 的关键包结构与文件落点已明确
+- [x] 分层语义（入口层 / 业务编排层 / 数据访问层）与读组写组单文件编排原则已明确，承接 `phase02-09` §9.4 与 `phase03-10` §10.4
+- [x] 支撑文件落点（`errors.go / types.go / validate.go / handler/response.go`）已明确，与 `moduleregistry` / `decisioncenter` 同构
+- [x] 候选读取接口拥有者与接线原则已明确（`candidate/` 子包拥有、`service/` 不得直接写跨模块 SQL、装配点注入），且该接线原则同样适用于 `ProductRepositorySummaryRead` / `ProductModuleSummaryRead` / `RepositoryProductSummaryRead` / `RepositoryModuleSummaryRead` 四个跨模块关系摘要读取接口
+- [x] `product_repositories` 表为 `phase04` 新增已明确，`product_modules` / `module_repositories` 表已存在于 `phase02` migration 中迁移后表结构不变
+- [x] `backend/internal/platform/router.go` 只作为装配点，`chi` 子路由组织方式只作为实现兼容前提，不反向决定业务 owner 已明确
+- [x] 当前 spec 未提前冻结 Go 数据访问层工具、HTTP/RPC 框架与最终 `.proto` 命名
+- [x] 本规格与 `phase04-03 / 04` 上游冻结结论及 `phase02-09` §9 / `phase03-10` §10 后端设计层模式保持一致
+- [x] 设计结果足以直接进入实现
