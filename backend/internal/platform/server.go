@@ -1,6 +1,7 @@
 // Package platform — HTTP 服务器装配。
 //
-// 使用 chi v5 装配根路由器，挂载 Module Registry 模块路由，
+// 使用 chi v5 装配根路由器，挂载 Module Registry / Decision Center /
+// Product Registry / Repository Binding 模块路由，
 // 应用基础中间件（RequestID / Logger / Recoverer / CORS），并启动 HTTP 服务。
 package platform
 
@@ -27,9 +28,12 @@ type Server struct {
 // 装配顺序：
 //  1. 应用基础中间件（RequestID / Logger / Recoverer / CORS）
 //  2. 注册健康检查端点
-//  3. 通过 mountModuleRegistry 把 Module Registry 路由挂到 /api 下
-//  4. 通过 mountDecisionCenter 把 Decision Center 路由挂到 /api 下（phase03-12）
-//  5. 构造 http.Server
+//  3. 构造 Product Registry / Repository Binding 的 service 层（供 Module Registry 兼容委派复用）
+//  4. 通过 mountModuleRegistry 把 Module Registry 路由挂到 /api 下（注入兼容委派目标）
+//  5. 通过 mountDecisionCenter 把 Decision Center 路由挂到 /api 下（phase03-12）
+//  6. 通过 mountProductRegistry 把 Product Registry 路由挂到 /api 下（phase04-12）
+//  7. 通过 mountRepositoryBinding 把 Repository Binding 路由挂到 /api 下（phase04-12）
+//  8. 构造 http.Server
 func NewServer(cfg Config, pool *pgxpool.Pool) *Server {
 	r := chi.NewRouter()
 
@@ -46,8 +50,19 @@ func NewServer(cfg Config, pool *pgxpool.Pool) *Server {
 
 	// 装配业务模块路由到 /api
 	r.Route("/api", func(r chi.Router) {
-		mountModuleRegistry(r, pool)
+		// phase04-12: 先构造 Product Registry / Repository Binding 的 service 层，
+		// 供 Module Registry 的旧绑定入口做兼容委派注入。
+		//
+		// 装配顺序约束（phase04-07 L162-181）：
+		//   Repository Binding 必须先构造，将其 BindingStore 作为 BoundRepositoryReader
+		//   注入到 Product Registry 的 QueryService（ProductRepositorySummaryRead owner=Repository Binding）。
+		repoQuerySvc, repoCommandSvc, repoBindingStore := buildRepositoryBinding(pool)
+		productQuerySvc, productCommandSvc := buildProductRegistry(pool, repoBindingStore)
+
+		mountModuleRegistry(r, pool, productQuerySvc, productCommandSvc, repoQuerySvc, repoCommandSvc)
 		mountDecisionCenter(r, pool)
+		mountProductRegistry(r, productQuerySvc, productCommandSvc)
+		mountRepositoryBinding(r, repoQuerySvc, repoCommandSvc)
 	})
 
 	return &Server{

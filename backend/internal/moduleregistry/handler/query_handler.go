@@ -1,28 +1,37 @@
 // Package handler — 读组入口层。
 //
-// 承接 ModuleListRead / ModuleDetailRead / ProductBindingCandidateRead / RepositoryBindingCandidateRead。
+// 承接 ModuleListRead / ModuleDetailRead 与历史候选读取兼容入口。
+//
+// phase04-12 起，canonical 候选读取已迁移到 Product Registry / Repository Binding；
+// 这里仅保留 Module Detail 历史入口所需的兼容适配层，不再承接业务 owner。
 // 文件落点：backend/internal/moduleregistry/handler/query_handler.go
 package handler
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 
 	"github.com/psco/backend/internal/moduleregistry"
-	"github.com/psco/backend/internal/moduleregistry/candidate"
 	"github.com/psco/backend/internal/moduleregistry/service"
 )
 
+// ProductCandidateReader 承接旧 ProductBindingCandidateRead 的兼容委派。
+type ProductCandidateReader func(context.Context) ([]moduleregistry.ProductCandidate, error)
+
+// RepositoryCandidateReader 承接旧 RepositoryBindingCandidateRead 的兼容委派。
+type RepositoryCandidateReader func(context.Context) ([]moduleregistry.RepositoryCandidate, error)
+
 // QueryHandler 承接读组 HTTP 入口。
 type QueryHandler struct {
-	query              *service.QueryService
-	productCandidate   *candidate.ProductCandidateRead
-	repositoryCandidate *candidate.RepositoryCandidateRead
+	query               *service.QueryService
+	productCandidate    ProductCandidateReader
+	repositoryCandidate RepositoryCandidateReader
 }
 
 // NewQueryHandler 构造 QueryHandler。
-func NewQueryHandler(q *service.QueryService, pc *candidate.ProductCandidateRead, rc *candidate.RepositoryCandidateRead) *QueryHandler {
+func NewQueryHandler(q *service.QueryService, pc ProductCandidateReader, rc RepositoryCandidateReader) *QueryHandler {
 	return &QueryHandler{query: q, productCandidate: pc, repositoryCandidate: rc}
 }
 
@@ -66,9 +75,9 @@ func (h *QueryHandler) GetModuleDetail(w http.ResponseWriter, r *http.Request) {
 
 // ListProductCandidates GET /api/candidates/products
 //
-// 承接 ProductBindingCandidateRead（§6.2 候选读取，phase02 由 Module Registry 临时承接）。
+// 兼容旧 Module Detail 的 Product 候选入口；实际数据由 canonical Product Registry 主线提供。
 func (h *QueryHandler) ListProductCandidates(w http.ResponseWriter, r *http.Request) {
-	items, err := h.productCandidate.List(r.Context())
+	items, err := h.productCandidate(r.Context())
 	if err != nil {
 		writeError(w, err)
 		return
@@ -81,9 +90,9 @@ func (h *QueryHandler) ListProductCandidates(w http.ResponseWriter, r *http.Requ
 
 // ListRepositoryCandidates GET /api/candidates/repositories
 //
-// 承接 RepositoryBindingCandidateRead（§6.2 候选读取，phase02 由 Module Registry 临时承接）。
+// 兼容旧 Module Detail 的 Repository 候选入口；实际数据由 canonical Repository Binding 主线提供。
 func (h *QueryHandler) ListRepositoryCandidates(w http.ResponseWriter, r *http.Request) {
-	items, err := h.repositoryCandidate.List(r.Context())
+	items, err := h.repositoryCandidate(r.Context())
 	if err != nil {
 		writeError(w, err)
 		return

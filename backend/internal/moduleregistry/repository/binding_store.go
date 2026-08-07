@@ -1,6 +1,12 @@
 // Package repository — product_modules + module_repositories 表数据访问层。
 //
-// 统一承接 §4.1 BindModuleToProduct 与 MapModuleToRepository 的关系写入与读取。
+// phase04-12 起，product_modules / module_repositories 的写入 owner 已迁移到
+// Product Registry（productregistry.repository.ProductStore.BindModule）与
+// Repository Binding（repositorybinding.repository.BindingStore.MapModule）。
+// 本文件只保留 ModuleDetailRead 所需的读取能力（ListProductBindingsByModule /
+// ListRepositoryMappingsByModule / ListDecisionLinksByModule），
+// 不再承接绑定写入（BindProduct / MapRepository / ProductExists / RepositoryExists）。
+//
 // 文件落点对齐 phase02-08 spec §"数据访问层文件落点"。
 package repository
 
@@ -13,7 +19,9 @@ import (
 	"github.com/psco/backend/internal/moduleregistry"
 )
 
-// BindingStore 承接 product_modules 与 module_repositories 两张关系表的读写。
+// BindingStore 承接 product_modules 与 module_repositories 两张关系表的读取。
+//
+// phase04-12 起只保留读方法，写入由 Product Registry / Repository Binding 拥有。
 type BindingStore struct {
 	pool *pgxpool.Pool
 }
@@ -23,24 +31,7 @@ func NewBindingStore(pool *pgxpool.Pool) *BindingStore {
 	return &BindingStore{pool: pool}
 }
 
-// --- 产品绑定 (product_modules) ---
-
-// BindProduct 插入模块-产品绑定关系。重复绑定返回 ErrDuplicateBinding。
-func (s *BindingStore) BindProduct(ctx context.Context, moduleID, productID string) error {
-	tag, err := s.pool.Exec(ctx, `
-INSERT INTO product_modules (module_id, product_id)
-VALUES ($1, $2)
-ON CONFLICT (module_id, product_id) DO NOTHING`,
-		moduleID, productID,
-	)
-	if err != nil {
-		return fmt.Errorf("insert product binding: %w", err)
-	}
-	if tag.RowsAffected() == 0 {
-		return moduleregistry.ErrDuplicateBinding
-	}
-	return nil
-}
+// --- 产品绑定读取 (product_modules) ---
 
 // ListProductBindingsByModule 读取指定模块的产品绑定，附带 product name。
 func (s *BindingStore) ListProductBindingsByModule(ctx context.Context, moduleID string) ([]moduleregistry.ProductBinding, error) {
@@ -71,24 +62,7 @@ ORDER BY p.name`,
 	return items, nil
 }
 
-// --- 仓库映射 (module_repositories) ---
-
-// MapRepository 插入模块-仓库映射关系。重复映射返回 ErrDuplicateBinding。
-func (s *BindingStore) MapRepository(ctx context.Context, moduleID, repositoryID string) error {
-	tag, err := s.pool.Exec(ctx, `
-INSERT INTO module_repositories (module_id, repository_id)
-VALUES ($1, $2)
-ON CONFLICT (module_id, repository_id) DO NOTHING`,
-		moduleID, repositoryID,
-	)
-	if err != nil {
-		return fmt.Errorf("insert repository mapping: %w", err)
-	}
-	if tag.RowsAffected() == 0 {
-		return moduleregistry.ErrDuplicateBinding
-	}
-	return nil
-}
+// --- 仓库映射读取 (module_repositories) ---
 
 // ListRepositoryMappingsByModule 读取指定模块的仓库映射，附带 repository name。
 func (s *BindingStore) ListRepositoryMappingsByModule(ctx context.Context, moduleID string) ([]moduleregistry.RepositoryMapping, error) {
@@ -157,30 +131,4 @@ ORDER BY d.created_at DESC`,
 		return nil, fmt.Errorf("iter decision link rows: %w", err)
 	}
 	return items, nil
-}
-
-// ProductExists 校验 product 是否存在（绑定前提校验）。
-func (s *BindingStore) ProductExists(ctx context.Context, productID string) (bool, error) {
-	var exists bool
-	err := s.pool.QueryRow(ctx,
-		`SELECT EXISTS(SELECT 1 FROM products WHERE id = $1)`,
-		productID,
-	).Scan(&exists)
-	if err != nil {
-		return false, fmt.Errorf("check product exists: %w", err)
-	}
-	return exists, nil
-}
-
-// RepositoryExists 校验 repository 是否存在（映射前提校验）。
-func (s *BindingStore) RepositoryExists(ctx context.Context, repositoryID string) (bool, error) {
-	var exists bool
-	err := s.pool.QueryRow(ctx,
-		`SELECT EXISTS(SELECT 1 FROM repositories WHERE id = $1)`,
-		repositoryID,
-	).Scan(&exists)
-	if err != nil {
-		return false, fmt.Errorf("check repository exists: %w", err)
-	}
-	return exists, nil
 }

@@ -86,13 +86,19 @@ type ModuleDetail struct {
 	DecisionLinks      []DecisionLink      `json:"decision_links"`
 }
 
-// ProductCandidate ProductBindingCandidateRead 返回项（§6.2）。
+// ProductCandidate 旧 ProductBindingCandidateRead 的兼容返回项。
+//
+// phase04-12 起，该 DTO 仅服务 Module Detail 历史入口的兼容适配，
+// 不再承接 canonical Product Registry / Repository Binding 主线。
 type ProductCandidate struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
 }
 
-// RepositoryCandidate RepositoryBindingCandidateRead 返回项（§6.2）。
+// RepositoryCandidate 旧 RepositoryBindingCandidateRead 的兼容返回项。
+//
+// phase04-12 起，该 DTO 仅服务 Module Detail 历史入口的兼容适配，
+// 不再承接 canonical Repository Binding 主线。
 type RepositoryCandidate struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`

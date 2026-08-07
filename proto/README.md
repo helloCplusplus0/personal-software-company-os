@@ -114,10 +114,12 @@ buf generate
 | `GetModuleDetail` | GET | `/api/modules/{moduleId}` | URL path |
 | `CreateModule` | POST | `/api/modules` | JSON body |
 | `CreateRelease` | POST | `/api/modules/{moduleId}/releases` | JSON body + URL path |
-| `BindModuleToProduct` | POST | `/api/modules/{moduleId}/bindings/products` | JSON body + URL path |
-| `MapModuleToRepository` | POST | `/api/modules/{moduleId}/bindings/repositories` | JSON body + URL path |
-| `ListProductCandidates` | GET | `/api/candidates/products` | — |
-| `ListRepositoryCandidates` | GET | `/api/candidates/repositories` | — |
+| `BindModuleToProduct` | POST | `/api/modules/{moduleId}/bindings/products` | JSON body + URL path（兼容委派到 Product Registry） |
+| `MapModuleToRepository` | POST | `/api/modules/{moduleId}/bindings/repositories` | JSON body + URL path（兼容委派到 Repository Binding） |
+
+> phase04-12 起已移除旧候选读取入口 `/api/candidates/products` 与 `/api/candidates/repositories`。
+> canonical 候选读取由 Product Registry 的 `ListProductModuleCandidates` 与 Repository Binding 的
+> `ListRepositoryProductCandidates` / `ListRepositoryModuleCandidates` 各自承接。
 
 #### Decision Center
 

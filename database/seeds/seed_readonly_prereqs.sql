@@ -10,13 +10,23 @@
 -- 通过 scripts/seed_decision_link_fixture.sql 手动建立一条示例关联。
 
 -- products 候选读取前提（对齐前端 mock 数据）
-INSERT INTO products (name) VALUES ('Product A') ON CONFLICT (name) DO NOTHING;
-INSERT INTO products (name) VALUES ('Product B') ON CONFLICT (name) DO NOTHING;
-INSERT INTO products (name) VALUES ('Product C') ON CONFLICT (name) DO NOTHING;
+-- phase04-12 升级：从 name-only 升级为完整字段插入（description / status）
+-- 必须继续保留历史 name 与 ON CONFLICT (name) DO NOTHING
+-- 其定位仍然只是"历史兼容最小前提"，不是 phase04 正式基线
+INSERT INTO products (name, description, status) VALUES
+  ('Product A', 'phase02 候选读取前提产品', 'active'),
+  ('Product B', 'phase02 候选读取前提产品', 'active'),
+  ('Product C', 'phase02 候选读取前提产品', 'active')
+ON CONFLICT (name) DO NOTHING;
 
 -- repositories 候选读取前提（对齐前端 mock 数据）
-INSERT INTO repositories (name) VALUES ('main-repo') ON CONFLICT (name) DO NOTHING;
-INSERT INTO repositories (name) VALUES ('mirror-repo') ON CONFLICT (name) DO NOTHING;
+-- phase04-12 升级：从 name-only 升级为完整字段插入（url / provider / status）
+-- 必须继续保留历史 name 与 ON CONFLICT (name) DO NOTHING
+-- 其定位仍然只是"历史兼容最小前提"，不是 phase04 正式基线
+INSERT INTO repositories (name, url, provider, status) VALUES
+  ('main-repo', 'https://github.com/psco/main-repo', 'github', 'active'),
+  ('mirror-repo', 'https://github.com/psco/mirror-repo', 'github', 'active')
+ON CONFLICT (name) DO NOTHING;
 
 -- decisions 只读入口前提（对齐前端 mock 数据）
 -- phase03-12 升级：从 title-only 升级为结构化字段插入

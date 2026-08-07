@@ -1,0 +1,15 @@
+- [x] 已明确 `backend/internal/productregistry/` 的文件落点、分层职责与 `.proto` 单向承接边界
+- [x] 已明确 `backend/internal/repositorybinding/` 的文件落点、分层职责与 `.proto` 单向承接边界
+- [x] 已明确 `Product Registry` 的 `List / Detail / Create / BindModuleToProduct / ModuleCandidates` 读取与写入边界
+- [x] 已明确 `Repository Binding` 的 `List / Detail / Create / BindRepositoryToProduct / MapModuleToRepository / 两条候选读取` 边界
+- [x] 已明确 `ProductModuleSummaryRead / ProductRepositorySummaryRead / RepositoryProductSummaryRead / RepositoryModuleSummaryRead` 的 owner、落点与接线方式
+- [x] 已明确创建与三类绑定写入的校验顺序、错误语义与 reread owner
+- [x] 已明确 `0006_product_repository_binding_mainline.sql` 的职责，包括 `products / repositories` 原位升级与 `product_repositories` 新增
+- [x] 已明确历史 `products / repositories` 数据的兼容回填口径与幂等要求
+- [x] 已明确 `product_modules / module_repositories` 历史数据保持可读且不重建第二套表
+- [x] 已明确 `seed_product_repository_mainline_baseline.sql` 的覆盖维度与 name 兼容要求
+- [x] 已明确 `seed_readonly_prereqs.sql` 的升级定位仍是“历史兼容最小前提”
+- [x] 已明确 `reset_product_repository_mainline.sh` 的三种模式、清空范围与 `DELETE` 策略
+- [x] 已明确旧 `ProductBindingCandidateRead / RepositoryBindingCandidateRead / ModuleBindingWrite` 若保留，只能作为兼容委派层
+- [x] 已明确 `mountProductRegistry` 与 `mountRepositoryBinding` 需要挂到现有 `/api` chi 子路由下
+- [x] 已明确后端编译、migration、reset、真实 HTTP 请求与兼容委派都属于本阶段必须验证的验收项

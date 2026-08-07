@@ -1,6 +1,12 @@
 // Package handler — 写组入口层。
 //
-// 承接 ModuleCreateWrite / ModuleReleaseWrite / ModuleBindingWrite。
+// 承接 ModuleCreateWrite / ModuleReleaseWrite / ModuleBindingWrite（兼容委派）。
+//
+// phase04-12 起，BindModuleToProduct 与 MapModuleToRepository 的业务 owner 已迁移到
+// Product Registry 与 Repository Binding。旧 Module Registry 入口若保留，只能作为
+// 兼容适配层委派到新的 canonical 实现，不在本 service 层继续保留长期 owner 逻辑
+// （phase04-12 spec §"phase02 旧 transport 入口若保留，必须只做兼容委派"）。
+//
 // 文件落点：backend/internal/moduleregistry/handler/command_handler.go
 package handler
 
@@ -10,17 +16,32 @@ import (
 	"github.com/go-chi/chi/v5"
 
 	"github.com/psco/backend/internal/moduleregistry"
+	productservice "github.com/psco/backend/internal/productregistry/service"
+	reposervice "github.com/psco/backend/internal/repositorybinding/service"
 	"github.com/psco/backend/internal/moduleregistry/service"
 )
 
 // CommandHandler 承接写组 HTTP 入口。
+//
+// 依赖注入：
+//   - command: Module Registry 自身的 ModuleCreateWrite / ModuleReleaseWrite
+//   - productBindingSvc: Product Registry 的 BindModuleToProduct（兼容委派目标）
+//   - repositoryMappingSvc: Repository Binding 的 MapModuleToRepository（兼容委派目标）
 type CommandHandler struct {
-	command *service.CommandService
+	command              *service.CommandService
+	productBindingSvc    *productservice.CommandService
+	repositoryMappingSvc *reposervice.CommandService
 }
 
 // NewCommandHandler 构造 CommandHandler。
-func NewCommandHandler(c *service.CommandService) *CommandHandler {
-	return &CommandHandler{command: c}
+//
+// productBindingSvc 与 repositoryMappingSvc 用于旧模块中心绑定入口的兼容委派。
+func NewCommandHandler(c *service.CommandService, productBindingSvc *productservice.CommandService, repositoryMappingSvc *reposervice.CommandService) *CommandHandler {
+	return &CommandHandler{
+		command:              c,
+		productBindingSvc:    productBindingSvc,
+		repositoryMappingSvc: repositoryMappingSvc,
+	}
 }
 
 // CreateModule POST /api/modules
@@ -67,8 +88,16 @@ func (h *CommandHandler) CreateRelease(w http.ResponseWriter, r *http.Request) {
 
 // BindModuleToProduct POST /api/modules/{moduleId}/bindings/products
 //
-// 承接 ModuleBindingWrite 的产品绑定子动作（§6.2 写组）。
+// 兼容委派入口（phase04-12）。
+//
+// 旧 Module Registry 模块中心写入口，委派到 Product Registry 的 canonical 实现
+// productregistry.CommandService.BindModuleToProduct(productID, moduleID)。
+//
+// 注意参数顺序：旧入口以 module 为中心（moduleId 在 URL），新 canonical 以 product 为中心
+// （productID 在 URL），委派时需要交换参数顺序。
+//
 // 成功返回 204 No Content，前端停留 ModuleDetailPage 并重新读取绑定结果。
+// reread owner 仍是 ProductDetailRead（canonical 语义），不制造第二套 reread owner。
 func (h *CommandHandler) BindModuleToProduct(w http.ResponseWriter, r *http.Request) {
 	moduleID := chi.URLParam(r, "moduleId")
 	if moduleID == "" {
@@ -81,7 +110,8 @@ func (h *CommandHandler) BindModuleToProduct(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	if err := h.command.BindModuleToProduct(r.Context(), moduleID, req.ProductID); err != nil {
+	// 委派到 Product Registry canonical 实现（参数顺序：productID, moduleID）
+	if err := h.productBindingSvc.BindModuleToProduct(r.Context(), req.ProductID, moduleID); err != nil {
 		writeError(w, err)
 		return
 	}
@@ -90,8 +120,16 @@ func (h *CommandHandler) BindModuleToProduct(w http.ResponseWriter, r *http.Requ
 
 // MapModuleToRepository POST /api/modules/{moduleId}/bindings/repositories
 //
-// 承接 ModuleBindingWrite 的仓库映射子动作（§6.2 写组）。
+// 兼容委派入口（phase04-12）。
+//
+// 旧 Module Registry 模块中心写入口，委派到 Repository Binding 的 canonical 实现
+// repositorybinding.CommandService.MapModuleToRepository(repositoryID, moduleID)。
+//
+// 注意参数顺序：旧入口以 module 为中心（moduleId 在 URL），新 canonical 以 repository 为中心
+// （repositoryId 在 URL），委派时需要交换参数顺序。
+//
 // 成功返回 204 No Content，前端停留 ModuleDetailPage 并重新读取绑定结果。
+// reread owner 仍是 RepositoryDetailRead（canonical 语义），不制造第二套 reread owner。
 func (h *CommandHandler) MapModuleToRepository(w http.ResponseWriter, r *http.Request) {
 	moduleID := chi.URLParam(r, "moduleId")
 	if moduleID == "" {
@@ -104,7 +142,8 @@ func (h *CommandHandler) MapModuleToRepository(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	if err := h.command.MapModuleToRepository(r.Context(), moduleID, req.RepositoryID); err != nil {
+	// 委派到 Repository Binding canonical 实现（参数顺序：repositoryID, moduleID）
+	if err := h.repositoryMappingSvc.MapModuleToRepository(r.Context(), req.RepositoryID, moduleID); err != nil {
 		writeError(w, err)
 		return
 	}

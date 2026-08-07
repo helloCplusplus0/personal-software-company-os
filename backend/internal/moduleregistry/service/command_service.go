@@ -16,15 +16,18 @@ import (
 )
 
 // CommandService 承接写组业务编排。
+//
+// phase04-12 起，BindModuleToProduct / MapModuleToRepository 的业务 owner 已迁移到
+// Product Registry 与 Repository Binding。本 service 只保留 ModuleCreateWrite /
+// ModuleReleaseWrite，不再持有绑定写入能力。
 type CommandService struct {
 	modules  *repository.ModuleStore
 	releases *repository.ReleaseStore
-	bindings *repository.BindingStore
 }
 
 // NewCommandService 构造 CommandService。
-func NewCommandService(modules *repository.ModuleStore, releases *repository.ReleaseStore, bindings *repository.BindingStore) *CommandService {
-	return &CommandService{modules: modules, releases: releases, bindings: bindings}
+func NewCommandService(modules *repository.ModuleStore, releases *repository.ReleaseStore) *CommandService {
+	return &CommandService{modules: modules, releases: releases}
 }
 
 // CreateModule 承接 ModuleCreateWrite。
@@ -110,54 +113,8 @@ func (s *CommandService) CreateRelease(ctx context.Context, moduleID string, req
 	return r, nil
 }
 
-// BindModuleToProduct 承接 ModuleBindingWrite 的产品绑定子动作。
-//
-// 校验顺序：
-//  1. 模块存在性
-//  2. Product 候选存在性（候选读取前提校验，§"Product 连接边界"）
-//  3. 重复绑定检测
-func (s *CommandService) BindModuleToProduct(ctx context.Context, moduleID, productID string) error {
-	if err := moduleregistry.ValidateModuleID(moduleID); err != nil {
-		return err
-	}
-	if err := moduleregistry.ValidateProductID(productID); err != nil {
-		return moduleregistry.ErrProductNotFound
-	}
-	if _, err := s.modules.GetByID(ctx, moduleID); err != nil {
-		return err
-	}
-	exists, err := s.bindings.ProductExists(ctx, productID)
-	if err != nil {
-		return err
-	}
-	if !exists {
-		return moduleregistry.ErrProductNotFound
-	}
-	return s.bindings.BindProduct(ctx, moduleID, productID)
-}
-
-// MapModuleToRepository 承接 ModuleBindingWrite 的仓库映射子动作。
-//
-// 校验顺序：
-//  1. 模块存在性
-//  2. Repository 候选存在性（候选读取前提校验，§"Repository 连接边界"）
-//  3. 重复映射检测
-func (s *CommandService) MapModuleToRepository(ctx context.Context, moduleID, repositoryID string) error {
-	if err := moduleregistry.ValidateModuleID(moduleID); err != nil {
-		return err
-	}
-	if err := moduleregistry.ValidateRepositoryID(repositoryID); err != nil {
-		return moduleregistry.ErrRepositoryNotFound
-	}
-	if _, err := s.modules.GetByID(ctx, moduleID); err != nil {
-		return err
-	}
-	exists, err := s.bindings.RepositoryExists(ctx, repositoryID)
-	if err != nil {
-		return err
-	}
-	if !exists {
-		return moduleregistry.ErrRepositoryNotFound
-	}
-	return s.bindings.MapRepository(ctx, moduleID, repositoryID)
-}
+// 注：BindModuleToProduct 与 MapModuleToRepository 的业务 owner 已在 phase04-12 迁移到
+// Product Registry（productregistry.CommandService.BindModuleToProduct）与
+// Repository Binding（repositorybinding.CommandService.MapModuleToRepository）。
+// 旧 Module Registry 入口若保留，只能在 handler 层做兼容委派，不得在 service 层
+// 继续保留长期 owner 逻辑（phase04-12 spec §"phase02 旧 transport 入口若保留，必须只做兼容委派"）。
