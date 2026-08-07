@@ -1,0 +1,26 @@
+- [x] 已明确 `phase04-14` 的直接上游是 `phase04-09 / 10 / 11 / 12 / 13`
+  - 证据：`acceptance_report.md` §1.2 前置条件核对覆盖 phase04-09 环境链路、phase04-10 正式规格、phase04-11 proto 合同、phase04-12 后端主线、phase04-13 前端主线
+- [x] 已明确联调必须在真实前端、真实后端、真实数据库与真实基线上执行，不允许 mock 主线替代
+  - 证据：`acceptance_report.md` §1.1 环境重建顺序使用真实 init_db.sh / 后端 / seeds / reset 脚本 / 前端；§1.2 前端直接消费真实 API
+- [x] 已明确环境建立顺序必须复用 `init_db.sh -> 后端启动(自动 migration) -> run_seeds.sh -> reset_module_mainline.sh -> reset_product_repository_mainline.sh -> 前端启动`
+  - 证据：`acceptance_report.md` §1.1 环境重建顺序已按真实链路验证 6 步：`init_db.sh` → 后端启动（显式 `RUN_SEEDS_ON_BOOT=false`）→ `run_seeds.sh` → `reset_module_mainline.sh` → `reset_product_repository_mainline.sh --clean-only` → 前端启动
+- [x] 已明确最小主线必须覆盖 `CreateProduct / CreateRepository / BindRepositoryToProduct / BindModuleToProduct / MapModuleToRepository`
+  - 证据：`acceptance_report.md` §2.1-2.2 五个动作全部端到端走通
+- [x] 已明确 `BindModuleToProduct` 的 canonical owner 与 reread 页面是 `ProductDetailPage`
+  - 证据：`acceptance_report.md` §2.1 Step 6-7 BindModuleToProduct 成功后 reread ProductDetailRead 验证 bound_modules=1
+- [x] 已明确 `BindRepositoryToProduct` 与 `MapModuleToRepository` 的 canonical owner 与 reread 页面是 `RepositoryBindingDetailPage`
+  - 证据：`acceptance_report.md` §2.2 Step 4-7 两次绑定成功后 reread RepositoryDetailRead 验证 bound_products=1, mapped_modules=1
+- [x] 已明确 `Module Detail` 中旧绑定入口只能作为兼容入口或轻量跳转，不得重新形成第二主工作台
+  - 证据：`acceptance_report.md` §3 已真实验证 `Module Detail -> Product Registry` 与 `Module Detail -> Repository Binding` 两条兼容入口链路，实际写入均发生在 canonical owner 页面
+- [x] 已明确旧 `/api/candidates/products` 与 `/api/candidates/repositories` 兼容读取必须进入本轮验收范围
+  - 证据：`acceptance_report.md` §5.2 已真实验证两个兼容端点均返回 `200`，兼容读取仍由当前 canonical query service 承接
+- [x] 已明确空状态、错误态、候选为空、目标不存在、重复绑定/重复映射与返回路径都必须进入本轮验收范围
+  - 证据：`acceptance_report.md` §2.1-§2.2 已真实验证 Product 与 Repository 空状态；`acceptance_report.md` §5.1-§5.3 已覆盖关键 `400/404/409` 异常路径与候选为空 `200 []`
+- [x] 已明确 `fromList / fromModuleDetail / fromProductDetail / direct-entry` 四类来源上下文的返回路径与刷新恢复规则都必须被验证
+  - 证据：`acceptance_report.md` §4 已真实验证四类来源上下文返回路径，且 `fromList + queryText` 的筛选恢复通过
+- [x] 已明确 `.proto`、HTTP 过渡层、前端适配层与 `phase04-10` 正式规格正文必须在联调中核对为单值一致
+  - 证据：`acceptance_report.md` §6 已核对 `.proto`、HTTP DTO、前端适配层与 `phase04-10` 正式规格正文的一致性
+- [x] 已明确验收结果必须形成可重复复核证据，不能只以 build 通过或口头结论收口
+  - 证据：`acceptance_report.md` 完整记录环境重建入口、执行顺序、HTTP 请求/响应结果、状态码矩阵与页面行为结果
+- [x] 已明确发现的问题必须在当前阶段闭合，不得遗留隐性阻断到后续收口阶段
+  - 证据：`acceptance_report.md` §7 已记录本轮问题与修复，§8-§9 已明确全部收口且 DoD 达成

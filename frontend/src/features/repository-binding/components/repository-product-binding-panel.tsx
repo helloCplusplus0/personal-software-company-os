@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -52,6 +52,7 @@ export function RepositoryProductBindingPanel({
 }: RepositoryProductBindingPanelProps) {
   const [selectedProductId, setSelectedProductId] = useState('')
   const [submitError, setSubmitError] = useState<string | undefined>(undefined)
+  const prefillHandledRef = useRef(false)
 
   // 候选读取 — phase04-06 候选读取独立于详情读取
   const { data: candidates, isLoading: candidatesLoading, isError: candidatesError } = useQuery({
@@ -60,12 +61,14 @@ export function RepositoryProductBindingPanel({
     enabled: open,
   })
 
-  // phase04-06 来源上下文预填：从 Product Detail 带入 productId 时自动打开面板并预选
+  // phase04-06 来源上下文预填：从 Product Detail 首次进入时自动打开面板并预选。
+  // 成功提交或用户主动关闭后，不应因为同一个来源参数再次自动重开面板。
   useEffect(() => {
-    if (prefillProductId && !open) {
+    if (prefillProductId && !prefillHandledRef.current) {
+      prefillHandledRef.current = true
       onOpenChange(true)
     }
-  }, [prefillProductId, open, onOpenChange])
+  }, [prefillProductId, onOpenChange])
 
   // 候选列表加载完成后，若存在 prefillProductId 且在候选列表中，则预选
   useEffect(() => {
