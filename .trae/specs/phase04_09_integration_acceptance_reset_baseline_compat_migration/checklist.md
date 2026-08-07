@@ -1,0 +1,32 @@
+- [x] 已明确 `phase04` 联调环境必须可重复建立，并复用现有单一数据库与脚本主线
+- [x] 已明确 `phase04` 联调启动顺序：`init_db -> migration(含 0006) -> run_seeds -> reset_module_mainline -> reset_product_repository_mainline -> 前端`
+- [x] 已明确当前阶段不要求 `reset_decision_mainline.sh` 成为 `phase04` 验收前置步骤
+- [x] 已明确 `0006_product_repository_binding_mainline.sql` 为 `products / repositories / product_repositories` 的唯一升级 migration 落点
+- [x] 已明确 `products` 原位新增 `description / status`、`repositories` 原位新增 `url / provider / status`
+- [x] 已明确 `product_repositories` 的表结构、唯一约束与读取索引
+- [x] 已明确 `products / repositories` 的 `active / archived` 状态约束与列表读取索引
+- [x] 已明确不得新建影子表、不得删除既有 `id / name / created_at`
+- [x] 已明确 `products` 历史记录的 `description / status` 回填策略（含明确占位值），并要求幂等
+- [x] 已明确 `repositories` 历史记录的 `url / provider / status` 回填策略（含明确占位值），并要求幂等
+- [x] 已明确 `product_modules / module_repositories` 历史关系继续可读，不通过重建关系表迁移
+- [x] 已明确重置脚本落点 `database/scripts/reset_product_repository_mainline.sh`
+- [x] 已明确重置脚本支持 `--clean-only / --restore-only / 默认` 三种模式，并复用既有 `resolve_psql` 风格
+- [x] 已明确清空范围覆盖 `product_repositories / product_modules / module_repositories / products / repositories`，并按受控顺序执行（先 `product_repositories`，再 `product_modules / module_repositories`，最后 `products / repositories`）
+- [x] 已明确前置校验为“数据库存在 + modules 基线存在”
+- [x] 已明确继续使用 `DELETE FROM ...`，不改用 `TRUNCATE ... RESTART IDENTITY ... CASCADE`
+- [x] 已明确基线 seed 文件落点 `database/seeds/seed_product_repository_mainline_baseline.sql`
+- [x] 已明确 `Product / Repository` 基线覆盖维度（数量、状态、provider）
+- [x] 已明确三类绑定关系的最小基线覆盖
+- [x] 已明确 `seed_product_repository_mainline_baseline.sql` 必须保留 `Product A / Product B / Product C / main-repo / mirror-repo` 既有 name，确保与 `seed_module_mainline_baseline.sql` 的 name 查找兼容，两条重置链可交叉重复执行
+- [x] 已明确 fixture 只允许“基线 seed + reset 模式 + API 操作”两层策略
+- [x] 已明确 `seed_readonly_prereqs.sql` 仅保留历史兼容最小前提定位，不再作为 `phase04` 正式主线基线
+- [x] 已明确 `seed_readonly_prereqs.sql` 中 `products / repositories` seed 必须从 `name-only` 升级为完整字段插入，保持 `name` 兼容并填入明确占位值
+- [x] 已明确从空状态到首个 `Product`、首个 `Repository`、首轮三类绑定与 `Module Detail` 兼容入口的冷启动路径，且三类绑定写入后的 reread 分别落到对应 canonical owner 页面
+- [x] 已明确 `Module Detail -> Product` 与 `Module Detail -> Repository` 的旧入口兼容路径
+- [x] 已明确 `Product Detail -> Repository` 的兼容跳转路径
+- [x] 已明确 `fromList / fromModuleDetail / fromProductDetail / direct-entry` 四类回流矩阵
+- [x] 已明确旧候选读取/旧绑定入口只能作为兼容适配层委派给 canonical owner，且验收必须逐项覆盖 `ProductBindingCandidateRead` / `ModuleBindingWrite` / `RepositoryBindingCandidateRead` / `Module Detail` 旧入口兼容跳转，不得只验证一条即宣告通过
+- [x] 已明确最小异常路径清单（创建校验、目标不存在、目标非 active、重复冲突、列表空、候选空、详情不存在）
+- [x] 已明确异常前提通过基线 seed 与受控 API 操作建立，不新增独立 fixture SQL
+- [x] 已明确 `products / repositories` 在 `phase04` 中已从只读前提升级为正式主线实体
+- [x] 已明确 `phase04` 验收环境不再依赖手工 SQL 建立
