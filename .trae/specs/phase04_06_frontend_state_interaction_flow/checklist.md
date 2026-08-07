@@ -1,0 +1,27 @@
+- [x] `Product Registry / List` 的最小搜索参数、默认值、刷新恢复规则已明确，路由搜索参数为唯一事实源
+- [x] `Repository Binding / List` 的最小搜索参数、默认值、刷新恢复规则已明确，路由搜索参数为唯一事实源
+- [x] 当前阶段仓库列表不引入 `providerFilter` 的结论已在本阶段单值化
+- [x] 列表查询条件不引入 `sessionStorage` 等持久化层作为缺参回退源，无参 URL 稳定表现为默认筛选参数
+- [x] 两个列表页的读取状态、派生视图状态、空状态主动作与错误呈现位置已明确
+- [x] `ProductCreatePage` 的来源上下文状态、草稿状态与提交状态已明确
+- [x] `ProductCreatePage` 创建失败后的状态保持与成功后的默认回流已明确
+- [x] `RepositoryCreatePage` 的来源上下文状态、草稿状态与提交状态已明确
+- [x] `RepositoryCreatePage` 创建失败后的状态保持与成功后的默认回流已明确
+- [x] `ProductCreatePage` 与 `RepositoryCreatePage` 创建成功回流至对应 Detail 页时必须继承来源标记与上下文参数，不得在创建成功回流后丢失来源标记导致退化为 `direct-entry`
+- [x] `ProductDetailPage` 的最小读取状态与来源上下文状态已明确
+- [x] `ProductModuleBindingPanel` 的候选读取状态、写入状态、成功后重读与失败后状态保持已明确
+- [x] `RepositoryBindingDetailPage` 的最小读取状态与来源上下文状态已明确
+- [x] `RepositoryProductBindingPanel` 与 `RepositoryModuleMappingPanel` 的最小状态已明确
+- [x] `Repository Binding Detail / Workspace` 的单活动面板规则已明确
+- [x] `Repository Binding` 两类绑定动作成功后的停留、重读与面板回收规则已明确
+- [x] `Repository Binding` 两类绑定动作失败后的状态保持与错误呈现位置已明确
+- [x] 从创建页或详情页返回时按真实来源决定返回路径（含回列表时保留原搜索参数上下文）的规则已明确
+- [x] `Module Detail -> Product` 主线的默认回流页面、来源标记与刷新恢复规则已明确
+- [x] `Module Detail -> Repository` 主线的默认回流页面、来源标记与刷新恢复规则已明确
+- [x] `Product Detail -> Repository` 主线的默认回流页面、来源标记与刷新恢复规则已明确
+- [x] 每个页面同时只允许一个主来源状态的规则已明确
+- [x] 页面级 UI 状态优先归属当前页面或详情页上下文的原则已明确
+- [x] 派生视图状态优先由读模型结果计算、不重复持久化为独立全局字段的原则已明确
+- [x] 本规格未越界冻结 `phase04-07 / 08` 的后端模块边界、接口分组与 `.proto` 合同设计
+- [x] 本规格与 `phase02-09` §7.4/§8.4、`phase03-06` 及 `phase04-02 / 03 / 04 / 05` 及 `phase04` 三件套保持一致
+- [x] 设计结果足以直接进入实现
