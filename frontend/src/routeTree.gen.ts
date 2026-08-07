@@ -15,6 +15,12 @@ import { Route as DecisionsNewRouteImport } from './routes/decisions/new'
 import { Route as ModulesIndexRouteImport } from './routes/modules/index'
 import { Route as ModulesModuleIdRouteImport } from './routes/modules/$moduleId'
 import { Route as ModulesNewRouteImport } from './routes/modules/new'
+import { Route as ProductsIndexRouteImport } from './routes/products/index'
+import { Route as ProductsProductIdRouteImport } from './routes/products/$productId'
+import { Route as ProductsNewRouteImport } from './routes/products/new'
+import { Route as RepositoriesIndexRouteImport } from './routes/repositories/index'
+import { Route as RepositoriesRepositoryIdRouteImport } from './routes/repositories/$repositoryId'
+import { Route as RepositoriesNewRouteImport } from './routes/repositories/new'
 import { Route as ModulesModuleIdReleasesNewRouteImport } from './routes/modules/$moduleId/releases/new'
 
 const DecisionsIndexRoute = DecisionsIndexRouteImport.update({
@@ -47,6 +53,37 @@ const ModulesNewRoute = ModulesNewRouteImport.update({
   path: '/modules/new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProductsIndexRoute = ProductsIndexRouteImport.update({
+  id: '/products/',
+  path: '/products/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductsProductIdRoute = ProductsProductIdRouteImport.update({
+  id: '/products/$productId',
+  path: '/products/$productId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductsNewRoute = ProductsNewRouteImport.update({
+  id: '/products/new',
+  path: '/products/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RepositoriesIndexRoute = RepositoriesIndexRouteImport.update({
+  id: '/repositories/',
+  path: '/repositories/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RepositoriesRepositoryIdRoute =
+  RepositoriesRepositoryIdRouteImport.update({
+    id: '/repositories/$repositoryId',
+    path: '/repositories/$repositoryId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const RepositoriesNewRoute = RepositoriesNewRouteImport.update({
+  id: '/repositories/new',
+  path: '/repositories/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ModulesModuleIdReleasesNewRoute =
   ModulesModuleIdReleasesNewRouteImport.update({
     id: '/releases/new',
@@ -59,8 +96,14 @@ export interface FileRoutesByFullPath {
   '/decisions/new': typeof DecisionsNewRoute
   '/modules/$moduleId': typeof ModulesModuleIdRouteWithChildren
   '/modules/new': typeof ModulesNewRoute
+  '/products/$productId': typeof ProductsProductIdRoute
+  '/products/new': typeof ProductsNewRoute
+  '/repositories/$repositoryId': typeof RepositoriesRepositoryIdRoute
+  '/repositories/new': typeof RepositoriesNewRoute
   '/decisions/': typeof DecisionsIndexRoute
   '/modules/': typeof ModulesIndexRoute
+  '/products/': typeof ProductsIndexRoute
+  '/repositories/': typeof RepositoriesIndexRoute
   '/modules/$moduleId/releases/new': typeof ModulesModuleIdReleasesNewRoute
 }
 export interface FileRoutesByTo {
@@ -68,8 +111,14 @@ export interface FileRoutesByTo {
   '/decisions/new': typeof DecisionsNewRoute
   '/modules/$moduleId': typeof ModulesModuleIdRouteWithChildren
   '/modules/new': typeof ModulesNewRoute
+  '/products/$productId': typeof ProductsProductIdRoute
+  '/products/new': typeof ProductsNewRoute
+  '/repositories/$repositoryId': typeof RepositoriesRepositoryIdRoute
+  '/repositories/new': typeof RepositoriesNewRoute
   '/decisions': typeof DecisionsIndexRoute
   '/modules': typeof ModulesIndexRoute
+  '/products': typeof ProductsIndexRoute
+  '/repositories': typeof RepositoriesIndexRoute
   '/modules/$moduleId/releases/new': typeof ModulesModuleIdReleasesNewRoute
 }
 export interface FileRoutesById {
@@ -78,8 +127,14 @@ export interface FileRoutesById {
   '/decisions/new': typeof DecisionsNewRoute
   '/modules/$moduleId': typeof ModulesModuleIdRouteWithChildren
   '/modules/new': typeof ModulesNewRoute
+  '/products/$productId': typeof ProductsProductIdRoute
+  '/products/new': typeof ProductsNewRoute
+  '/repositories/$repositoryId': typeof RepositoriesRepositoryIdRoute
+  '/repositories/new': typeof RepositoriesNewRoute
   '/decisions/': typeof DecisionsIndexRoute
   '/modules/': typeof ModulesIndexRoute
+  '/products/': typeof ProductsIndexRoute
+  '/repositories/': typeof RepositoriesIndexRoute
   '/modules/$moduleId/releases/new': typeof ModulesModuleIdReleasesNewRoute
 }
 export interface FileRouteTypes {
@@ -89,8 +144,14 @@ export interface FileRouteTypes {
     | '/decisions/new'
     | '/modules/$moduleId'
     | '/modules/new'
+    | '/products/$productId'
+    | '/products/new'
+    | '/repositories/$repositoryId'
+    | '/repositories/new'
     | '/decisions/'
     | '/modules/'
+    | '/products/'
+    | '/repositories/'
     | '/modules/$moduleId/releases/new'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -98,8 +159,14 @@ export interface FileRouteTypes {
     | '/decisions/new'
     | '/modules/$moduleId'
     | '/modules/new'
+    | '/products/$productId'
+    | '/products/new'
+    | '/repositories/$repositoryId'
+    | '/repositories/new'
     | '/decisions'
     | '/modules'
+    | '/products'
+    | '/repositories'
     | '/modules/$moduleId/releases/new'
   id:
     | '__root__'
@@ -107,8 +174,14 @@ export interface FileRouteTypes {
     | '/decisions/new'
     | '/modules/$moduleId'
     | '/modules/new'
+    | '/products/$productId'
+    | '/products/new'
+    | '/repositories/$repositoryId'
+    | '/repositories/new'
     | '/decisions/'
     | '/modules/'
+    | '/products/'
+    | '/repositories/'
     | '/modules/$moduleId/releases/new'
   fileRoutesById: FileRoutesById
 }
@@ -117,8 +190,14 @@ export interface RootRouteChildren {
   DecisionsNewRoute: typeof DecisionsNewRoute
   ModulesModuleIdRoute: typeof ModulesModuleIdRouteWithChildren
   ModulesNewRoute: typeof ModulesNewRoute
+  ProductsProductIdRoute: typeof ProductsProductIdRoute
+  ProductsNewRoute: typeof ProductsNewRoute
+  RepositoriesRepositoryIdRoute: typeof RepositoriesRepositoryIdRoute
+  RepositoriesNewRoute: typeof RepositoriesNewRoute
   DecisionsIndexRoute: typeof DecisionsIndexRoute
   ModulesIndexRoute: typeof ModulesIndexRoute
+  ProductsIndexRoute: typeof ProductsIndexRoute
+  RepositoriesIndexRoute: typeof RepositoriesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -165,6 +244,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ModulesNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/products/': {
+      id: '/products/'
+      path: '/products'
+      fullPath: '/products/'
+      preLoaderRoute: typeof ProductsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/products/$productId': {
+      id: '/products/$productId'
+      path: '/products/$productId'
+      fullPath: '/products/$productId'
+      preLoaderRoute: typeof ProductsProductIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/products/new': {
+      id: '/products/new'
+      path: '/products/new'
+      fullPath: '/products/new'
+      preLoaderRoute: typeof ProductsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/repositories/': {
+      id: '/repositories/'
+      path: '/repositories'
+      fullPath: '/repositories/'
+      preLoaderRoute: typeof RepositoriesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/repositories/$repositoryId': {
+      id: '/repositories/$repositoryId'
+      path: '/repositories/$repositoryId'
+      fullPath: '/repositories/$repositoryId'
+      preLoaderRoute: typeof RepositoriesRepositoryIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/repositories/new': {
+      id: '/repositories/new'
+      path: '/repositories/new'
+      fullPath: '/repositories/new'
+      preLoaderRoute: typeof RepositoriesNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/modules/$moduleId/releases/new': {
       id: '/modules/$moduleId/releases/new'
       path: '/releases/new'
@@ -192,8 +313,14 @@ const rootRouteChildren: RootRouteChildren = {
   DecisionsNewRoute: DecisionsNewRoute,
   ModulesModuleIdRoute: ModulesModuleIdRouteWithChildren,
   ModulesNewRoute: ModulesNewRoute,
+  ProductsProductIdRoute: ProductsProductIdRoute,
+  ProductsNewRoute: ProductsNewRoute,
+  RepositoriesRepositoryIdRoute: RepositoriesRepositoryIdRoute,
+  RepositoriesNewRoute: RepositoriesNewRoute,
   DecisionsIndexRoute: DecisionsIndexRoute,
   ModulesIndexRoute: ModulesIndexRoute,
+  ProductsIndexRoute: ProductsIndexRoute,
+  RepositoriesIndexRoute: RepositoriesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

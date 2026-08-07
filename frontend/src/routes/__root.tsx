@@ -30,6 +30,12 @@ function RootComponent() {
               <Link to="/decisions" className="text-lg font-semibold text-foreground hover:text-primary transition-colors">
                 Decision Center
               </Link>
+              <Link to="/products" className="text-lg font-semibold text-foreground hover:text-primary transition-colors">
+                Product Registry
+              </Link>
+              <Link to="/repositories" className="text-lg font-semibold text-foreground hover:text-primary transition-colors">
+                Repository Binding
+              </Link>
             </nav>
           </div>
         </header>

@@ -1,113 +1,63 @@
-import { useState } from 'react'
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { Link } from '@tanstack/react-router'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { fetchProductCandidates, fetchRepositoryCandidates, bindModuleToProduct, mapModuleToRepository } from '../data/module-registry-adapter'
-import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
+import { ArrowRight } from 'lucide-react'
 import type { ProductBinding, RepositoryMapping } from '../types'
 
 interface ModuleBindingPanelProps {
   moduleId: string
+  moduleName: string
   productBindings: ProductBinding[]
   repositoryMappings: RepositoryMapping[]
-  onBindingSuccess: () => void
 }
 
-type PanelMode = 'closed' | 'product' | 'repository'
-
 /**
- * ModuleBindingPanel — 绑定面板
- * §4.1 统一承接 BindModuleToProduct 与 MapModuleToRepository
- * §8.4 同一时刻只允许一个绑定面板处于打开态
- * §8.4 绑定成功后停留在 ModuleDetailPage，重新读取绑定结果
- * §8.4 绑定失败时错误停留在面板上下文，保留当前选择
+ * ModuleBindingPanel — 兼容入口组件（phase04-13 收敛）
+ *
+ * phase04-05 / phase04-13 已冻结：
+ * - Module Detail 中的绑定面板从直接写入承接位回落为只读摘要展示与兼容跳转入口
+ * - 不再在 Module Detail 内直接提交 BindModuleToProduct 或 MapModuleToRepository
+ * - 正式绑定写入统一迁移到 ProductDetailPage 与 RepositoryBindingDetailPage 承接
+ *
+ * 兼容跳转入口（phase04-13 spec "Module Detail 发起 Product/Repository 绑定动作"）：
+ * - 目标未确定 → 跳转到 /products 或 /repositories 并携带 moduleId / moduleName / fromModuleDetail
+ * - 目标已确定 → 跳转到 /products/:productId 或 /repositories/:repositoryId 并携带 moduleId / moduleName / fromModuleDetail
+ *
+ * 只读摘要展示：
+ * - 继续展示已绑定的 Product 与 Repository 摘要
+ * - 已绑定项可点击跳转到对应 Detail 页（目标已确定分支）
+ * - 不再保留候选读取、选择器、提交按钮组成的第二主工作台
  */
 export function ModuleBindingPanel({
   moduleId,
+  moduleName,
   productBindings,
   repositoryMappings,
-  onBindingSuccess,
 }: ModuleBindingPanelProps) {
-  // §8.4 面板状态：closed / open-idle / submitting / submit-success / submit-error
-  const [panelMode, setPanelMode] = useState<PanelMode>('closed')
-  const [selectedProductId, setSelectedProductId] = useState('')
-  const [selectedRepositoryId, setSelectedRepositoryId] = useState('')
-  const [submitError, setSubmitError] = useState<string | undefined>(undefined)
-
-  // 候选读取
-  const { data: productCandidates } = useQuery({
-    queryKey: ['product-candidates'],
-    queryFn: fetchProductCandidates,
-    enabled: panelMode === 'product',
-  })
-  const { data: repositoryCandidates } = useQuery({
-    queryKey: ['repository-candidates'],
-    queryFn: fetchRepositoryCandidates,
-    enabled: panelMode === 'repository',
-  })
-
-  const productMutation = useMutation({
-    mutationFn: () => bindModuleToProduct({ moduleId, productId: selectedProductId }),
-    onSuccess: () => {
-      toast.success('产品绑定成功')
-      setPanelMode('closed')
-      setSelectedProductId('')
-      setSubmitError(undefined)
-      onBindingSuccess()
-    },
-    onError: (error: Error) => {
-      // §8.4 绑定失败时错误停留在面板上下文
-      setSubmitError(error.message)
-    },
-  })
-
-  const repositoryMutation = useMutation({
-    mutationFn: () => mapModuleToRepository({ moduleId, repositoryId: selectedRepositoryId }),
-    onSuccess: () => {
-      toast.success('仓库映射成功')
-      setPanelMode('closed')
-      setSelectedRepositoryId('')
-      setSubmitError(undefined)
-      onBindingSuccess()
-    },
-    onError: (error: Error) => {
-      setSubmitError(error.message)
-    },
-  })
-
-  const handleOpenPanel = (mode: PanelMode) => {
-    // §8.4 同一时刻只允许一个绑定面板打开
-    setSubmitError(undefined)
-    setPanelMode(panelMode === mode ? 'closed' : mode)
-  }
-
-  const submitting = productMutation.isPending || repositoryMutation.isPending
-
   return (
     <Card>
       <CardHeader>
         <CardTitle>关联关系</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* 产品绑定区 */}
+        {/* 产品绑定区 — 只读摘要 + 兼容跳转入口 */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">产品绑定</span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleOpenPanel('product')}
-              disabled={submitting && panelMode !== 'product'}
-            >
-              {panelMode === 'product' ? '取消' : '绑定产品'}
+            {/* phase04-13 目标未确定：进入 Product Registry 列表主入口 */}
+            <Button variant="outline" size="sm" asChild>
+              <Link
+                to="/products"
+                search={{
+                  fromModuleDetail: true,
+                  moduleId,
+                  moduleName,
+                }}
+              >
+                <ArrowRight className="mr-2 h-4 w-4" />
+                进入产品绑定
+              </Link>
             </Button>
           </div>
           <div className="space-y-1">
@@ -115,51 +65,44 @@ export function ModuleBindingPanel({
               <p className="text-xs text-muted-foreground">未绑定产品</p>
             ) : (
               productBindings.map((pb) => (
-                <div key={pb.product_id} className="flex items-center gap-2">
-                  <Badge variant="outline">{pb.product_name}</Badge>
-                </div>
+                // phase04-13 目标已确定：跳转到 ProductDetailPage 并携带 moduleId / moduleName / fromModuleDetail
+                <Link
+                  key={pb.product_id}
+                  to="/products/$productId"
+                  params={{ productId: pb.product_id }}
+                  search={{
+                    fromModuleDetail: true,
+                    moduleId,
+                    moduleName,
+                  }}
+                  className="inline-block"
+                >
+                  <Badge variant="outline" className="cursor-pointer hover:bg-accent transition-colors">
+                    {pb.product_name}
+                  </Badge>
+                </Link>
               ))
             )}
           </div>
-
-          {/* 产品绑定面板 */}
-          {panelMode === 'product' && (
-            <div className="mt-2 space-y-2 rounded-md border p-3">
-              <Select value={selectedProductId} onValueChange={setSelectedProductId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="选择产品" />
-                </SelectTrigger>
-                <SelectContent>
-                  {productCandidates?.map((pc) => (
-                    <SelectItem key={pc.id} value={pc.id}>
-                      {pc.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {submitError && <p className="text-xs text-destructive">{submitError}</p>}
-              <Button
-                size="sm"
-                disabled={!selectedProductId || submitting}
-                onClick={() => productMutation.mutate()}
-              >
-                {submitting ? '提交中...' : '确认绑定'}
-              </Button>
-            </div>
-          )}
         </div>
 
-        {/* 仓库映射区 */}
+        {/* 仓库映射区 — 只读摘要 + 兼容跳转入口 */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">仓库映射</span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleOpenPanel('repository')}
-              disabled={submitting && panelMode !== 'repository'}
-            >
-              {panelMode === 'repository' ? '取消' : '映射仓库'}
+            {/* phase04-13 目标未确定：进入 Repository Binding 列表主入口 */}
+            <Button variant="outline" size="sm" asChild>
+              <Link
+                to="/repositories"
+                search={{
+                  fromModuleDetail: true,
+                  moduleId,
+                  moduleName,
+                }}
+              >
+                <ArrowRight className="mr-2 h-4 w-4" />
+                进入仓库映射
+              </Link>
             </Button>
           </div>
           <div className="space-y-1">
@@ -167,38 +110,25 @@ export function ModuleBindingPanel({
               <p className="text-xs text-muted-foreground">未映射仓库</p>
             ) : (
               repositoryMappings.map((rm) => (
-                <div key={rm.repository_id} className="flex items-center gap-2">
-                  <Badge variant="outline">{rm.repository_name}</Badge>
-                </div>
+                // phase04-13 目标已确定：跳转到 RepositoryBindingDetailPage 并携带 moduleId / moduleName / fromModuleDetail
+                <Link
+                  key={rm.repository_id}
+                  to="/repositories/$repositoryId"
+                  params={{ repositoryId: rm.repository_id }}
+                  search={{
+                    fromModuleDetail: true,
+                    moduleId,
+                    moduleName,
+                  }}
+                  className="inline-block"
+                >
+                  <Badge variant="outline" className="cursor-pointer hover:bg-accent transition-colors">
+                    {rm.repository_name}
+                  </Badge>
+                </Link>
               ))
             )}
           </div>
-
-          {/* 仓库映射面板 */}
-          {panelMode === 'repository' && (
-            <div className="mt-2 space-y-2 rounded-md border p-3">
-              <Select value={selectedRepositoryId} onValueChange={setSelectedRepositoryId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="选择仓库" />
-                </SelectTrigger>
-                <SelectContent>
-                  {repositoryCandidates?.map((rc) => (
-                    <SelectItem key={rc.id} value={rc.id}>
-                      {rc.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {submitError && <p className="text-xs text-destructive">{submitError}</p>}
-              <Button
-                size="sm"
-                disabled={!selectedRepositoryId || submitting}
-                onClick={() => repositoryMutation.mutate()}
-              >
-                {submitting ? '提交中...' : '确认映射'}
-              </Button>
-            </div>
-          )}
         </div>
       </CardContent>
     </Card>

@@ -1,0 +1,33 @@
+- [x] 已明确 `phase04-13` 的直接上游规格入口是 `phase04-05 / 06 / 10 / 12`
+- [x] 已明确前端实现范围包含 `Product List / Create / Detail` 与 `Repository Binding / List / Create / Detail(or Workspace)`
+  - 证据：`frontend/src/features/product-registry/pages/` 下落地 `product-list-page.tsx` / `product-create-page.tsx` / `product-detail-page.tsx`；`frontend/src/features/repository-binding/pages/` 下落地 `repository-binding-list-page.tsx` / `repository-create-page.tsx` / `repository-binding-detail-page.tsx`
+- [x] 已明确根布局必须接入 `Product Registry` 与 `Repository Binding` 的可见导航入口
+  - 证据：`frontend/src/routes/__root.tsx` L33-38 新增 `Product Registry` 与 `Repository Binding` 的 `Link` 导航入口
+- [x] 已明确 `frontend/src/routes/products/` 与 `frontend/src/routes/repositories/` 的主线路由文件落点
+  - 证据：`routes/products/index.tsx`、`routes/products/new.tsx`、`routes/products/$productId.tsx`、`routes/repositories/index.tsx`、`routes/repositories/new.tsx`、`routes/repositories/$repositoryId.tsx` 已落地，`routeTree.gen.ts` 已重新生成
+- [x] 已明确 `frontend/src/features/product-registry/` 与 `frontend/src/features/repository-binding/` 的页面、组件、类型与数据适配落点
+  - 证据：两个 feature 目录下均包含 `pages/`、`components/`、`data/`、`types.ts`，落点与 `phase04-05` 已冻结结论一致
+- [x] 已明确前端数据适配必须直接消费 `phase04-12` 真实 API，不新增并列 mock 数据主线
+  - 证据：`data/api-adapter.ts` 直接通过 `fetch` 调用 `/api/products` 与 `/api/repositories` 真实 HTTP API，无 `mock-adapter.ts`
+- [x] 已明确 `Product List` 与 `Repository Binding / List` 必须承接 `queryText / statusFilter` 搜索参数与空状态入口
+  - 证据：`product-list-page.tsx` 与 `repository-binding-list-page.tsx` 通过 `validateSearch` schema 承接 `queryText / statusFilter`，区分 `initial-loading / ready / empty / error`，空状态主动作直接进入对应 Create 页
+  - P1 修复证据：`product-list-page.tsx` L86-99 工具栏 onChange 保留 `fromModuleDetail / moduleId / moduleName`；`repository-binding-list-page.tsx` L84-100 工具栏 onChange 保留 `fromProductDetail / productId / productName / fromModuleDetail / moduleId / moduleName` 以及 Product Detail 来源透传参数，不因修改筛选条件而丢失来源标记
+- [x] 已明确 `Product Create` 与 `Repository Create` 必须承接来源上下文、提交失败停留、成功回流携带来源标记与主动取消按真实来源返回
+  - 证据：`product-create-page.tsx` 与 `repository-create-page.tsx` 实现来源标记单值判定、提交失败停留（`onError` 不跳转）、成功回流携带来源标记（`onSuccess` 携带 `fromList / fromModuleDetail / fromProductDetail` 等）、主动取消按真实来源返回
+- [x] 已明确 `Product Detail` 必须承接 `BindModuleToProduct` 与进入 `Repository Binding` 的上下文入口
+  - 证据：`product-detail-page.tsx` L143-148 承接 `ProductModuleBindingPanel`；`product-bound-repository-list-section.tsx` 提供进入 `/repositories` 的上下文入口（携带 `fromProductDetail / productId / productName`）
+- [x] 已明确 `Repository Binding Detail / Workspace` 必须承接 `BindRepositoryToProduct` 与 `MapModuleToRepository`，且两类绑定面板互斥展开
+  - 证据：`repository-binding-detail-page.tsx` L16 `PanelMode = 'closed' | 'product' | 'module'` 实现互斥展开；L185-200 承接 `RepositoryProductBindingPanel` 与 `RepositoryModuleMappingPanel`
+- [x] 已明确三类绑定关系的候选读取、提交、错误停留（保留已选候选）、候选为空提示与成功 reread 必须沿用 `TanStack Query` 主线
+  - 证据：`product-module-binding-panel.tsx`、`repository-product-binding-panel.tsx`、`repository-module-mapping-panel.tsx` 均使用 `useQuery` 读取候选、`useMutation` 提交绑定、`invalidateQueries` 失效详情/列表/候选查询，错误时停留面板上下文并保留已选候选，候选为空时展示空状态提示
+- [x] 已明确 `Detail` 页用户主动返回时必须基于继承的来源标记按真实来源返回，刷新后必须恢复来源标记，无来源列表上下文时返回列表默认筛选参数
+  - 证据：`product-detail-page.tsx` L63-84 与 `repository-binding-detail-page.tsx` L89-121 实现 `handleReturn` 按真实来源返回；路由搜索参数为唯一事实源，刷新后自动恢复；无来源时返回 `statusFilter: 'all'` 默认筛选参数
+  - P1 修复证据：`repository-binding-detail-page.tsx` L99-108 返回 Product Detail 时通过 `buildProductDetailSearchFromTransit` 恢复 Product Detail 的来源标记（fromList/fromModuleDetail + 相应参数），不退化为 direct-entry；`utils/product-source-transit.ts` 提供透传与恢复辅助函数
+- [x] 已明确 `Module Detail` 中旧绑定入口必须收敛为兼容入口或轻量跳转，不再形成第二主工作台
+  - 证据：`module-binding-panel.tsx` 已移除候选读取/选择器/提交按钮，回落为只读摘要 + 兼容跳转入口；目标未确定时跳转到 `/products` 与 `/repositories` 列表页，目标已确定时已绑定项 Badge 可点击跳转到对应 Detail 页（`/products/$productId` 与 `/repositories/$repositoryId`），均携带 `fromModuleDetail / moduleId / moduleName`
+- [x] 已明确 `Module Detail / Product Detail` 发起的上下文入口必须在正式主线页面中被承接
+  - 证据：`products/$productId.tsx` 与 `repositories/$repositoryId.tsx` 的 `validateSearch` schema 包含 `fromModuleDetail / moduleId / moduleName` 与 `fromProductDetail / productId / productName`；对应 Detail 页通过 `prefillModuleId` / `prefillProductId` 承接预填
+- [x] 已明确单一 `React Web` 页面体系必须同时覆盖 PC 与移动浏览器布局，不引入第二套移动端 UI 架构
+  - 证据：所有页面通过 Tailwind 响应式工具类（`hidden md:block` / `md:hidden` / `lg:grid-cols-3` / `lg:col-span-*`）实现 PC / 移动双场景，未引入独立移动端页面体系或第二套 UI 架构
+- [x] 已明确 `phase04-13` 的实现验收以“前端主线可运行、产品创建/仓库创建/三类绑定可走通、旧绑定入口已收敛、无第二套移动端 UI 架构”为准
+  - 证据：`npx tsc -b --noEmit` 类型检查通过；`npm run build` 构建通过；闭环路径已实现；旧绑定入口已收敛；无第二套移动端 UI 架构
