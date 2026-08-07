@@ -1,0 +1,41 @@
+- [x] `product_repositories / product_modules / module_repositories` 的关系语义已明确
+  - 依据：`spec.md` §ADDED Requirements「三类绑定关系关系语义冻结」三个 Scenario L31-35 / L39-43 / L47-51 — 多对多关系 + 语义解释 + 唯一性约束；与 `shared_baseline` §5（`product_repositories / product_modules / module_repositories` 直接承接）一致
+- [x] `Product Detail`、`Repository Binding`、`Module Detail` 的交互归属已明确
+  - 依据：`spec.md` §ADDED Requirements「三类绑定动作 canonical owner 冻结」L135-140 +「Module Detail 旧入口兼容跳转与参数冻结」L161-164；与 `shared_baseline` §4.1（交互归属矩阵）+ `architecture_plan` §4.5（交互归属原则）一致
+- [x] 候选读取范围已明确（`active` 状态 + 已绑定排除 + `created_at` 降序）
+  - 依据：`spec.md` §ADDED Requirements「BindRepositoryToProduct 候选范围冻结」L59-63 +「BindModuleToProduct 候选范围冻结」L71-75 +「MapModuleToRepository 候选范围冻结」L83-87；与 `shared_baseline` §5.1（候选读取基线冻结：候选为当前已存在的 products / modules，候选排序、状态过滤、已绑定排除规则必须在后续 /spec 中单值化）一致 — `phase04-03` 已完成单值化
+- [x] 无候选空状态语义已明确
+  - 依据：`spec.md` §ADDED Requirements「候选读取空状态语义冻结」L95-99 — 返回空列表语义，不得映射为资源不存在或接口错误；与 `shared_baseline` §5.1（无可绑定候选时，页面必须返回明确空状态，而不是把空结果误报为接口错误）+ §5.2（候选读取返回空结果时，返回空列表语义，不得错误映射为资源不存在）一致
+- [x] 重复绑定前提已明确
+  - 依据：`spec.md` §ADDED Requirements「重复绑定语义冻结」L123-127 — 返回明确的重复冲突语义，不得静默成功或降级为通用错误；与 `shared_baseline` §5.2（任一绑定动作重复建立时，返回重复冲突语义）一致
+- [x] `BindModuleToProduct` 的主归属留在 `Product Detail` 已单值化
+  - 依据：`spec.md` §ADDED Requirements「三类绑定动作 canonical owner 冻结」L137 — `BindModuleToProduct` → `Product Detail`（`Product Registry` 模块）；与 `shared_baseline` §5.1（`BindModuleToProduct` → `Product Detail`）+ `architecture_plan` §4.5（`BindModuleToProduct` 的主归属冻结为 `Product Detail`，不得再由 `Repository Binding` 或 `Module Detail` 并行拥有第二套主写入流程）+ `phase04-01` spec（动作 owner 判定 L118）一致
+- [x] 旧 `Module Detail` 入口只保留为兼容跳转，不允许本页直写已单值化
+  - 依据：`spec.md` §ADDED Requirements「Module Detail 旧入口兼容跳转与参数冻结」L161-164 + §REMOVED Requirements「Module Detail 作为绑定写入主入口」L286-289；与 `shared_baseline` §5.2（`Module Detail` 只允许保留进入正式主入口的上下文跳转，不扩写为第二套主写入流程）+ `architecture_plan` §4.5（`Module Detail` 中既有绑定入口在迁移后只允许保留为兼容跳转）+ `phase04-01` spec（Module Detail 兼容入口判定 L143-146）一致
+- [x] 不把 `Decision Center`、`Module Registry` 重新扩写为并列绑定主线已明确
+  - 依据：`spec.md` §ADDED Requirements「非目标冻结」L254-258 — 不得把 `Decision Center` 扩写为绑定写入主线，不得把 `Module Registry` 重新扩写为绑定写入主线；与 `shared_baseline` §2.4（不得把 `Decision Center` 重新扩写为 `Product / Repository` 绑定主线）+ `architecture_plan` §5.3（不做 `Decision Center` 返工重做、`Module Registry` 重构式返工）一致
+- [x] 三类绑定关系的候选展示模型已明确
+  - 依据：`spec.md` §ADDED Requirements「候选读取展示模型冻结」L107-109 + L113-115 — 候选 `Product`：`product_id / product_name / product_status`；候选 `Module`：`module_id / module_name / module_status`；与 `phase04-02` spec 已冻结的已绑定展示模型（Product Detail 已绑定模块 L195-197、已绑定仓库 L201-203；Repository 工作台已绑定产品 L230-231、已映射模块 L235-237）字段一致
+- [x] 绑定成功后 reread 承接页面已明确
+  - 依据：`spec.md` §ADDED Requirements「绑定成功后 reread 承接页面冻结」L148-153 — 回到 canonical owner 页面完成 reread，不得只靠 toast；与 `shared_baseline` §7（三类绑定成功后必须回到对应 canonical owner 页面完成 reread，不得只靠 toast 作为成功依据）一致
+- [x] `Module Detail` 兼容跳转参数已冻结为进入正式主入口并携带上下文参数 `moduleId / moduleName / fromModuleDetail`，与目标页身份参数 `productId / repositoryId` 拆开传递
+  - 依据：`spec.md` §ADDED Requirements「Module Detail 旧入口兼容跳转与参数冻结」Scenario: 判断 Module Detail 兼容跳转参数 L168-173 — 必须进入对应绑定动作的正式主入口，携带 `moduleId / moduleName / fromModuleDetail` 作为上下文参数（只表示来源模块身份与来源页面标记，不表示目标实体身份）；目标实体未确定时先进入对应列表页（`Product Registry / List` 或 `Repository Binding / List`）选择，已确定时额外携带 `productId` 或 `repositoryId` 作为目标页身份参数与上下文参数拆开传递；接收方页面必须能基于上下文参数预填候选 `Module` 选择；与 `architecture_plan` §4.5（可以带上 `moduleId / moduleName / fromModuleDetail` 等上下文进入正式主入口）+ `phase04-01` spec（Module Detail 兼容入口判定 L143-146：只允许通过轻量跳转或带上下文入口进入正式主入口，不得在本页直接提交绑定写入）一致
+- [x] `Product Detail` 上下文入口跳转参数已冻结为进入 `BindRepositoryToProduct` 正式主入口并携带上下文参数 `productId / productName / fromProductDetail`，与目标页身份参数 `repositoryId` 拆开传递
+  - 依据：`spec.md` §ADDED Requirements「Product Detail 上下文入口跳转参数冻结」Scenario: 判断 Product Detail 上下文跳转参数 L179-187 — 必须进入 `BindRepositoryToProduct` 的正式主入口，携带 `productId / productName / fromProductDetail` 作为上下文参数（只表示来源产品身份与来源页面标记，不表示目标 `Repository` 身份）；目标 `Repository` 未确定时先进入 `Repository Binding / List` 选择，已确定时额外携带 `repositoryId` 作为目标页身份参数与上下文参数拆开传递；接收方页面必须能基于上下文参数预填候选 `Product` 选择；`Product Detail` 自身不得承接第二套仓库绑定写入流程；与 `phase04-01` spec（Product 主线最小跳转关系 L132：`Product Detail -> Repository Binding Detail / Workspace` 的带上下文跳转；Product 详情页职责判定 L69-70：必须提供进入 `Repository Binding Detail / Workspace` 的上下文入口，不得并行承接第二套仓库绑定写入流程）一致
+- [x] `phase02` `ProductBindingCandidateRead` 迁移边界已明确（迁移到 `Repository Binding` 模块 `candidate/` 子包）
+  - 依据：`spec.md` §ADDED Requirements「phase02 临时承接迁移边界冻结」Scenario: 判断 ProductBindingCandidateRead 迁移边界 L195-198；与 `architecture_plan` §4.4（`phase02` 中临时承接的 `ProductBindingCandidateRead` 与 `RepositoryBindingCandidateRead` 必须在本阶段明确迁移策略）一致
+- [x] `phase02` `RepositoryBindingCandidateRead` 迁移边界已明确（废弃）
+  - 依据：`spec.md` §ADDED Requirements「phase02 临时承接迁移边界冻结」Scenario: 判断 RepositoryBindingCandidateRead 迁移边界 L202-205；废弃原因：`phase04` 中 `MapModuleToRepository` 的候选为 `Module` 而非 `Repository`
+- [x] `phase02` `ModuleBindingWrite` 拆分迁移边界已明确
+  - 依据：`spec.md` §ADDED Requirements「phase02 临时承接迁移边界冻结」Scenario: 判断 ModuleBindingWrite 迁移边界 L209-213 — `BindModuleToProduct` → `Product Registry`，`MapModuleToRepository` → `Repository Binding`，`BindRepositoryToProduct` 作为 `Repository Binding` 新增能力
+- [x] `phase02` `binding_store` 拆分迁移边界已明确
+  - 依据：`spec.md` §ADDED Requirements「phase02 临时承接迁移边界冻结」Scenario: 判断 binding_store 迁移边界 L217-221 — `product_modules` → `Product Registry`，`module_repositories` → `Repository Binding`，`product_repositories` 作为 `Repository Binding` 新增能力
+- [x] 历史绑定数据兼容前提已明确
+  - 依据：`spec.md` §ADDED Requirements「phase02 临时承接迁移边界冻结」Scenario: 判断历史绑定数据兼容前提 L225-228 — 历史数据必须保持可读，不得通过影子表或双写绕过迁移；与 `architecture_plan` §4.4（`phase02` 中已经落地的 `BindModuleToProduct / MapModuleToRepository` 可运行能力，不得通过重建影子表、第二套绑定表或临时双写绕过迁移）+ §4.4（`phase04` 必须明确历史绑定数据、候选读取与既有前端入口在迁移后的兼容前提）一致
+- [x] 候选读取接口归属已明确（消费方模块 `candidate/` 子包拥有）
+  - 依据：`spec.md` §ADDED Requirements「候选读取接口归属冻结」L236-239 + L243-246 — `Product Registry` 拥有候选 `Module` 读取，`Repository Binding` 拥有候选 `Product` 读取与候选 `Module` 读取；与 `phase02-09` §9.6（跨模块候选读取接口通过独立 Read 接口隔离，service 不得直接写跨模块 SQL）模式一致
+- [x] `archived` 状态记录不进入候选列表已明确
+  - 依据：`spec.md` §ADDED Requirements 三个候选范围 Requirement 中"不得将 `archived` 状态的 xxx 纳入候选列表" L63 / L75 / L87 + §REMOVED Requirements「基于 archived 记录建立新绑定」L291-294；与 `phase04-02` spec（`active` 语义：可见、可继续绑定；`archived` 语义：已归档保留的历史事实；候选读取的具体过滤策略属于 `phase04-03` 范围）一致 — `phase04-03` 决策为只允许 `active` 记录作为候选
+- [x] 本次规格与 `phase01-06` 正式 MVP 规格正文及 `phase04` 三件套保持一致
+  - 依据（phase01-06）：`mvp_spec_v0.1.md` §5.4 中 `Product / Module / Repository` 对象关系与三类绑定表定义 — `spec.md` 三类绑定关系语义与 MVP 对象关系一致
+  - 依据（phase04 三件套）：`dev_plan` §3 phase04-03 范围四项 + DoD 六项 → `spec.md` 14 个 ADDED + 2 个 MODIFIED + 2 个 REMOVED 全覆盖；`shared_baseline` §3 动作矩阵 + §4.1 交互归属矩阵 + §5.1 候选读取基线 + §5.2 接口归属前提 + §7 reread 承接 → `spec.md` 对应 Requirement 全一致；`architecture_plan` §4.4 迁移策略 + §4.5 交互归属 + §4.6 源码设计层输出（三类绑定关系的候选读取、重复绑定排除规则、空状态与上下文恢复规则）→ `spec.md` 已冻结
