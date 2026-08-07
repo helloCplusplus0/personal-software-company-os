@@ -1,0 +1,18 @@
+- [x] `phase04` 的 `.proto` 合同源已冻结为单一 `proto/` workspace 内的 `common / product_registry / repository_binding` 三段式布局
+  - 证据：`spec.md` §ADDED Requirements「phase04 Proto 合同源必须进入现有单一 proto workspace」L33-43 + 「Proto 包名、目录与版本语义必须冻结」Scenario: 目录与包名冻结 L49-59
+- [x] `Product Registry` 与 `Repository Binding` 的消息结构、服务接口、包名与版本语义已明确
+  - 证据：`spec.md` L45-68（包名/版本/go_package）+ L89-128（Product 消息）+ L130-173（Repository 消息）+ L264-301（service 矩阵，含 phase02 RPC 迁移承接 L292-301）
+- [x] `Product Registry` 的字段语义、字段编号、写组返回语义与页面动作映射已单值化
+  - 证据：`spec.md` L93-112（核心对象字段语义）+ L114-128（写组返回 `CreateProductResponse.product_id` / `BindModuleToProductResponse` 空响应）+ L179-187（页面动作映射）+ L210-233（字段编号冻结）+ L199-204（排序规则不进入 `.proto`，由 service/repository 层承接，属字段语义合同边界）
+- [x] `Repository Binding` 的字段语义、字段编号、写组返回语义与页面动作映射已单值化
+  - 证据：`spec.md` L134-153（核心对象字段语义）+ L155-173（写组返回 `CreateRepositoryResponse.repository_id` / 两个绑定响应空响应）+ L189-197（页面动作映射）+ L235-262（字段编号冻结）
+- [x] 三类绑定写入与三条候选读取的消息边界已明确，且未并入详情读取
+  - 证据：`spec.md` §ADDED Requirements「详情读取与候选读取必须保持消息边界分离」L303-331（三类绑定写入 = `BindModuleToProduct` / `BindRepositoryToProduct` / `MapModuleToRepository`；三条候选读取 = `ListProductModuleCandidates` / `ListRepositoryProductCandidates` / `ListRepositoryModuleCandidates`；详情响应不得内嵌候选结果）
+- [x] `psco.common.v1.ActiveArchivedStatus` 与 `psco.module_registry.v1.ModuleStatus` 的复用策略已明确，且未引入循环依赖
+  - 证据：`spec.md` L70-87（`ActiveArchivedStatus` 单值化 + L82-83 ActiveArchivedStatus 与 ModuleStatus 覆盖范围区分 + L85 UNSPECIFIED = 不过滤语义 + L86 create request 不允许 UNSPECIFIED）+ L110（`BoundModuleSummary.module_status` import `ModuleStatus`）+ L152（`MappedModuleSummary.module_status` import `ModuleStatus`）+ L151（`BoundProductSummary.product_status` 复用 `ActiveArchivedStatus`）；`common.proto` 只承接共享枚举，不引入业务 owner 歧义或循环依赖
+- [x] `.proto` 与 `chi + JSON HTTP` 的显式映射策略已明确，路径参数组装规则已单值化
+  - 证据：`spec.md` §ADDED Requirements「chi + JSON HTTP 必须从 Proto 单向承接」L351-367（过渡层保留 L355-360 + 路径参数组装规则 L362-367）+ 「RPC 到 HTTP 的映射矩阵必须明确」L369-393（Product Registry 与 Repository Binding 完整 RPC → HTTP 映射）
+- [x] 合同演进规则已明确，包括递增编号、`reserved`、`v1 -> v2` 升级边界与 `buf breaking` 前提
+  - 证据：`spec.md` §ADDED Requirements「合同演进与 breaking check 规则必须冻结」L395-430（字段/枚举演进规则 L399-404 + reserved 约束 L406-411 + v1 breaking 升级边界 L413-421 + Buf 校验链冻结 L423-430，复用 `proto/Makefile`，`buf breaking` 对照 `../.git#branch=main,subdir=proto`）
+- [x] 当前 spec 未提前冻结完整 gRPC / Connect 迁移、DTO 全量替换或第二套生成/校验链
+  - 证据：`spec.md` §ADDED Requirements「当前阶段合同落地边界必须明确」L432-442（当前阶段可以不完成完整 gRPC / Connect / 网关迁移，可继续保留 `chi` 作为 HTTP 过渡传输层，不要求立即用生成类型替换全部手写 DTO）+ §REMOVED Requirements L457-463（移除手写 JSON DTO 作为合同主线的旧口径）
