@@ -1,0 +1,26 @@
+- [x] `Product Registry` 页面文件落点已明确（`ProductListPage / ProductCreatePage / ProductDetailPage` 遵循 `features/product-registry/pages/` 模式）
+- [x] `Repository Binding` 页面文件落点已明确（`RepositoryBindingListPage / RepositoryCreatePage / RepositoryBindingDetailPage` 遵循 `features/repository-binding/pages/` 模式，显式保留上游 `Repository Binding / List` 与 `Repository Binding Detail / Workspace` 语义）
+- [x] `Product Registry` 路由树与 URL 语义已明确（`/products`、`/products/new`、`/products/$productId` 遵循 `TanStack Router` 文件路由约定）
+- [x] `Repository Binding` 路由树与 URL 语义已明确（`/repositories`、`/repositories/new`、`/repositories/$repositoryId`，`RepositoryBindingListRoute` / `RepositoryBindingDetailRoute` 显式保留上游语义）
+- [x] `Product List` 组件树已明确（Toolbar + Content + TableOrCards + EmptyState），筛选维度只冻结 `queryText / statusFilter`
+- [x] `Product Create` 组件树已明确（Form + Actions），只承接 `name / description / status`
+- [x] `Product Detail` 组件树已明确（SummaryCard + BoundModuleListSection + ModuleBindingPanel + BoundRepositoryListSection + RepositoryBindingEntry）
+- [x] `Repository Binding / List` 组件树已明确（`RepositoryBindingListPageShell`），筛选维度只冻结 `queryText / statusFilter`，不引入 `providerFilter`
+- [x] `Repository Create` 组件树已明确（Form + Actions），只承接 `name / url / provider / status`
+- [x] `Repository Binding Detail / Workspace` 组件树已明确（`RepositoryBindingDetailPageShell`：SummaryCard + BoundProductListSection + ProductBindingPanel + MappedModuleListSection + ModuleMappingPanel）
+- [x] `Module Detail` 兼容跳转到 `Product Detail` 的路由参数已明确（`moduleId / moduleName / fromModuleDetail` + `productId`，区分目标未确定/已确定）
+- [x] `Module Detail` 兼容跳转到 `Repository Binding Detail / Workspace` 的路由参数已明确（`moduleId / moduleName / fromModuleDetail` + `repositoryId`，区分目标未确定/已确定）
+- [x] `Product Detail` 上下文跳转到 `Repository Binding Detail / Workspace` 的路由参数已明确（`productId / productName / fromProductDetail` + `repositoryId`，区分目标未确定/已确定）
+- [x] `Product List` 布局降级已明确（PC 高密度列表，移动单列/卡片重排）
+- [x] `Product Create` 布局降级已明确（PC/移动单列垂直布局）
+- [x] `Product Detail` 布局降级已明确（PC 分区式详情，移动垂直重排）
+- [x] `Repository Binding / List` 布局降级已明确（PC 高密度列表，移动单列/卡片重排）
+- [x] `Repository Create` 布局降级已明确（PC/移动单列垂直布局）
+- [x] `Repository Binding Detail / Workspace` 布局降级已明确（PC 分区式详情，移动垂直重排）
+- [x] 组件归属原则已明确（默认归属于所属页面，只在确有复用证据时抽为共享组件）
+- [x] 运行时实现细节不冻结已明确（hook 命名、Query key、store API、缓存时间、optimistic update 等不提前冻结；页面级 UI 状态归属与状态容器选择不冻结，由 `phase04-06` 承接）
+- [x] `Module Detail` 绑定面板回落解释已明确（从直接写入回落为摘要展示与兼容跳转入口）
+- [x] 未引入第二套移动端 UI 架构（通过布局降级策略解决窄屏适配）
+- [x] 本规格未越界冻结后端模块边界（`phase04-07`）与 `.proto` 合同设计（`phase04-08`）的设计职责
+- [x] 本规格未越界冻结 `phase04-06` 范围（列表搜索上下文持久化、返回路径规则、页面级状态模型、面板开闭默认值、面板互斥展开规则、状态容器归属已明确推迟到 `phase04-06`，Why 部分已写明边界划分，布局降级策略只冻结布局结构）
+- [x] 本次规格与 `phase04` 三件套、`phase04-01/02/03/04`、`shared_baseline` §4 页面矩阵命名、`phase02-09` §8 前端实现模式保持一致
