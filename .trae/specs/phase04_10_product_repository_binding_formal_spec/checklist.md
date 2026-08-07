@@ -1,0 +1,16 @@
+- [x] 已明确 `phase04-10` 需要产出单一的 `Product / Repository / Binding` 正式规格正文，而不是继续以 `phase04-01 ~ 09` 作为长期并列入口
+- [x] 已明确正式规格正文目标文件为 `product_repository_binding_spec_v0.1.md`
+- [x] 已明确正式规格正文至少完整覆盖页面、动作、模板、绑定关系、数据读写、API、合同、验收基线、迁移边界、非目标、实现设计层结果与 Done 标准
+- [x] 已明确正式规格正文必须完整继承 `mvp_spec_v0.1.md`、`module_registry_spec_v0.1.md`、`phase02-12` 验收结论、`decision_center_spec_v0.1.md`、`phase03-14` 验收结论与 `phase04-01 ~ 09` 的冻结结论
+- [x] 已明确正式规格正文中的页面与动作章节必须完整承接 `Product Registry / List`、`Product Create`、`Product Detail`、`Repository Binding / List`、`Repository Create`、`Repository Binding Detail / Workspace` 与 `Module Detail` 兼容入口关系
+- [x] 已明确正式规格正文中的模板与状态章节必须完整承接 `Product / Repository` 最小结构化模板、required / optional、`active / archived` 状态语义与最小展示模型
+- [x] 已明确正式规格正文中的绑定关系与入口上下文章节必须完整承接三类绑定关系、候选范围、上下文入口、canonical owner 与 reread owner
+- [x] 已明确正式规格正文中的数据与 API 章节必须承接最小数据矩阵、读写范围、候选读取前提、接口分组与错误语义
+- [x] 已明确正式规格正文中的前端实现设计章节必须承接页面分层、路由结构、组件职责、状态模型与多入口回流规则
+- [x] 已明确正式规格正文中的后端实现设计章节必须承接模块边界、接口分组、关系摘要读取链路、候选读取链路与兼容适配边界
+- [x] 已明确正式规格正文中的合同章节必须承接 `.proto` 包名、服务矩阵、共享枚举、字段编号、`reserved` 约束与 Buf 主线校验链
+- [x] 已明确正式规格正文中的验收基线与迁移章节必须承接 `0006_product_repository_binding_mainline.sql`、重置脚本、基线 seed、冷启动路径、旧入口兼容与多入口回流矩阵
+- [x] 已明确正式规格正文中的非目标矩阵与 Done 标准必须显式存在
+- [x] 已明确正式规格正文被定位为后续实现与 `phase05` 的直接上游规格入口
+- [x] 已明确正式规格正文必须与 `AGENTS.md`、`plan.md`、`TECH_STACK_BASELINE.md`、`project_rules.md`、`architecture_map.md`、`PSCO-summarize-feedback.md`、`phase04` 三件套、`phase02 / phase03` 已交付结果互链一致
+- [x] 已实际产出 `product_repository_binding_spec_v0.1.md`，完整收敛 `phase04-01 ~ 09` 的冻结结论且无第二套边界
