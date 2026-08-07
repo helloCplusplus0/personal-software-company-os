@@ -29,6 +29,9 @@
 - [phase03 architecture_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase03_decision_center_foundation_architecture_plan.md)
 - [phase03 dev_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase03_decision_center_foundation_dev_plan.md)
 - [phase03 shared_baseline](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase03_decision_center_foundation_shared_baseline.md)
+- [phase04 architecture_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase04_product_and_repository_binding_foundation_architecture_plan.md)
+- [phase04 dev_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase04_product_and_repository_binding_foundation_dev_plan.md)
+- [phase04 shared_baseline](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase04_product_and_repository_binding_foundation_shared_baseline.md)
 - [Decision Center 正式规格正文](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase03_10_decision_center_formal_spec/decision_center_spec_v0.1.md)
 - [phase03 联调验收与收口入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase03_14_decision_center_integration_validation_acceptance)
 - [Module Registry 正式规格正文](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase02_09_module_registry_formal_spec/module_registry_spec_v0.1.md)
@@ -43,3 +46,5 @@
 - `phase03_decision_center_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - `Decision Center` 最小主线已形成可运行交付物，并已冻结正式规格与联调验收入口
 - 当前阶段入口已切换为 `phase04_product_and_repository_binding_foundation`
+- `phase04_product_and_repository_binding_foundation` 已正式进入 `/plan`
+- 当前活动文档已切换为 `phase04` 三件套

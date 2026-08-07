@@ -6,7 +6,7 @@
 
 - 当前阶段：`phase04_product_and_repository_binding_foundation`
 - 当前状态：`phase03` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，当前入口切换至 `phase04`
-- 当前目标：以 `phase03-10` 正式规格、`phase03-11` 合同主线与 `phase03-14` 验收结论为直接上游，启动 `Product / Repository / Module Binding` 最小主线的下一阶段规划
+- 当前目标：以 `phase03-10` 正式规格、`phase03-11` 合同主线与 `phase03-14` 验收结论为直接上游，完成 `Product / Repository / Module Binding` 最小主线的 `phase04` 三件套规划
 - 当前下一阶段入口：`phase04_product_and_repository_binding_foundation`
 
 ## 2. 当前进度概览
@@ -28,6 +28,8 @@
 - `.trae/specs/phase03_10_decision_center_formal_spec/decision_center_spec_v0.1.md` 已冻结为 `Decision Center` 当前阶段唯一规格收敛入口
 - `.trae/specs/phase03_11_decision_center_proto_mainline/` 已将 `Decision Center` 最小 `.proto` 合同落地为仓库主线
 - `.trae/specs/phase03_14_decision_center_integration_validation_acceptance/` 已形成 `phase03` 联调验收与收口结论入口
+- `phase04_product_and_repository_binding_foundation` 已正式进入 `/plan`
+- `phase04` 三件套已建立，用于冻结 `Product Registry + Repository Binding` 的最小主线边界、执行顺序与共享基线
 
 ## 3. Phase 路线预览
 

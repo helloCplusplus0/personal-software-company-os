@@ -1,0 +1,33 @@
+- [x] `Product Registry / List`、`Product Create`、`Product Detail` 已被明确冻结为当前阶段 `Product` 页面主线
+  - 依据：`spec.md` §ADDED Requirements「Phase04 页面边界冻结」L26 + 「Product Registry 列表页职责冻结」「Product Create 页面职责冻结」「Product Detail 页面职责冻结」三个 Requirement
+- [x] `Repository Binding / List`、`Repository Create`、`Repository Binding Detail / Workspace` 已被明确冻结为当前阶段 `Repository` 页面主线
+  - 依据：`spec.md` §ADDED Requirements「Phase04 页面边界冻结」L26 + 「Repository Binding 列表页职责冻结」「Repository Create 页面职责冻结」「Repository Binding Detail / Workspace 页面职责冻结」三个 Requirement
+- [x] `Product Registry / List` 的职责已明确为产品读取、筛选入口、创建入口与进入详情入口
+  - 依据：`spec.md` §ADDED Requirements「Product Registry 列表页职责冻结」Scenario: Product 列表页职责判定
+- [x] `Product Create` 的职责已明确为 `CreateProduct` 的唯一页面级承接入口
+  - 依据：`spec.md` §ADDED Requirements「Product Create 页面职责冻结」Scenario: Product 创建页职责判定
+- [x] `Product Detail` 的职责已明确为详情读取、已绑定模块/仓库读取、`BindModuleToProduct` 与进入仓库绑定工作台的上下文入口
+  - 依据：`spec.md` §ADDED Requirements「Product Detail 页面职责冻结」Scenario: Product 详情页职责判定
+- [x] `Repository Binding / List` 的职责已明确为仓库读取、筛选入口、创建入口与进入工作台入口
+  - 依据：`spec.md` §ADDED Requirements「Repository Binding 列表页职责冻结」Scenario: Repository 列表页职责判定
+- [x] `Repository Create` 的职责已明确为 `CreateRepository` 的唯一页面级承接入口
+  - 依据：`spec.md` §ADDED Requirements「Repository Create 页面职责冻结」Scenario: Repository 创建页职责判定
+- [x] `Repository Binding Detail / Workspace` 的职责已明确为详情读取、候选读取、`BindRepositoryToProduct` 与 `MapModuleToRepository` 的最小承接页
+  - 依据：`spec.md` §ADDED Requirements「Repository Binding Detail / Workspace 页面职责冻结」Scenario: Repository 工作台职责判定
+- [x] 五个核心动作与六个页面之间的 owner 已明确单值化
+  - 依据：`spec.md` §ADDED Requirements「五个核心动作 owner 冻结」Scenario: 动作 owner 判定 — `CreateProduct`→`Product Create`、`CreateRepository`→`Repository Create`、`BindModuleToProduct`→`Product Detail`、`BindRepositoryToProduct`→`Repository Binding Detail / Workspace`、`MapModuleToRepository`→`Repository Binding Detail / Workspace`
+- [x] `Product Registry`、`Repository Binding`、`Module Detail` 之间的最小跳转关系与上下文入口已明确
+  - 依据：`spec.md` §ADDED Requirements「页面跳转关系冻结」三个 Scenario：Product 主线最小跳转关系判定、Repository 主线最小跳转关系判定、Module Detail 兼容入口判定
+- [x] `Module Detail` 当前阶段只作为绑定摘要与正式主入口跳转位存在，未被保留为第二绑定工作台
+  - 依据：`spec.md` §MODIFIED Requirements「Module Detail 的绑定承接方式」+ §ADDED Requirements「页面跳转关系冻结」Scenario: Module Detail 兼容入口判定 L143-146
+- [x] 六个页面的最小页面级信息区块已冻结
+  - 依据：`spec.md` §ADDED Requirements「Product 页面级信息区块冻结」三个 Scenario + 「Repository 页面级信息区块冻结」三个 Scenario
+- [x] `PC / 移动浏览器` 的信息密度策略已明确，且仍采用单一 `React Web` 交付
+  - 依据：`spec.md` §ADDED Requirements「PC 与移动浏览器信息密度策略冻结」Scenario: 桌面端信息密度 + Scenario: 移动浏览器信息密度
+- [x] 当前阶段未引入第二套移动端 UI 方案、独立 `React Native` 客户端或完整 `PWA`
+  - 依据：`spec.md` §REMOVED Requirements「第二套移动端 UI 方案」+ §ADDED Requirements「PC 与移动浏览器信息密度策略冻结」Scenario L220-221
+- [x] 当前阶段未把独立 `AI Assistant` 一级导航纳入 `phase04` 页面主线
+  - 依据：`spec.md` §ADDED Requirements「Phase04 页面边界冻结」Scenario: 页面范围判定 L34 — 「不得把独立 `AI Assistant` 一级导航纳入 `phase04` 页面主线」；与 `mvp_spec_v0.1.md` §4.2「明确不进入 `v0.1` — `AI Assistant` 一级导航」一致
+- [x] 本次规格与 `phase01-06` 正式 MVP 规格正文及 `phase04` 三件套保持一致
+  - 依据（phase01-06）：`mvp_spec_v0.1.md` §2.1 核心实体含 `Product`/`Repository`、§3 动作矩阵含五个核心动作、§4.1 页面范围含 `Product Registry`/`Repository Binding`、§4.2 明确不进入 `AI Assistant` 一级导航 — 与 `spec.md` 一致
+  - 依据（phase04 三件套）：`dev_plan` §3 phase04-01 范围五项 → `spec.md` 五组 Requirement 全覆盖；`shared_baseline` §4 页面矩阵六类 + §4.1 交互归属矩阵 → `spec.md` 六个页面职责 + 动作 owner 一致；`architecture_plan` §4.5 交互归属原则 → `spec.md` 动作 owner 与跳转关系一致

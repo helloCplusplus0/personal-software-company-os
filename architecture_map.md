@@ -73,6 +73,10 @@ docs/
   - `phase03_decision_center_foundation_architecture_plan.md`
   - `phase03_decision_center_foundation_dev_plan.md`
   - `phase03_decision_center_foundation_shared_baseline.md`
+- 当前已创建：
+  - `phase04_product_and_repository_binding_foundation_architecture_plan.md`
+  - `phase04_product_and_repository_binding_foundation_dev_plan.md`
+  - `phase04_product_and_repository_binding_foundation_shared_baseline.md`
 - 当前已完成：
   - `.trae/specs/phase01_06_formal_mvp_spec/mvp_spec_v0.1.md`（`v0.1` 执行层唯一规格入口）
   - `.trae/specs/phase02_09_module_registry_formal_spec/module_registry_spec_v0.1.md`（`Module Registry` 当前阶段唯一规格入口）
@@ -83,8 +87,10 @@ docs/
 - 当前项目技术路线已冻结为 `Durable System Track`
 - `phase02_module_registry_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - `phase03_decision_center_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
+- `phase04_product_and_repository_binding_foundation` 已正式进入 `/plan`
 - `phase02` 直接承接正式 MVP 规格正文，不在根级文档重复正文内容
 - `phase03` 直接承接 `phase02` 已交付的 `Module Registry` 主线与 `.proto` 合同结果，并已完成 `Decision Center` 正式规格、合同、实现与联调验收收口
+- `phase04` 直接承接 `phase03` 已交付的 `Decision Center` 主线与联调验收结果，并已建立 `Product Registry + Repository Binding` 三件套
 - 当前阶段入口已切换为 `phase04_product_and_repository_binding_foundation`
 - `phase04` 将直接承接 `phase03-10` 正式规格、`phase03-11` 合同主线与 `phase03-14` 验收结论，不在根级文档重复正文内容
 
