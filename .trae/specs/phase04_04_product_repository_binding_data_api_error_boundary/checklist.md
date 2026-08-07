@@ -1,0 +1,27 @@
+- [x] `phase04-04` 当前阶段的数据读写范围已明确（列表/详情/创建/绑定/候选五类）
+- [x] 当前阶段写入范围已明确只承接 `CreateProduct`、`CreateRepository`、`BindModuleToProduct`、`BindRepositoryToProduct`、`MapModuleToRepository`
+- [x] 当前阶段读取范围已明确只承接产品/仓库列表读取、详情读取与三类候选读取
+- [x] `ProductListRead`、`ProductDetailRead`、`RepositoryListRead`、`RepositoryDetailRead` 的最小读接口数据范围已明确
+- [x] `ProductModuleCandidateRead`、`ProductBindingCandidateRead`、`RepositoryModuleCandidateRead` 的候选读接口数据范围已明确
+- [x] `ProductCreateWrite`、`RepositoryCreateWrite`、`ProductModuleBindingWrite`、`RepositoryProductBindingWrite`、`RepositoryModuleMappingWrite` 的最小写接口数据范围已明确
+- [x] 详情读取与候选读取边界已明确为独立承接，不得合并或拆散
+- [x] `CreateProduct / CreateRepository` 的必填缺失已明确返回校验失败语义
+- [x] `CreateProduct / CreateRepository` 的字段值非法（含去空白后为空、`status` 越界）已明确返回校验失败语义并归属到对应创建写接口
+- [x] 三类绑定写入缺少目标标识时已明确返回校验失败语义
+- [x] 三类绑定写入目标不满足当前阶段可绑定前提时已明确返回校验失败语义
+- [x] 三类绑定写入源实体或目标实体不存在时已明确返回资源不存在语义
+- [x] 三类绑定写入重复建立关系时已明确返回重复冲突语义
+- [x] 产品/仓库列表空结果已明确返回空列表语义，而不是资源不存在
+- [x] 产品/仓库详情资源不存在时已明确返回资源不存在语义
+- [x] 三类候选读取空结果已明确返回空列表语义，而不是资源不存在
+- [x] 候选读取依附的当前 `Product` 或 `Repository` 不存在时已明确返回资源不存在语义
+- [x] 三类绑定写入的校验失败类型已进入阶段规划（必填缺失/目标不存在/目标非 active/重复绑定）
+- [x] 当前阶段未提前冻结 `Dashboard`、`product_asset_coverage` 或其他跨页面聚合接口
+- [x] `phase02` 临时承接接口迁移边界已解释（`ProductBindingCandidateRead` 迁移、`RepositoryBindingCandidateRead` 废弃、`ModuleBindingWrite` 拆分）
+- [x] 本规格未越界冻结接口分组与方向级 API 矩阵（由 `phase04-07` 承接）
+- [x] 本规格未越界冻结合同与存储解耦约束（由 `phase04-08` 承接）
+- [x] 本规格未越界冻结候选读取接线位置（由 `phase04-07` 承接）
+- [x] 本规格未越界冻结关系写入后读取语义（已由 `phase04-03` 冻结 canonical owner 与 reread 承接页面）
+- [x] 本规格未越界冻结实现工具选型（由 `phase04-07` 承接）
+- [x] MODIFIED Requirement 未冻结"接口名保持不变"，留给 `phase04-07/08` 统一收敛
+- [x] 本次规格与 `phase04` 三件套、`phase04-01`、`phase04-02`、`phase04-03` 保持一致
