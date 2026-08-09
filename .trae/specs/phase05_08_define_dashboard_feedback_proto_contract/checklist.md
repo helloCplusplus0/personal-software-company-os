@@ -1,0 +1,28 @@
+- [x] 已明确 `Dashboard + Feedback` 的最小 `.proto` 合同源必须进入现有单一 `proto/` workspace
+- [x] 已明确文件落点为 `proto/psco/dashboard/v1/dashboard.proto`，包名与版本语义为 `psco.dashboard.v1`
+- [x] 已明确 `DashboardService` 作为当前阶段唯一 service owner，承接 `GetDashboardOverview / GetFeedbackSignals / GetRecentActivities`
+- [x] 已明确三个 request 保持无筛选、无分页、无排序切换的最小边界
+- [x] 已明确 `DashboardOverview` 至少承接六个概览计数字段，且不混入反馈或活动字段
+- [x] 已明确 `GetDashboardOverviewResponse` 只承接主聚合读模型，不发明第二套错误包络
+- [x] 已明确 `DashboardOverview` 与 `GetDashboardOverviewRequest / Response` 的当前版本具体字段编号方案
+- [x] 已明确 `FeedbackSignal` 的最小字段模板与 `phase05-02` 单值一致
+- [x] 已明确 `FeedbackSignalFamily / FeedbackSignalCode / FeedbackSignalPriority / DashboardTargetType` 的最小枚举语义与具体编号方案
+- [x] 已明确 `FeedbackSignalPriority` 直接表达冻结后的优先级顺序，而不是退回模糊高/中/低口径
+- [x] 已明确 `GetFeedbackSignalsResponse` 承接 `current_focus_signals` 与 `asset_feedback_summary` 两层结构
+- [x] 已明确 `ProductAssetCoverageSummary` 的最小字段与展示上限
+- [x] 已明确 `FeedbackSignal`、`ProductAssetCoverageSummary` 与 `GetFeedbackSignalsRequest / Response` 的当前版本具体字段编号方案
+- [x] 已明确 `product missing both bindings` 在合同中拥有独立 `signal_code` 与独立计数字段
+- [x] 已明确 `DashboardTargetType` 足以覆盖 `Decision Detail / Decision Center List / Product Detail / Module Detail / Repository Detail` 的 canonical 落点
+- [x] 已明确当反馈信号落到 `Decision Center / List` 时，`target_id` 允许为空字符串
+- [x] 已明确 `RecentActivityItem` 至少承接 `activity_type / activity_at / target_type / target_id / target_label`
+- [x] 已明确 `RecentActivityType` 去除笼统 `binding`，且具备当前版本具体枚举编号方案
+- [x] 已明确 `activity_at` 是当前阶段唯一显式活动时间字段与排序锚点
+- [x] 已明确 `GetRecentActivitiesResponse` 最多返回 `10` 条活动项
+- [x] 已明确 `RecentActivityItem` 与 `GetRecentActivitiesRequest / Response` 的当前版本具体字段编号方案
+- [x] 已明确 `.proto` 与 `chi + JSON HTTP` 的 RPC → HTTP 映射矩阵
+- [x] 已明确错误语义由传输层显式映射承接，不在 `.proto` 中新增第二套错误包络
+- [x] 已明确手写 JSON DTO / adapter 只能从 `.proto` 单向承接，不得形成第二套合同源
+- [x] 已明确当前版本字段编号表、枚举编号表、`reserved` 与 breaking check 的演进规则
+- [x] 已明确最小 Buf 校验链为 `build / lint / generate / breaking`
+- [x] 已明确 `buf breaking` 必须直接对照 `../.git#branch=main,subdir=proto`
+- [x] 已验证本次规格与 `phase05-02 / 03 / 04 / 07` 以及现有 `proto/` 主线保持一致
