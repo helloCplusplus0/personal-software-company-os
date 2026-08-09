@@ -1,0 +1,17 @@
+- [x] 当前阶段最小聚合读范围已明确冻结为 `DashboardOverviewRead / FeedbackSignalRead / RecentActivityRead`
+- [x] 已明确 Dashboard 当前阶段不承接新的业务写入接口
+- [x] `DashboardOverviewRead` 的最小字段范围与无筛选/无分页输入边界已明确
+- [x] `FeedbackSignalRead` 的上游来源、最大返回数量与无额外筛选输入边界已明确
+- [x] `RecentActivityRead` 的最小字段范围、最大返回数量与无额外筛选输入边界已明确
+- [x] 冷启动空系统与“已有结构化资产但仍无 Module”已明确为两类不同的成功状态
+- [x] 无信号、`Asset Feedback` 成功空态与无活动都已明确返回成功语义，而不是资源不存在或接口失败
+- [x] “无缺口且无活动”已明确为非空成功态，不与冷启动空系统混同，且不展示强制主 CTA
+- [x] `DashboardOverviewRead` 失败触发整页失败的语义已明确
+- [x] `FeedbackSignalRead` 与 `RecentActivityRead` 失败只触发局部失败、不强制整页失败的语义已明确
+- [x] `FeedbackSignalRead` 局部失败且 overview 未命中 1-4 条件时，已明确必须抑制强制主 CTA，并降级为区块内重试入口
+- [x] 非法参数已明确返回校验失败语义，不得静默忽略
+- [x] Dashboard 主 CTA 的唯一优先级矩阵与单主 CTA 约束已明确
+- [x] 非空但无 Module 的系统状态已明确不与冷启动空系统混同
+- [x] 当前阶段未提前冻结外部埋点、趋势分析、通知中心或新的聚合分析接口
+- [x] 本规格未越界冻结 `phase05-06` 的前端状态模型、`phase05-07` 的后端模块边界/接口分组、`phase05-08` 的 `.proto` 设计职责
+- [x] 本次规格与 `phase05` 三件套、`phase05-02 / 03` 的上游冻结结论保持一致
