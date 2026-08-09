@@ -1,0 +1,16 @@
+- [x] `DashboardHomePage` 页面文件落点已明确为 `frontend/src/features/dashboard/pages/dashboard-home-page.tsx`
+- [x] `DashboardRoute -> /dashboard -> frontend/src/routes/dashboard.tsx` 已明确，且当前阶段未把 `/` 解释为 `Dashboard Home`
+- [x] `frontend/src/routes/__root.tsx` 的一级 `Dashboard` 导航接入已明确，既有 `Modules / Decisions / Products / Repositories` 导航继续保留
+- [x] `DashboardHomePageShell`、`CurrentFocusSection / DashboardOverviewSection / AssetFeedbackSection / RecentActivitySection / DashboardPrimaryActionPanel` 页面级组件树顺序已明确，与 `Current Focus` 第一优先级一致
+- [x] `DashboardOverviewCardGrid / DashboardOverviewCard` 的职责边界已明确
+- [x] `DashboardPrimaryActionPanel` 的组件归属与职责已明确，承接主 CTA 优先级矩阵与空状态按钮可点模式
+- [x] `FeedbackSignalCardList / FeedbackSignalCard` 的职责边界已明确
+- [x] `AssetFeedbackList / AssetFeedbackItemCard` 的职责边界已明确
+- [x] `RecentActivityList / RecentActivityItemCard` 的职责边界已明确
+- [x] `/dashboard` 当前阶段不引入新的搜索参数或区块级 URL 状态已明确
+- [x] `modules / products / repositories / decisions` 的 List / Detail / Create 路由对 `fromDashboard / dashboardSection / dashboardReturnTo` 的最小承接方式已明确
+- [x] Dashboard 组件默认归属于 `frontend/src/features/dashboard/components/`，且只在存在跨 feature 复用证据时才允许抽为共享组件
+- [x] `PC / 移动浏览器` 双场景下的布局降级策略已明确，且仍采用单一 `React Web`
+- [x] 当前阶段未引入第二套移动端 UI、第二套路由树或第二套 Dashboard 页面体系
+- [x] 本规格未越界冻结 `phase05-06` 的状态模型与返回恢复细节、`phase05-07` 的后端边界/接口分组、`phase05-08` 的 `.proto` 设计职责
+- [x] 本次规格与 `phase05` 三件套、`phase05-01 / 03 / 04` 以及现有前端目录命名模式保持一致
