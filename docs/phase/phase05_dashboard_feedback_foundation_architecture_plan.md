@@ -4,6 +4,10 @@
 
 本文档是 `phase05_dashboard_feedback_foundation` 的架构规划文档。
 
+当前根级真相源已完成 `phase05` 收口。本文档保留为 `phase05` 的架构规划与冻结记录；文中“当前阶段”均指 `phase05` 当时上下文，不覆盖根级当前“`phase05` 已完成收口、下一阶段正式 phase 入口待建立后切换”的状态。
+
+`phase05` 的已交付边界统一以 `.trae/specs/phase05_10_dashboard_feedback_formal_spec/dashboard_feedback_spec_v0.1.md`、`.trae/specs/phase05_11_dashboard_feedback_proto_mainline/` 与 `.trae/specs/phase05_14_dashboard_feedback_integration_validation_acceptance/acceptance_report.md` 为准。
+
 `phase05` 的目标不是补一页“看上去像驾驶舱”的统计大盘，而是在 `phase04` 已交付 `Product Registry + Repository Binding` 主线的基础上，冻结 `Dashboard + Feedback` 最小闭环的主交付边界、聚合归属、合同前提与实现范围，再继续进入 `/spec`、实现、验收与收口。
 
 当前阶段必须解决两个历史风险：

@@ -4,6 +4,10 @@
 
 本文档定义 `phase05_dashboard_feedback_foundation` 的执行顺序、子任务范围、DoD 与明确不做。
 
+当前根级真相源已完成 `phase05` 收口。本文档保留为 `phase05` 的执行规划与任务拆分记录；文中“当前阶段”均指 `phase05` 当时上下文，不覆盖根级当前“`phase05` 已完成收口、下一阶段正式 phase 入口待建立后切换”的状态。
+
+`phase05` 的已交付边界统一以 `.trae/specs/phase05_10_dashboard_feedback_formal_spec/dashboard_feedback_spec_v0.1.md`、`.trae/specs/phase05_11_dashboard_feedback_proto_mainline/` 与 `.trae/specs/phase05_14_dashboard_feedback_integration_validation_acceptance/acceptance_report.md` 为准。
+
 `phase05` 继续遵守交付型 phase 原则：不是只把 Dashboard 画成一张静态页面，而是要完成 `/plan -> /spec -> 实现 -> 验收 -> 收口` 全链路，并最终交付 `Dashboard + Feedback` 最小可执行闭环。
 
 相较于 `phase03` 与 `phase04`，本阶段在任务拆分上显式吸取以下经验：
@@ -280,7 +284,7 @@ DoD：
 
 - 根级文档与 `phase05` 文档保持单值一致
 - `plan.md` 中 `phase05` 状态更新正确
-- 下一阶段的进入条件清楚
+- 下一阶段正式 phase 入口未建立时，根级文档明确保持“待建立后切换”状态
 
 ## 4. 明确不做
 

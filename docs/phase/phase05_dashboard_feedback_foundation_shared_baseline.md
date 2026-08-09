@@ -11,8 +11,9 @@
 - 当前项目：`PSCO`
 - 当前 phase：`phase05_dashboard_feedback_foundation`
 - 当前技术路线：`Durable System Track`
-- 当前根级阶段状态：`phase04` 已完成收口，项目当前入口已切换为 `phase05_dashboard_feedback_foundation`
-- 当前阶段下一步：先完成 `phase05` 三件套审核，再进入对应 `/spec`
+- 当前根级阶段状态：`phase05` 已完成收口；下一阶段正式 phase 入口待建立后切换
+- 本文档保留为 `phase05` 的共享冻结基线；文中“当前阶段”均指 `phase05` 当时上下文，不覆盖根级当前阶段状态
+- `phase05` 的已交付边界统一以 `.trae/specs/phase05_10_dashboard_feedback_formal_spec/dashboard_feedback_spec_v0.1.md`、`.trae/specs/phase05_11_dashboard_feedback_proto_mainline/` 与 `.trae/specs/phase05_14_dashboard_feedback_integration_validation_acceptance/acceptance_report.md` 为准
 
 ### 2.2 当前阶段唯一直接执行层上游
 

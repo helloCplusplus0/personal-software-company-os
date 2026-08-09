@@ -1,6 +1,6 @@
 # PSCO Dashboard + Feedback 规格 v0.1 — 正式规格正文
 
-> **文档定位**：本文档是 `phase05_dashboard_feedback_foundation` 的正式规格正文，作为后续 `phase05-11 / 12 / 13 / 14` 合同落地、实现、联调验收与收口以及 `phase06+` 引用 `Dashboard + Feedback` 主线时的直接上游规格来源。
+> **文档定位**：本文档是 `phase05_dashboard_feedback_foundation` 的正式规格正文，作为后续 `phase05-11 / 12 / 13 / 14` 合同落地、实现、联调验收与收口以及下一阶段正式入口建立后承接 `Dashboard + Feedback` 主线时的直接上游规格来源。
 > **上游收敛**：本文档由 `phase05-01` 到 `phase05-09` 的冻结结论收敛而成，不另立第二套边界。`phase05-01 ~ 09` 在本文档生效后退为追溯来源与证据链，不再承担并列直接执行层入口职责。
 > **互链前提**：本文档以 `phase01-06` 的 `mvp_spec_v0.1.md` 为当前阶段唯一执行层总上游，完整承接 `module_registry_spec_v0.1.md` 与 `phase02-12` 验收结论中已交付的 `Module Registry` 边界、`decision_center_spec_v0.1.md` 与 `phase03-14` 验收结论中已交付的 `Decision Center` 边界、`product_repository_binding_spec_v0.1.md` 与 `phase04-14` 验收结论中已交付的 `Product Registry + Repository Binding` 边界，并与 `AGENTS.md`、`plan.md`、`TECH_STACK_BASELINE.md`、`project_rules.md`、`architecture_map.md`、`PSCO-summarize-feedback.md` 保持单值一致。
 > **状态约束**：`phase04` 已完成收口，项目当前根级阶段为 `phase05_dashboard_feedback_foundation`；本文档是 `Dashboard + Feedback` 的正式规格入口，`phase05` 后续实现、复核与下一阶段规格不得再把 `phase05-01 ~ 09` 当作并列直接执行层入口使用。

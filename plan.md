@@ -5,9 +5,9 @@
 ## 1. 当前状态
 
 - 当前阶段：`phase05_dashboard_feedback_foundation`
-- 当前状态：`phase04` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，`phase05` 已正式进入 `/plan`
-- 当前目标：以 `phase04-10` 正式规格、`phase04-11` 合同主线与 `phase04-14` 验收结论为直接上游，完成 `Dashboard + Feedback` 最小闭环的 `phase05` 三件套规划
-- 当前下一阶段入口：`phase05_dashboard_feedback_foundation`
+- 当前状态：`phase05` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
+- 当前目标：保持根级真相源与 `phase05` 已交付边界一致，并等待下一阶段正式 phase 入口建立后切换
+- 当前下一阶段入口：待正式建立后切换（直接承接 `phase05-10 / 11 / 14`，不得预设新的 phase 名称）
 
 ## 2. 当前进度概览
 
@@ -33,8 +33,13 @@
 - `.trae/specs/phase04_10_product_repository_binding_formal_spec/product_repository_binding_spec_v0.1.md` 已冻结为 `Product / Repository / Binding` 当前阶段唯一规格收敛入口
 - `.trae/specs/phase04_11_product_repository_binding_proto_mainline/` 已将 `Product / Repository / Binding` 最小 `.proto` 合同落地为仓库主线
 - `.trae/specs/phase04_14_product_repository_binding_integration_validation_acceptance/acceptance_report.md` 已形成 `phase04` 联调验收与收口结论入口
-- `phase05_dashboard_feedback_foundation` 已正式进入 `/plan`
-- `phase05` 三件套已建立，用于冻结 `Dashboard + Feedback` 的最小主线边界、执行顺序与共享基线
+- `phase05_dashboard_feedback_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
+- `Dashboard + Feedback` 最小主线已形成可运行、可验收交付物
+- `.trae/specs/phase05_10_dashboard_feedback_formal_spec/dashboard_feedback_spec_v0.1.md` 已冻结为 `Dashboard + Feedback` 当前阶段唯一规格收敛入口
+- `.trae/specs/phase05_11_dashboard_feedback_proto_mainline/` 已将 `Dashboard + Feedback` 最小 `.proto` 合同落地为仓库主线
+- `.trae/specs/phase05_14_dashboard_feedback_integration_validation_acceptance/acceptance_report.md` 已形成 `phase05` 联调验收与收口结论入口
+- `phase05` 三件套保留为该阶段 `/plan` 的规划与冻结记录，不再覆盖根级当前状态
+- 下一阶段正式 phase 入口尚未在仓库中建立；根级阶段切换保持“待建立后切换”显式状态
 
 ## 3. Phase 路线预览
 
@@ -76,21 +81,21 @@
 - 进入条件：直接承接 `.trae/specs/phase04_10_product_repository_binding_formal_spec/product_repository_binding_spec_v0.1.md`、`.trae/specs/phase04_11_product_repository_binding_proto_mainline/` 与 `.trae/specs/phase04_14_product_repository_binding_integration_validation_acceptance/acceptance_report.md`，以 `phase04` 已完成的 `Product Registry + Repository Binding` 交付物作为唯一上游输入
 - 范围约束：不得重复实现 `Product Registry`、`Repository Binding` 与三类绑定动作主线，而是以 `phase04` 已冻结页面、动作、数据、合同与联调结论为前提推进 `Dashboard + Feedback`
 - 交付要求：作为交付型 phase 推进，不得只停留在规格冻结
-- 状态：`current`
+- 状态：`completed`
+- 当前收口结果：已交付 `Dashboard + Feedback` 正式规格正文、最小 `.proto` 合同主线、后端与数据主线、前端主线与联调验收收口结果
 
-## 4. phase05 进入条件
+## 4. 下一阶段切换条件
 
-当以下条件同时满足时，当前阶段入口切换为 `phase05_dashboard_feedback_foundation`：
+当以下条件同时满足时，根级入口才允许从 `phase05` 已完成收口状态切换到下一阶段正式 phase 入口：
 
-1. `phase04` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口` 全链路
-2. `.trae/specs/phase04_10_product_repository_binding_formal_spec/product_repository_binding_spec_v0.1.md` 已冻结为 `Product / Repository / Binding` 当前阶段唯一正式规格入口
-3. `.trae/specs/phase04_11_product_repository_binding_proto_mainline/` 已将 `Product / Repository / Binding` 最小 `.proto` 合同落地为仓库合同主线
-4. `.trae/specs/phase04_12_product_repository_binding_backend_data_mainline/` 与 `.trae/specs/phase04_13_product_repository_binding_frontend_mainline/` 已完成前后端实现收口
-5. `.trae/specs/phase04_14_product_repository_binding_integration_validation_acceptance/acceptance_report.md` 已形成联调验收与问题收口结论
-6. `Product / Repository / Module Binding` 的最小闭环已在同一环境中被验证可运行
-7. `phase05` 已明确只承接 `phase04` 已交付主线，不重复实现 `Product Registry`、`Repository Binding` 与三类绑定动作主线
+1. `phase05` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口` 全链路
+2. `.trae/specs/phase05_10_dashboard_feedback_formal_spec/dashboard_feedback_spec_v0.1.md` 已冻结为 `Dashboard + Feedback` 当前阶段唯一正式规格入口
+3. `.trae/specs/phase05_11_dashboard_feedback_proto_mainline/` 已将 `Dashboard + Feedback` 最小 `.proto` 合同落地为仓库合同主线
+4. `.trae/specs/phase05_14_dashboard_feedback_integration_validation_acceptance/acceptance_report.md` 已形成联调验收与问题收口结论
+5. 下一阶段正式 `phase` 入口文档已在仓库中建立，并明确直接承接 `phase05-10 / 11 / 14`
+6. 根级真相源已完成状态切换回写，且未在根级文档中凭空猜测未建立的 phase 名称
 
-当前结论：以上进入条件已满足，仓库根级入口已从 `phase04_product_and_repository_binding_foundation` 切换到 `phase05_dashboard_feedback_foundation`。
+当前结论：`phase05` 已完成收口，下一阶段的直接上游输入已冻结为 `phase05-10` 正式规格正文、`phase05-11` 合同主线与 `phase05-14` 验收结论；由于下一阶段正式 phase 入口尚未建立，根级入口当前保持“待建立后切换”状态。
 
 ## 5. 说明
 

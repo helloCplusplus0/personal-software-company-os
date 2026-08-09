@@ -1,0 +1,12 @@
+- [x] 已明确 `phase05-15` 需要完成 `phase05` 文档互链复核，而不是新增第二套规格边界
+- [x] 已明确 `phase05-10` 的 `dashboard_feedback_spec_v0.1.md` 仍是 `Dashboard + Feedback` 当前阶段唯一规格入口
+- [x] 已明确 `phase05-11` 合同主线、`phase05-12 / 13` 实现结论与 `phase05-14` 联调验收结论需要进入根级同步范围，不再保留“仍在 /plan”或“仍在当前进行中”的旧口径
+- [x] 已明确根级状态回写的目标文档与同步边界
+- [x] 已明确根级回写只更新状态、入口、完成标志与冻结结论，不复制 phase 正文或验收细节
+- [x] 已明确 `plan.md` 中 `phase05` 的状态需要更新为与验收结果一致的表达
+- [x] 已明确 `phase05` 完成标志必须与 `phase05-14` 的运行证据一致
+- [x] 已明确下一阶段必须直接承接 `phase05-10 / 11 / 14` 作为 `Dashboard + Feedback` 已交付边界
+- [x] 已明确若下一阶段正式 phase 入口尚未建立，根级文档不得凭空杜撰新的阶段名称
+- [x] 已明确 `AGENTS.md`、`plan.md`、`docs/README.md`、`architecture_map.md` 与 `phase05` 文档需要保持单值一致
+- [x] 已明确后续接手者需要先读根级状态入口，再读 `phase05-10`、`phase05-11` 与 `phase05-14` 作为 `Dashboard + Feedback` 已交付边界
+- [x] 已明确本次收口不得遗留“phase05 仍处于 /plan / 仅完成三件套规划”等旧阶段表达
