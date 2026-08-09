@@ -1,0 +1,17 @@
+- [x] `dashboard_overview` 中四类独立可点击概览卡片的 canonical 跳转目标已明确冻结
+- [x] `Current Focus / Next Action` 与 `Asset Feedback` 中各类反馈卡片的单值落点已明确，且都回到既有 canonical owner 页面
+- [x] Dashboard 空状态与主 CTA 的目标页面、优先级顺序与“系统已就绪时不强制展示主 CTA”的规则已明确
+- [x] 高优先级反馈主 CTA 已明确保留真实来源区块 `current-focus`，未误标为 `empty-state`
+- [x] `recent_activity_feed` 中 `module / release / product / repository / decision / product_module_binding / product_repository_binding / module_repository_binding` 的单值落点已明确
+- [x] `release` 活动已明确统一回落到所属 `Module Detail`，当前阶段不新增 `Release Detail`
+- [x] 笼统 `binding` 活动类型已明确移除，必须至少拆分为三类绑定活动
+- [x] `fromDashboard=true`、`dashboardSection`、`dashboardReturnTo=/dashboard` 已明确为最小来源参数集合
+- [x] `dashboardSection` 的允许值已单值化，且未引入第二套 Dashboard 来源参数命名
+- [x] 已明确 `fromDashboard` 是 Dashboard 外层来源标记，不覆盖 `phase04` 已冻结的页面原生来源模型
+- [x] 已明确 `Dashboard -> Module/Product/Repository/Decision List -> Detail` 多跳路径中 `fromList` 与 `fromDashboard` 的职责分工
+- [x] 已明确“用户主动返回 Dashboard”与“写入成功后停留 canonical owner 完成 reread”是两个独立动作
+- [x] 已明确 Dashboard 来源下 Create 页的取消返回 `/dashboard`、提交成功后 Detail 保留 `fromDashboard` 回流与外层来源标记保留规则
+- [x] 已明确带 `fromDashboard` 的页面刷新后必须恢复来源标记与返回路径
+- [x] 已明确非法 `dashboardSection` 与缺失/非法 `dashboardReturnTo` 的回退语义
+- [x] 已明确 Dashboard 当前阶段仍只承接读与跳转，不形成第二套写入工作台
+- [x] 本次规格与 `phase05` 三件套、`phase05-01 / 02` 及 `phase04-03 / 06` 上游规则保持一致
