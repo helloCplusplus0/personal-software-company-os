@@ -1,0 +1,20 @@
+- [x] `Dashboard Home` 的最小查询状态已明确为 `overviewQueryState / feedbackQueryState / activityQueryState`
+- [x] `Dashboard Home` 的整页视图状态已明确为 `initial-loading / ready / page-error`
+- [x] `DashboardOverviewRead` 作为主聚合读取、`FeedbackSignalRead / RecentActivityRead` 作为附属聚合读取的前端角色已明确
+- [x] `DashboardOverviewSection` 的状态模型已明确为 `loading / ready / error`
+- [x] `CurrentFocusSection` 与 `AssetFeedbackSection` 共享 `FeedbackSignalRead` 且最小状态为 `loading / ready / empty / error`
+- [x] `RecentActivitySection` 的最小状态已明确为 `loading / ready / empty / error`
+- [x] `DashboardPrimaryActionPanel` 的最小状态已明确为 `computing / ready / hidden / suppressed`
+- [x] 冷启动空系统、非空但无 Module、无反馈信号、无最近活动等成功态的页面行为已明确
+- [x] `DashboardOverviewRead` 失败触发整页失败、附属聚合失败只触发局部失败的前端交互流已明确
+- [x] Feedback 分区重试与 Recent Activity 分区重试的粒度已明确，且未错误升级为整页刷新
+- [x] 主 CTA 的命中、等待、抑制与隐藏规则已明确
+- [x] `DashboardPrimaryActionPanel` 的 `hidden` 规则已明确排除 `phase05-04` 顺序 1-4 的创建导向 CTA 场景
+- [x] 多缺口并存时只允许一个主 CTA，其他动作降级为区块内次级入口的规则已明确
+- [x] Dashboard 到 List / Detail / Create 的返回链路与外层来源上下文恢复规则已明确
+- [x] 主动返回 `/dashboard` 时，来源区块恢复的一次性路由导航状态承接机制已明确，且未把 `/dashboard` 改成搜索参数页面
+- [x] `/dashboard` 刷新重跑三类读取、目标页刷新继续以 URL 搜索参数承接 Dashboard 外层来源的规则已明确
+- [x] `fromDashboard / dashboardSection / dashboardReturnTo` 仍然是唯一 Dashboard 外层来源参数集合
+- [x] 当前规格未依赖 `sessionStorage / localStorage` 作为 Dashboard 页面状态恢复的事实源
+- [x] 当前规格未越界冻结 `phase05-07` 的后端模块边界/接口分组或 `phase05-08` 的 `.proto` 设计职责
+- [x] 本次规格与 `phase05` 三件套、`phase05-03 / 04 / 05` 保持一致，且设计结果足以直接进入实现
