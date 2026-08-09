@@ -1,0 +1,40 @@
+# Checklist
+
+- [x] 已明确 Dashboard 验收环境必须复用既有 `database/scripts/` + `database/seeds/` 模式，不发明第二套工具链
+- [x] 已明确 `reset_dashboard_acceptance.sh` 作为 Dashboard 验收唯一统一入口
+- [x] 已明确四种模式：默认 `clean+restore`、`--clean-only`、`--restore-only`、`--fixture <name>`
+- [x] 已明确清空范围通过编排既有 `reset_product_repository_mainline.sh --clean-only`、`reset_decision_mainline.sh --clean-only` 与 `reset_module_mainline.sh --clean-only` 实现，按依赖逆序执行
+- [x] 已明确恢复范围按依赖顺序编排既有脚本 + Dashboard 基线补齐
+- [x] 已明确 `decisions` 表清空通过编排既有 `reset_decision_mainline.sh --clean-only` 实现，不得绕过既有脚本直接 DELETE
+- [x] 已明确所有 `--fixture` 模式统一遵守"先清空，再加载指定 fixture"语义，不允许任何 fixture 叠加已有数据
+- [x] 已明确七类最小 fixture 与两类 CTA 扩展 fixture 的命名与 CTA 映射矩阵
+- [x] 已明确 fixture 1 `empty-system` 映射 CTA 1 冷启动空系统
+- [x] 已明确 fixture 2 `modules-only` 映射 CTA 3 有模块无产品
+- [x] 已明确 fixture 3 `products-without-modules` 映射 CTA 2 非空缺口
+- [x] 已明确 fixture 4 `products-missing-repository` 映射 CTA 7 缺仓库绑定
+- [x] 已明确 fixture 5 `products-missing-module` 映射 CTA 8 缺模块绑定
+- [x] 已明确 fixture 6 `pending-decisions` 映射 CTA 5 待决策信号
+- [x] 已明确 fixture 7 `recent-activities` 映射 Recent Activity 区块 + CTA 9，所有 product 双绑定，覆盖八类活动类型
+- [x] 已明确 fixture 8 `products-missing-all-repositories`（CTA 扩展）映射 CTA 4，modules + products 存在但 repositories 为空
+- [x] 已明确 fixture 9 `products-missing-both-bindings`（CTA 扩展）映射 CTA 6，目标 product 同时无 product_modules 与 product_repositories
+- [x] 已明确 fixture 4 / 5 / 7 / 9 不得同时产生 `pending_decision_signals`，避免 CTA 5 抢占 CTA 6 / 7 / 8 / 9
+- [x] 已明确 CTA 4 通过 `--fixture products-missing-all-repositories` 正式建立，有独立 SQL 文件，不依赖手工 SQL
+- [x] 已明确 CTA 6 通过 `--fixture products-missing-both-bindings` 正式建立，有独立 SQL 文件，不依赖手工 SQL
+- [x] 已明确 CTA 9 直接由 `--fixture recent-activities` 覆盖（完整基线 + 全部双绑定 + 多类活动项）
+- [x] 已明确 fixture 文件命名为 `seed_dashboard_fixture_<name>.sql`，落点在 `database/seeds/`
+- [x] 已明确基线文件命名为 `seed_dashboard_acceptance_baseline.sql`
+- [x] 已明确 fixture SQL 幂等约束：`ON CONFLICT DO NOTHING` / `WHERE NOT EXISTS` / `UPDATE-then-INSERT`
+- [x] 已明确空系统验收基线通过 `--clean-only` 或 `--fixture empty-system` 建立，可重复执行
+- [x] 已明确最小有数据验收基线通过默认模式或 `--restore-only` 建立，可重复执行
+- [x] 已明确局部错误状态通过受控环境变量单一入口模拟，不破坏数据库结构，不产生 SQL fixture 文件
+- [x] 已明确三个环境变量：`DASHBOARD_SIMULATE_OVERVIEW_ERROR` / `DASHBOARD_SIMULATE_FEEDBACK_ERROR` / `DASHBOARD_SIMULATE_RECENT_ACTIVITY_ERROR`
+- [x] 已明确 overview 失败 → 整页失败；feedback / recent activity 失败 → 局部失败
+- [x] 已明确局部错误模拟的详细实现由 `phase05-12` 承接
+- [x] 已明确跳转返回验收矩阵覆盖四类 Detail 直接跳转返回
+- [x] 已明确跳转返回验收矩阵覆盖四类 List 直接跳转返回
+- [x] 已明确多跳路径的 `fromList` + `fromDashboard` 共存与分离规则
+- [x] 已明确三类 Create 页回流路径（取消返回 + 提交后 Detail 返回）
+- [x] 已明确刷新恢复路径验证参数不丢失
+- [x] 已明确非法参数回退：`dashboardSection` 回退 `overview`，`dashboardReturnTo` 回退 `/dashboard`
+- [x] 已明确 Dashboard 验收不得依赖临时手工 SQL
+- [x] 已验证本次规格与 `phase05-02 / 03 / 04 / 07 / 08` 以及既有 reset/seed 主线保持一致
