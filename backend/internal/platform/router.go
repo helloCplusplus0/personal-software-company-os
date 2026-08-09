@@ -68,6 +68,9 @@ import (
 	dchandler "github.com/psco/backend/internal/decisioncenter/handler"
 	dcrepository "github.com/psco/backend/internal/decisioncenter/repository"
 	dcservice "github.com/psco/backend/internal/decisioncenter/service"
+	dashboardcandidate "github.com/psco/backend/internal/dashboard/candidate"
+	dashboardhandler "github.com/psco/backend/internal/dashboard/handler"
+	dashboardservice "github.com/psco/backend/internal/dashboard/service"
 	"github.com/psco/backend/internal/moduleregistry"
 	"github.com/psco/backend/internal/moduleregistry/handler"
 	"github.com/psco/backend/internal/moduleregistry/repository"
@@ -308,4 +311,41 @@ func mountRepositoryBinding(r chi.Router, querySvc *reposervice.QueryService, co
 	r.Post("/repositories", commandH.CreateRepository)
 	r.Post("/repositories/{repositoryId}/bindings/products", commandH.BindRepositoryToProduct)
 	r.Post("/repositories/{repositoryId}/bindings/modules", commandH.MapModuleToRepository)
+}
+
+// buildDashboard 构造 Dashboard 的 QueryService 并返回。
+//
+// 装配语义（phase05-07 §"platform 装配层必须接线 Dashboard 模块"）：
+//   - Dashboard candidate reader（overview / feedback / activity 三组）由 platform 装配点构造
+//   - Dashboard QueryService 的跨模块读依赖在 platform 装配点注入，不在 Dashboard 模块内部自行 new
+//   - Dashboard 只承接只读聚合，当前阶段无 command service
+//
+// 必须在既有四个 canonical 模块装配之后调用（Dashboard 跨模块读取依赖 canonical 模块的表已建表）。
+func buildDashboard(pool *pgxpool.Pool) *dashboardservice.QueryService {
+	// 1. candidate 层（跨模块 reader，由 Dashboard 拥有）
+	overviewReaders := dashboardcandidate.NewOverviewReaders(pool)
+	feedbackReaders := dashboardcandidate.NewFeedbackReaders(pool)
+	activityReaders := dashboardcandidate.NewActivityReaders(pool)
+
+	// 2. service 层（注入三个 candidate reader 集合）
+	querySvc := dashboardservice.NewQueryService(overviewReaders, feedbackReaders, activityReaders)
+
+	return querySvc
+}
+
+// mountDashboard 把 Dashboard 模块的全部路由挂到 /api 下。
+//
+// 装配顺序（phase05-08 RPC→HTTP 映射矩阵 + phase05-07 分层语义）：
+//  1. 由调用方注入已构造的 QueryService
+//  2. 构造 handler 层，注入 service
+//  3. 在 /api 子路由器上注册三个 GET 路径
+func mountDashboard(r chi.Router, querySvc *dashboardservice.QueryService) {
+	// handler 层
+	queryH := dashboardhandler.NewQueryHandler(querySvc)
+
+	// 路由注册（phase05-08 RPC→HTTP 映射矩阵）
+	// --- 读组 ---
+	r.Get("/dashboard/overview", queryH.GetOverview)
+	r.Get("/dashboard/feedback-signals", queryH.GetFeedbackSignals)
+	r.Get("/dashboard/recent-activities", queryH.GetRecentActivities)
 }

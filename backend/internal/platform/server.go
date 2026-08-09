@@ -1,7 +1,7 @@
 // Package platform — HTTP 服务器装配。
 //
 // 使用 chi v5 装配根路由器，挂载 Module Registry / Decision Center /
-// Product Registry / Repository Binding 模块路由，
+// Product Registry / Repository Binding / Dashboard 模块路由，
 // 应用基础中间件（RequestID / Logger / Recoverer / CORS），并启动 HTTP 服务。
 package platform
 
@@ -63,6 +63,12 @@ func NewServer(cfg Config, pool *pgxpool.Pool) *Server {
 		mountDecisionCenter(r, pool)
 		mountProductRegistry(r, productQuerySvc, productCommandSvc)
 		mountRepositoryBinding(r, repoQuerySvc, repoCommandSvc)
+
+		// phase05-12: Dashboard 必须在既有四个 canonical 模块装配之后装配
+		// （Dashboard 跨模块读取依赖 canonical 模块的表已建表）。
+		// Dashboard 只承接只读聚合，跨模块读依赖在 platform 装配点注入（phase05-07）。
+		dashboardQuerySvc := buildDashboard(pool)
+		mountDashboard(r, dashboardQuerySvc)
 	})
 
 	return &Server{

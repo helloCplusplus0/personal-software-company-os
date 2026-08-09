@@ -1,0 +1,43 @@
+- [x] 已明确 phase05-12 目标是把 Dashboard 后端推进为仓库内可编译可运行的代码
+- [x] 已明确 Dashboard 模块物理落点为 backend/internal/dashboard/
+- [x] 已明确模块文件分层为 handler / service / candidate / types.go / errors.go / handler/response.go
+- [x] 已明确 Go package 为 github.com/psco/backend/internal/dashboard
+- [x] 已明确 DTO 从 dashboard.proto 单向派生，字段使用 snake_case JSON tag
+- [x] 已明确 DashboardOverview DTO 承接 6 个计数字段
+- [x] 已明确 FeedbackSignal DTO 承接 9 个字段
+- [x] 已明确 ProductAssetCoverageSummary DTO 承接 5 个字段（含 representative_signals）
+- [x] 已明确 RecentActivityItem DTO 承接 5 个字段（含 activity_at: time.Time）
+- [x] 已明确枚举使用 string 类型与 snake_case 常量值
+- [x] 已明确单一 QueryService 承接 ReadOverview / ReadFeedbackSignal / ReadRecentActivity 三个读组
+- [x] 已明确 ReadOverview 任一 reader 失败返回整页失败
+- [x] 已明确 ReadFeedbackSignal / ReadRecentActivity 失败返回局部失败，不拖垮 ReadOverview
+- [x] 已明确跨模块读取通过 candidate/ 子包隔离，service 层不直接跨模块写 SQL
+- [x] 已明确 candidate reader 分工：overview / feedback / activity 三组
+- [x] 已明确 ReadFeedbackSignal 归一化 pending_decision_signals 与 product_asset_coverage 为统一 FeedbackSignal 列表
+- [x] 已明确反馈信号优先级排序：P1 > P2 > P3 > P4，同优先级按 created_at DESC
+- [x] 已明确 current_focus_signals 最多 5 条，representative_signals 最多 3 条
+- [x] 已明确 missing_both_bindings 作为独立计数字段，不回退为隐式组合
+- [x] 已明确 ReadRecentActivity 覆盖 8 类活动类型，按 activity_at 倒序，最多 10 条
+- [x] 已明确活动项跳转目标映射对齐 phase05-03 导航解释
+- [x] 已明确空态返回成功响应（200 + 空列表/零计数），不映射为 404 或 500
+- [x] 已明确 handler 注册 GET /api/dashboard/overview、feedback-signals、recent-activities 三个路由
+- [x] 已明确 handler 显式组装空 Proto request 语义（直接调用 service 方法）
+- [x] 已明确 platform 装配层通过 buildDashboard + mountDashboard 接线
+- [x] 已明确局部错误模拟通过 DASHBOARD_SIMULATE_OVERVIEW_ERROR / FEEDBACK_ERROR / RECENT_ACTIVITY_ERROR 环境变量
+- [x] 已明确 reset_dashboard_acceptance.sh 支持默认/--clean-only/--restore-only/--fixture <name> 四种模式
+- [x] 已明确清空通过编排既有 reset 脚本实现，不绕过直接 DELETE
+- [x] 已明确九类 fixture 文件命名与落点
+- [x] 已明确 fixture SQL 必须幂等可重复执行
+- [x] 已明确 go build ./... 必须通过
+- [x] 已明确三个 GET endpoint 必须可运行
+- [x] 已明确 reset_dashboard_acceptance.sh 必须可重复执行
+- [x] 已明确三个 GET endpoint 成功响应体必须对齐 proto envelope（overview / current_focus_signals+asset_feedback_summary / activities）
+- [x] 已明确 handler 不得返回裸 DashboardOverview 或裸 []RecentActivityItem
+- [x] 已明确响应包络 DTO 落点在 types.go，由 DashboardOverviewReadResult / FeedbackSignalReadResult / RecentActivityReadResult 承接
+- [x] 已明确 reset_dashboard_acceptance.sh host psql 模式必须补齐 PGPASSWORD 处理，与既有 reset 脚本一致
+- [x] 已明确 host 模式下 PG_PASSWORD 未设置时必须从容器读取 POSTGRES_PASSWORD，容器未运行则报错退出
+- [x] 已验证修复后 go build ./... 通过
+- [x] 已验证修复后 go vet ./internal/dashboard/... 通过
+- [x] 已验证修复后 bash -n reset_dashboard_acceptance.sh 通过
+- [x] 已运行时验证三个 endpoint 响应 JSON 顶层字段对齐 proto envelope
+
