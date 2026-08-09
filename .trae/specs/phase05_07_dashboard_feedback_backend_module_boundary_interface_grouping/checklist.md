@@ -1,0 +1,42 @@
+- [x] Dashboard 后端模块物理落点已明确为 `backend/internal/dashboard/`
+- [x] Dashboard 模块 Go package 路径已明确为 `github.com/psco/backend/internal/dashboard`，沿用 `internal/<modulename>` 命名模式
+- [x] Dashboard 模块内部文件分层已明确为 `handler/ / service/ / repository/ / candidate/ / types.go / errors.go / validate.go / handler/response.go`
+- [x] `errors.go / types.go / validate.go / handler/response.go` 已明确按职责单值化映射到唯一文件
+- [x] Dashboard 读接口分组已明确为 `DashboardOverviewRead / FeedbackSignalRead / RecentActivityRead` 三组
+- [x] 三个读组统一收口到 `backend/internal/dashboard/service/query_service.go` 的单一 `QueryService`，对应 `ReadOverview / ReadFeedbackSignal / ReadRecentActivity` 三个读组方法已明确
+- [x] 单一 `QueryService` 模式与 `phase02-09 / phase03-10 / phase04-10` 已落地的单文件 `service/query_service.go` 模式一致已明确
+- [x] 不得为三个读组单独发明 `OverviewReadService / FeedbackSignalReadService / RecentActivityReadService` 等独立 service owner 已明确
+- [x] Dashboard 模块不承接任何业务写入接口、写动作 canonical owner 继续由 canonical 模块承接已明确
+- [x] `DashboardOverviewRead` 的读组 owner 已明确为 `QueryService.ReadOverview`
+- [x] `DashboardOverviewRead` 的 reader 接口集合已明确为 `ModuleCountReader / ProductCountReader / RepositoryCountReader / DecisionCountReader`
+- [x] `DashboardOverviewRead` 任一 reader 失败必须返回整页失败，与 `phase05-04` 错误语义一致已明确
+- [x] `FeedbackSignalRead` 的读组 owner 已明确为 `QueryService.ReadFeedbackSignal`
+- [x] `Feedback Signal Card` 归一化组装 owner 已明确为 `QueryService.ReadFeedbackSignal` 内部，不让 canonical 模块产卡片
+- [x] `FeedbackSignalRead` 的 reader 接口集合已明确为 `PendingDecisionSignalReader / ProductAssetCoverageReader`
+- [x] `FeedbackSignalRead` 局部失败语义与 `phase05-04` 一致已明确
+- [x] `RecentActivityRead` 的读组 owner 已明确为 `QueryService.ReadRecentActivity`
+- [x] `recent_activity` 类型映射 owner 已明确为 `QueryService.ReadRecentActivity` 内部
+- [x] `RecentActivityRead` 的 reader 接口集合已明确为 `ModuleActivityReader / ProductActivityReader / RepositoryActivityReader / DecisionActivityReader`
+- [x] 各 activity reader 必须返回带显式 `activity_at` 字段的原始活动项已明确
+- [x] 跨模块读取方向已明确只允许两类受控模式：Dashboard `candidate` 自拥有读，或 canonical owner 提供的 provider-owned read
+- [x] Dashboard `candidate/` 自拥有模式只用于 Dashboard 自己拥有的原始聚合读已明确
+- [x] canonical owner 已拥有的源语义或摘要读取未被一刀切排除，provider-owned read 可继续参与装配已明确
+- [x] Dashboard `candidate/` 实现可以直接读取 canonical 模块的表，但必须在 `candidate/` 子包内隔离已明确
+- [x] Dashboard `service/` 层不得直接 import canonical 模块 `repository/` 包、不得直接跨模块写 SQL 已明确
+- [x] Dashboard `candidate/` 子包的 reader 分工（Module / Decision / Product / Repository 四组）已明确
+- [x] 依赖注入装配点已明确为 `backend/internal/platform/` 路由装配层，沿用 `phase03/04` 装配模式
+- [x] 跨模块读取接口 owner 归属规则已明确按读语义 owner 选择受控模式，而不是把所有读取强行并成一种实现 owner
+- [x] 未额外发明第三套跨模块读取架构已明确
+- [x] DTO 落点已明确为 `backend/internal/dashboard/types.go`
+- [x] DTO 与 `.proto` 映射方式已明确为显式映射函数，owner 在 Dashboard 模块，`.proto` 消息由 `phase05-08` 承接
+- [x] DTO 字段语义对齐 `phase05-02 / phase05-04` 已冻结的最小字段模板已明确
+- [x] 错误响应统一入口已明确为 `backend/internal/dashboard/handler/response.go`
+- [x] 整页失败、局部失败、空态响应的传递规则与 `phase05-04 / phase05-06` 一致已明确
+- [x] “局部失败”未被提前冻结为附属读 endpoint 的专用响应标记，而是保持为调用侧组合语义已明确
+- [x] 当前阶段不冻结 Go 数据访问层具体工具（`sqlx / sqlc / GORM / database/sql`）已明确
+- [x] 当前阶段不冻结缓存层、连接池配置、查询超时已明确
+- [x] 当前阶段不冻结 `.proto` 服务命名、消息结构、字段编号、包名版本已明确
+- [x] 当前阶段不冻结 `chi` 路由路径、HTTP 方法、状态码细节、reader 接口具体方法签名已明确
+- [x] 本次规格与 `phase05` 三件套、`phase05-02 / 04 / 06`、既有 `phase02-09 / phase03-10 / phase04-10` 后端模式保持一致
+- [x] 本次规格未越界冻结 `phase05-08` 的 `.proto` 设计职责与前端实现细节
+- [x] 设计结果足以直接进入实现
