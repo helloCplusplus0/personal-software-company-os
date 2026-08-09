@@ -16,6 +16,7 @@ import (
 	"log/slog"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"syscall"
 	"time"
 
@@ -29,8 +30,13 @@ func main() {
 	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo})))
 
 	// 1. 加载 .env（可选，生产环境应直接注入环境变量）
-	if err := godotenv.Load(); err != nil {
-		slog.Info("no .env file loaded, relying on environment variables", "error", err)
+	if loaded, err := loadDotEnv(); err != nil {
+		slog.Error("load .env failed", "error", err)
+		os.Exit(1)
+	} else if len(loaded) == 0 {
+		slog.Info("no .env file loaded, relying on environment variables")
+	} else {
+		slog.Info("loaded .env files", "files", loaded)
 	}
 
 	cfg, err := platform.LoadConfig()
@@ -109,4 +115,42 @@ func main() {
 		os.Exit(1)
 	}
 	slog.Info("server stopped cleanly")
+}
+
+// loadDotEnv 兼容仓库根与 backend/ 目录两种常见启动方式。
+//
+// 优先加载当前目录中的 .env；若不存在，再尝试仓库根下的 backend/.env。
+// 使用 godotenv.Load 的显式文件列表模式，避免只查当前目录导致启动位置变化时丢失配置。
+func loadDotEnv() ([]string, error) {
+	candidates := []string{".env", "backend/.env", "../backend/.env"}
+	loaded := make([]string, 0, len(candidates))
+	seen := make(map[string]struct{}, len(candidates))
+
+	for _, candidate := range candidates {
+		absPath, err := filepath.Abs(candidate)
+		if err != nil {
+			return nil, err
+		}
+		if _, ok := seen[absPath]; ok {
+			continue
+		}
+		if _, err := os.Stat(absPath); err != nil {
+			if os.IsNotExist(err) {
+				continue
+			}
+			return nil, err
+		}
+
+		seen[absPath] = struct{}{}
+		loaded = append(loaded, absPath)
+	}
+
+	if len(loaded) == 0 {
+		return nil, nil
+	}
+
+	if err := godotenv.Load(loaded...); err != nil {
+		return nil, err
+	}
+	return loaded, nil
 }

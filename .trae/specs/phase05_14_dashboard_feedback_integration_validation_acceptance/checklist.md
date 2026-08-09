@@ -1,0 +1,10 @@
+- [x] 已明确 `phase05-14` 必须复用 `phase05-09` 的真实验收基线、fixture 与重置脚本，不得用 mock 或手工 SQL 替代
+- [x] 已明确验收前必须核对前端 `/dashboard`、后端 `/api/dashboard/*`、真实 API 模式与合同单值链路
+- [x] 已明确必须覆盖 Dashboard 空状态、有数据状态、局部错误状态与 `Recent Activity` 的最小验收矩阵
+- [x] 已明确必须分别验收 `overview / feedback-signals / recent-activities` 三类聚合读取与前端消费闭环
+- [x] 已明确必须覆盖 Dashboard 到 `Product / Repository / Module / Decision` 的直接跳转、主动返回与多跳返回路径
+- [x] 已明确 `Dashboard -> List -> Detail -> List -> Dashboard` 多跳链路中 `fromList` 与 `fromDashboard` 必须并存恢复
+- [x] 已明确返回 Dashboard 时必须通过一次性 navigation state 恢复 `dashboardSection`
+- [x] 已明确 `phase05-14` 必须产出单一 `acceptance_report.md`，统一承接环境、步骤、结果、问题与 DoD
+- [x] 已明确联调中发现的问题必须在当前阶段显式收口；未收口阻断不得宣告通过
+- [x] 已验证本 spec 与 `phase05-09 / 10 / 11 / 12 / 13` 及 `phase04-14` 的验收模式保持一致

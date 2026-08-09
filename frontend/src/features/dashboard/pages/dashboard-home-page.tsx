@@ -24,6 +24,8 @@
  *   - AssetFeedback 区块状态基于 representative_signals 独立派生（不再与 CurrentFocus 共享）
  */
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useNavigate, type HistoryState } from '@tanstack/react-router'
+import { useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
@@ -38,6 +40,15 @@ import { AssetFeedbackSection } from '../components/asset-feedback-section'
 import { RecentActivitySection } from '../components/recent-activity-section'
 import { DashboardPrimaryActionPanel } from '../components/dashboard-primary-action-panel'
 import { useDashboardReturnSection } from '../lib/dashboard-source'
+import type { DashboardSection } from '../types'
+
+const DASHBOARD_SECTION_LABELS: Record<DashboardSection, string> = {
+  overview: '系统概览',
+  'current-focus': 'Current Focus',
+  'asset-feedback': 'Asset Feedback',
+  'recent-activity': 'Recent Activity',
+  'empty-state': '主 CTA',
+}
 
 /**
  * DashboardHomePage — Dashboard 主页面组件。
@@ -51,11 +62,49 @@ import { useDashboardReturnSection } from '../lib/dashboard-source'
  * 不承接任何业务写入（phase05-13 §"Dashboard 前端必须只读不写"）。
  */
 export function DashboardHomePage() {
+  const navigate = useNavigate({ from: '/dashboard' })
   const queryClient = useQueryClient()
+  const sectionRefs = useRef<Record<DashboardSection, HTMLDivElement | null>>({
+    overview: null,
+    'current-focus': null,
+    'asset-feedback': null,
+    'recent-activity': null,
+    'empty-state': null,
+  })
 
   // 一次性路由 state 中的 dashboardSection 恢复标记（phase05-13 §"一次性路由 state 承接"）
-  // 用于主动返回 Dashboard 后的区块定位（当前阶段主要用于无障碍焦点，不强制滚动）
+  // 用于主动返回 Dashboard 后的区块定位；读取后立刻清空，避免变成持久事实源。
   const returnSection = useDashboardReturnSection()
+
+  useEffect(() => {
+    if (!returnSection) {
+      return
+    }
+
+    const target = sectionRefs.current[returnSection]
+    if (!target) {
+      navigate({
+        to: '/dashboard',
+        replace: true,
+        state: {} as HistoryState,
+      })
+      return
+    }
+
+    const frameId = window.requestAnimationFrame(() => {
+      target.scrollIntoView({ block: 'start', behavior: 'auto' })
+      target.focus({ preventScroll: true })
+      navigate({
+        to: '/dashboard',
+        replace: true,
+        state: {} as HistoryState,
+      })
+    })
+
+    return () => {
+      window.cancelAnimationFrame(frameId)
+    }
+  }, [navigate, returnSection])
 
   // ============================================================================
   // 三路独立查询（phase05-10 §7.1）
@@ -198,59 +247,103 @@ export function DashboardHomePage() {
   // 整页 ready：渲染 stat bar + 四区块 + 主 CTA 面板
   return (
     <>
-      {/* 一次性恢复标记提示（可选，当前阶段主要用于无障碍焦点） */}
       {returnSection && (
         <div className="sr-only" aria-live="polite">
-          从 {returnSection} 区块返回
+          已恢复到 {DASHBOARD_SECTION_LABELS[returnSection]} 区块
         </div>
       )}
 
       <DashboardHomePageShell
         primaryActionPanel={
-          <DashboardPrimaryActionPanel
-            overviewStatus="ready"
-            overview={overviewQuery.data}
-            feedbackStatus={ctaFeedbackStatus}
-            currentFocusSignals={feedbackQuery.data?.current_focus_signals ?? []}
-            assetFeedbackRepresentativeSignals={
-              feedbackQuery.data?.asset_feedback_summary?.representative_signals ?? []
-            }
-          />
+          <div
+            ref={(node) => {
+              sectionRefs.current['empty-state'] = node
+            }}
+            data-dashboard-section="empty-state"
+            tabIndex={-1}
+            className="rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          >
+            <DashboardPrimaryActionPanel
+              overviewStatus="ready"
+              overview={overviewQuery.data}
+              feedbackStatus={ctaFeedbackStatus}
+              currentFocusSignals={feedbackQuery.data?.current_focus_signals ?? []}
+              assetFeedbackRepresentativeSignals={
+                feedbackQuery.data?.asset_feedback_summary?.representative_signals ?? []
+              }
+            />
+          </div>
         }
         statBar={
           overviewQuery.data && (
-            <DashboardStatBar
-              overview={overviewQuery.data}
-              coverageStatus={coverageStatus}
-              summary={feedbackQuery.data?.asset_feedback_summary}
-            />
+            <div
+              ref={(node) => {
+                sectionRefs.current.overview = node
+              }}
+              data-dashboard-section="overview"
+              tabIndex={-1}
+              className="rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            >
+              <DashboardStatBar
+                overview={overviewQuery.data}
+                coverageStatus={coverageStatus}
+                summary={feedbackQuery.data?.asset_feedback_summary}
+              />
+            </div>
           )
         }
         currentFocusSection={
-          <CurrentFocusSection
-            status={currentFocusStatus}
-            signals={feedbackQuery.data?.current_focus_signals ?? []}
-            error={feedbackQuery.error as Error | null}
-            onRetry={() => queryClient.invalidateQueries({ queryKey: ['dashboard-feedback-signals'] })}
-          />
+          <div
+            ref={(node) => {
+              sectionRefs.current['current-focus'] = node
+            }}
+            data-dashboard-section="current-focus"
+            tabIndex={-1}
+            className="rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          >
+            <CurrentFocusSection
+              status={currentFocusStatus}
+              signals={feedbackQuery.data?.current_focus_signals ?? []}
+              error={feedbackQuery.error as Error | null}
+              onRetry={() => queryClient.invalidateQueries({ queryKey: ['dashboard-feedback-signals'] })}
+            />
+          </div>
         }
         assetFeedbackSection={
-          <AssetFeedbackSection
-            status={assetFeedbackStatus}
-            signals={
-              feedbackQuery.data?.asset_feedback_summary?.representative_signals ?? []
-            }
-            error={feedbackQuery.error as Error | null}
-            onRetry={() => queryClient.invalidateQueries({ queryKey: ['dashboard-feedback-signals'] })}
-          />
+          <div
+            ref={(node) => {
+              sectionRefs.current['asset-feedback'] = node
+            }}
+            data-dashboard-section="asset-feedback"
+            tabIndex={-1}
+            className="rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          >
+            <AssetFeedbackSection
+              status={assetFeedbackStatus}
+              signals={
+                feedbackQuery.data?.asset_feedback_summary?.representative_signals ?? []
+              }
+              error={feedbackQuery.error as Error | null}
+              onRetry={() => queryClient.invalidateQueries({ queryKey: ['dashboard-feedback-signals'] })}
+            />
+          </div>
         }
         recentActivitySection={
-          <RecentActivitySection
-            status={activitySectionStatus}
-            activities={activityQuery.data?.activities ?? []}
-            error={activityQuery.error as Error | null}
-            onRetry={() => queryClient.invalidateQueries({ queryKey: ['dashboard-recent-activities'] })}
-          />
+          <div
+            ref={(node) => {
+              sectionRefs.current['recent-activity'] = node
+            }}
+            data-dashboard-section="recent-activity"
+            tabIndex={-1}
+            className="rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          >
+            <RecentActivitySection
+              status={activitySectionStatus}
+              activities={activityQuery.data?.activities ?? []}
+              error={activityQuery.error as Error | null}
+              onRetry={() => queryClient.invalidateQueries({ queryKey: ['dashboard-recent-activities'] })}
+            />
+          </div>
         }
       />
     </>

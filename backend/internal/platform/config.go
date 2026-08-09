@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"path/filepath"
 	"strconv"
 )
 
@@ -32,10 +33,13 @@ type Config struct {
 // DATABASE_URL 必须为显式最终值；若密码含 /、=、@ 等特殊字符，调用方需在写入 env 前完成 URL 编码。
 // 敏感凭据不写入仓库源码，应通过本地 .env 文件或运行环境提供。
 func LoadConfig() (Config, error) {
+	migrationsDir := resolveRepoRelativePath(envOrDefault("MIGRATIONS_DIR", "database/migrations"))
+	seedsDir := resolveRepoRelativePath(envOrDefault("SEEDS_DIR", "database/seeds"))
+
 	cfg := Config{
 		DatabaseURL:    os.Getenv("DATABASE_URL"),
-		MigrationsDir:  envOrDefault("MIGRATIONS_DIR", "database/migrations"),
-		SeedsDir:       envOrDefault("SEEDS_DIR", "database/seeds"),
+		MigrationsDir:  migrationsDir,
+		SeedsDir:       seedsDir,
 		RunSeedsOnBoot: envOrDefault("RUN_SEEDS_ON_BOOT", "false") == "true",
 	}
 
@@ -64,4 +68,44 @@ func envOrDefault(key, defaultVal string) string {
 		return v
 	}
 	return defaultVal
+}
+
+// resolveRepoRelativePath 将相对目录解析到仓库中的真实落点，避免 backend/ 目录启动时相对路径失效。
+//
+// 解析策略：
+//  1. 绝对路径：直接返回 clean 后结果
+//  2. 当前工作目录可直接命中：返回其绝对路径
+//  3. 从当前目录逐级向上查找，直到命中仓库中的相对路径落点
+//  4. 若仍未命中，回退为当前工作目录下的绝对路径，便于错误日志直接暴露最终尝试路径
+func resolveRepoRelativePath(rawPath string) string {
+	if rawPath == "" {
+		return rawPath
+	}
+	if filepath.IsAbs(rawPath) {
+		return filepath.Clean(rawPath)
+	}
+
+	cwd, err := os.Getwd()
+	if err != nil {
+		return filepath.Clean(rawPath)
+	}
+
+	for current := cwd; ; current = filepath.Dir(current) {
+		candidate := filepath.Join(current, rawPath)
+		if pathExists(candidate) {
+			return candidate
+		}
+
+		parent := filepath.Dir(current)
+		if parent == current {
+			break
+		}
+	}
+
+	return filepath.Join(cwd, rawPath)
+}
+
+func pathExists(path string) bool {
+	_, err := os.Stat(path)
+	return err == nil
 }
