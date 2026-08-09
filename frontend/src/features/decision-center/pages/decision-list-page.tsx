@@ -21,6 +21,8 @@ import { DecisionListContent } from '../components/decision-list-content'
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 import { useDecisionListSearchStore } from '../stores/decision-list-search-store'
+import { BackToDashboardButton } from '@/features/dashboard/components/back-to-dashboard-button'
+import { mergeCurrentDashboardSource } from '@/features/dashboard/lib/dashboard-source'
 
 export function DecisionListPage() {
   const search = useSearch({ from: '/decisions/' })
@@ -42,9 +44,20 @@ export function DecisionListPage() {
 
   const isFiltered = Boolean(search.queryText) || (search.statusFilter !== 'all')
   const isEmpty = !isLoading && !isError && (data?.length ?? 0) === 0
+  const detailSearch: Record<string, unknown> = mergeCurrentDashboardSource(
+    {
+      fromList: true,
+      queryText: search.queryText,
+      statusFilter: search.statusFilter,
+    },
+    search,
+  ) as unknown as Record<string, unknown>
 
   return (
     <div className="space-y-4">
+      {/* phase05-13：从 Dashboard 进入时展示"返回 Dashboard"按钮 */}
+      <BackToDashboardButton />
+
       {/* 页面标题与创建入口 */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Decision Center</h1>
@@ -60,9 +73,15 @@ export function DecisionListPage() {
       <DecisionListToolbar
         queryText={search.queryText ?? ''}
         statusFilter={search.statusFilter ?? 'all'}
-        onChange={(queryText, statusFilter) =>
-          navigate({ search: { queryText: queryText || undefined, statusFilter } })
-        }
+          onChange={(queryText, statusFilter) =>
+            navigate({
+              search: (prev) => ({
+                ...prev,
+                queryText: queryText || undefined,
+                statusFilter,
+              }),
+            })
+          }
       />
 
       {/* 内容区：根据读取结果派生视图状态 */}
@@ -90,7 +109,7 @@ export function DecisionListPage() {
           <p className="text-muted-foreground">没有匹配筛选条件的决策</p>
         </div>
       ) : (
-        <DecisionListContent items={data ?? []} isLoading={isLoading} />
+          <DecisionListContent items={data ?? []} isLoading={isLoading} detailSearch={detailSearch} />
       )}
     </div>
   )

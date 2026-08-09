@@ -12,6 +12,8 @@ import {
   buildProductDetailSearchFromTransit,
   type RepositoryBindingSearch,
 } from '../utils/product-source-transit'
+import { BackToDashboardButton } from '@/features/dashboard/components/back-to-dashboard-button'
+import { mergeCurrentDashboardSource } from '@/features/dashboard/lib/dashboard-source'
 
 /**
  * panelMode — phase04-06 互斥展开状态
@@ -91,10 +93,13 @@ export function RepositoryBindingDetailPage() {
     if (fromList) {
       navigate({
         to: '/repositories',
-        search: {
-          queryText: search.queryText,
-          statusFilter: search.statusFilter ?? 'all',
-        },
+          search: mergeCurrentDashboardSource(
+            {
+              queryText: search.queryText,
+              statusFilter: search.statusFilter ?? 'all',
+            },
+            search,
+          ),
       })
     } else if (fromProductDetail && search.productId) {
       // phase04-06 返回 Product Detail 时，必须恢复 Product Detail 的来源标记
@@ -104,18 +109,19 @@ export function RepositoryBindingDetailPage() {
       navigate({
         to: '/products/$productId',
         params: { productId: search.productId },
-        search: productDetailSearch,
+          search: mergeCurrentDashboardSource(productDetailSearch, search),
       })
     } else if (fromModuleDetail && search.moduleId) {
       navigate({
         to: '/modules/$moduleId',
         params: { moduleId: search.moduleId },
+          search: mergeCurrentDashboardSource({}, search) as Record<string, unknown>,
       })
     } else {
       // direct-entry → 回 Repository Binding / List 默认筛选参数
       navigate({
         to: '/repositories',
-        search: { statusFilter: 'all' },
+          search: mergeCurrentDashboardSource({ statusFilter: 'all' as const }, search),
       })
     }
   }
@@ -130,10 +136,14 @@ export function RepositoryBindingDetailPage() {
   if (isError) {
     return (
       <div className="space-y-4">
-        <Button variant="ghost" size="sm" onClick={handleReturn}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          {returnLabel}
-        </Button>
+        {/* phase05-13：从 Dashboard 进入时同时展示"返回 Dashboard"与原生返回 */}
+        <div className="flex items-center gap-2">
+          <BackToDashboardButton />
+          <Button variant="ghost" size="sm" onClick={handleReturn}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            {returnLabel}
+          </Button>
+        </div>
         <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4">
           <p className="text-sm text-destructive">
             {error instanceof Error && 'status' in error && (error as { status: number }).status === 404
@@ -148,10 +158,13 @@ export function RepositoryBindingDetailPage() {
   if (isLoading || !data) {
     return (
       <div className="space-y-4">
-        <Button variant="ghost" size="sm" onClick={handleReturn}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          {returnLabel}
-        </Button>
+        <div className="flex items-center gap-2">
+          <BackToDashboardButton />
+          <Button variant="ghost" size="sm" onClick={handleReturn}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            {returnLabel}
+          </Button>
+        </div>
         <Skeleton className="h-32 w-full" />
         <Skeleton className="h-48 w-full" />
         <Skeleton className="h-48 w-full" />
@@ -162,10 +175,14 @@ export function RepositoryBindingDetailPage() {
   return (
     <div className="space-y-4">
       {/* 返回 — phase04-06 按真实来源决定 */}
-      <Button variant="ghost" size="sm" onClick={handleReturn}>
-        <ArrowLeft className="mr-2 h-4 w-4" />
-        {returnLabel}
-      </Button>
+      {/* phase05-13：从 Dashboard 进入时同时展示"返回 Dashboard"与原生返回 */}
+      <div className="flex items-center gap-2">
+        <BackToDashboardButton />
+        <Button variant="ghost" size="sm" onClick={handleReturn}>
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          {returnLabel}
+        </Button>
+      </div>
 
       {/* phase04-06 来源上下文展示 */}
       {fromProductDetail && search.productName && (

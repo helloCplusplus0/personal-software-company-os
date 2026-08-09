@@ -5,6 +5,9 @@ import { ProductListToolbar } from '../components/product-list-toolbar'
 import { ProductListContent } from '../components/product-list-content'
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
+import { BackToDashboardButton } from '@/features/dashboard/components/back-to-dashboard-button'
+import { mergeCurrentDashboardSource } from '@/features/dashboard/lib/dashboard-source'
+import type { ProductDetailSearch } from '../components/product-list-content'
 
 /**
  * ProductListPage — Product Registry / List
@@ -45,17 +48,26 @@ export function ProductListPage() {
   // phase04-05 / 06 上下文入口：点击列表项时继续携带上下文搜索参数到详情页
   // - 从 Module Detail 进入 → 继续携带 fromModuleDetail + moduleId / moduleName
   // - 普通列表进入 → 继续携带 fromList + 原 queryText / statusFilter
-  const detailSearch: Record<string, unknown> = hasModuleContext
-    ? { fromModuleDetail: true, moduleId: search.moduleId, moduleName: search.moduleName }
-    : { fromList: true, queryText: search.queryText, statusFilter: search.statusFilter }
+  const detailSearch: ProductDetailSearch = mergeCurrentDashboardSource(
+    hasModuleContext
+      ? { fromModuleDetail: true, moduleId: search.moduleId, moduleName: search.moduleName }
+      : { fromList: true, queryText: search.queryText, statusFilter: search.statusFilter },
+    search,
+  ) as unknown as ProductDetailSearch
 
   // phase04-05 上下文入口：新建产品时也继续携带上下文搜索参数
-  const createSearch: Record<string, unknown> = hasModuleContext
-    ? { fromModuleDetail: true, moduleId: search.moduleId, moduleName: search.moduleName }
-    : { fromList: true, queryText: search.queryText, statusFilter: search.statusFilter }
+  const createSearch = mergeCurrentDashboardSource(
+    hasModuleContext
+      ? { fromModuleDetail: true, moduleId: search.moduleId, moduleName: search.moduleName }
+      : { fromList: true, queryText: search.queryText, statusFilter: search.statusFilter },
+    search,
+  ) as unknown as Record<string, unknown>
 
   return (
     <div className="space-y-4">
+      {/* phase05-13：从 Dashboard 进入时展示"返回 Dashboard"按钮 */}
+      <BackToDashboardButton />
+
       {/* 页面标题与创建入口 */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Product Registry</h1>
@@ -83,20 +95,15 @@ export function ProductListPage() {
       <ProductListToolbar
         queryText={search.queryText ?? ''}
         statusFilter={search.statusFilter ?? 'all'}
-        onChange={(queryText, statusFilter) => {
-          // phase04-06 修改筛选条件时必须保留来源上下文参数
-          // 不得因修改筛选条件而丢失 fromModuleDetail / moduleId / moduleName 等来源标记
-          const newSearch: Record<string, unknown> = {
-            queryText: queryText || undefined,
-            statusFilter,
+          onChange={(queryText, statusFilter) =>
+            navigate({
+              search: (prev) => ({
+                ...prev,
+                queryText: queryText || undefined,
+                statusFilter,
+              }),
+            })
           }
-          if (hasModuleContext) {
-            newSearch.fromModuleDetail = true
-            newSearch.moduleId = search.moduleId
-            newSearch.moduleName = search.moduleName
-          }
-          navigate({ search: newSearch })
-        }}
       />
 
       {/* 内容区：根据读取结果派生视图状态 */}

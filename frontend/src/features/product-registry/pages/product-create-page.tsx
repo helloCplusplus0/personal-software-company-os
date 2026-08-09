@@ -5,6 +5,8 @@ import { createProduct } from '../data/product-registry-adapter'
 import { ProductCreateForm } from '../components/product-create-form'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
+import { BackToDashboardButton } from '@/features/dashboard/components/back-to-dashboard-button'
+import { useDashboardBackButton } from '@/features/dashboard/lib/dashboard-source'
 
 /**
  * ProductCreatePage — Product Create
@@ -38,13 +40,17 @@ export function ProductCreatePage() {
   const search = useSearch({ from: '/products/new' })
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const { showBackButton: isFromDashboard } = useDashboardBackButton()
 
   // phase04-06 来源上下文单值判定
   const fromList = search.fromList === true
   const fromModuleDetail = search.fromModuleDetail === true
   const hasSourceModule = Boolean(search.moduleId && search.moduleName)
 
-  // phase04-06 主动取消返回路径 — 按真实来源决定
+  // phase05-13 §"Create 页面取消返回 Dashboard"：
+  // fromDashboard=true 时取消返回 /dashboard，而不是回列表
+  // 此分支由 BackToDashboardButton 承接，handleReturn 仅处理非 Dashboard 来源
+  // phase04-06 主动取消返回路径 — 按真实来源决定（非 Dashboard 来源）
   const handleReturn = () => {
     if (fromList) {
       // fromList → 回 Product List + 原 queryText / statusFilter
@@ -88,6 +94,13 @@ export function ProductCreatePage() {
         detailSearch.moduleId = search.moduleId
         detailSearch.moduleName = search.moduleName
       }
+      // phase05-13 提交成功后进入 Detail 页时必须继续保留 fromDashboard 等参数
+      // 不得因为 fromDashboard=true 就在提交成功后自动跳回 Dashboard
+      if (isFromDashboard) {
+        detailSearch.fromDashboard = true
+        detailSearch.dashboardSection = search.dashboardSection
+        detailSearch.dashboardReturnTo = search.dashboardReturnTo
+      }
       // direct-entry → 不携带来源标记
 
       navigate({
@@ -105,10 +118,15 @@ export function ProductCreatePage() {
   return (
     <div className="max-w-2xl space-y-4">
       <div className="flex items-center gap-3">
-        <Button variant="ghost" size="sm" onClick={handleReturn}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          {fromModuleDetail ? '返回模块详情' : '返回列表'}
-        </Button>
+        {/* phase05-13：fromDashboard=true 时取消返回 /dashboard，否则保留原返回按钮 */}
+        {isFromDashboard ? (
+          <BackToDashboardButton />
+        ) : (
+          <Button variant="ghost" size="sm" onClick={handleReturn}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            {fromModuleDetail ? '返回模块详情' : '返回列表'}
+          </Button>
+        )}
         <h1 className="text-2xl font-bold">新建产品</h1>
       </div>
 

@@ -1,4 +1,4 @@
-import { useParams, Link, useNavigate } from '@tanstack/react-router'
+import { useParams, Link, useNavigate, useSearch } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { fetchModuleDetail } from '../data/module-registry-adapter'
 import { ModuleSummaryCard } from '../components/module-summary-card'
@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useModuleListSearchStore } from '../stores/module-list-search-store'
+import { BackToDashboardButton } from '@/features/dashboard/components/back-to-dashboard-button'
+import { mergeCurrentDashboardSource } from '@/features/dashboard/lib/dashboard-source'
 
 /**
  * ModuleDetailPage — Module Detail
@@ -28,9 +30,19 @@ import { useModuleListSearchStore } from '../stores/module-list-search-store'
  */
 export function ModuleDetailPage() {
   const { moduleId } = useParams({ from: '/modules/$moduleId' })
+  const detailSearch = useSearch({ from: '/modules/$moduleId' })
   const navigate = useNavigate()
   // §7.4 从 store 读取最后一次列表搜索上下文，返回列表时恢复
   const lastSearch = useModuleListSearchStore((s) => s.lastSearch)
+  const returnSearch = mergeCurrentDashboardSource(
+    detailSearch.fromList
+      ? {
+          queryText: detailSearch.queryText,
+          statusFilter: detailSearch.statusFilter ?? 'all',
+        }
+      : lastSearch,
+    detailSearch,
+  ) as unknown as Record<string, unknown>
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['module-detail', moduleId],
@@ -41,10 +53,14 @@ export function ModuleDetailPage() {
   if (isError) {
     return (
       <div className="space-y-4">
-        <Button variant="ghost" size="sm" onClick={() => navigate({ to: '/modules', search: lastSearch })}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          返回列表
-        </Button>
+        {/* phase05-13：从 Dashboard 进入时同时展示"返回 Dashboard"与"返回列表" */}
+        <div className="flex items-center gap-2">
+          <BackToDashboardButton />
+            <Button variant="ghost" size="sm" onClick={() => navigate({ to: '/modules', search: returnSearch })}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            返回列表
+          </Button>
+        </div>
         <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4">
           <p className="text-sm text-destructive">详情读取失败：{(error as Error).message}</p>
         </div>
@@ -55,12 +71,15 @@ export function ModuleDetailPage() {
   if (isLoading || !data) {
     return (
       <div className="space-y-4">
-        <Button variant="ghost" size="sm" asChild>
-          <Link to="/modules" search={lastSearch}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            返回列表
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <BackToDashboardButton />
+          <Button variant="ghost" size="sm" asChild>
+              <Link to="/modules" search={returnSearch}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              返回列表
+            </Link>
+          </Button>
+        </div>
         <Skeleton className="h-32 w-full" />
         <Skeleton className="h-48 w-full" />
         <Skeleton className="h-48 w-full" />
@@ -71,12 +90,16 @@ export function ModuleDetailPage() {
   return (
     <div className="space-y-4">
       {/* 返回列表 — §7.4 恢复原有搜索参数 */}
-      <Button variant="ghost" size="sm" asChild>
-        <Link to="/modules" search={lastSearch}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          返回列表
-        </Link>
-      </Button>
+      {/* phase05-13：从 Dashboard 进入时同时展示"返回 Dashboard"与"返回列表" */}
+      <div className="flex items-center gap-2">
+        <BackToDashboardButton />
+        <Button variant="ghost" size="sm" asChild>
+            <Link to="/modules" search={returnSearch}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            返回列表
+          </Link>
+        </Button>
+      </div>
 
       {/* PC：分区式布局；移动端：垂直顺序重排 */}
       <div className="grid gap-4 lg:grid-cols-3">

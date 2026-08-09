@@ -2,13 +2,18 @@ import { useSearch, useNavigate, Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { fetchRepositoryList } from '../data/repository-binding-adapter'
 import { RepositoryBindingListToolbar } from '../components/repository-binding-list-toolbar'
-import { RepositoryBindingListContent } from '../components/repository-binding-list-content'
+import {
+  RepositoryBindingListContent,
+  type RepositoryDetailSearch,
+} from '../components/repository-binding-list-content'
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 import {
   extractProductSourceTransit,
   type RepositoryBindingSearch,
 } from '../utils/product-source-transit'
+import { BackToDashboardButton } from '@/features/dashboard/components/back-to-dashboard-button'
+import { mergeCurrentDashboardSource } from '@/features/dashboard/lib/dashboard-source'
 
 /**
  * RepositoryBindingListPage — Repository Binding / List
@@ -61,43 +66,42 @@ export function RepositoryBindingListPage() {
   // - 从 Product Detail 进入 → 继续携带 fromProductDetail + productId / productName + Product Detail 来源透传
   // - 从 Module Detail 进入 → 继续携带 fromModuleDetail + moduleId / moduleName
   // - 普通列表进入 → 继续携带 fromList + 原 queryText / statusFilter
-  const detailSearch: Record<string, unknown> = hasProductContext
-    ? { fromProductDetail: true, productId: search.productId, productName: search.productName, ...productTransit }
-    : hasModuleContext
-      ? { fromModuleDetail: true, moduleId: search.moduleId, moduleName: search.moduleName }
-      : { fromList: true, queryText: search.queryText, statusFilter: search.statusFilter }
+  const detailSearch: RepositoryDetailSearch = mergeCurrentDashboardSource(
+    hasProductContext
+      ? { fromProductDetail: true, productId: search.productId, productName: search.productName, ...productTransit }
+      : hasModuleContext
+        ? { fromModuleDetail: true, moduleId: search.moduleId, moduleName: search.moduleName }
+        : { fromList: true, queryText: search.queryText, statusFilter: search.statusFilter },
+    search,
+  ) as unknown as RepositoryDetailSearch
 
   // phase04-05 上下文入口：新建仓库时也继续携带上下文搜索参数
-  const createSearch: Record<string, unknown> = hasProductContext
-    ? { fromProductDetail: true, productId: search.productId, productName: search.productName, ...productTransit }
-    : hasModuleContext
-      ? { fromModuleDetail: true, moduleId: search.moduleId, moduleName: search.moduleName }
-      : { fromList: true, queryText: search.queryText, statusFilter: search.statusFilter }
+  const createSearch = mergeCurrentDashboardSource(
+    hasProductContext
+      ? { fromProductDetail: true, productId: search.productId, productName: search.productName, ...productTransit }
+      : hasModuleContext
+        ? { fromModuleDetail: true, moduleId: search.moduleId, moduleName: search.moduleName }
+        : { fromList: true, queryText: search.queryText, statusFilter: search.statusFilter },
+    search,
+  ) as unknown as Record<string, unknown>
 
   // phase04-06 工具栏 onChange：修改筛选条件时必须保留来源上下文参数
   // 不得因修改筛选条件而丢失 fromProductDetail / fromModuleDetail 等来源标记
   const handleFilterChange = (queryText: string, statusFilter: string) => {
-    const newSearch: Record<string, unknown> = {
-      queryText: queryText || undefined,
-      statusFilter,
-    }
-    // 保留来源上下文参数
-    if (hasProductContext) {
-      newSearch.fromProductDetail = true
-      newSearch.productId = search.productId
-      newSearch.productName = search.productName
-      // 继续携带 Product Detail 来源透传参数
-      Object.assign(newSearch, productTransit)
-    } else if (hasModuleContext) {
-      newSearch.fromModuleDetail = true
-      newSearch.moduleId = search.moduleId
-      newSearch.moduleName = search.moduleName
-    }
-    navigate({ search: newSearch })
+    navigate({
+      search: (prev) => ({
+        ...prev,
+        queryText: queryText || undefined,
+        statusFilter: statusFilter as 'all' | 'active' | 'archived',
+      }),
+    })
   }
 
   return (
     <div className="space-y-4">
+      {/* phase05-13：从 Dashboard 进入时展示"返回 Dashboard"按钮 */}
+      <BackToDashboardButton />
+
       {/* 页面标题与创建入口 */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Repository Binding</h1>

@@ -7,6 +7,8 @@ import { ProductBoundRepositoryListSection } from '../components/product-bound-r
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
+import { BackToDashboardButton } from '@/features/dashboard/components/back-to-dashboard-button'
+import { mergeCurrentDashboardSource } from '@/features/dashboard/lib/dashboard-source'
 
 /**
  * ProductDetailPage — Product Detail
@@ -64,21 +66,25 @@ export function ProductDetailPage() {
     if (fromList) {
       navigate({
         to: '/products',
-        search: {
-          queryText: search.queryText,
-          statusFilter: search.statusFilter ?? 'all',
-        },
+          search: mergeCurrentDashboardSource(
+            {
+              queryText: search.queryText,
+              statusFilter: search.statusFilter ?? 'all',
+            },
+            search,
+          ),
       })
     } else if (fromModuleDetail && search.moduleId) {
       navigate({
         to: '/modules/$moduleId',
         params: { moduleId: search.moduleId },
+          search: mergeCurrentDashboardSource({}, search) as Record<string, unknown>,
       })
     } else {
       // direct-entry → 回 Product List 默认筛选参数
       navigate({
         to: '/products',
-        search: { statusFilter: 'all' },
+          search: mergeCurrentDashboardSource({ statusFilter: 'all' as const }, search),
       })
     }
   }
@@ -86,10 +92,14 @@ export function ProductDetailPage() {
   if (isError) {
     return (
       <div className="space-y-4">
-        <Button variant="ghost" size="sm" onClick={handleReturn}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          {fromModuleDetail ? '返回模块详情' : '返回列表'}
-        </Button>
+        {/* phase05-13：从 Dashboard 进入时同时展示"返回 Dashboard"与原生返回 */}
+        <div className="flex items-center gap-2">
+          <BackToDashboardButton />
+          <Button variant="ghost" size="sm" onClick={handleReturn}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            {fromModuleDetail ? '返回模块详情' : '返回列表'}
+          </Button>
+        </div>
         <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4">
           <p className="text-sm text-destructive">
             {error instanceof Error && 'status' in error && (error as { status: number }).status === 404
@@ -104,10 +114,13 @@ export function ProductDetailPage() {
   if (isLoading || !data) {
     return (
       <div className="space-y-4">
-        <Button variant="ghost" size="sm" onClick={handleReturn}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          {fromModuleDetail ? '返回模块详情' : '返回列表'}
-        </Button>
+        <div className="flex items-center gap-2">
+          <BackToDashboardButton />
+          <Button variant="ghost" size="sm" onClick={handleReturn}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            {fromModuleDetail ? '返回模块详情' : '返回列表'}
+          </Button>
+        </div>
         <Skeleton className="h-32 w-full" />
         <Skeleton className="h-48 w-full" />
         <Skeleton className="h-48 w-full" />
@@ -118,10 +131,14 @@ export function ProductDetailPage() {
   return (
     <div className="space-y-4">
       {/* 返回 — phase04-06 按真实来源决定 */}
-      <Button variant="ghost" size="sm" onClick={handleReturn}>
-        <ArrowLeft className="mr-2 h-4 w-4" />
-        {fromModuleDetail ? '返回模块详情' : '返回列表'}
-      </Button>
+      {/* phase05-13：从 Dashboard 进入时同时展示"返回 Dashboard"与原生返回 */}
+      <div className="flex items-center gap-2">
+        <BackToDashboardButton />
+        <Button variant="ghost" size="sm" onClick={handleReturn}>
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          {fromModuleDetail ? '返回模块详情' : '返回列表'}
+        </Button>
+      </div>
 
       {/* phase04-06 来源上下文展示 — 从 Module Detail 带上下文进入时 */}
       {fromModuleDetail && search.moduleName && (

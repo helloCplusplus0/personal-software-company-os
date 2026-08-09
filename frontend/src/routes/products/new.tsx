@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
 import { ProductCreatePage } from '@/features/product-registry/pages/product-create-page'
+import { dashboardSourceSearchSchema } from '@/features/dashboard/lib/dashboard-source-schema'
 
 /**
  * ProductCreateRoute — /products/new
@@ -23,6 +24,8 @@ const productCreateSearchSchema = z.object({
   fromModuleDetail: z.boolean().optional(),
   moduleId: z.string().optional(),
   moduleName: z.string().optional(),
+  // phase05-13 Dashboard 来源参数
+  ...dashboardSourceSearchSchema,
 })
 
 export const Route = createFileRoute('/products/new')({

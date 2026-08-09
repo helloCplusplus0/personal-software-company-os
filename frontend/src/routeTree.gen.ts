@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DecisionsIndexRouteImport } from './routes/decisions/index'
 import { Route as DecisionsDecisionIdRouteImport } from './routes/decisions/$decisionId'
 import { Route as DecisionsNewRouteImport } from './routes/decisions/new'
@@ -23,6 +24,11 @@ import { Route as RepositoriesRepositoryIdRouteImport } from './routes/repositor
 import { Route as RepositoriesNewRouteImport } from './routes/repositories/new'
 import { Route as ModulesModuleIdReleasesNewRouteImport } from './routes/modules/$moduleId/releases/new'
 
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DecisionsIndexRoute = DecisionsIndexRouteImport.update({
   id: '/decisions/',
   path: '/decisions/',
@@ -92,6 +98,7 @@ const ModulesModuleIdReleasesNewRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
+  '/dashboard': typeof DashboardRoute
   '/decisions/$decisionId': typeof DecisionsDecisionIdRoute
   '/decisions/new': typeof DecisionsNewRoute
   '/modules/$moduleId': typeof ModulesModuleIdRouteWithChildren
@@ -107,6 +114,7 @@ export interface FileRoutesByFullPath {
   '/modules/$moduleId/releases/new': typeof ModulesModuleIdReleasesNewRoute
 }
 export interface FileRoutesByTo {
+  '/dashboard': typeof DashboardRoute
   '/decisions/$decisionId': typeof DecisionsDecisionIdRoute
   '/decisions/new': typeof DecisionsNewRoute
   '/modules/$moduleId': typeof ModulesModuleIdRouteWithChildren
@@ -123,6 +131,7 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/dashboard': typeof DashboardRoute
   '/decisions/$decisionId': typeof DecisionsDecisionIdRoute
   '/decisions/new': typeof DecisionsNewRoute
   '/modules/$moduleId': typeof ModulesModuleIdRouteWithChildren
@@ -140,6 +149,7 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/dashboard'
     | '/decisions/$decisionId'
     | '/decisions/new'
     | '/modules/$moduleId'
@@ -155,6 +165,7 @@ export interface FileRouteTypes {
     | '/modules/$moduleId/releases/new'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/dashboard'
     | '/decisions/$decisionId'
     | '/decisions/new'
     | '/modules/$moduleId'
@@ -170,6 +181,7 @@ export interface FileRouteTypes {
     | '/modules/$moduleId/releases/new'
   id:
     | '__root__'
+    | '/dashboard'
     | '/decisions/$decisionId'
     | '/decisions/new'
     | '/modules/$moduleId'
@@ -186,6 +198,7 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  DashboardRoute: typeof DashboardRoute
   DecisionsDecisionIdRoute: typeof DecisionsDecisionIdRoute
   DecisionsNewRoute: typeof DecisionsNewRoute
   ModulesModuleIdRoute: typeof ModulesModuleIdRouteWithChildren
@@ -202,6 +215,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/decisions/': {
       id: '/decisions/'
       path: '/decisions'
@@ -309,6 +329,7 @@ const ModulesModuleIdRouteWithChildren = ModulesModuleIdRoute._addFileChildren(
 )
 
 const rootRouteChildren: RootRouteChildren = {
+  DashboardRoute: DashboardRoute,
   DecisionsDecisionIdRoute: DecisionsDecisionIdRoute,
   DecisionsNewRoute: DecisionsNewRoute,
   ModulesModuleIdRoute: ModulesModuleIdRouteWithChildren,

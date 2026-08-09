@@ -14,6 +14,7 @@ import type { ModuleListItem } from '../types'
 interface ModuleListContentProps {
   items: ModuleListItem[]
   isLoading: boolean
+  detailSearch: Record<string, unknown>
 }
 
 /**
@@ -22,7 +23,7 @@ interface ModuleListContentProps {
  * - PC：高信息密度表格
  * - 移动：卡片重排（通过 hidden/block 响应式切换）
  */
-export function ModuleListContent({ items, isLoading }: ModuleListContentProps) {
+export function ModuleListContent({ items, isLoading, detailSearch }: ModuleListContentProps) {
   const navigate = useNavigate()
 
   if (isLoading) {
@@ -59,6 +60,7 @@ export function ModuleListContent({ items, isLoading }: ModuleListContentProps) 
                   navigate({
                     to: '/modules/$moduleId',
                     params: { moduleId: item.id },
+                      search: detailSearch,
                   })
                 }
               >
@@ -87,6 +89,7 @@ export function ModuleListContent({ items, isLoading }: ModuleListContentProps) 
             key={item.id}
             to="/modules/$moduleId"
             params={{ moduleId: item.id }}
+              search={detailSearch}
             className="block rounded-lg border p-4 hover:bg-accent transition-colors"
           >
             <div className="flex items-center justify-between">

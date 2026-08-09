@@ -25,6 +25,7 @@ import type { DecisionListItem, DecisionStatus } from '../types'
 interface DecisionListContentProps {
   items: DecisionListItem[]
   isLoading: boolean
+  detailSearch: Record<string, unknown>
 }
 
 /** 状态对应的 Badge variant */
@@ -43,7 +44,7 @@ const STATUS_LABEL: Record<DecisionStatus, string> = {
   archived: 'Archived',
 }
 
-export function DecisionListContent({ items, isLoading }: DecisionListContentProps) {
+export function DecisionListContent({ items, isLoading, detailSearch }: DecisionListContentProps) {
   if (isLoading) {
     return (
       <div className="space-y-2">
@@ -74,7 +75,7 @@ export function DecisionListContent({ items, isLoading }: DecisionListContentPro
                   <Link
                     to="/decisions/$decisionId"
                     params={{ decisionId: item.id }}
-                    search={{ fromList: true }}
+                      search={detailSearch}
                     className="text-primary hover:underline"
                   >
                     {item.title}
@@ -110,7 +111,7 @@ export function DecisionListContent({ items, isLoading }: DecisionListContentPro
             key={item.id}
             to="/decisions/$decisionId"
             params={{ decisionId: item.id }}
-            search={{ fromList: true }}
+              search={detailSearch}
             className="block rounded-md border p-3 hover:bg-accent transition-colors"
           >
             <div className="flex items-center justify-between gap-2">

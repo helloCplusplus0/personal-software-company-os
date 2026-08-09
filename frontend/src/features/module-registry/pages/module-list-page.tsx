@@ -7,6 +7,8 @@ import { ModuleListContent } from '../components/module-list-content'
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 import { useModuleListSearchStore } from '../stores/module-list-search-store'
+import { BackToDashboardButton } from '@/features/dashboard/components/back-to-dashboard-button'
+import { mergeCurrentDashboardSource } from '@/features/dashboard/lib/dashboard-source'
 
 /**
  * ModuleListPage — Module Registry / List
@@ -38,14 +40,26 @@ export function ModuleListPage() {
 
   const isFiltered = Boolean(search.queryText) || (search.statusFilter !== 'all')
   const isEmpty = !isLoading && !isError && (data?.length ?? 0) === 0
+  const detailSearch: Record<string, unknown> = mergeCurrentDashboardSource(
+    {
+      fromList: true,
+      queryText: search.queryText,
+      statusFilter: search.statusFilter,
+    },
+    search,
+  ) as unknown as Record<string, unknown>
+  const createSearch: Record<string, unknown> = mergeCurrentDashboardSource({}, search) as unknown as Record<string, unknown>
 
   return (
     <div className="space-y-4">
+      {/* phase05-13：从 Dashboard 进入时展示"返回 Dashboard"按钮 */}
+      <BackToDashboardButton />
+
       {/* 页面标题与创建入口 */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Module Registry</h1>
         <Button asChild>
-          <Link to="/modules/new">
+            <Link to="/modules/new" search={createSearch}>
             <Plus className="mr-2 h-4 w-4" />
             新建模块
           </Link>
@@ -56,9 +70,15 @@ export function ModuleListPage() {
       <ModuleListToolbar
         queryText={search.queryText ?? ''}
         statusFilter={search.statusFilter ?? 'all'}
-        onChange={(queryText, statusFilter) =>
-          navigate({ search: { queryText: queryText || undefined, statusFilter } })
-        }
+          onChange={(queryText, statusFilter) =>
+            navigate({
+              search: (prev) => ({
+                ...prev,
+                queryText: queryText || undefined,
+                statusFilter,
+              }),
+            })
+          }
       />
 
       {/* 内容区：根据读取结果派生视图状态 */}
@@ -75,7 +95,7 @@ export function ModuleListPage() {
         <div className="rounded-lg border border-dashed p-8 text-center">
           <p className="text-muted-foreground mb-4">系统中尚无任何模块，先完成首个模块登记</p>
           <Button asChild>
-            <Link to="/modules/new">
+              <Link to="/modules/new" search={createSearch}>
               <Plus className="mr-2 h-4 w-4" />
               完成首个模块登记
             </Link>
@@ -86,7 +106,7 @@ export function ModuleListPage() {
           <p className="text-muted-foreground">没有匹配筛选条件的模块</p>
         </div>
       ) : (
-        <ModuleListContent items={data ?? []} isLoading={isLoading} />
+          <ModuleListContent items={data ?? []} isLoading={isLoading} detailSearch={detailSearch} />
       )}
     </div>
   )

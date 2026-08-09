@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
 import { ModuleListPage } from '@/features/module-registry/pages/module-list-page'
+import { dashboardSourceSearchSchema } from '@/features/dashboard/lib/dashboard-source-schema'
 
 /**
  * ModuleListRoute — /modules
@@ -11,12 +12,17 @@ import { ModuleListPage } from '@/features/module-registry/pages/module-list-pag
  *
  * 从 ModuleCreatePage 或 ModuleDetailPage 返回时，
  * 必须按原有搜索参数恢复列表上下文（§7.4）
+ *
+ * phase05-13：扩展承接 Dashboard 来源参数（fromDashboard / dashboardSection / dashboardReturnTo），
+ * 用于从 Dashboard 概览卡片跳转后保留返回 Dashboard 上下文。
  */
 const moduleListSearchSchema = z.object({
   queryText: z.string().optional(),
   // .default('all') 使导航到 /modules 时 search 可选（输入层 statusFilter 可省略）
   // .catch('all') 保证 URL 中出现非法值时优雅降级为 'all'
   statusFilter: z.enum(['all', 'active', 'archived']).catch('all').default('all'),
+  // phase05-13 Dashboard 来源参数
+  ...dashboardSourceSearchSchema,
 })
 
 export const Route = createFileRoute('/modules/')({

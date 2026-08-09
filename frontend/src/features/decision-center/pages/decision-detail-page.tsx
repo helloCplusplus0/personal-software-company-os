@@ -31,6 +31,8 @@ import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useDecisionListSearchStore } from '../stores/decision-list-search-store'
+import { BackToDashboardButton } from '@/features/dashboard/components/back-to-dashboard-button'
+import { mergeCurrentDashboardSource } from '@/features/dashboard/lib/dashboard-source'
 
 export function DecisionDetailPage() {
   const { decisionId } = useParams({ from: '/decisions/$decisionId' })
@@ -42,7 +44,15 @@ export function DecisionDetailPage() {
   // §9.1 单值化返回参数：
   // - fromList === true（从 DecisionListPage 进入）：返回列表恢复 lastSearch
   // - fromList 不存在（从 Module Detail 入口或外部直达进入）：返回列表落默认参数，不恢复历史筛选
-  const returnSearch = detailSearch.fromList ? lastSearch : { statusFilter: 'all' as const }
+  const returnSearch = mergeCurrentDashboardSource(
+    detailSearch.fromList
+      ? {
+          queryText: detailSearch.queryText ?? lastSearch.queryText,
+          statusFilter: detailSearch.statusFilter ?? lastSearch.statusFilter,
+        }
+      : { statusFilter: 'all' as const },
+    detailSearch,
+  )
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['decision-detail', decisionId],
@@ -53,10 +63,14 @@ export function DecisionDetailPage() {
   if (isError) {
     return (
       <div className="space-y-4">
-        <Button variant="ghost" size="sm" onClick={() => navigate({ to: '/decisions', search: returnSearch })}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          返回列表
-        </Button>
+        {/* phase05-13：从 Dashboard 进入时同时展示"返回 Dashboard"与"返回列表" */}
+        <div className="flex items-center gap-2">
+          <BackToDashboardButton />
+          <Button variant="ghost" size="sm" onClick={() => navigate({ to: '/decisions', search: returnSearch })}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            返回列表
+          </Button>
+        </div>
         <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4">
           <p className="text-sm text-destructive">详情读取失败：{(error as Error).message}</p>
         </div>
@@ -67,12 +81,15 @@ export function DecisionDetailPage() {
   if (isLoading || !data) {
     return (
       <div className="space-y-4">
-        <Button variant="ghost" size="sm" asChild>
-          <Link to="/decisions" search={returnSearch}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            返回列表
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <BackToDashboardButton />
+          <Button variant="ghost" size="sm" asChild>
+            <Link to="/decisions" search={returnSearch}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              返回列表
+            </Link>
+          </Button>
+        </div>
         <Skeleton className="h-48 w-full" />
         <Skeleton className="h-32 w-full" />
         <Skeleton className="h-32 w-full" />
@@ -91,12 +108,16 @@ export function DecisionDetailPage() {
   return (
     <div className="space-y-4">
       {/* 返回列表 — §9.1 按 fromList 单值化决定恢复 lastSearch 或落默认参数 */}
-      <Button variant="ghost" size="sm" asChild>
-        <Link to="/decisions" search={returnSearch}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          返回列表
-        </Link>
-      </Button>
+      {/* phase05-13：从 Dashboard 进入时同时展示"返回 Dashboard"与"返回列表" */}
+      <div className="flex items-center gap-2">
+        <BackToDashboardButton />
+        <Button variant="ghost" size="sm" asChild>
+          <Link to="/decisions" search={returnSearch}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            返回列表
+          </Link>
+        </Button>
+      </div>
 
       {/* PC：分区式布局；移动端：垂直顺序重排 */}
       <div className="grid gap-4 lg:grid-cols-3">

@@ -1,4 +1,4 @@
-import { useNavigate, Link } from '@tanstack/react-router'
+import { useNavigate, useSearch, Link } from '@tanstack/react-router'
 import { ModuleCreateForm } from '../components/module-create-form'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
@@ -7,6 +7,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import type { CreateModuleInput } from '../types'
 import { useModuleListSearchStore } from '../stores/module-list-search-store'
+import { BackToDashboardButton } from '@/features/dashboard/components/back-to-dashboard-button'
+import { useDashboardBackButton } from '@/features/dashboard/lib/dashboard-source'
 
 /**
  * ModuleCreatePage — Module Create
@@ -17,12 +19,21 @@ import { useModuleListSearchStore } from '../stores/module-list-search-store'
  * - 提交失败时停留当前页，保留草稿，错误显示在表单上下文
  * - 提交成功默认回流到 ModuleDetailPage
  * - 从此页主动返回：保留原搜索参数上下文的 ModuleListPage（§7.4）
+ *
+ * phase05-13 §"Create 页面取消返回 Dashboard"：
+ * - fromDashboard=true 时，取消返回 /dashboard，而不是回列表
+ * - 通过路由 state 承接 dashboardSection=empty-state
+ * - 提交成功后进入 Detail 页时必须继续保留 fromDashboard=true
+ * - 不得因为 fromDashboard=true 就在提交成功后自动跳回 Dashboard
  */
 export function ModuleCreatePage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   // §7.4 从 store 读取最后一次列表搜索上下文，返回列表时恢复
   const lastSearch = useModuleListSearchStore((s) => s.lastSearch)
+  // phase05-13 从路由搜索参数读取 Dashboard 来源上下文
+  const dashboardSearch = useSearch({ from: '/modules/new' })
+  const { showBackButton: isFromDashboard } = useDashboardBackButton()
 
   const mutation = useMutation({
     mutationFn: (input: CreateModuleInput) => createModule(input),
@@ -30,7 +41,21 @@ export function ModuleCreatePage() {
       // §8.4 提交成功默认回流到 ModuleDetailPage
       queryClient.invalidateQueries({ queryKey: ['module-list'] })
       toast.success('模块创建成功')
-      navigate({ to: '/modules/$moduleId', params: { moduleId: module.id } })
+
+      // phase05-13 提交成功后进入 Detail 页时必须继续保留 fromDashboard 等参数
+      // 不得因为 fromDashboard=true 就在提交成功后自动跳回 Dashboard
+      const detailSearch: Record<string, unknown> = {}
+      if (isFromDashboard) {
+        detailSearch.fromDashboard = true
+        detailSearch.dashboardSection = dashboardSearch.dashboardSection
+        detailSearch.dashboardReturnTo = dashboardSearch.dashboardReturnTo
+      }
+
+      navigate({
+        to: '/modules/$moduleId',
+        params: { moduleId: module.id },
+        search: detailSearch,
+      })
     },
     onError: (error: Error) => {
       // §8.4 提交失败时停留当前页，错误显示在表单上下文
@@ -41,12 +66,17 @@ export function ModuleCreatePage() {
   return (
     <div className="max-w-2xl space-y-4">
       <div className="flex items-center gap-3">
-        <Button variant="ghost" size="sm" asChild>
-          <Link to="/modules" search={lastSearch}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            返回列表
-          </Link>
-        </Button>
+        {/* phase05-13：fromDashboard=true 时取消返回 /dashboard，否则保留原"返回列表" */}
+        {isFromDashboard ? (
+          <BackToDashboardButton />
+        ) : (
+          <Button variant="ghost" size="sm" asChild>
+            <Link to="/modules" search={lastSearch}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              返回列表
+            </Link>
+          </Button>
+        )}
         <h1 className="text-2xl font-bold">新建模块</h1>
       </div>
 

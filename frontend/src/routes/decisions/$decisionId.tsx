@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
 import { DecisionDetailPage } from '@/features/decision-center/pages/decision-detail-page'
+import { dashboardSourceSearchSchema } from '@/features/dashboard/lib/dashboard-source-schema'
 
 /**
  * DecisionDetailRoute — /decisions/:decisionId
@@ -16,6 +17,10 @@ import { DecisionDetailPage } from '@/features/decision-center/pages/decision-de
  */
 const decisionDetailSearchSchema = z.object({
   fromList: z.boolean().optional(),
+  queryText: z.string().optional(),
+  statusFilter: z.enum(['all', 'proposed', 'active', 'superseded', 'archived']).optional(),
+  // phase05-13 Dashboard 来源参数
+  ...dashboardSourceSearchSchema,
 })
 
 export const Route = createFileRoute('/decisions/$decisionId')({

@@ -1,0 +1,22 @@
+- [x] 已明确 `phase05-13` 的目标是把 `Dashboard Home` 推进为仓库内可运行的前端主线，而不是重写正式正文或联调验收结论
+- [x] 已明确 `frontend/src/routes/dashboard.tsx` 与 `frontend/src/features/dashboard/pages/dashboard-home-page.tsx` 的单值落点
+- [x] 已明确根导航必须新增 `Dashboard` 一级入口并进入 `/dashboard`
+- [x] 已明确当前阶段不得把 `/` 重新解释为 `Dashboard Home`
+- [x] 已明确 Dashboard 数据适配层必须直接消费 `phase05-12` 真实 API，不得并列 `mock-adapter.ts`
+- [x] 已明确前端字段语义必须对齐 `frontend/src/gen/proto/psco/dashboard/v1/dashboard_pb.ts`
+- [x] 已明确 Dashboard 三路读取必须显式承接 `overview / feedback-signals / recent-activities`
+- [x] 已明确 `overviewQueryState / feedbackQueryState / activityQueryState` 的最小查询状态继续成立
+- [x] 已明确整页重试、Feedback 分区重试与 Recent Activity 分区重试的粒度，不升级为第二套缓存协议
+- [x] 已明确页面级组件树继续承接 `Current Focus / dashboard_overview / Asset Feedback / Recent Activity / DashboardPrimaryActionPanel`
+- [x] 已明确 `Current Focus` 最多展示 `5` 条、`Asset Feedback` 最多展示 `3` 条，且后者不升级为第二主队列
+- [x] 已明确 `DashboardStatBar` 的概览零值、资产覆盖骨架/占位与 `Recent Activity` 空列表都属于受控成功/局部失败语义
+- [x] 已明确 `DashboardPrimaryActionPanel` 必须落实 `computing / ready / hidden / suppressed` 状态机与唯一主 CTA 规则
+- [x] 已明确 Dashboard 到 canonical owner 页面的跳转必须继续透传 `fromDashboard / dashboardSection / dashboardReturnTo`
+- [x] 已明确目标页主动返回 Dashboard 必须通过一次性 navigation state 承接区块恢复
+- [x] 已明确刷新后 owner 页面必须继续从 URL 恢复 Dashboard 来源参数
+- [x] 已明确 Router 是 Dashboard 来源恢复的唯一事实源边界，Zustand 不得提升为来源事实源
+- [x] 已明确 Dashboard 刷新时必须重新读取三路真实接口，不得恢复旧页面快照
+- [x] 已明确桌面宽屏与移动浏览器必须共用同一套 `React Web` 页面与组件主线
+- [x] 已明确移动浏览器下区块顺序继续保持 `Current Focus / DashboardStatBar / Asset Feedback / Recent Activity`
+- [x] 已明确 Dashboard 只负责读与跳转，不形成第二套写入工作台
+- [x] 已验证本 spec 与 `phase05-05 / 06 / 10 / 11 / 12` 及 `phase03-13 / 04-13` 的既有模式保持一致
