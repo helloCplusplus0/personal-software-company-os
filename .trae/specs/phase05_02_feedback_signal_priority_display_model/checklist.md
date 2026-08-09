@@ -1,0 +1,14 @@
+- [x] `Feedback` 已被明确冻结为当前阶段的派生信号层，而不是独立重实体、人工录入流或复杂评分系统
+- [x] `pending_decision_signals` 的 Dashboard 消费语义已明确：先归一化为 `Feedback Signal Card`，再进入 `Current Focus / Next Action`
+- [x] `product_asset_coverage` 的 Dashboard 消费语义已明确：高优先级缺口项可进入主队列，补充摘要进入 `Asset Feedback`
+- [x] `product_asset_coverage` 的空状态语义已明确：无缺口时返回完整读模型结构、三类缺口计数归零、代表项为空列表，且成功空态与局部读取失败显式区分
+- [x] `product missing both bindings` 已明确为 `product_asset_coverage` 中的独立计数与代表项语义
+- [x] 统一 `Feedback Signal Card` 的最小字段模板已单值化为 `signal_family / signal_code / priority / title / summary / action_label / target_type / target_id / target_label`
+- [x] 反馈信号优先级已明确固定为 `pending_decision_signals > missing both bindings > missing repository binding > missing module binding`
+- [x] 同优先级反馈信号的排序前提已明确为“最近需要处理时间优先”，缺省回退为 `created_at DESC`
+- [x] `Current Focus / Next Action` 的最大展示数量已明确冻结为 `5`
+- [x] `Asset Feedback` 的最大展示数量已明确冻结为 `3`
+- [x] `recent_activity_feed` 的最小展示模型已明确为独立活动流，且最多展示 `10` 条活动项
+- [x] `recent_activity_feed` 的排序字段与时间语义已明确冻结为显式活动时间字段（如 `activity_at`）倒序
+- [x] `dashboard_overview` 的最小展示模型已明确，且只服务概览区块，不进入反馈优先级队列
+- [x] 本次规格与 `phase05` 三件套、`phase05-01` 页面边界以及 `phase01-06 / phase04-10` 的上游边界保持一致
