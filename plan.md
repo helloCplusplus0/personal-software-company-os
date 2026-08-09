@@ -5,8 +5,8 @@
 ## 1. 当前状态
 
 - 当前阶段：`phase05_dashboard_feedback_foundation`
-- 当前状态：`phase04` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，当前下一阶段入口切换至 `phase05`
-- 当前目标：以 `phase04-10` 正式规格、`phase04-11` 合同主线与 `phase04-14` 验收结论为直接上游，推进 `Dashboard + Feedback` 最小闭环进入 `/plan`
+- 当前状态：`phase04` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，`phase05` 已正式进入 `/plan`
+- 当前目标：以 `phase04-10` 正式规格、`phase04-11` 合同主线与 `phase04-14` 验收结论为直接上游，完成 `Dashboard + Feedback` 最小闭环的 `phase05` 三件套规划
 - 当前下一阶段入口：`phase05_dashboard_feedback_foundation`
 
 ## 2. 当前进度概览
@@ -33,7 +33,8 @@
 - `.trae/specs/phase04_10_product_repository_binding_formal_spec/product_repository_binding_spec_v0.1.md` 已冻结为 `Product / Repository / Binding` 当前阶段唯一规格收敛入口
 - `.trae/specs/phase04_11_product_repository_binding_proto_mainline/` 已将 `Product / Repository / Binding` 最小 `.proto` 合同落地为仓库主线
 - `.trae/specs/phase04_14_product_repository_binding_integration_validation_acceptance/acceptance_report.md` 已形成 `phase04` 联调验收与收口结论入口
-- `phase05_dashboard_feedback_foundation` 已成为当前下一阶段入口，下一步应先进入 `/plan`
+- `phase05_dashboard_feedback_foundation` 已正式进入 `/plan`
+- `phase05` 三件套已建立，用于冻结 `Dashboard + Feedback` 的最小主线边界、执行顺序与共享基线
 
 ## 3. Phase 路线预览
 

@@ -1,0 +1,17 @@
+- [x] `Dashboard Home` 已被明确冻结为 `phase05-01` 当前阶段唯一页面主线
+- [x] `Dashboard Home` 的职责已明确为概览读取、主行动队列、补充摘要、最近活动与空状态 CTA，而不承接新的业务写入入口
+- [x] `dashboard_overview / Current Focus（内部承接 Next Action 主队列） / Asset Feedback / Recent Activity` 四个区块的固定归属关系已被单值化
+- [x] 第一屏优先级已明确冻结为 `Current Focus / Next Action` 优先，其他区块只能降级承接
+- [x] `Dashboard Home` 的正式业务入口已明确冻结为 `/dashboard`
+- [x] `Dashboard` 已明确为既有主导航中的一级入口新增，而不是隐藏区块或替代现有主线
+- [x] 当前阶段已明确不把 `/` 单值解释为 `Dashboard Home`
+- [x] 根级布局宿主与 `Dashboard Home` 的关系已明确：前者承接全局导航与页面容器语义，后者承接业务首页语义
+- [x] `PC / 移动浏览器` 双场景的信息密度与布局降级策略已明确，且仍采用单一 `React Web`
+- [x] 当前阶段已明确不形成复杂驾驶舱、不形成第二套首页体系、不引入第二套移动端 UI
+- [x] 本次规格与 `phase05` 三件套、`phase04` 直接上游及 `phase01-06` MVP 页面范围保持一致
+- [x] `Dashboard Home` 四类区块（`dashboard_overview` / `Current Focus / Next Action` / `Asset Feedback` / `Recent Activity`）的可点击入口热区已单值化为"整卡可点"统一规则
+- [x] `dashboard_overview` 中仅 `module_count / product_count / repository_count / decision_count` 作为独立整卡可点击概览卡片存在
+- [x] `product_with_repository_count / product_with_module_count` 已明确为当前阶段的辅助指标，不形成独立可点击卡片，也不引入新的 `Product List` 筛选态
+- [x] 空状态主 CTA 已明确为按钮可点模式，不采用整卡模式
+- [x] 各区块的视觉锚点（`action_label` / 对象名称）已明确，且不限制点击热区范围
+- [x] 已明确不得在同一区块内混合"整卡可点"与"仅按钮可点"两种模式

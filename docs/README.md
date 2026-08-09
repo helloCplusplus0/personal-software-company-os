@@ -26,10 +26,13 @@
 - [阶段路线图](file:///home/dell/Projects/personal-software-company-os/plan.md)
 - [项目规则](file:///home/dell/Projects/personal-software-company-os/project_rules.md)
 - [目录与迁移落点](file:///home/dell/Projects/personal-software-company-os/architecture_map.md)
-- 当前阶段入口：`phase05_dashboard_feedback_foundation`（当前尚未建立 `docs/phase/` 三件套，先以 `AGENTS.md` 与 `plan.md` 的根级状态为准）
+- 当前阶段入口：`phase05_dashboard_feedback_foundation`
 - [phase05 直接上游：phase04 正式规格正文](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase04_10_product_repository_binding_formal_spec/product_repository_binding_spec_v0.1.md)
 - [phase05 直接上游：phase04 合同主线入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase04_11_product_repository_binding_proto_mainline)
 - [phase05 直接上游：phase04 联调验收与收口入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase04_14_product_repository_binding_integration_validation_acceptance/acceptance_report.md)
+- [phase05 architecture_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase05_dashboard_feedback_foundation_architecture_plan.md)
+- [phase05 dev_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase05_dashboard_feedback_foundation_dev_plan.md)
+- [phase05 shared_baseline](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase05_dashboard_feedback_foundation_shared_baseline.md)
 - [phase04 规划记录：architecture_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase04_product_and_repository_binding_foundation_architecture_plan.md)
 - [phase04 规划记录：dev_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase04_product_and_repository_binding_foundation_dev_plan.md)
 - [phase04 规划记录：shared_baseline](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase04_product_and_repository_binding_foundation_shared_baseline.md)
@@ -49,5 +52,6 @@
 - `phase04_product_and_repository_binding_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - `Product Registry + Repository Binding` 最小主线已形成可运行交付物，并已冻结正式规格、`.proto` 合同与联调验收入口
 - 当前阶段入口已切换为 `phase05_dashboard_feedback_foundation`
-- `phase05_dashboard_feedback_foundation` 已成为当前下一阶段入口，下一步应先进入 `/plan`
-- 当前最应优先读取的已交付边界入口为 `phase04-10` 正式规格正文、`phase04-11` 合同主线与 `phase04-14` 联调验收结论；`phase04` 三件套仅保留为该阶段规划与冻结记录
+- `phase05_dashboard_feedback_foundation` 已正式进入 `/plan`
+- `phase05` 三件套已建立，当前活动文档已切换为 `phase05` 三件套
+- 当前最应优先读取的已交付边界入口为 `phase04-10` 正式规格正文、`phase04-11` 合同主线与 `phase04-14` 联调验收结论；`phase05` 三件套用于当前阶段规划，`phase04` 三件套仅保留为上一阶段规划与冻结记录

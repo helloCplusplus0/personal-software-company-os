@@ -77,6 +77,10 @@ docs/
   - `phase04_product_and_repository_binding_foundation_architecture_plan.md`
   - `phase04_product_and_repository_binding_foundation_dev_plan.md`
   - `phase04_product_and_repository_binding_foundation_shared_baseline.md`
+- 当前已创建：
+  - `phase05_dashboard_feedback_foundation_architecture_plan.md`
+  - `phase05_dashboard_feedback_foundation_dev_plan.md`
+  - `phase05_dashboard_feedback_foundation_shared_baseline.md`
 - 当前已完成：
   - `.trae/specs/phase01_06_formal_mvp_spec/mvp_spec_v0.1.md`（`v0.1` 执行层唯一规格入口）
   - `.trae/specs/phase02_09_module_registry_formal_spec/module_registry_spec_v0.1.md`（`Module Registry` 当前阶段唯一规格入口）
@@ -92,11 +96,12 @@ docs/
 - `phase03_decision_center_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - `phase04_product_and_repository_binding_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - `phase04` 三件套保留为该阶段 `/plan` 的规划与冻结记录，不再承担项目当前阶段状态说明
+- `phase05_dashboard_feedback_foundation` 已正式进入 `/plan`
 - `phase02` 直接承接正式 MVP 规格正文，不在根级文档重复正文内容
 - `phase03` 直接承接 `phase02` 已交付的 `Module Registry` 主线与 `.proto` 合同结果，并已完成 `Decision Center` 正式规格、合同、实现与联调验收收口
 - `phase04` 直接承接 `phase03` 已交付的 `Decision Center` 主线与联调验收结果，并已完成 `Product Registry + Repository Binding` 正式规格、合同、实现与联调验收收口
 - 当前阶段入口已切换为 `phase05_dashboard_feedback_foundation`
-- `phase05` 将直接承接 `phase04-10` 正式规格、`phase04-11` 合同主线与 `phase04-14` 验收结论；当前尚未建立 `docs/phase/` 三件套，进入 `/plan` 后再创建
+- `phase05` 将直接承接 `phase04-10` 正式规格、`phase04-11` 合同主线与 `phase04-14` 验收结论，并已建立 `docs/phase/` 三件套用于冻结 `Dashboard + Feedback` 最小主线
 
 ### 4.2 fix
 
