@@ -1,0 +1,19 @@
+- [x] 已明确 `phase05-11` 的目标是把 `Dashboard + Feedback` 合同推进为仓库内实际落地的 proto 主线，而不是重新设计一版合同
+- [x] 已明确合同源文件落点为 `proto/psco/dashboard/v1/dashboard.proto`
+- [x] 已明确包名与版本语义为 `psco.dashboard.v1`
+- [x] 已明确 `.proto` 是 `Dashboard + Feedback` 当前阶段唯一合同定义入口
+- [x] 已明确 `dashboard.proto` 必须继续承接 `DashboardService`、三类只读 RPC、核心消息结构与 `phase05-08` 已冻结的编号/演进规则
+- [x] 已明确 `RecentActivityItem.activity_at` 必须继续使用 `google.protobuf.Timestamp`
+- [x] 已明确 `buf build / lint / generate / breaking` 必须继续通过既有 `proto/` 受控入口运行
+- [x] 已明确 `buf breaking` 的基准路径继续冻结为 `../.git#branch=main,subdir=proto`
+- [x] 已明确 Go 与 TypeScript 生成产物新增落点为 `backend/internal/gen/proto/psco/dashboard/v1/` 与 `frontend/src/gen/proto/psco/dashboard/v1/`
+- [x] 已明确 `proto/README.md` 必须把 Dashboard 纳入目录总览、包名表、生成产物表与 RPC → HTTP 映射矩阵
+- [x] 已明确三个 Dashboard `GET` 入口当前阶段无 body、无 query 过滤、无路径参数
+- [x] 已明确 `backend/internal/dashboard/types.go`、handler DTO 与前端 adapter 只允许从 `.proto` 派生或显式对齐
+- [x] 已明确 handler 必须显式组装空 Proto request，不得因为 `GET` 无参数就绕过 request 合同
+- [x] 已明确错误状态码、错误包络与局部错误展示仍属于 HTTP / handler 适配层，不进入 `.proto` 合同本体
+- [x] 已明确 DTO / 页面层不得新增 `.proto` 中不存在的业务字段语义
+- [x] 已明确当前阶段继续允许 `chi + JSON HTTP` 作为过渡传输层
+- [x] 已明确当前阶段不要求完成完整 gRPC / Connect 迁移或立即替换全部手写 DTO
+- [x] 已明确后续 `phase05-12 / 13 / 14` 必须优先引用已落地的 `dashboard.proto` 与现有 `proto/` 工具链入口
+- [x] 已验证本 spec 与 `phase05-08`、`phase05-10`、`phase03-11`、`phase04-11` 以及现有 `proto/` workspace 基线保持一致

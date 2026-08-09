@@ -1,12 +1,14 @@
 # PSCO Proto 合同源
 
-> **文档定位**：本目录是 PSCO 项目的 Protocol Buffers 合同源入口，统一承接 `Module Registry`（phase02-11A）、`Decision Center`（phase03-11）与 `Product / Repository / Binding`（phase04-11）的最小合同源。
+> **文档定位**：本目录是 PSCO 项目的 Protocol Buffers 合同源入口，统一承接 `Module Registry`（phase02-11A）、`Decision Center`（phase03-11）、`Product / Repository / Binding`（phase04-11）与 `Dashboard + Feedback`（phase05-11）的最小合同源。
 > 上游规格：
 > - `phase02-11A spec` §"Module Registry 最小 Proto 合同源" + `module_registry_spec_v0.1.md` §6.1 / §6.5
 > - `phase03-08 Decision Center 最小 Proto 合同设计 Spec` + `phase03-10 decision_center_spec_v0.1.md` §7
 > - `phase03-11 Decision Center 最小 Protocol Buffers 合同主线 Spec`
 > - `phase04-08 Product / Repository / Binding 最小 Proto 合同设计 Spec` + `phase04-10 product_repository_binding_spec_v0.1.md` §合同设计
 > - `phase04-11 Product / Repository / Binding 最小 Protocol Buffers 合同主线 Spec`
+> - `phase05-08 Dashboard + Feedback 最小 Proto 合同设计 Spec` + `phase05-10 dashboard_feedback_spec_v0.1.md` §合同设计
+> - `phase05-11 Dashboard + Feedback 最小 Protocol Buffers 合同主线 Spec`
 
 ## 1. 目录结构
 
@@ -29,12 +31,15 @@ proto/
     ├── product_registry/
     │   └── v1/
     │       └── product_registry.proto   # Product Registry 最小合同源（phase04-11 落地）
-    └── repository_binding/
+    ├── repository_binding/
+    │   └── v1/
+    │       └── repository_binding.proto # Repository Binding 最小合同源（phase04-11 落地）
+    └── dashboard/
         └── v1/
-            └── repository_binding.proto # Repository Binding 最小合同源（phase04-11 落地）
+            └── dashboard.proto          # Dashboard + Feedback 最小合同源（phase05-11 落地）
 ```
 
-> 约束：不得为单个模块新增第二套 `buf.yaml`、`buf.gen.yaml`、`Makefile` 或并列 proto 根目录。`Module Registry`、`Decision Center`、`Product Registry` 与 `Repository Binding` 必须在同一个 buf workspace 内共同通过 `build / lint / generate / breaking` 校验。
+> 约束：不得为单个模块新增第二套 `buf.yaml`、`buf.gen.yaml`、`Makefile` 或并列 proto 根目录。`Module Registry`、`Decision Center`、`Product Registry`、`Repository Binding` 与 `Dashboard + Feedback` 必须在同一个 buf workspace 内共同通过 `build / lint / generate / breaking` 校验。
 
 ## 2. 包名与版本语义
 
@@ -45,6 +50,7 @@ proto/
 | Decision Center | `psco.decision_center.v1` | `v1` | `psco/decision_center/v1/decision_center.proto` |
 | Product Registry | `psco.product_registry.v1` | `v1` | `psco/product_registry/v1/product_registry.proto` |
 | Repository Binding | `psco.repository_binding.v1` | `v1` | `psco/repository_binding/v1/repository_binding.proto` |
+| Dashboard | `psco.dashboard.v1` | `v1` | `psco/dashboard/v1/dashboard.proto` |
 
 ### 演进规则（统一适用于所有模块）
 
@@ -60,6 +66,7 @@ proto/
 - `Product Registry` 通过 `import "psco/common/v1/common.proto"` 直接复用 `psco.common.v1.ActiveArchivedStatus`，用于 `Product.status` / `ProductListItem.status` / `BoundRepositorySummary.repository_status` / `CreateProductRequest.status` / `ListProductsRequest.status_filter`
 - `Repository Binding` 通过 `import "psco/module_registry/v1/module_registry.proto"` 直接复用 `psco.module_registry.v1.ModuleStatus`，用于 `MappedModuleSummary.module_status` / `RepositoryModuleCandidate.module_status`
 - `Repository Binding` 通过 `import "psco/common/v1/common.proto"` 直接复用 `psco.common.v1.ActiveArchivedStatus`，用于 `Repository.status` / `RepositoryListItem.status` / `BoundProductSummary.product_status` / `RepositoryProductCandidate.product_status` / `CreateRepositoryRequest.status` / `ListRepositoriesRequest.status_filter`
+- `Dashboard + Feedback` 当前阶段不复用 `ActiveArchivedStatus` 或 `ModuleStatus`，自有枚举（`FeedbackSignalFamily` / `FeedbackSignalCode` / `FeedbackSignalPriority` / `DashboardTargetType` / `RecentActivityType`）在 `dashboard.proto` 内单值定义，不通过 import 引入跨包枚举
 - `common.proto` 只承接跨 `Product / Repository` 共享且不会引入业务 owner 歧义的最小公共枚举，不定义业务消息或服务接口
 - 不得在 `psco.product_registry.v1` 或 `psco.repository_binding.v1` 中重定义本地等价 `ActiveArchivedStatus` 或 `ModuleStatus` 枚举
 - 该 import 仅限于复用枚举类型，不引入对其他模块 service 或消息结构的合同依赖
@@ -90,18 +97,20 @@ buf generate
 | Go | Decision Center | `backend/internal/gen/proto/psco/decision_center/v1/` | 消息类型（同上） |
 | Go | Product Registry | `backend/internal/gen/proto/psco/product_registry/v1/` | 消息类型（同上） |
 | Go | Repository Binding | `backend/internal/gen/proto/psco/repository_binding/v1/` | 消息类型（同上） |
+| Go | Dashboard | `backend/internal/gen/proto/psco/dashboard/v1/` | 消息类型（同上） |
 | TypeScript | Common | `frontend/src/gen/proto/psco/common/v1/` | 共享枚举类型 |
 | TypeScript | Module Registry | `frontend/src/gen/proto/psco/module_registry/v1/` | 消息类型（同上） |
 | TypeScript | Decision Center | `frontend/src/gen/proto/psco/decision_center/v1/` | 消息类型（同上） |
 | TypeScript | Product Registry | `frontend/src/gen/proto/psco/product_registry/v1/` | 消息类型（同上） |
 | TypeScript | Repository Binding | `frontend/src/gen/proto/psco/repository_binding/v1/` | 消息类型（同上） |
+| TypeScript | Dashboard | `frontend/src/gen/proto/psco/dashboard/v1/` | 消息类型（同上） |
 
 > 生成产物已加入 `.gitignore`，不进入版本控制。每次 `make gen` 重新生成。
 > 当前阶段所有模块只生成消息类型与 service 描述符，不生成 gRPC 服务桩或客户端桩。后续迁移到 gRPC / Connect 时在 `buf.gen.yaml` 中加回对应插件，不需要修改 `.proto` 合同源。
 
 ## 4. 过渡传输层映射
 
-当前阶段保留 `chi + JSON HTTP` 作为过渡传输层（`phase02-11` 已实现；`Decision Center` 由 `phase03-12 / 13` 实现；`Product / Repository / Binding` 由 `phase04-12 / 13` 实现）。
+当前阶段保留 `chi + JSON HTTP` 作为过渡传输层（`phase02-11` 已实现；`Decision Center` 由 `phase03-12 / 13` 实现；`Product / Repository / Binding` 由 `phase04-12 / 13` 实现；`Dashboard + Feedback` 由 `phase05-12 / 13` 实现）。
 `.proto` 是唯一合同源，JSON 请求与响应语义从 `.proto` 派生。
 
 ### RPC → HTTP 映射矩阵
@@ -152,6 +161,16 @@ buf generate
 | `MapModuleToRepository` | POST | `/api/repositories/{repositoryId}/bindings/modules` | JSON body + URL path |
 | `ListRepositoryProductCandidates` | GET | `/api/repositories/{repositoryId}/candidates/products` | URL path |
 | `ListRepositoryModuleCandidates` | GET | `/api/repositories/{repositoryId}/candidates/modules` | URL path |
+
+#### Dashboard
+
+| RPC 方法 | HTTP 方法 | HTTP 路径 | 请求体来源 |
+| --- | --- | --- | --- |
+| `GetDashboardOverview` | GET | `/api/dashboard/overview` | 无 |
+| `GetFeedbackSignals` | GET | `/api/dashboard/feedback-signals` | 无 |
+| `GetRecentActivities` | GET | `/api/dashboard/recent-activities` | 无 |
+
+> Dashboard 三个 `GET` 入口当前阶段无 body、无 query 过滤、无路径参数。handler 必须显式组装空 Proto request 再进入业务层，不得因 `GET` 无参数就绕过 request 合同边界。
 
 > 约束：JSON 请求与响应语义必须从 `.proto` 派生或与 `.proto` 语义显式对齐；HTTP 过渡层使用 URL 路径参数承接 `decisionId` / `moduleId` / `productId` / `repositoryId` 时，handler 必须在进入业务层前显式组装为对应的 Proto request 字段；不得把 HTTP 路径、状态码或中间件策略误写成 Proto 合同本体。
 
@@ -313,6 +332,32 @@ buf generate
 - 输入/写入参数与搜索参数应使用 **camelCase**（如 `repositoryId` / `queryText` / `statusFilter`），属前端表单与路由层命名，由 adapter 层在组装 JSON 请求时转换为 snake_case。
 后续阶段可逐步替换为从 `.proto` 生成的 TypeScript 类型。
 
+### 后端 — Dashboard（`backend/internal/dashboard/types.go`，由 phase05-12 实现）
+
+`Dashboard + Feedback` 的 `.proto` 合同源已在 `phase05-11` 落地，后端过渡传输层 DTO 由 `phase05-12` 实现。
+实现时必须遵守的单向承接约束：
+
+| 预期 `types.go` 结构体 | `.proto` 消息 | 单向承接约束 |
+| --- | --- | --- |
+| `DashboardOverview` | `DashboardOverview` | 语义对齐（纯 int32 计数字段，无时间字段） |
+| `FeedbackSignal` | `FeedbackSignal` | 语义对齐（枚举使用自有枚举，不引入 ActiveArchivedStatus / ModuleStatus） |
+| `ProductAssetCoverageSummary` | `ProductAssetCoverageSummary` | 语义对齐（missing_both_bindings_count 作为独立计数字段，不回退为隐式组合） |
+| `RecentActivityItem` | `RecentActivityItem` | 语义对齐（activity_at: time.Time ↔ Timestamp） |
+| `GetDashboardOverviewResponse` | `GetDashboardOverviewResponse` | 语义对齐 |
+| `GetFeedbackSignalsResponse` | `GetFeedbackSignalsResponse` | 语义对齐（主队列 + 资产缺口摘要两层结构） |
+| `GetRecentActivitiesResponse` | `GetRecentActivitiesResponse` | 语义对齐 |
+
+> 实现期不得在 `types.go`、handler DTO 或前端页面层私自新增 `.proto` 中不存在的业务字段语义。
+> 错误状态码、错误包络与局部错误展示仍属于 HTTP / handler 适配层，不进入 `.proto` 合同本体。
+
+### 前端 — Dashboard（`frontend/src/features/dashboard/`，由 phase05-13 实现）
+
+`Dashboard + Feedback` 的前端过渡传输层适配代码由 `phase05-13` 实现。
+命名约定按类型分层（与现有 Module Registry / Decision Center / Product Registry / Repository Binding 模式同构）：
+- 响应/域类型（`DashboardOverview` / `FeedbackSignal` / `ProductAssetCoverageSummary` / `RecentActivityItem`）应使用 **snake_case**（如 `signal_family` / `signal_code` / `target_id` / `activity_at` / `missing_both_bindings_count`），直接承接后端 JSON（snake_case），与 `.proto` 的 snake_case 对齐，无需转换。
+- Dashboard 三个读组当前阶段无输入/写入参数与搜索参数，不涉及 camelCase 转换。
+后续阶段可逐步替换为从 `.proto` 生成的 TypeScript 类型。
+
 ## 6. 当前阶段不做
 
 - 不完成完整 gRPC / Connect 传输层迁移
@@ -339,5 +384,5 @@ make breaking
 
 > `make build` 是 buf 校验链的最基础入口，`lint / generate / breaking` 都隐式依赖 build 成功。
 > `make breaking` 对照仓库 `main` 分支的 `proto/` 子目录基准。
-> 当前 `main` 分支已有 `phase02-11A` 提交的 `Module Registry` proto 基准，`phase03-11` 新增的 `Decision Center` proto 与 `phase04-11` 新增的 `Common / Product Registry / Repository Binding` proto 均属于向后兼容的新增，`make breaking` 退出码为 0。
+> 当前 `main` 分支已有 `phase02-11A` 提交的 `Module Registry` proto 基准，`phase03-11` 新增的 `Decision Center` proto、`phase04-11` 新增的 `Common / Product Registry / Repository Binding` proto 与 `phase05-11` 新增的 `Dashboard + Feedback` proto 均属于向后兼容的新增，`make breaking` 退出码为 0。
 > 后续任何对已存在字段编号、字段类型或字段语义的删除或修改都会被检测为破坏性变更并返回非零退出码。

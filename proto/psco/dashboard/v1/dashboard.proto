@@ -1,0 +1,272 @@
+// PSCO Dashboard + Feedback 最小 Protocol Buffers 合同源
+//
+// 文档定位：本文件是 Dashboard + Feedback 当前阶段唯一合同定义入口（phase05-11 落地）。
+// 上游规格：
+//   - phase05-08 Dashboard + Feedback 最小 Proto 合同设计 Spec
+//                §"Dashboard + Feedback 合同必须进入现有 proto workspace"
+//                / §"DashboardService 最小 RPC 矩阵必须单值化"
+//                / §"DashboardOverview 消息边界必须对齐 phase05-04"
+//                / §"FeedbackSignal 合同必须冻结统一卡片模型与资产缺口摘要"
+//                / §"RecentActivity 合同必须冻结活动类型与显式时间字段"
+//                / §"chi + JSON HTTP 过渡映射必须从 proto 单向承接"
+//                / §"合同演进与 Buf 校验规则必须冻结"
+//                / §"当前版本字段编号方案必须冻结为机械映射"
+//   - phase05-10 dashboard_feedback_spec_v0.1.md §合同设计（Proto 主线）
+//   - phase05-11 Dashboard + Feedback 最小 Protocol Buffers 合同主线 Spec
+//
+// 落点要求：
+//   - 本文件落地到现有 proto/ 工作区，复用同一 buf workspace
+//   - 不新增第二套 buf.yaml / buf.gen.yaml / Makefile 或并列 proto 根目录
+//   - 与 Module Registry / Decision Center / Product Registry / Repository Binding
+//     在同一个 buf workspace 内共同通过校验
+//
+// 过渡传输层说明：
+//   当前阶段保留 chi + JSON HTTP 作为过渡传输层（phase05-12/13 实现）。
+//   JSON 请求与响应语义必须从本 .proto 派生或严格对齐，不得形成第二套合同源。
+//   HTTP 路径、状态码与中间件策略不属于本合同本体，由过渡传输层独立承载。
+//   三个 GET 入口当前阶段无 body、无 query 过滤、无路径参数，handler 必须显式
+//   组装空 Proto request 再进入业务层，不得因 GET 无参数绕过 request 合同边界。
+//
+// 字段编号规则：
+//   - 每个字段拥有稳定编号，不得复用已删除字段编号或字段语义
+//   - 新增字段必须使用新的递增编号，不得插入到已有编号之间
+//   - reserved 关键字用于标记已删除或预留的编号区间
+//   - 后续版本删除字段或废弃字段名时必须使用 reserved 保留字段号
+//
+// 跨包依赖策略：
+//   - Dashboard + Feedback 当前阶段不复用 ActiveArchivedStatus 或 ModuleStatus
+//   - Dashboard 自有枚举（FeedbackSignalFamily / FeedbackSignalCode /
+//     FeedbackSignalPriority / DashboardTargetType / RecentActivityType）
+//     在本文件内单值定义，不通过 import 引入跨包枚举
+//   - 后续若需跨模块关系摘要，由消费方模块独立承接，不在此文件中引入
+//
+// 排序规则边界：
+//   - 当前阶段三个读组 request 均为空消息，不引入 order_by 字段或排序注解
+//   - current_focus_signals 最多 5 条、representative_signals 最多 3 条、
+//     activities 最多 10 条的上限由 service 层承接，不进入 .proto 合同本体
+//   - 该边界承接现有 psco.decision_center.v1 / psco.product_registry.v1
+//     已建立的"排序与上限由 service 层承接"模式
+//
+// 生成入口：
+//   在 proto/ 目录执行 make gen，或直接执行 buf generate。
+//   生成产物：
+//     - Go:    backend/internal/gen/proto/psco/dashboard/v1/
+//     - TS:    frontend/src/gen/proto/psco/dashboard/v1/
+//
+// 当前阶段边界：
+//   - 只生成消息类型，不生成 gRPC 服务桩
+//   - service 定义在 .proto 合同源中已冻结，后续迁移到 gRPC / Connect 时再加回 grpc/connect 插件
+//   - 不要求完成完整 gRPC / Connect 传输层迁移
+//   - 不要求立即用生成类型替换全部现有手写 DTO
+
+syntax = "proto3";
+
+package psco.dashboard.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// Go 包路径（生成代码落点）
+option go_package = "github.com/psco/backend/internal/gen/proto/psco/dashboard/v1;dashboardv1";
+
+// ============================================================================
+// 枚举
+// ============================================================================
+
+// FeedbackSignalFamily — 反馈信号的家族分组，对齐 phase05-02 冻结的最小展示模型。
+// UNSPECIFIED 表示未指定，不得作为合法业务值。
+// 当前阶段只承接 PENDING_DECISION 与 PRODUCT_ASSET_COVERAGE 两个家族。
+enum FeedbackSignalFamily {
+  FEEDBACK_SIGNAL_FAMILY_UNSPECIFIED = 0;
+  FEEDBACK_SIGNAL_FAMILY_PENDING_DECISION = 1;
+  FEEDBACK_SIGNAL_FAMILY_PRODUCT_ASSET_COVERAGE = 2;
+}
+
+// FeedbackSignalCode — 反馈信号的具体业务码，对齐 phase05-02 / phase05-04 冻结的信号清单。
+// UNSPECIFIED 表示未指定，不得作为合法业务值。
+// PRODUCT_MISSING_BOTH_BINDINGS 作为独立 code 存在，不回退为两个单缺口的隐式组合语义。
+enum FeedbackSignalCode {
+  FEEDBACK_SIGNAL_CODE_UNSPECIFIED = 0;
+  FEEDBACK_SIGNAL_CODE_PENDING_DECISION = 1;
+  FEEDBACK_SIGNAL_CODE_PRODUCT_MISSING_BOTH_BINDINGS = 2;
+  FEEDBACK_SIGNAL_CODE_PRODUCT_MISSING_REPOSITORY_BINDING = 3;
+  FEEDBACK_SIGNAL_CODE_PRODUCT_MISSING_MODULE_BINDING = 4;
+}
+
+// FeedbackSignalPriority — 反馈信号的优先级，对齐 phase05-02 / phase05-04 冻结的优先级顺序。
+// UNSPECIFIED 表示未指定，不得作为合法业务值。
+// 编号顺序直接表达 P1 > P2 > P3 > P4，不压缩为高/中/低三级口径。
+enum FeedbackSignalPriority {
+  FEEDBACK_SIGNAL_PRIORITY_UNSPECIFIED = 0;
+  FEEDBACK_SIGNAL_PRIORITY_P1_PENDING_DECISION = 1;
+  FEEDBACK_SIGNAL_PRIORITY_P2_PRODUCT_MISSING_BOTH_BINDINGS = 2;
+  FEEDBACK_SIGNAL_PRIORITY_P3_PRODUCT_MISSING_REPOSITORY_BINDING = 3;
+  FEEDBACK_SIGNAL_PRIORITY_P4_PRODUCT_MISSING_MODULE_BINDING = 4;
+}
+
+// DashboardTargetType — 反馈信号与活动项的 canonical 跳转目标类型。
+// 对齐 phase05-03 冻结的导航身份解释。
+// UNSPECIFIED 表示未指定，不得作为合法业务值。
+// 当 target_type = DECISION_LIST 时，target_id 允许为空字符串，
+// 表达聚合决策信号落到 Decision Center / List 的语义。
+enum DashboardTargetType {
+  DASHBOARD_TARGET_TYPE_UNSPECIFIED = 0;
+  DASHBOARD_TARGET_TYPE_DECISION_DETAIL = 1;
+  DASHBOARD_TARGET_TYPE_DECISION_LIST = 2;
+  DASHBOARD_TARGET_TYPE_PRODUCT_DETAIL = 3;
+  DASHBOARD_TARGET_TYPE_MODULE_DETAIL = 4;
+  DASHBOARD_TARGET_TYPE_REPOSITORY_DETAIL = 5;
+}
+
+// RecentActivityType — 最近活动项的业务类型，对齐 phase05-02 / phase05-03 冻结的活动语义。
+// UNSPECIFIED 表示未指定，不得作为合法业务值。
+// 不保留笼统 binding 类型，binding 必须拆分为 product_module_binding /
+// product_repository_binding / module_repository_binding 三类。
+enum RecentActivityType {
+  RECENT_ACTIVITY_TYPE_UNSPECIFIED = 0;
+  RECENT_ACTIVITY_TYPE_MODULE = 1;
+  RECENT_ACTIVITY_TYPE_RELEASE = 2;
+  RECENT_ACTIVITY_TYPE_PRODUCT = 3;
+  RECENT_ACTIVITY_TYPE_REPOSITORY = 4;
+  RECENT_ACTIVITY_TYPE_DECISION = 5;
+  RECENT_ACTIVITY_TYPE_PRODUCT_MODULE_BINDING = 6;
+  RECENT_ACTIVITY_TYPE_PRODUCT_REPOSITORY_BINDING = 7;
+  RECENT_ACTIVITY_TYPE_MODULE_REPOSITORY_BINDING = 8;
+}
+
+// ============================================================================
+// 核心消息
+// ============================================================================
+
+// DashboardOverview — 概览卡片主聚合读模型，对齐 phase05-04 冻结的读取边界。
+// 只服务概览卡片与系统状态判定前提，不混入 FeedbackSignal 或 RecentActivityItem。
+// 这些字段足以支撑 phase05-04 已冻结的空系统、非空缺口与创建导向 CTA 1-4 判定前提。
+message DashboardOverview {
+  int32 module_count = 1;
+  int32 product_count = 2;
+  int32 repository_count = 3;
+  int32 decision_count = 4;
+  int32 product_with_repository_count = 5;
+  int32 product_with_module_count = 6;
+}
+
+// FeedbackSignal — 统一反馈主队列的单值卡片模型，对齐 phase05-02 冻结的最小模板。
+// 同时承接"解释缺口"与"导航到 canonical owner"两类语义，不得减少字段。
+// 当前阶段不引入 score / trend / external_metric / recommendation_reason。
+message FeedbackSignal {
+  FeedbackSignalFamily signal_family = 1;
+  FeedbackSignalCode signal_code = 2;
+  FeedbackSignalPriority priority = 3;
+  string title = 4;
+  string summary = 5;
+  string action_label = 6;
+  DashboardTargetType target_type = 7;
+  string target_id = 8;
+  string target_label = 9;
+}
+
+// ProductAssetCoverageSummary — 资产缺口补充摘要，对齐 phase05-02 / phase05-04 冻结结构。
+// missing_both_bindings_count 必须作为独立计数字段存在，
+// 不回退为"缺仓库 + 缺模块"两个单缺口的隐式组合语义。
+// representative_signals 最多展示 3 条代表性缺口项（上限由 service 层承接）。
+message ProductAssetCoverageSummary {
+  int32 fully_bound_product_count = 1;
+  int32 missing_both_bindings_count = 2;
+  int32 missing_repository_binding_count = 3;
+  int32 missing_module_binding_count = 4;
+  repeated FeedbackSignal representative_signals = 5;
+}
+
+// RecentActivityItem — 独立活动流单值项，对齐 phase05-02 / phase05-03 冻结的活动项语义。
+// activity_at 必须使用显式 google.protobuf.Timestamp，不依赖隐式 created_at 约定。
+// 当前阶段最多返回 10 条活动项（上限由 service 层承接）。
+// target_type 表示 canonical owner 页面目标，对齐 phase05-03 导航解释：
+//   - release 活动统一回落到 Module Detail
+//   - product_module_binding 统一落到 Product Detail
+//   - product_repository_binding 与 module_repository_binding 统一落到
+//     Repository Binding Detail / Workspace
+message RecentActivityItem {
+  RecentActivityType activity_type = 1;
+  google.protobuf.Timestamp activity_at = 2;
+  DashboardTargetType target_type = 3;
+  string target_id = 4;
+  string target_label = 5;
+}
+
+// ============================================================================
+// 读组请求与响应消息
+// ============================================================================
+
+// GetDashboardOverviewRequest — 概览读取请求（当前版本无字段）。
+// 保持无筛选、无分页、无排序切换的最小请求边界。
+// 后续若增加字段，只能从新的递增字段号开始，不得反向改写当前"空 request"边界。
+message GetDashboardOverviewRequest {}
+
+// GetDashboardOverviewResponse — 概览读取响应。
+// 只以单一主读模型承接，不并入整页错误、局部失败标记或反馈卡片列表。
+message GetDashboardOverviewResponse {
+  DashboardOverview overview = 1;
+}
+
+// GetFeedbackSignalsRequest — 反馈信号读取请求（当前版本无字段）。
+// 保持无筛选、无分页、无排序切换的最小请求边界。
+// 后续若增加字段，只能从新的递增字段号开始，不得反向改写当前"空 request"边界。
+message GetFeedbackSignalsRequest {}
+
+// GetFeedbackSignalsResponse — 反馈信号读取响应。
+// 承接统一反馈主队列（current_focus_signals，最多 5 条）与资产缺口补充摘要
+// （asset_feedback_summary）两层结构。
+// current_focus_signals 为空时表示当前无主队列信号，不视为错误。
+// asset_feedback_summary 在空态下需返回完整结构与三类缺口计数为 0、代表项为空列表
+// （由 service 层承接，不进入 .proto 合同本体）。
+message GetFeedbackSignalsResponse {
+  repeated FeedbackSignal current_focus_signals = 1;
+  ProductAssetCoverageSummary asset_feedback_summary = 2;
+}
+
+// GetRecentActivitiesRequest — 最近活动读取请求（当前版本无字段）。
+// 保持无筛选、无分页、无排序切换的最小请求边界。
+// 后续若增加字段，只能从新的递增字段号开始，不得反向改写当前"空 request"边界。
+message GetRecentActivitiesRequest {}
+
+// GetRecentActivitiesResponse — 最近活动读取响应。
+// activities 为空时表示当前无活动项，不视为错误。
+message GetRecentActivitiesResponse {
+  repeated RecentActivityItem activities = 1;
+}
+
+// ============================================================================
+// 服务接口
+// ============================================================================
+
+// DashboardService — Dashboard + Feedback 当前阶段完整动作矩阵的 RPC 合同。
+//
+// 接口分组对齐 phase05-07：
+//   - 读组：GetDashboardOverview / GetFeedbackSignals / GetRecentActivities
+//   - 当前阶段不承接任何业务写入
+//
+// 三个 RPC 都只承接读，不并列增加趋势分析、通知中心、导出或批量操作 RPC。
+// 三个 RPC 的 request 当前版本均为空消息，承接默认读取，
+// 不引入 queryText / statusFilter / page / pageSize / sort / dateRange。
+//
+// 错误语义：
+//   合同只承接成功路径下的合同结构，不并列发明第二套错误业务字段。
+//   整页失败、局部失败展示状态等错误语义继续由 HTTP / handler 适配层承接。
+//   空结果（空主队列、空活动流、空代表项）必须表现为正常空列表响应，
+//   不得设计为空错误。
+//   HTTP 状态码映射继续由过渡传输层负责，不写进 .proto 合同本体。
+//
+// 过渡传输层映射：
+//   当前阶段由 chi + JSON HTTP 承接，RPC 到 HTTP 的映射约定见 proto/README.md。
+//   后续阶段可迁移到 gRPC / Connect 而不需要修改本合同源。
+service DashboardService {
+  // --- 读组 ---
+
+  // DashboardOverviewRead — 概览聚合读取
+  rpc GetDashboardOverview(GetDashboardOverviewRequest) returns (GetDashboardOverviewResponse);
+
+  // FeedbackSignalRead — 反馈信号读取（主队列 + 资产缺口摘要）
+  rpc GetFeedbackSignals(GetFeedbackSignalsRequest) returns (GetFeedbackSignalsResponse);
+
+  // RecentActivityRead — 最近活动读取
+  rpc GetRecentActivities(GetRecentActivitiesRequest) returns (GetRecentActivitiesResponse);
+}
