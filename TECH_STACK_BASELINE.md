@@ -420,6 +420,28 @@ Go承担：
 * 部署简单
 * 长期稳定
 
+### Go 路线默认后端栈
+
+在 `Durable System Track` 中，Go 后端默认采用以下最小栈：
+
+* `net/http`
+* `chi`
+* `pgx / pgxpool`
+* `log/slog`
+
+职责划分：
+
+* `chi`：HTTP 路由、子路由挂载、中间件编排
+* `net/http`：基础传输抽象
+* `pgx / pgxpool`：PostgreSQL 驱动与连接池
+* `log/slog`：结构化日志
+
+原则：
+
+> `chi` 是轻量传输层与路由装配工具，不是合同定义工具。
+
+> Go 路线默认保持 SQL-first 与标准库优先，不为“框架完整性”额外叠加第二套服务框架。
+
 ---
 
 # Compute Layer
@@ -563,6 +585,39 @@ proto
 
  +--- Rust
 
+```
+
+### Contract First 的落地规则
+
+在 `Durable System Track` 中：
+
+* `.proto` 是唯一长期合同源
+* `buf lint / breaking` 是合同演进门禁
+* HTTP JSON 可以作为浏览器友好的传输形式存在
+* 但 JSON 传输层不得形成与 `.proto` 并列的第二套 canonical contract
+
+这意味着：
+
+* 路由、中间件、HTTP handler 可以由 `chi + net/http` 承接
+* 但对外字段、枚举、错误语义、response envelope 必须与 `.proto` 单值一致
+* 若存在 JSON request / response DTO，它们只能从 `.proto` 单向派生或显式映射，不得自行演化出第二套语义
+
+因此，Go 路线的正确关系是：
+
+```
+.proto
+  ↓
+Go / TypeScript 生成物或显式映射
+  ↓
+chi + HTTP JSON transport
+```
+
+而不是：
+
+```
+chi JSON contract
+  ↘
+   .proto contract
 ```
 
 ---

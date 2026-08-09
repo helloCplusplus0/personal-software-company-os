@@ -4,10 +4,10 @@
 
 ## 1. 当前状态
 
-- 当前阶段：`phase05_dashboard_feedback_foundation`
-- 当前状态：`phase05` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
-- 当前目标：保持根级真相源与 `phase05` 已交付边界一致，并等待下一阶段正式 phase 入口建立后切换
-- 当前下一阶段入口：待正式建立后切换（直接承接 `phase05-10 / 11 / 14`，不得预设新的 phase 名称）
+- 当前阶段：`phase06_onboarding_sovereignty_reuse_foundation`
+- 当前状态：`phase06` 已完成 `/plan` 建立，待进入 `/spec -> 实现 -> 验收 -> 收口`
+- 当前目标：交付 `Onboarding + Data Sovereignty + Reuse Awareness` 最小主线，并保持根级真相源与 `phase06` 规划入口一致
+- 当前下一阶段入口：待 `phase06` 正式收口后切换（不得预设新的 phase 名称）
 
 ## 2. 当前进度概览
 
@@ -39,7 +39,9 @@
 - `.trae/specs/phase05_11_dashboard_feedback_proto_mainline/` 已将 `Dashboard + Feedback` 最小 `.proto` 合同落地为仓库主线
 - `.trae/specs/phase05_14_dashboard_feedback_integration_validation_acceptance/acceptance_report.md` 已形成 `phase05` 联调验收与收口结论入口
 - `phase05` 三件套保留为该阶段 `/plan` 的规划与冻结记录，不再覆盖根级当前状态
-- 下一阶段正式 phase 入口尚未在仓库中建立；根级阶段切换保持“待建立后切换”显式状态
+- `PSCO-mvp02-summarize-feedback.md` 已冻结为 `mvp0.2` 下一阶段 `/plan` 的最终仲裁与规划基线
+- `phase06_onboarding_sovereignty_reuse_foundation` 三件套已建立
+- `phase06` 直接承接 `phase05-10 / 11 / 14` 与 `PSCO-mvp02-summarize-feedback.md`，当前待继续进入 `/spec`
 
 ## 3. Phase 路线预览
 
@@ -84,18 +86,27 @@
 - 状态：`completed`
 - 当前收口结果：已交付 `Dashboard + Feedback` 正式规格正文、最小 `.proto` 合同主线、后端与数据主线、前端主线与联调验收收口结果
 
+### phase06：`phase06_onboarding_sovereignty_reuse_foundation`
+
+- 目标：交付 `Onboarding + Data Sovereignty + Reuse Awareness` 最小主线
+- 进入条件：直接承接 `PSCO-mvp02-summarize-feedback.md` 与 `phase05` 已冻结的正式规格、合同主线和联调验收结果，以 `phase05` 已完成的 Dashboard / Feedback 主线作为唯一交付上游
+- 范围约束：不得重新扩写 `Opportunity / Feature / Experiment`，不得把 `Capability` 升级为重实体 CRUD，且不得把导出 / 备份后移为尾部补丁
+- 交付要求：作为交付型 phase 推进，必须完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
+- 状态：`planned`
+- 当前规划结果：已建立 `phase06` 三件套，当前待继续进入 `/spec`
+
 ## 4. 下一阶段切换条件
 
-当以下条件同时满足时，根级入口才允许从 `phase05` 已完成收口状态切换到下一阶段正式 phase 入口：
+当以下条件同时满足时，根级入口才允许从 `phase06` 当前进行中状态切换到下一阶段正式 phase 入口：
 
-1. `phase05` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口` 全链路
-2. `.trae/specs/phase05_10_dashboard_feedback_formal_spec/dashboard_feedback_spec_v0.1.md` 已冻结为 `Dashboard + Feedback` 当前阶段唯一正式规格入口
-3. `.trae/specs/phase05_11_dashboard_feedback_proto_mainline/` 已将 `Dashboard + Feedback` 最小 `.proto` 合同落地为仓库合同主线
-4. `.trae/specs/phase05_14_dashboard_feedback_integration_validation_acceptance/acceptance_report.md` 已形成联调验收与问题收口结论
-5. 下一阶段正式 `phase` 入口文档已在仓库中建立，并明确直接承接 `phase05-10 / 11 / 14`
+1. `phase06` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口` 全链路
+2. `phase06` 对应正式规格正文已冻结为当前阶段唯一正式规格入口
+3. `phase06` 对应 `.proto` 合同主线已落地为仓库合同主线
+4. `phase06` 对应联调验收与问题收口结论已形成正式入口
+5. 下一阶段正式 `phase` 入口文档已在仓库中建立，并明确直接承接 `phase06` 已冻结的规格、合同与验收结果
 6. 根级真相源已完成状态切换回写，且未在根级文档中凭空猜测未建立的 phase 名称
 
-当前结论：`phase05` 已完成收口，下一阶段的直接上游输入已冻结为 `phase05-10` 正式规格正文、`phase05-11` 合同主线与 `phase05-14` 验收结论；由于下一阶段正式 phase 入口尚未建立，根级入口当前保持“待建立后切换”状态。
+当前结论：`phase06` 已建立正式 `/plan` 入口，当前直接上游已冻结为 `PSCO-mvp02-summarize-feedback.md` 与 `phase05-10 / 11 / 14`；在 `phase06` 正式收口前，根级入口不切换到后续阶段。
 
 ## 5. 说明
 

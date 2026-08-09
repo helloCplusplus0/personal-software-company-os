@@ -45,6 +45,9 @@
 
 > 说明：`AGENTS-OLD.md` 已不存在于根目录，且不再作为当前项目技术栈来源；历史技术口径统一以 `TECH_STACK_BASELINE.md` 为准。
 
+- `PSCO-mvp01-summarize-feedback.md`：`mvp0.1` 阶段最终共识与执行基线参考
+- `PSCO-mvp02-summarize-feedback.md`：基于两轮 `mvp0.2` 评审与交叉汇总形成的下一阶段最终仲裁与 `/plan` 上游基线
+
 ## 3. docs 目录结构
 
 ```text
@@ -81,6 +84,10 @@ docs/
   - `phase05_dashboard_feedback_foundation_architecture_plan.md`
   - `phase05_dashboard_feedback_foundation_dev_plan.md`
   - `phase05_dashboard_feedback_foundation_shared_baseline.md`
+- 当前已创建：
+  - `phase06_onboarding_sovereignty_reuse_foundation_architecture_plan.md`
+  - `phase06_onboarding_sovereignty_reuse_foundation_dev_plan.md`
+  - `phase06_onboarding_sovereignty_reuse_foundation_shared_baseline.md`
 - 当前已完成：
   - `.trae/specs/phase01_06_formal_mvp_spec/mvp_spec_v0.1.md`（`v0.1` 执行层唯一规格入口）
   - `.trae/specs/phase02_09_module_registry_formal_spec/module_registry_spec_v0.1.md`（`Module Registry` 当前阶段唯一规格入口）
@@ -105,7 +112,8 @@ docs/
 - `phase04` 直接承接 `phase03` 已交付的 `Decision Center` 主线与联调验收结果，并已完成 `Product Registry + Repository Binding` 正式规格、合同、实现与联调验收收口
 - `phase05` 已直接承接 `phase04-10` 正式规格、`phase04-11` 合同主线与 `phase04-14` 验收结论，并完成 `Dashboard + Feedback` 正式规格、合同、实现与联调验收收口
 - `phase05` 三件套保留为该阶段 `/plan` 的规划与冻结记录，不再承担根级当前阶段状态说明
-- 下一阶段正式 phase 入口尚未建立；根级文档在新入口建立前保持“待建立后切换”显式状态
+- `phase06` 已直接承接 `PSCO-mvp02-summarize-feedback.md` 与 `phase05-10 / 11 / 14`，并已建立当前阶段正式 `/plan` 入口
+- 后续阶段正式 phase 入口待 `phase06` 收口后建立；根级文档不得提前猜测下一阶段名称
 
 ### 4.2 fix
 
@@ -141,6 +149,12 @@ docs/
 - `PSCO-summarize-feedback-dsv4flash.md`
 - `PSCO-summarize-feedback-GLM52.md`
 - `PSCO-summarize-feedback-GPT54.md`
+- `PSCO-mvp02-GLM52.md`
+- `PSCO-next-phase-mvp02-GPT54.md`
+- `PSCO-mvp02-deepseekv4flash.md`
+- `PSCO-mvp02-deepseekv4pro.md`
+- `PSCO-mvp02-qwen37pro.md`
+- `PSCO-mvp02-summarize-feedback-GPT54.md`
 
 另保留迁移跳转文件：
 

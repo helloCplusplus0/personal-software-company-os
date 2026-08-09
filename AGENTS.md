@@ -6,9 +6,9 @@
 ## 1. 项目定位
 
 - 项目名称：`Personal Software Company OS`
-- 当前阶段：`phase05_dashboard_feedback_foundation`（已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`）
-- 当前主目标：保持 `phase05` 已交付边界与根级真相源口径一致，并等待下一阶段正式 phase 入口建立后切换
-- 当前下一阶段入口：待正式建立后切换（不得预设新的 phase 名称）
+- 当前阶段：`phase06_onboarding_sovereignty_reuse_foundation`（已完成 `/plan` 建立，待进入 `/spec -> 实现 -> 验收 -> 收口`）
+- 当前主目标：交付 `Onboarding + Data Sovereignty + Reuse Awareness` 最小主线，并保持根级真相源与 `phase06` 规划入口一致
+- 当前下一阶段入口：待 `phase06` 正式收口后切换（不得预设新的 phase 名称）
 - 当前定位：PSCO 是个人软件公司的经营与资产系统，不是代码管理工具，不是 AI Chat 产品，也不是自动扫描系统
 
 ## 2. 当前唯一上游
@@ -58,7 +58,9 @@
 - `.trae/specs/phase05_11_dashboard_feedback_proto_mainline/` 已将 `Dashboard + Feedback` 最小 `.proto` 合同接入仓库既有 `proto/` 主线
 - `.trae/specs/phase05_14_dashboard_feedback_integration_validation_acceptance/acceptance_report.md` 已给出 `phase05` 联调验收与收口结论入口
 - `phase05` 三件套保留为该阶段 `/plan` 的规划与冻结记录，不再覆盖根级当前状态
-- 下一阶段正式 phase 入口尚未在仓库中建立；根级入口在正式建立前保持“待建立后切换”状态
+- `PSCO-mvp02-summarize-feedback.md` 已冻结为 `mvp0.2` 下一阶段 `/plan` 的最终仲裁与规划基线
+- `phase06_onboarding_sovereignty_reuse_foundation` 三件套已建立，并作为当前阶段正式 `/plan` 入口
+- `phase06` 直接承接 `phase05-10 / 11 / 14` 与 `PSCO-mvp02-summarize-feedback.md`，当前待继续进入 `/spec`
 
 ## 5. 推荐阅读顺序
 
@@ -90,7 +92,11 @@
 26. `docs/phase/phase05_dashboard_feedback_foundation_architecture_plan.md`
 27. `docs/phase/phase05_dashboard_feedback_foundation_dev_plan.md`
 28. `docs/phase/phase05_dashboard_feedback_foundation_shared_baseline.md`
-29. 当前目标对应的 `phase / fix / audit` 文档
+29. `PSCO-mvp02-summarize-feedback.md`
+30. `docs/phase/phase06_onboarding_sovereignty_reuse_foundation_architecture_plan.md`
+31. `docs/phase/phase06_onboarding_sovereignty_reuse_foundation_dev_plan.md`
+32. `docs/phase/phase06_onboarding_sovereignty_reuse_foundation_shared_baseline.md`
+33. 当前目标对应的 `phase / fix / audit` 文档
 
 ## 6. 接手提醒
 
