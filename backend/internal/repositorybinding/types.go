@@ -97,9 +97,9 @@ type RepositoryModuleCandidate struct {
 
 // --- 写组请求体 ---
 
-// CreateRepositoryRequest 创建写入最小字段（phase04-04）。
-// 对齐 proto CreateRepositoryRequest：name / url / provider / status。
-// status 必填且必须属于 active / archived，UNSPECIFIED 不允许作为合法写入值。
+// CreateRepositoryRequest 创建写入最小字段。
+// 对齐 proto CreateRepositoryRequest：name + url 为最小人工必填；
+// provider 为空时由系统默认补为 manual，status 为空时由系统默认补为 active。
 type CreateRepositoryRequest struct {
 	Name     string           `json:"name"`
 	URL      string           `json:"url"`

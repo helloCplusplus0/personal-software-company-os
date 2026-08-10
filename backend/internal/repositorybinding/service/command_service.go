@@ -36,10 +36,11 @@ func NewCommandService(repos *repository.RepositoryStore, bindings *repository.B
 
 // CreateRepository 承接 RepositoryCreateWrite。
 //
-// 校验顺序（phase04-04 / phase04-12 spec）：
-//  1. 必填字段去首尾空白后非空（name / url / provider）
-//  2. status 只允许 active / archived
-//  3. Repository.name / url / provider 的最小格式合法性
+// 校验顺序（phase04-04 / phase04-12 spec；phase06 draft-first 对齐）：
+//  1. 必填字段去首尾空白后非空（name / url）
+//  2. provider 为空时由系统默认补为 manual
+//  3. status 为空时由系统默认补为 active；非空时只允许 active / archived
+//  4. Repository.name / url / provider 的最小格式合法性
 //
 // 成功返回新建仓库 id，支撑前端回流到 Repository Binding Detail / Workspace。
 func (s *CommandService) CreateRepository(ctx context.Context, req repositorybinding.CreateRepositoryRequest) (*repositorybinding.CreateRepositoryResponse, error) {
@@ -47,15 +48,23 @@ func (s *CommandService) CreateRepository(ctx context.Context, req repositorybin
 	name := strings.TrimSpace(req.Name)
 	url := strings.TrimSpace(req.URL)
 	provider := strings.TrimSpace(req.Provider)
-	if name == "" || url == "" || provider == "" {
+	if name == "" || url == "" {
 		return nil, repositorybinding.ErrInvalidInput
 	}
-	if req.Status != repositorybinding.RepositoryStatusActive && req.Status != repositorybinding.RepositoryStatusArchived {
+	if provider == "" {
+		provider = "manual"
+	}
+
+	status := req.Status
+	if status == "" {
+		status = repositorybinding.RepositoryStatusActive
+	}
+	if status != repositorybinding.RepositoryStatusActive && status != repositorybinding.RepositoryStatusArchived {
 		return nil, repositorybinding.ErrInvalidStatus
 	}
 
 	// 写入
-	r, err := s.repos.Create(ctx, name, url, provider, req.Status)
+	r, err := s.repos.Create(ctx, name, url, provider, status)
 	if err != nil {
 		return nil, err
 	}

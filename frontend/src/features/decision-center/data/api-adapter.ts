@@ -143,19 +143,31 @@ export async function fetchDecisionModuleCandidates(decisionId: string): Promise
  * 字段映射：sourceModuleId → source_module_id
  */
 export async function createDecision(input: CreateDecisionInput): Promise<CreateDecisionResponse> {
+  const payload: Record<string, string | string[]> = {
+    title: input.title,
+    choice: input.choice,
+    reason: input.reason,
+    source_module_id: input.source_module_id ?? '',
+  }
+  if (input.context !== undefined) {
+    payload.context = input.context
+  }
+  if (input.problem !== undefined) {
+    payload.problem = input.problem
+  }
+  if (input.alternatives !== undefined) {
+    payload.alternatives = input.alternatives
+  }
+  if (input.impact !== undefined) {
+    payload.impact = input.impact
+  }
+  if (input.status !== undefined) {
+    payload.status = input.status
+  }
+
   return request<CreateDecisionResponse>(`/api/decisions`, {
     method: 'POST',
-    body: JSON.stringify({
-      title: input.title,
-      context: input.context,
-      problem: input.problem,
-      alternatives: input.alternatives,
-      choice: input.choice,
-      reason: input.reason,
-      impact: input.impact,
-      status: input.status,
-      source_module_id: input.source_module_id ?? '',
-    }),
+    body: JSON.stringify(payload),
   })
 }
 

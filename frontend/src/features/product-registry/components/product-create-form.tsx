@@ -20,8 +20,8 @@ interface ProductCreateFormProps {
 
 /**
  * ProductCreateForm — 产品创建表单
- * phase04-05 组件树冻结：只承接 name / description / status 最小录入
- * phase04-06 草稿状态：idle / dirty，status 默认预填 active
+ * phase04-05 组件树冻结：只承接 name / description / status 录入
+ * phase06 draft-first：name 为最小人工必填，description 可留空，status 默认预填 active
  * phase04-06 提交失败时停留当前页，保留草稿，错误显示在表单上下文
  *
  * 布局降级（phase04-05）：
@@ -36,8 +36,14 @@ export function ProductCreateForm({ submitting, submitError, onSubmit }: Product
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!name || !description) return
-    onSubmit({ name, description, status })
+    const trimmedName = name.trim()
+    const trimmedDescription = description.trim()
+    if (!trimmedName) return
+    onSubmit({
+      name: trimmedName,
+      description: trimmedDescription === '' ? undefined : trimmedDescription,
+      status,
+    })
   }
 
   return (
@@ -56,15 +62,12 @@ export function ProductCreateForm({ submitting, submitError, onSubmit }: Product
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="description">
-          产品描述 <span className="text-destructive">*</span>
-        </Label>
+        <Label htmlFor="description">产品描述（可选）</Label>
         <Textarea
           id="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="简要描述产品职责与边界"
-          required
         />
       </div>
 
@@ -87,7 +90,7 @@ export function ProductCreateForm({ submitting, submitError, onSubmit }: Product
       )}
 
       <div className="flex gap-2">
-        <Button type="submit" disabled={submitting || !name || !description}>
+        <Button type="submit" disabled={submitting || !name.trim()}>
           {submitting ? '提交中...' : '创建产品'}
         </Button>
       </div>

@@ -86,8 +86,8 @@ export interface ModuleListSearch {
 /** CreateModule 写入参数 — §5.7 */
 export interface CreateModuleInput {
   name: string
-  description: string
-  status: ModuleStatus
+  description?: string
+  status?: ModuleStatus
 }
 
 /** CreateRelease 写入参数 — §5.7 */

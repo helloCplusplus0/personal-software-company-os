@@ -106,7 +106,9 @@ type RepositoryCandidate struct {
 
 // --- 写组请求体 ---
 
-// CreateModuleRequest §5.7 创建写入最小字段：name / description / status。
+// CreateModuleRequest §5.7 创建写入最小字段：
+// name 为最小人工必填；description 为空时由系统默认补为 ""；
+// status 为空时由系统默认补为 active。
 type CreateModuleRequest struct {
 	Name        string       `json:"name"`
 	Description string       `json:"description"`

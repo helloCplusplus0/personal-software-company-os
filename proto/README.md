@@ -308,7 +308,7 @@ buf generate
 | `DecisionLink` | `DecisionLink` | 语义对齐 |
 | `ProductCandidate` | `ProductCandidate` | 语义对齐 |
 | `RepositoryCandidate` | `RepositoryCandidate` | 语义对齐 |
-| `CreateModuleRequest` | `CreateModuleRequest` | 语义对齐 |
+| `CreateModuleRequest` | `CreateModuleRequest` | 语义对齐（name 为最小人工必填；description 默认 ""；status 默认 active） |
 | `CreateReleaseRequest` | `CreateReleaseRequest` | 语义对齐（types.go 无 module_id，由 URL 承接；released_at: string ↔ Timestamp） |
 | `BindModuleToProductRequest` | `BindModuleToProductRequest` | 语义对齐（types.go 无 module_id，由 URL 承接） |
 | `MapModuleToRepositoryRequest` | `MapModuleToRepositoryRequest` | 语义对齐（types.go 无 module_id，由 URL 承接） |
@@ -336,7 +336,7 @@ buf generate
 | `SourceContext` | `SourceContext` | 语义对齐 |
 | `DecisionDetail` | `DecisionDetail` | 语义对齐 |
 | `DecisionModuleCandidate` | `DecisionModuleCandidate` | 语义对齐（status 复用 ModuleStatus，不重定义本地枚举） |
-| `CreateDecisionRequest` | `CreateDecisionRequest` | 语义对齐 |
+| `CreateDecisionRequest` | `CreateDecisionRequest` | 语义对齐（title / choice / reason 为最小人工必填；status 默认 proposed） |
 | `LinkDecisionToTargetRequest` | `LinkDecisionToTargetRequest` | 语义对齐（types.go 无 decision_id，由 URL 承接） |
 
 > 实现期不得在 `types.go`、handler DTO 或前端页面层私自新增 `.proto` 中不存在的业务字段语义。
@@ -362,7 +362,7 @@ buf generate
 | `BoundRepositorySummary` | `BoundRepositorySummary` | 语义对齐（repository_status 复用 ActiveArchivedStatus） |
 | `ProductDetail` | `ProductDetail` | 语义对齐 |
 | `ProductModuleCandidate` | `ProductModuleCandidate` | 语义对齐（module_status 复用 ModuleStatus） |
-| `CreateProductRequest` | `CreateProductRequest` | 语义对齐（status 复用 ActiveArchivedStatus） |
+| `CreateProductRequest` | `CreateProductRequest` | 语义对齐（name 为最小人工必填；status 复用 ActiveArchivedStatus，默认 active） |
 | `BindModuleToProductRequest` | `BindModuleToProductRequest` | 语义对齐（types.go 无 product_id，由 URL 承接） |
 
 > 实现期不得在 `types.go`、handler DTO 或前端页面层私自新增 `.proto` 中不存在的业务字段语义。
@@ -389,7 +389,7 @@ buf generate
 | `RepositoryDetail` | `RepositoryDetail` | 语义对齐 |
 | `RepositoryProductCandidate` | `RepositoryProductCandidate` | 语义对齐（product_status 复用 ActiveArchivedStatus） |
 | `RepositoryModuleCandidate` | `RepositoryModuleCandidate` | 语义对齐（module_status 复用 ModuleStatus） |
-| `CreateRepositoryRequest` | `CreateRepositoryRequest` | 语义对齐（status 复用 ActiveArchivedStatus） |
+| `CreateRepositoryRequest` | `CreateRepositoryRequest` | 语义对齐（name + url 为最小人工必填；status 复用 ActiveArchivedStatus，默认 active） |
 | `BindRepositoryToProductRequest` | `BindRepositoryToProductRequest` | 语义对齐（types.go 无 repository_id，由 URL 承接） |
 | `MapModuleToRepositoryRequest` | `MapModuleToRepositoryRequest` | 语义对齐（types.go 无 repository_id，由 URL 承接） |
 
@@ -441,7 +441,7 @@ buf generate
 | `ExportSnapshot` | `ExportSnapshot` | 语义对齐（created_at: time.Time ↔ Timestamp；asset_scope: []string ↔ repeated ExportAssetScope） |
 | `ExportResultStatus` | `ExportResultStatus` | 语义对齐（自有枚举，不引入跨包枚举） |
 | `GetExportSnapshotResponse` / `ExportCoreAssetsResponse` | 同名 `.proto` 消息 | 语义对齐 |
-| `BackupSnapshot` | `BackupSnapshot` | 语义对齐（created_at: time.Time ↔ Timestamp；verified_status: 枚举 ↔ BackupVerifiedStatus） |
+| `BackupSnapshot` | `BackupSnapshot` | 语义对齐（created_at: time.Time ↔ Timestamp；verified_status: 枚举 ↔ BackupVerifiedStatus；verify_failure_code: 枚举 ↔ VerifyFailureCode） |
 | `ManifestSummary` / `AssetCoverageEntry` / `SchemaVersionPrerequisite` | 同名 `.proto` 消息 | 语义对齐 |
 | `GetBackupSnapshotResponse` / `CreateInstanceBackupResponse` | 同名 `.proto` 消息 | 语义对齐（GetBackupSnapshot 读取侧由独立读取 owner 承接，不与 CreateInstanceBackup 写入响应耦合） |
 | `ModuleReuseSummary` | `ModuleReuseSummary` | 语义对齐（latest_reuse_at: time.Time ↔ Timestamp） |

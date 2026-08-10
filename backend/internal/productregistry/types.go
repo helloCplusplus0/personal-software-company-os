@@ -87,9 +87,9 @@ type ProductModuleCandidate struct {
 
 // --- 写组请求体 ---
 
-// CreateProductRequest 创建写入最小字段（phase04-04）。
-// 对齐 proto CreateProductRequest：name / description / status。
-// status 必填且必须属于 active / archived，UNSPECIFIED 不允许作为合法写入值。
+// CreateProductRequest 创建写入最小字段。
+// 对齐 proto CreateProductRequest：name 为最小人工必填；
+// description 为空时由系统默认补为 ""，status 为空时由系统默认补为 active。
 type CreateProductRequest struct {
 	Name        string        `json:"name"`
 	Description string        `json:"description"`

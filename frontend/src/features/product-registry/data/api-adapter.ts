@@ -142,13 +142,19 @@ export async function fetchProductModuleCandidates(productId: string): Promise<P
  * POST /api/products
  */
 export async function createProduct(input: CreateProductInput): Promise<CreateProductResponse> {
+  const payload: Record<string, string> = {
+    name: input.name,
+  }
+  if (input.description !== undefined) {
+    payload.description = input.description
+  }
+  if (input.status !== undefined) {
+    payload.status = input.status
+  }
+
   return request<CreateProductResponse>(`/api/products`, {
     method: 'POST',
-    body: JSON.stringify({
-      name: input.name,
-      description: input.description,
-      status: input.status,
-    }),
+    body: JSON.stringify(payload),
   })
 }
 

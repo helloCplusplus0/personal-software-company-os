@@ -33,12 +33,12 @@ func NewCommandService(decisions *repository.DecisionStore, links *repository.Li
 
 // CreateDecision 承接 DecisionWrite (RecordDecision)。
 //
-// 校验顺序（phase03-04 / phase03-10 §5.5 冻结）：
-//  1. 必填字段非空校验（title / context / problem / choice / reason / status）
-//     去首尾空白后不得为空字符串
-//  2. status 取值合法性校验（proposed / active / superseded / archived）
-//  3. alternatives 条目校验（每个条目去首尾空白后不得为空字符串）
-//  4. source_module_id 可选来源校验（§5.11）：非空时校验 Module 存在性
+// 校验顺序（phase03-04 / phase03-10 §5.5 冻结；phase06 draft-first 对齐）：
+//  1. 必填字段非空校验（title / choice / reason），去首尾空白后不得为空字符串
+//  2. context / problem / impact 为空时由系统默认补为 ""
+//  3. status 为空时由系统默认补为 proposed；非空时校验取值合法性
+//  4. alternatives 条目校验（显式提供时，每个条目去首尾空白后不得为空字符串）
+//  5. source_module_id 可选来源校验（§5.11）：非空时校验 Module 存在性
 //
 // 成功返回新建 Decision 标识（decision_id），支持前端回流到 DecisionDetailPage
 // （phase03-10 §6.4 不返回完整 Decision 对象，避免脱离 DecisionDetailRead 的第二套回流路径）。
@@ -49,12 +49,17 @@ func (s *CommandService) CreateDecision(ctx context.Context, req decisioncenter.
 	problem := strings.TrimSpace(req.Problem)
 	choice := strings.TrimSpace(req.Choice)
 	reason := strings.TrimSpace(req.Reason)
-	if title == "" || context == "" || problem == "" || choice == "" || reason == "" || req.Status == "" {
+	impact := strings.TrimSpace(req.Impact)
+	if title == "" || choice == "" || reason == "" {
 		return nil, decisioncenter.ErrInvalidInput
 	}
 
 	// 2. status 取值合法性校验
-	if !isValidDecisionStatus(req.Status) {
+	status := req.Status
+	if status == "" {
+		status = decisioncenter.DecisionStatusProposed
+	}
+	if !isValidDecisionStatus(status) {
 		return nil, decisioncenter.ErrInvalidStatus
 	}
 
@@ -91,6 +96,8 @@ func (s *CommandService) CreateDecision(ctx context.Context, req decisioncenter.
 	req.Problem = problem
 	req.Choice = choice
 	req.Reason = reason
+	req.Impact = impact
+	req.Status = status
 	req.Alternatives = trimmedAlts
 	req.SourceModuleID = sourceModuleID
 

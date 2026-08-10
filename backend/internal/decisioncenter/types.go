@@ -103,6 +103,9 @@ type DecisionModuleCandidate struct {
 
 // CreateDecisionRequest RecordDecision 写入最小字段
 // （对齐 .proto CreateDecisionRequest，phase03-10 §5.5 / §5.8 / §5.11）。
+// title / choice / reason 为最小人工必填；
+// context / problem / impact 为空时由系统默认补为 ""；
+// alternatives 为空时由系统默认补为 []；status 为空时由系统默认补为 proposed。
 //
 // SourceModuleID 为可选入口上下文来源 Module 标识（§5.11）：
 //   - 从 Module Detail 带上下文进入 Decision Create 时传入

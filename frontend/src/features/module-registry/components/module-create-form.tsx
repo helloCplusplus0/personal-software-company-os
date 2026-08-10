@@ -20,7 +20,7 @@ interface ModuleCreateFormProps {
 
 /**
  * ModuleCreateForm — 模块创建表单
- * §5.7 创建写入承接 CreateModule（最小字段 name / description / status）
+ * §5.7 创建写入承接 CreateModule（phase06 draft-first：name 为最小人工必填）
  * §8.4 草稿状态：idle / dirty
  * §8.4 提交失败时停留当前页，保留草稿，错误显示在表单上下文
  */
@@ -33,8 +33,14 @@ export function ModuleCreateForm({ submitting, submitError, onSubmit }: ModuleCr
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!name || !description) return
-    onSubmit({ name, description, status })
+    const trimmedName = name.trim()
+    const trimmedDescription = description.trim()
+    if (!trimmedName) return
+    onSubmit({
+      name: trimmedName,
+      description: trimmedDescription === '' ? undefined : trimmedDescription,
+      status,
+    })
   }
 
   return (
@@ -53,15 +59,12 @@ export function ModuleCreateForm({ submitting, submitError, onSubmit }: ModuleCr
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="description">
-          模块描述 <span className="text-destructive">*</span>
-        </Label>
+        <Label htmlFor="description">模块描述（可选）</Label>
         <Textarea
           id="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="简要描述模块职责"
-          required
         />
       </div>
 
@@ -84,7 +87,7 @@ export function ModuleCreateForm({ submitting, submitError, onSubmit }: ModuleCr
       )}
 
       <div className="flex gap-2">
-        <Button type="submit" disabled={submitting || !name || !description}>
+        <Button type="submit" disabled={submitting || !name.trim()}>
           {submitting ? '提交中...' : '创建模块'}
         </Button>
       </div>

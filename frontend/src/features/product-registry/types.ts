@@ -68,8 +68,8 @@ export interface ProductListSearch {
 /** CreateProduct 写入参数 — 对齐 proto CreateProductRequest */
 export interface CreateProductInput {
   name: string
-  description: string
-  status: ProductStatus
+  description?: string
+  status?: ProductStatus
 }
 
 /** CreateProduct 响应 — 对齐 proto CreateProductResponse */

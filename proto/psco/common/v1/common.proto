@@ -55,7 +55,7 @@ option go_package = "github.com/psco/backend/internal/gen/proto/psco/common/v1;c
 //   - 在列表读取 status_filter 字段中表示"不过滤"，对应 UI/路由层的 all
 //     （all 只存在于 UI/路由层，不得写入数据库、HTTP 持久化 DTO 或 .proto 持久化字段）
 //   - 在 status_filter 之外的字段（如 CreateProductRequest.status /
-//     CreateRepositoryRequest.status）中不允许作为合法写入值，由 service 层校验拒绝
+//     CreateRepositoryRequest.status）中可作为"未显式提供"语义，由 service 层默认补为 ACTIVE
 //   - 该 UNSPECIFIED = 不过滤语义与现有 psco.module_registry.v1.ModuleStatus
 //     与 psco.decision_center.v1.DecisionStatus 的 UNSPECIFIED 语义一致
 //

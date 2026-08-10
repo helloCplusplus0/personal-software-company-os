@@ -32,20 +32,26 @@ func NewCommandService(modules *repository.ModuleStore, releases *repository.Rel
 
 // CreateModule 承接 ModuleCreateWrite。
 //
-// 校验顺序（§5.6 模块准入规则）：
-//  1. 输入字段非空（name / description / status）
-//  2. status 取值合法（active / archived）
-//  3. name 唯一性
+// 校验顺序（§5.6 模块准入规则；phase06 draft-first 对齐）：
+//  1. 输入字段非空（name）
+//  2. description 为空时由系统默认补为 ""
+//  3. status 为空时由系统默认补为 active；非空时取值合法（active / archived）
+//  4. name 唯一性
 //
 // 成功返回带 id / created_at 的完整模块对象，支持前端回流到 ModuleDetailPage。
 func (s *CommandService) CreateModule(ctx context.Context, req moduleregistry.CreateModuleRequest) (*moduleregistry.Module, error) {
 	// 输入校验
 	name := strings.TrimSpace(req.Name)
 	description := strings.TrimSpace(req.Description)
-	if name == "" || description == "" {
+	if name == "" {
 		return nil, moduleregistry.ErrInvalidInput
 	}
-	if req.Status != moduleregistry.ModuleStatusActive && req.Status != moduleregistry.ModuleStatusArchived {
+
+	status := req.Status
+	if status == "" {
+		status = moduleregistry.ModuleStatusActive
+	}
+	if status != moduleregistry.ModuleStatusActive && status != moduleregistry.ModuleStatusArchived {
 		return nil, moduleregistry.ErrInvalidStatus
 	}
 
@@ -59,7 +65,7 @@ func (s *CommandService) CreateModule(ctx context.Context, req moduleregistry.Cr
 	}
 
 	// 写入
-	m, err := s.modules.Create(ctx, name, description, req.Status)
+	m, err := s.modules.Create(ctx, name, description, status)
 	if err != nil {
 		return nil, err
 	}

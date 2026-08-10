@@ -64,6 +64,10 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	backupcandidate "github.com/psco/backend/internal/backup/candidate"
+	backuphandler "github.com/psco/backend/internal/backup/handler"
+	backuprepo "github.com/psco/backend/internal/backup/repository"
+	backupservice "github.com/psco/backend/internal/backup/service"
 	dccandidate "github.com/psco/backend/internal/decisioncenter/candidate"
 	dchandler "github.com/psco/backend/internal/decisioncenter/handler"
 	dcrepository "github.com/psco/backend/internal/decisioncenter/repository"
@@ -71,10 +75,17 @@ import (
 	dashboardcandidate "github.com/psco/backend/internal/dashboard/candidate"
 	dashboardhandler "github.com/psco/backend/internal/dashboard/handler"
 	dashboardservice "github.com/psco/backend/internal/dashboard/service"
+	exportcandidate "github.com/psco/backend/internal/export/candidate"
+	exporthandler "github.com/psco/backend/internal/export/handler"
+	exportrepo "github.com/psco/backend/internal/export/repository"
+	exportservice "github.com/psco/backend/internal/export/service"
 	"github.com/psco/backend/internal/moduleregistry"
 	"github.com/psco/backend/internal/moduleregistry/handler"
 	"github.com/psco/backend/internal/moduleregistry/repository"
 	"github.com/psco/backend/internal/moduleregistry/service"
+	onboardingcandidate "github.com/psco/backend/internal/onboarding/candidate"
+	onboardinghandler "github.com/psco/backend/internal/onboarding/handler"
+	onboardingservice "github.com/psco/backend/internal/onboarding/service"
 	"github.com/psco/backend/internal/productregistry"
 	productcandidate "github.com/psco/backend/internal/productregistry/candidate"
 	producthandler "github.com/psco/backend/internal/productregistry/handler"
@@ -85,6 +96,9 @@ import (
 	repohandler "github.com/psco/backend/internal/repositorybinding/handler"
 	reporepo "github.com/psco/backend/internal/repositorybinding/repository"
 	reposervice "github.com/psco/backend/internal/repositorybinding/service"
+	reusesummarycandidate "github.com/psco/backend/internal/reusesummary/candidate"
+	reusesummaryhandler "github.com/psco/backend/internal/reusesummary/handler"
+	reusesummaryservice "github.com/psco/backend/internal/reusesummary/service"
 )
 
 // buildProductRegistry 构造 Product Registry 的 service 层并返回。
@@ -348,4 +362,110 @@ func mountDashboard(r chi.Router, querySvc *dashboardservice.QueryService) {
 	r.Get("/dashboard/overview", queryH.GetOverview)
 	r.Get("/dashboard/feedback-signals", queryH.GetFeedbackSignals)
 	r.Get("/dashboard/recent-activities", queryH.GetRecentActivities)
+}
+
+// ============================================================================
+// Phase06 模块装配（Onboarding / Export / Backup / ReuseSummary）
+//
+// 装配顺序约束（phase06-14 spec §"Phase06 路由装配必须接入现有 chi 组合根"）：
+//   - 必须先装配既有四个 canonical 模块与 Dashboard
+//   - 再装配 Onboarding / Export / Backup / ReuseSummary
+//   - 当前阶段不得把 phase06 模块塞回既有 canonical 模块的 mount 函数内部
+// ============================================================================
+
+// buildOnboarding 构造 Onboarding 的 QueryService 并返回。
+//
+// 装配语义（phase06-14 spec）：
+//   - Onboarding candidate reader（四类 canonical 计数 reader）由 platform 装配点构造
+//   - Onboarding QueryService 的跨模块读依赖在 platform 装配点注入
+//   - Onboarding 只承接只读聚合，当前阶段无 command service
+func buildOnboarding(pool *pgxpool.Pool) *onboardingservice.QueryService {
+	firstRunReaders := onboardingcandidate.NewFirstRunReaders(pool)
+	return onboardingservice.NewQueryService(firstRunReaders)
+}
+
+// mountOnboarding 把 Onboarding 模块的全部路由挂到 /api 下。
+func mountOnboarding(r chi.Router, querySvc *onboardingservice.QueryService) {
+	queryH := onboardinghandler.NewQueryHandler(querySvc)
+
+	// 路由注册（phase06-14 spec §"路由注册矩阵"）
+	// --- 读组 ---
+	r.Get("/onboarding/state", queryH.GetFirstRunState)
+}
+
+// buildExport 构造 Export 的 QueryService / CommandService 并返回。
+//
+// 装配语义（phase06-14 spec）：
+//   - Export candidate reader（9 类核心资产装配）由 platform 装配点构造
+//   - Export repository（instance_exports 读写）由 platform 装配点构造
+//   - Export QueryService 与 CommandService 共用同一 store 与 assetReader
+func buildExport(pool *pgxpool.Pool) (*exportservice.QueryService, *exportservice.CommandService) {
+	exportStore := exportrepo.NewExportStore(pool)
+	assetReader := exportcandidate.NewAssetReader(pool)
+
+	querySvc := exportservice.NewQueryService(exportStore, assetReader)
+	commandSvc := exportservice.NewCommandService(exportStore, assetReader)
+
+	return querySvc, commandSvc
+}
+
+// mountExport 把 Export 模块的全部路由挂到 /api 下。
+func mountExport(r chi.Router, querySvc *exportservice.QueryService, commandSvc *exportservice.CommandService) {
+	queryH := exporthandler.NewQueryHandler(querySvc)
+	commandH := exporthandler.NewCommandHandler(commandSvc)
+
+	// 路由注册（phase06-14 spec §"路由注册矩阵"）
+	// --- 读组 ---
+	r.Get("/dashboard/export", queryH.GetExportSnapshot)
+	// --- 写组 ---
+	r.Post("/dashboard/export", commandH.ExportCoreAssets)
+}
+
+// buildBackup 构造 Backup 的 QueryService / CommandService 并返回。
+//
+// 装配语义（phase06-14 spec）：
+//   - Backup candidate reader（9 类核心资产装配 + schema 版本读取）由 platform 装配点构造
+//   - Backup repository（instance_backups 读写）由 platform 装配点构造
+//   - Backup QueryService（read / verify 子路径）与 CommandService 共用同一 store 与 assetReader
+//   - GetBackupSnapshot 由独立读取 owner（QueryService）承接，不与 CommandService 写入响应耦合
+func buildBackup(pool *pgxpool.Pool) (*backupservice.QueryService, *backupservice.CommandService) {
+	backupStore := backuprepo.NewBackupStore(pool)
+	assetReader := backupcandidate.NewAssetReader(pool)
+
+	querySvc := backupservice.NewQueryService(backupStore, assetReader)
+	commandSvc := backupservice.NewCommandService(backupStore, assetReader)
+
+	return querySvc, commandSvc
+}
+
+// mountBackup 把 Backup 模块的全部路由挂到 /api 下。
+func mountBackup(r chi.Router, querySvc *backupservice.QueryService, commandSvc *backupservice.CommandService) {
+	queryH := backuphandler.NewQueryHandler(querySvc)
+	commandH := backuphandler.NewCommandHandler(commandSvc)
+
+	// 路由注册（phase06-14 spec §"路由注册矩阵"）
+	// --- 读组（read / verify 子路径） ---
+	r.Get("/dashboard/backup", queryH.GetBackupSnapshot)
+	// --- 写组 ---
+	r.Post("/dashboard/backup", commandH.CreateInstanceBackup)
+}
+
+// buildReuseSummary 构造 ReuseSummary 的 QueryService 并返回。
+//
+// 装配语义（phase06-14 spec）：
+//   - ReuseSummary candidate reader（三种作用域复用 reader）由 platform 装配点构造
+//   - ReuseSummary QueryService 的跨模块读依赖在 platform 装配点注入
+//   - ReuseSummary 只承接只读派生查询，当前阶段无 command service
+func buildReuseSummary(pool *pgxpool.Pool) *reusesummaryservice.QueryService {
+	reuseReaders := reusesummarycandidate.NewReuseReaders(pool)
+	return reusesummaryservice.NewQueryService(reuseReaders)
+}
+
+// mountReuseSummary 把 ReuseSummary 模块的全部路由挂到 /api 下。
+func mountReuseSummary(r chi.Router, querySvc *reusesummaryservice.QueryService) {
+	queryH := reusesummaryhandler.NewQueryHandler(querySvc)
+
+	// 路由注册（phase06-14 spec §"路由注册矩阵"）
+	// --- 读组 ---
+	r.Get("/reuse-summary", queryH.GetReuseSummary)
 }

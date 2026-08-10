@@ -19,8 +19,8 @@ interface RepositoryCreateFormProps {
 
 /**
  * RepositoryCreateForm — 仓库创建表单
- * phase04-05 组件树冻结：只承接 name / url / provider / status 最小录入
- * phase04-06 草稿状态：idle / dirty，status 默认预填 active
+ * phase04-05 组件树冻结：只承接 name / url / provider / status 录入
+ * phase06 draft-first：name + url 为最小人工必填，provider 可留空并默认补 manual，status 默认预填 active
  * phase04-06 提交失败时停留当前页，保留草稿，错误显示在表单上下文
  *
  * 布局降级（phase04-05）：
@@ -36,8 +36,16 @@ export function RepositoryCreateForm({ submitting, submitError, onSubmit }: Repo
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!name || !url || !provider) return
-    onSubmit({ name, url, provider, status })
+    const trimmedName = name.trim()
+    const trimmedURL = url.trim()
+    const trimmedProvider = provider.trim()
+    if (!trimmedName || !trimmedURL) return
+    onSubmit({
+      name: trimmedName,
+      url: trimmedURL,
+      provider: trimmedProvider === '' ? undefined : trimmedProvider,
+      status,
+    })
   }
 
   return (
@@ -69,15 +77,12 @@ export function RepositoryCreateForm({ submitting, submitError, onSubmit }: Repo
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="provider">
-          提供商 <span className="text-destructive">*</span>
-        </Label>
+        <Label htmlFor="provider">提供商（可选，默认 manual）</Label>
         <Input
           id="provider"
           value={provider}
           onChange={(e) => setProvider(e.target.value)}
           placeholder="如 github / gitlab"
-          required
         />
       </div>
 
@@ -100,7 +105,7 @@ export function RepositoryCreateForm({ submitting, submitError, onSubmit }: Repo
       )}
 
       <div className="flex gap-2">
-        <Button type="submit" disabled={submitting || !name || !url || !provider}>
+        <Button type="submit" disabled={submitting || !name.trim() || !url.trim()}>
           {submitting ? '提交中...' : '创建仓库'}
         </Button>
       </div>

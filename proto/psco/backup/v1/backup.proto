@@ -120,6 +120,16 @@ enum BackupVerifiedStatus {
   BACKUP_VERIFIED_STATUS_VERIFY_FAILED = 3;
 }
 
+// VerifyFailureCode — 备份恢复前提校验失败原因。
+// 仅在 verified_status = VERIFY_FAILED 时有业务含义。
+// UNSPECIFIED 表示当前快照未失败或失败原因未设置。
+enum VerifyFailureCode {
+  VERIFY_FAILURE_CODE_UNSPECIFIED = 0;
+  VERIFY_FAILURE_CODE_MANIFEST_MISSING = 1;
+  VERIFY_FAILURE_CODE_COVERAGE_INCOMPLETE = 2;
+  VERIFY_FAILURE_CODE_SCHEMA_MISMATCH = 3;
+}
+
 // ============================================================================
 // 核心消息
 // ============================================================================
@@ -157,6 +167,8 @@ message SchemaVersionPrerequisite {
 // created_at 必须使用显式 google.protobuf.Timestamp，不依赖隐式 created_at 约定。
 // asset_coverage 以 repeated AssetCoverageEntry 形式承接 9 类核心资产的覆盖矩阵。
 // verified_status 必须单值表达"未校验 / 已验证 / 校验失败"最小恢复前提状态。
+// verify_failure_code 用于在 verified_status = VERIFY_FAILED 时单值表达失败家族，
+// 使 HTTP DTO 与前端消费侧继续保持与 proto 单合同源对齐。
 // 当前阶段不把真正 restore 写回动作写入该消息或该 service 合同。
 message BackupSnapshot {
   google.protobuf.Timestamp created_at = 1;
@@ -164,6 +176,7 @@ message BackupSnapshot {
   repeated AssetCoverageEntry asset_coverage = 3;
   SchemaVersionPrerequisite schema_version_prerequisite = 4;
   BackupVerifiedStatus verified_status = 5;
+  VerifyFailureCode verify_failure_code = 6;
 }
 
 // ============================================================================

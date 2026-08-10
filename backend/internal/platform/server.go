@@ -69,6 +69,26 @@ func NewServer(cfg Config, pool *pgxpool.Pool) *Server {
 		// Dashboard 只承接只读聚合，跨模块读依赖在 platform 装配点注入（phase05-07）。
 		dashboardQuerySvc := buildDashboard(pool)
 		mountDashboard(r, dashboardQuerySvc)
+
+		// phase06-14: Onboarding / Export / Backup / ReuseSummary 必须在既有
+		// canonical 模块与 Dashboard 之后装配（phase06 模块依赖 canonical 模块的表已建表）。
+		// phase06 模块只承接只读聚合或独立写入，跨模块读依赖在 platform 装配点注入。
+
+		// Onboarding：首轮状态读取（只读，读时派生 first_run_state）
+		onboardingQuerySvc := buildOnboarding(pool)
+		mountOnboarding(r, onboardingQuerySvc)
+
+		// Export：导出快照读取 + 导出执行
+		exportQuerySvc, exportCommandSvc := buildExport(pool)
+		mountExport(r, exportQuerySvc, exportCommandSvc)
+
+		// Backup：备份快照读取（read / verify 子路径）+ 备份执行
+		backupQuerySvc, backupCommandSvc := buildBackup(pool)
+		mountBackup(r, backupQuerySvc, backupCommandSvc)
+
+		// ReuseSummary：复用感知派生读（只读，读时聚合）
+		reuseSummaryQuerySvc := buildReuseSummary(pool)
+		mountReuseSummary(r, reuseSummaryQuerySvc)
 	})
 
 	return &Server{

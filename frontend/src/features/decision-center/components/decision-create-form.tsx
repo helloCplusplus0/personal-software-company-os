@@ -2,8 +2,9 @@
  * DecisionCreateForm — 结构化模板字段录入表单
  *
  * §5.5 最小结构化模板字段：
- * - 创建必填：title / context / problem / choice / reason / status
- * - 创建可选：alternatives / impact
+ * - phase06 draft-first 创建必填：title / choice / reason
+ * - 创建可选：context / problem / alternatives / impact
+ * - status 默认预填 proposed，可由用户改写
  *
  * §5.5 alternatives 冻结为按顺序保留的文本条目集合，不引入嵌套对象结构。
  *
@@ -83,8 +84,22 @@ export function DecisionCreateForm({ submitting, onSubmit, submitError, sourceMo
   /** 提交表单 */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    const title = draft.title.trim()
+    const choice = draft.choice.trim()
+    const reason = draft.reason.trim()
+    if (!title || !choice || !reason) {
+      return
+    }
+
     onSubmit({
-      ...draft,
+      title,
+      choice,
+      reason,
+      context: draft.context.trim() === '' ? undefined : draft.context.trim(),
+      problem: draft.problem.trim() === '' ? undefined : draft.problem.trim(),
+      alternatives: draft.alternatives.length > 0 ? draft.alternatives : undefined,
+      impact: draft.impact.trim() === '' ? undefined : draft.impact.trim(),
+      status: draft.status,
       source_module_id: sourceModuleId || '',
     })
   }
@@ -110,27 +125,25 @@ export function DecisionCreateForm({ submitting, onSubmit, submitError, sourceMo
         />
       </div>
 
-      {/* 上下文 — 必填 */}
+      {/* 上下文 — 可选 */}
       <div className="space-y-2">
-        <Label htmlFor="context">上下文 *</Label>
+        <Label htmlFor="context">上下文（可选）</Label>
         <Textarea
           id="context"
           value={draft.context}
           onChange={(e) => update('context', e.target.value)}
           placeholder="决策发生的背景与前提"
-          required
         />
       </div>
 
-      {/* 问题 — 必填 */}
+      {/* 问题 — 可选 */}
       <div className="space-y-2">
-        <Label htmlFor="problem">问题 *</Label>
+        <Label htmlFor="problem">问题（可选）</Label>
         <Textarea
           id="problem"
           value={draft.problem}
           onChange={(e) => update('problem', e.target.value)}
           placeholder="需要解决的核心问题"
-          required
         />
       </div>
 
@@ -211,9 +224,9 @@ export function DecisionCreateForm({ submitting, onSubmit, submitError, sourceMo
         />
       </div>
 
-      {/* 状态 — 必填 */}
+      {/* 状态 — 默认 proposed，可选调整 */}
       <div className="space-y-2">
-        <Label>状态 *</Label>
+        <Label>状态</Label>
         <Select
           value={draft.status}
           onValueChange={(value) => update('status', value as DecisionStatus)}

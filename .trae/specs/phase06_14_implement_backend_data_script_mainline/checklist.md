@@ -1,0 +1,25 @@
+- [x] 已明确 `phase06-14` 的目标是把 `Onboarding + Sovereignty + Reuse` 推进为真实可运行的后端、数据与脚本主线
+- [x] 已明确 `backend/internal/onboarding/`、`export/`、`backup/`、`reusesummary/` 的最小文件落点与分层
+- [x] 已明确 `Onboarding` 当前阶段只承接 `GetFirstRunState` 读组，不新增独立写组
+- [x] 已明确 `first_run_state` 必须基于四类 canonical 对象读时派生，不得落独立状态表
+- [x] 已明确 `current_step` 必须按 `Product -> Repository -> Module -> Decision` 推导
+- [x] 已明确 `completion_progress` 冻结为 `0 / 25 / 50 / 75 / 100`
+- [x] 已明确 `0007_phase06_backend_data_mainline.sql` 必须新增 `modules.capability_key`
+- [x] 已明确 `0007_phase06_backend_data_mainline.sql` 必须新增 `instance_exports` 与 `instance_backups`
+- [x] 已明确 `instance_backups.verify_failure_code` 只允许 `manifest_missing / coverage_incomplete / schema_mismatch`
+- [x] 已明确 `Export` 必须装配 9 类核心资产并形成可重复读取的最新快照
+- [x] 已明确 `GetExportSnapshot` 在无历史记录时返回预览态快照，不映射为错误
+- [x] 已明确 `Backup` 必须落实 `CreateInstanceBackup + GetBackupSnapshot(read / verify)` 双路径
+- [x] 已明确 `GetBackupSnapshot` 必须按 `manifest / coverage / schema_version` 顺序校验恢复前提
+- [x] 已明确 backup 三类失败语义不得被折叠为泛化的 `backup failed`
+- [x] 已明确 `ReuseSummaryRead` 必须通过读时聚合返回最新已提交状态，不依赖异步统计表
+- [x] 已明确 `capability_label` 必须来自后端内置单一映射，而不是三套分散映射
+- [x] 已明确 `dashboard` 作用域返回前 `5` 条复用 / capability 摘要，详情页按已冻结作用域返回
+- [x] 已明确 `platform/router.go` 必须注册 `GET /api/onboarding/state`、`GET/POST /api/dashboard/export`、`GET/POST /api/dashboard/backup`、`GET /api/reuse-summary`
+- [x] 已明确 `GetReuseSummary` 的 `scope / module_id / product_id` 必须通过 query 参数显式映射到 Proto request
+- [x] 已明确 `phase06` 模块必须在既有 canonical 模块与 `Dashboard` 之后装配到 `server.go`
+- [x] 已明确 `reset_phase06_acceptance.sh` 必须复用既有 reset 工具链，不发明第二套脚本体系
+- [x] 已明确 `reset_phase06_acceptance.sh` 必须支持默认、`--clean-only`、`--restore-only`、`--fixture <name>`
+- [x] 已明确 `seed_phase06_acceptance_baseline.sql` 与 11 个 `seed_phase06_fixture_*.sql` 的正式落点
+- [x] 已明确清空阶段必须清理 `instance_exports / instance_backups`，但不得清理 `schema_migrations`
+- [x] 已明确后端与数据主线完成后，关键路径必须可重复执行且不依赖手工补 SQL、手工改 `first_run_state` 或手工伪造备份结果

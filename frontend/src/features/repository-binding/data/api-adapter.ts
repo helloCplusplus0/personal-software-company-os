@@ -155,14 +155,20 @@ export async function fetchRepositoryModuleCandidates(repositoryId: string): Pro
  * POST /api/repositories
  */
 export async function createRepository(input: CreateRepositoryInput): Promise<CreateRepositoryResponse> {
+  const payload: Record<string, string> = {
+    name: input.name,
+    url: input.url,
+  }
+  if (input.provider !== undefined) {
+    payload.provider = input.provider
+  }
+  if (input.status !== undefined) {
+    payload.status = input.status
+  }
+
   return request<CreateRepositoryResponse>(`/api/repositories`, {
     method: 'POST',
-    body: JSON.stringify({
-      name: input.name,
-      url: input.url,
-      provider: input.provider,
-      status: input.status,
-    }),
+    body: JSON.stringify(payload),
   })
 }
 

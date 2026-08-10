@@ -140,7 +140,11 @@ message RepositoryCandidate {
 // 写组请求消息结构（§5.7）
 // ============================================================================
 
-// CreateModuleRequest — §5.7 创建写入最小字段：name / description / status。
+// CreateModuleRequest — §5.7 创建写入请求。
+// phase06 draft-first 语义下：
+//   - 最小人工必填：name
+//   - description 为空时由系统默认补为 ""
+//   - status 为空 / UNSPECIFIED 时由系统默认补为 ACTIVE
 message CreateModuleRequest {
   string name = 1;
   string description = 2;

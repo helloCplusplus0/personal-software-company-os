@@ -213,9 +213,12 @@ message ListRepositoryModuleCandidatesResponse {
 // 写组请求与响应消息
 // ============================================================================
 
-// CreateRepositoryRequest — 创建写入最小字段：name / url / provider / status。
-// status 必填且必须属于 active / archived，UNSPECIFIED 不允许作为合法写入值，
-// 由 service 层校验拒绝。
+// CreateRepositoryRequest — 创建写入请求。
+// phase06 draft-first 语义下：
+//   - 最小人工必填：name / url
+//   - provider 为空时由系统默认补为 "manual"
+//   - status 为空 / UNSPECIFIED 时由系统默认补为 ACTIVE
+// 若显式提供 status，则仍只允许 active / archived。
 message CreateRepositoryRequest {
   string name = 1;
   string url = 2;

@@ -82,13 +82,13 @@ export interface DecisionListSearch {
 /** CreateDecision 写入参数 — §5.5 / §5.11 */
 export interface CreateDecisionInput {
   title: string
-  context: string
-  problem: string
-  alternatives: string[]
+  context?: string
+  problem?: string
+  alternatives?: string[]
   choice: string
   reason: string
-  impact: string
-  status: DecisionStatus
+  impact?: string
+  status?: DecisionStatus
   /** 入口上下文来源 Module 标识（可选，§5.11），空字符串表示无来源 */
   source_module_id?: string
 }

@@ -78,8 +78,8 @@ export interface RepositoryListSearch {
 export interface CreateRepositoryInput {
   name: string
   url: string
-  provider: string
-  status: RepositoryStatus
+  provider?: string
+  status?: RepositoryStatus
 }
 
 /** CreateRepository 响应 — 对齐 proto CreateRepositoryResponse */

@@ -32,25 +32,31 @@ func NewCommandService(products *repository.ProductStore, moduleCandidate *candi
 
 // CreateProduct 承接 ProductCreateWrite。
 //
-// 校验顺序（phase04-04 / phase04-12 spec）：
-//  1. 必填字段去首尾空白后非空（name / description）
-//  2. status 只允许 active / archived
-//  3. Product.name 的最小格式合法性
+// 校验顺序（phase04-04 / phase04-12 spec；phase06 draft-first 对齐）：
+//  1. 必填字段去首尾空白后非空（name）
+//  2. description 为空时由系统默认补为 ""
+//  3. status 为空时由系统默认补为 active；非空时只允许 active / archived
+//  4. Product.name 的最小格式合法性
 //
 // 成功返回新建产品 id，支撑前端回流到 Product Detail。
 func (s *CommandService) CreateProduct(ctx context.Context, req productregistry.CreateProductRequest) (*productregistry.CreateProductResponse, error) {
 	// 输入校验
 	name := strings.TrimSpace(req.Name)
 	description := strings.TrimSpace(req.Description)
-	if name == "" || description == "" {
+	if name == "" {
 		return nil, productregistry.ErrInvalidInput
 	}
-	if req.Status != productregistry.ProductStatusActive && req.Status != productregistry.ProductStatusArchived {
+
+	status := req.Status
+	if status == "" {
+		status = productregistry.ProductStatusActive
+	}
+	if status != productregistry.ProductStatusActive && status != productregistry.ProductStatusArchived {
 		return nil, productregistry.ErrInvalidStatus
 	}
 
 	// 写入
-	p, err := s.products.Create(ctx, name, description, req.Status)
+	p, err := s.products.Create(ctx, name, description, status)
 	if err != nil {
 		return nil, err
 	}

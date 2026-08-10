@@ -132,8 +132,8 @@ export async function createModule(input: CreateModuleInput): Promise<Module> {
   const newModule: Module = {
     id: `mod-${Date.now()}`,
     name: input.name,
-    description: input.description,
-    status: input.status,
+    description: input.description ?? '',
+    status: input.status ?? 'active',
     created_at: new Date().toISOString(),
   }
 
