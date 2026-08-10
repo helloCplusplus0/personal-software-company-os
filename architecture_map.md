@@ -47,6 +47,7 @@
 
 - `PSCO-mvp01-summarize-feedback.md`：`mvp0.1` 阶段最终共识与执行基线参考
 - `PSCO-mvp02-summarize-feedback.md`：基于两轮 `mvp0.2` 评审与交叉汇总形成的下一阶段最终仲裁与 `/plan` 上游基线
+- `PSCO-mvp03-summarize-feedback.md`：基于两轮 `mvp0.3` 评审与交叉汇总形成的最终仲裁、范围基线与推进顺序约束，作为 `phase07` 与后续 `mvp0.3` 业务阶段正式 `/plan` 的上游判断基线
 
 ## 3. docs 目录结构
 
@@ -88,6 +89,10 @@ docs/
   - `phase06_onboarding_sovereignty_reuse_foundation_architecture_plan.md`
   - `phase06_onboarding_sovereignty_reuse_foundation_dev_plan.md`
   - `phase06_onboarding_sovereignty_reuse_foundation_shared_baseline.md`
+- 当前已创建：
+  - `phase07_transport_contract_mainline_migration_architecture_plan.md`
+  - `phase07_transport_contract_mainline_migration_dev_plan.md`
+  - `phase07_transport_contract_mainline_migration_shared_baseline.md`
 - 当前已完成：
   - `.trae/specs/phase01_06_formal_mvp_spec/mvp_spec_v0.1.md`（`v0.1` 执行层唯一规格入口）
   - `.trae/specs/phase02_09_module_registry_formal_spec/module_registry_spec_v0.1.md`（`Module Registry` 当前阶段唯一规格入口）
@@ -117,7 +122,8 @@ docs/
 - `phase05` 三件套保留为该阶段 `/plan` 的规划与冻结记录，不再承担根级当前阶段状态说明
 - `phase06` 已直接承接 `PSCO-mvp02-summarize-feedback.md` 与 `phase05-10 / 11 / 14`，并已完成正式规格、合同、实现与联调验收收口
 - `phase06` 三件套保留为该阶段 `/plan` 的规划与冻结记录，不再承担根级当前阶段状态说明
-- 后续阶段正式 phase 入口待建立后切换；根级文档不得提前猜测 `phase07` 或其他未建立阶段名称
+- `phase07` 已直接承接 `PSCO-mvp03-summarize-feedback.md`、`audit_001` 审计结论与 `phase06-12 / 13 / 16`，当前作为 `mvp0.3` 业务阶段之前的前置基础 phase 推进
+- 后续业务阶段正式 phase 入口待 `phase07` 收口后切换；根级文档不得提前猜测 `phase08` 或其他未建立阶段名称
 
 ### 4.2 fix
 
@@ -129,6 +135,8 @@ docs/
 
 - `audit_issue_template.md`
 - `audit_analysis_template.md`
+- `audit_001_transport_contract_mainline_issue.md`
+- `audit_001_transport_contract_mainline_analysis.md`
 
 > 专家评审与交叉汇总文档不归入 `docs/audit/`，统一归入 `docs/review/`。
 
@@ -159,6 +167,14 @@ docs/
 - `PSCO-mvp02-deepseekv4pro.md`
 - `PSCO-mvp02-qwen37pro.md`
 - `PSCO-mvp02-summarize-feedback-GPT54.md`
+- `PSCO-mvp03-GPT54.md`
+- `PSCO-mvp03-summarize-feedback-GPT54.md`
+- `PSCO-mvp03-DPv4flash.md`
+- `PSCO-mvp03-DPv4pro.md`
+- `PSCO-mvp03-GLM52.md`
+- `PSCO-mvp03-qwen37pro.md`
+- `PSCO-mvp03-summarize-feedback-DPv4flash.md`
+- `PSCO-mvp03-summarize-feedback-GLM52.md`
 
 另保留迁移跳转文件：
 

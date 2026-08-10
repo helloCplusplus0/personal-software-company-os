@@ -88,10 +88,12 @@
 `PSCO` 当前项目已冻结为 `Durable System Track`，因此 Go 后端新增接口与存量演进统一遵守以下规则：
 
 - `.proto` 是唯一长期合同源；任何对外字段、枚举、响应 envelope 与错误语义都必须以 `.proto` 为准
-- `chi + JSON HTTP` 当前只承担传输适配职责，不承担合同定义职责
+- `chi` 继续作为 HTTP 路由与中间件装配层，不承担业务合同定义职责
+- 业务相关接口默认优先采用 `ConnectRPC` 作为 `.proto` 对齐的正式传输层；不得继续把手写 `chi + JSON HTTP` 业务接口作为新增默认模式
+- `healthz / readyz / metrics / debug` 等非业务基础设施端点允许继续由 `chi + net/http` 直接承接，不强制纳入 `.proto`
+- 若存量业务接口仍为 `chi + JSON HTTP`，其身份只允许是兼容适配层；不得形成与 `ConnectRPC` / `.proto` 并列的第二套 canonical API
 - HTTP handler 中出现的 JSON request / response struct，必须从 `.proto` 单向派生或显式对齐映射，不得形成并列的第二套字段语义
-- `mvp0.2` 默认继续沿用 `chi` 作为 HTTP 路由与中间件装配层，不以“替换传输框架”作为阶段目标
-- 若未来需要升级传输协议，只允许在保持 `.proto` 仍为唯一合同源的前提下演进，禁止先长出第二套 canonical API
+- 若未来继续演进传输协议，只允许在保持 `.proto` 仍为唯一合同源的前提下演进，禁止先长出第二套 canonical API
 
 ## 3. MVP 边界规则
 

@@ -595,21 +595,24 @@ proto
 * `buf lint / breaking` 是合同演进门禁
 * HTTP JSON 可以作为浏览器友好的传输形式存在
 * 但 JSON 传输层不得形成与 `.proto` 并列的第二套 canonical contract
+* 若 Go 路线需要在 HTTP 之上承接业务合同，默认优先采用 `ConnectRPC` 作为 `.proto` 对齐的正式业务传输层
+* `chi` 继续承担顶层路由、子路由挂载、中间件编排与非业务端点承载；`healthz / readyz / metrics / debug` 一类基础设施端点不必强行纳入 `.proto`
 
 这意味着：
 
 * 路由、中间件、HTTP handler 可以由 `chi + net/http` 承接
 * 但对外字段、枚举、错误语义、response envelope 必须与 `.proto` 单值一致
 * 若存在 JSON request / response DTO，它们只能从 `.proto` 单向派生或显式映射，不得自行演化出第二套语义
+* 业务接口不应再把手写 JSON DTO 当作长期事实源；若存在存量 JSON 业务端点，应视为兼容适配层，而不是第二套 canonical API
 
 因此，Go 路线的正确关系是：
 
 ```
 .proto
   ↓
-Go / TypeScript 生成物或显式映射
+ConnectRPC / Go / TypeScript 生成物或显式映射
   ↓
-chi + HTTP JSON transport
+chi + net/http transport shell
 ```
 
 而不是：

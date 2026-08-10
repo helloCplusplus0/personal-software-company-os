@@ -6,9 +6,9 @@
 ## 1. 项目定位
 
 - 项目名称：`Personal Software Company OS`
-- 当前阶段：`phase06_onboarding_sovereignty_reuse_foundation`（已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，待下一阶段正式 phase 入口建立后切换）
-- 当前主目标：保持 `phase06` 已收口结论与根级真相源、活动文档入口一致，并等待下一阶段正式 phase 入口建立
-- 当前下一阶段入口：待下一阶段正式 phase 入口建立后切换（不得预设 `phase07` 名称）
+- 当前阶段：`phase07_transport_contract_mainline_migration`（已建立正式 `/plan` 入口，作为 `mvp0.3` 业务阶段之前的前置基础 phase 推进）
+- 当前主目标：完成 `phase01 ~ phase06` canonical 业务接口向 `.proto + ConnectRPC` 正式主线的一次性迁移，并为后续 `mvp0.3` 业务主线清空传输层历史负担
+- 当前下一阶段入口：待 `phase07` 正式收口后，切换到 `mvp0.3` 业务主线对应的正式 phase 入口（不得预设 `phase08` 名称）
 - 当前定位：PSCO 是个人软件公司的经营与资产系统，不是代码管理工具，不是 AI Chat 产品，也不是自动扫描系统
 
 ## 2. 当前唯一上游
@@ -28,6 +28,7 @@
 - `Feature / Opportunity / Experiment` 保留在长期理论模型中，但不进入 `v0.1` 主执行范围
 - 当前项目必须遵守统一技术栈方案，禁止越出 `TECH_STACK_BASELINE.md` 自由发挥
 - 当前项目技术路线已明确冻结为 `Durable System Track`
+- 当前项目 Go 业务接口已明确收敛为 `.proto + ConnectRPC` 正式传输主线；`chi` 保留为路由 / 中间件装配层与 `healthz / metrics / debug` 等非业务端点承载层
 - `v0.1` 前端正式交付物为单一 `React Web`，同时考虑 `PC` 与移动浏览器 UI；当前不引入独立 `React Native` 客户端，`PWA` 仅作可兼容增强方向
 - `docs/` 当前只服务 `phase / fix / audit / review / archive` workflow
 
@@ -65,7 +66,9 @@
 - `.trae/specs/phase06_13_land_minimal_proto_contract_mainline/` 已将 `phase06` 最小 `.proto` 合同接入仓库既有 `proto/` 主线
 - `.trae/specs/phase06_16_integration_validation_acceptance/acceptance_report.md` 已给出 `phase06` 联调验收与收口结论入口
 - `phase06` 三件套保留为该阶段 `/plan` 的规划与冻结记录，不再覆盖根级当前状态
-- `phase06` 直接承接 `phase05-10 / 11 / 14` 与 `PSCO-mvp02-summarize-feedback.md`，并已完成当前阶段收口；下一阶段待正式 phase 入口建立后切换
+- `PSCO-mvp03-summarize-feedback.md` 已冻结为 `phase07` 与后续 `mvp0.3` 业务阶段的最终仲裁与规划基线
+- `docs/audit/audit_001_transport_contract_mainline_issue.md` 与 `docs/audit/audit_001_transport_contract_mainline_analysis.md` 已冻结为当前传输主线收敛议题的正式审计入口
+- `phase07_transport_contract_mainline_migration` 已建立三件套，当前直接承接 `PSCO-mvp03-summarize-feedback.md`、`audit_001` 审计结论与 `phase06-12 / 13 / 16`；后续 `mvp0.3` 业务阶段待 `phase07` 正式收口后切换
 
 ## 5. 推荐阅读顺序
 
@@ -98,13 +101,16 @@
 27. `docs/phase/phase05_dashboard_feedback_foundation_dev_plan.md`
 28. `docs/phase/phase05_dashboard_feedback_foundation_shared_baseline.md`
 29. `PSCO-mvp02-summarize-feedback.md`
-30. `docs/phase/phase06_onboarding_sovereignty_reuse_foundation_architecture_plan.md`
-31. `docs/phase/phase06_onboarding_sovereignty_reuse_foundation_dev_plan.md`
-32. `docs/phase/phase06_onboarding_sovereignty_reuse_foundation_shared_baseline.md`
-33. `.trae/specs/phase06_12_onboarding_sovereignty_reuse_formal_spec/spec.md`
-34. `.trae/specs/phase06_13_land_minimal_proto_contract_mainline/`
-35. `.trae/specs/phase06_16_integration_validation_acceptance/acceptance_report.md`
-36. 当前目标对应的 `phase / fix / audit` 文档
+30. `PSCO-mvp03-summarize-feedback.md`
+31. `docs/audit/audit_001_transport_contract_mainline_issue.md`
+32. `docs/audit/audit_001_transport_contract_mainline_analysis.md`
+33. `docs/phase/phase07_transport_contract_mainline_migration_architecture_plan.md`
+34. `docs/phase/phase07_transport_contract_mainline_migration_dev_plan.md`
+35. `docs/phase/phase07_transport_contract_mainline_migration_shared_baseline.md`
+36. `.trae/specs/phase06_12_onboarding_sovereignty_reuse_formal_spec/spec.md`
+37. `.trae/specs/phase06_13_land_minimal_proto_contract_mainline/`
+38. `.trae/specs/phase06_16_integration_validation_acceptance/acceptance_report.md`
+39. 当前目标对应的 `phase / fix / audit` 文档
 
 ## 6. 接手提醒
 
