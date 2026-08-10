@@ -1,0 +1,47 @@
+- [x] 已明确既有四层结构（handler / service / candidate / repository）与 platform 组合根模式
+- [x] 已明确既有 5 个模块清单与装配函数
+- [x] 已明确"消费方模块拥有 candidate reader"跨模块读取模式
+- [x] 已明确 Export 模块目录结构（handler / service / candidate / types.go / errors.go / response.go）
+- [x] 已明确 ExportRead 接口 owner（query_handler → query_service，GET /api/dashboard/export）
+- [x] 已明确 ExportRead 正式承接 `export_snapshot`（资产范围 + 创建时间 + 创建结果摘要 / 预览态）
+- [x] 已明确 ExportWrite 接口 owner（command_handler → command_service，POST /api/dashboard/export）
+- [x] 已明确 Export 模块只读 canonical 表、不承接备份职责，且当前阶段不提前冻结 export 元数据介质
+- [x] 已明确 Backup 模块目录结构（handler / service / candidate / repository / types.go / errors.go / response.go）
+- [x] 已明确 BackupWrite command 子路径（command_handler → command_service，POST /api/dashboard/backup）
+- [x] 已明确 BackupWrite 的 read/verify 子路径（query_handler → query_service，GET /api/dashboard/backup）
+- [x] 已明确 `backup_snapshot` 由 BackupWrite owner 内的正式 read/verify 子路径承接
+- [x] 已明确 BackupWrite 响应只返回创建结果摘要，不包含完整 backup_snapshot
+- [x] 已明确 Backup 模块只读 canonical 表、不承接导出职责、不执行 restore 写回
+- [x] 已明确 Export 覆盖矩阵（9 类 canonical 表）与装配 owner（export.candidate.AssetReader）
+- [x] 已明确 Backup 覆盖矩阵（9 类 + manifest + 创建时间 + schema/version）与装配 owner
+- [x] 已明确两个 candidate reader 各自独立拥有、分别读取相同覆盖范围
+- [x] 已明确 candidate reader 直接使用 *pgxpool.Pool，service 不直接写跨模块 SQL
+- [x] 已明确覆盖矩阵中 9 类数据必须全部装配，不得缺失关系数据
+- [x] 已明确 backup verified 5 步校验链定义
+- [x] 已明确步骤 1（产物生成）由 BackupWrite 承接
+- [x] 已明确步骤 2-5（恢复前提校验）由 BackupWrite.read_verify 承接
+- [x] 已明确 BackupWrite 响应不包含 backup verified 判定结果
+- [x] 已明确校验失败必须分类（manifest 缺失 / 覆盖不完整 / schema 缺失）
+- [x] 已明确与 canonical 模块的边界（只读、不依赖 service、canonical 不感知）
+- [x] 已明确与 platform 装配点的边界（buildExport / mountExport / buildBackup / mountBackup）
+- [x] 已明确装配顺序约束（只需 canonical 表已建表，不需 canonical service 已构造）
+- [x] 已明确与数据库脚本的边界（不修改 migrations / seeds）
+- [x] 已明确不冻结的细节（脚本名、存储介质、目录细节、文件格式）
+- [x] 已明确 export.proto 文件路径（proto/psco/export/v1/export.proto）与消息类型（含 `ExportSnapshot` 或等价正式读模型）
+- [x] 已明确 backup.proto 文件路径（proto/psco/backup/v1/backup.proto）与消息类型
+- [x] 已明确 backup.proto 包含 BackupManifest / BackupCoverage / SchemaVersion 消息类型
+- [x] 已明确合同约束（复用 buf 入口、types.go 单向派生）
+- [x] 已明确 BackupWrite.read_verify 响应包含完整 backup_snapshot（manifest + 覆盖矩阵 + schema/version + 校验结果）
+- [x] 已明确 Export / Backup 通过 candidate reader 只读 canonical 表
+- [x] 已明确 Export / Backup 之间无直接依赖
+- [x] 已明确 canonical 模块不感知 Export / Backup
+- [x] 已验证 Export 覆盖矩阵（9 类）与 phase06-03 一致
+- [x] 已验证 ExportRead 已正式承接 shared baseline 中的 `export_snapshot` 最小读模型
+- [x] 已验证 Backup 覆盖矩阵（不小于 Export + manifest + 创建时间 + schema/version）与 phase06-03 一致
+- [x] 已验证 backup verified 校验链与 phase06-03 一致
+- [x] 已验证 backup_snapshot 读取侧承接位与 phase06-05 一致，且不新长第二套 canonical owner
+- [x] 已验证 .proto 合同分组与 phase06-05 "唯一合同源"一致
+- [x] 已验证 Export/Backup 路由与 shared_baseline §4.1 一致
+- [x] 已验证跨模块读取模式与既有 dashboard candidate 模式一致
+- [x] 已验证错误分类与 phase06-03 "错误语义冻结"一致
+- [x] 已明确本次设计足以支撑后续 phase06-10 合同实现与 phase06-15 后端实现
