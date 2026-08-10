@@ -156,6 +156,7 @@
   - `supporting_module_count`
   - `latest_capability_update_at`
   - 最小解释文案
+- `capability_summary` 的最小事实来源冻结为 Module 写模型中的轻量 `capability_key`（可空）与系统内置 label 映射；未填写 `capability_key` 的 Module 不参与当前阶段 capability 聚合，但不阻断首轮成功会话
 - 当前阶段复用感知的新鲜度口径冻结为“读取时反映最新已提交状态”，不引入异步离线刷新前提
 
 当前阶段不在架构规划中提前冻结：
@@ -183,6 +184,9 @@
 - `Export` 的正式用户入口冻结为 `Dashboard` 动作区中的独立入口，正式执行路由冻结为 `/dashboard/export`
 - `Backup` 的正式用户入口冻结为 `Dashboard` 动作区中的独立入口，正式执行路由冻结为 `/dashboard/backup`
 - `Export / Backup` 不允许以内联方式直接塞回 `Dashboard Home` 主内容区完成全部操作
+- 首次进入应用时的 cold-start 判定固定由前端根级路由入口守卫承接（`beforeLoad` 或等价根级 loader），不得分散到页面组件 `useEffect` 中各自判断
+- `first_run_state = not_started` 时，根级默认进入路径必须回落到 `/onboarding`
+- `first_run_state = in_progress` 时，不要求劫持所有 canonical detail 路由；根级默认进入路径与 `Dashboard` 必须提供 `Continue Onboarding` 入口
 
 当前阶段关于首轮成功会话的单值定义补充冻结如下：
 
@@ -202,6 +206,10 @@
   - `Module` 已映射到 `Repository`
   - `Decision` 已完成对象链接
 - 但 `Decision` 至少必须完成最小可持久化记录，不允许把“尚未打开 Decision 写路径”也算作 onboarding 已完成
+- `first_run_state` 的最小状态跃迁冻结为：
+  - 尚未开始任何首轮对象写入：`not_started`
+  - 已至少创建 `1` 条首轮对象记录、但四类对象未全部持久化：`in_progress`
+  - 四类对象均已持久化并满足首轮成功会话条件：`completed`
 
 ### 4.6 当前阶段源码设计层输出要求
 
@@ -214,6 +222,7 @@
 - 前端新增 mutation 的固定承接位与失效刷新归一化策略
 - `.proto` 合同、HTTP DTO 与前端消费模型的一致性校验策略
 - 验收环境中的冷启动、部分录入、导出、备份与复用反馈 fixture
+- `backup verified` 基于备份产物与 manifest 读取校验成立，而不是仅以“写出文件成功”代替
 
 ### 4.7 当前阶段规划吸取的历史经验
 

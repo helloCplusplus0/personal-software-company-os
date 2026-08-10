@@ -1,0 +1,18 @@
+- [x] `Onboarding Home / Flow` 已被明确冻结为 `phase06-01` 当前阶段唯一新增页面主线
+- [x] `Onboarding` 的职责已明确为首轮引导、四类对象最小录入入口、当前步骤展示与继续补全入口，而不替代 `Dashboard` 与既有 canonical owner 页面
+- [x] `Onboarding` 的正式业务入口已明确冻结为 `/onboarding`
+- [x] cold-start 主 CTA 与回访继续入口已明确单值回到 `/onboarding`
+- [x] 应用启动时的 first-run 判定已明确固定由前端根级路由入口守卫承接，而不是页面级 `useEffect`
+- [x] 当前阶段已明确不形成第二套根级宿主或第二套默认首页体系
+- [x] `first_run_state` 最小状态机已冻结为 `not_started / in_progress / completed`
+- [x] 三种 `first_run_state` 的进入条件、状态跃迁与默认落点已明确
+- [x] cold-start 用户的默认进入路径已明确冻结为 `/onboarding`
+- [x] `in_progress` 用户根级默认进入路径已明确冻结为 `/dashboard`，且 `Dashboard` 必须提供 `Continue Onboarding` 入口回到 `/onboarding`，不强制劫持所有 canonical detail 页面
+- [x] `completed` 用户已明确不再默认进入 `/onboarding`
+- [x] 首轮成功会话已明确冻结为一次连续会话内最少各创建 `1` 条已持久化的 `Product / Repository / Module / Decision`
+- [x] “一次连续会话” 已明确操作化为同一个 `first_run_state` 生命周期中的同一个 first-run onboarding run，允许中途退出后通过 `Continue Onboarding` 回访继续补全
+- [x] 当前阶段已明确允许 `draft-first / partial-entry`
+- [x] 当前阶段已明确不要求绑定关系全部完成后才算首轮成功会话
+- [x] `Decision` 至少完成最小可持久化记录的要求已明确
+- [x] 首轮成功会话的推荐执行顺序已明确冻结为 `Product -> Repository -> Module -> Decision`
+- [x] 本次规格与 `phase06` 三件套、`phase05` 已冻结 Dashboard / canonical owner 边界及当前根级真相源保持一致

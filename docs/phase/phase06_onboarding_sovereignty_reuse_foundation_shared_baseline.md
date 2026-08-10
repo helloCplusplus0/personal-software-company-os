@@ -114,6 +114,9 @@
 - 冷启动空系统主 CTA：`/onboarding`
 - 首轮未完成用户回访主 CTA：`Continue Onboarding -> /onboarding`
 - `Export / Backup` 允许从 `Dashboard` 动作区进入，但不得在 `Dashboard Home` 主内容区内联完成全部操作
+- 首次进入应用时的 cold-start 判定固定由前端根级路由入口守卫承接（`beforeLoad` 或等价根级 loader），不得分散到页面组件 `useEffect` 中各自判断
+- `first_run_state = not_started` 时，根级默认进入路径必须回落到 `/onboarding`
+- `first_run_state = in_progress` 时，不要求劫持所有 canonical detail 路由；根级默认进入路径与 `Dashboard` 必须提供 `Continue Onboarding` 入口
 
 ## 5. 当前阶段数据矩阵
 
@@ -140,6 +143,7 @@
 ### 5.1 最小读写模型
 
 - `first_run_state` 至少承接：
+  - `status`：`not_started | in_progress | completed`
   - 是否首次进入
   - 当前引导步骤
   - 首轮完成条件
@@ -176,6 +180,10 @@
   - `Repository` 已绑定 `Product`
   - `Module` 已映射 `Repository`
   - `Decision` 已完成对象链接
+- `first_run_state` 的最小状态跃迁冻结为：
+  - 尚未开始任何首轮对象写入：`not_started`
+  - 已至少创建 `1` 条首轮对象记录、但四类对象未全部持久化：`in_progress`
+  - 四类对象均已持久化并满足首轮成功会话条件：`completed`
 
 ### 5.2 最小接口归属前提
 
@@ -189,6 +197,7 @@
 - `module_reuse_summary` 由当前 canonical 绑定关系读时聚合得到，不引入独立统计表作为唯一事实源
 - `module_reuse_summary` 的最小统计口径冻结为“一个 Module 当前被多少 Product 直接复用”
 - `capability_summary` 由当前 Module 派生信息读时聚合得到，不引入独立 Capability 重实体
+- `capability_summary` 的最小事实来源冻结为 Module 写模型中的轻量 `capability_key`（可空）与系统内置 `capability_label` 映射；未填写 `capability_key` 的 Module 不参与当前阶段 capability 聚合，但不阻断首轮成功会话
 - 当前阶段复用感知的新鲜度口径冻结为“读取时反映最新已提交状态”，不引入异步离线刷新前提
 
 ## 6. 当前阶段合同与演进基线
@@ -216,6 +225,11 @@
   - 当前备份清单或 manifest
   - 备份创建时间
   - 当前实例恢复所需的 schema / 版本前提
+- 当前阶段 `backup verified` 的最小成立条件冻结为：
+  - 已生成可读取的备份产物
+  - 可重新读取并校验备份 manifest
+  - manifest 中可见核心资产覆盖矩阵与 schema / 版本恢复前提
+  - 不要求当前阶段完成真正 restore 写回
 
 ## 7. 当前阶段冷启动与验收基线
 
@@ -231,6 +245,10 @@
 - 验收时不得把“只创建了部分对象”算作首轮成功会话
 - 验收时不得把“缺少绑定关系导出”算作已完成数据主权闭合
 - 验收时必须验证 `module_reuse_summary / capability_summary` 读取的是最新已提交状态
+- 验收时必须分别验证：
+  - cold-start 用户会被正确导向 `/onboarding`
+  - `in_progress` 回访用户不会被强制劫持离开 canonical detail，但能稳定看到 `Continue Onboarding`
+  - `backup verified` 基于备份产物与 manifest 读取校验成立，而不是仅以“写出文件成功”代替
 
 ## 8. 非目标矩阵
 
