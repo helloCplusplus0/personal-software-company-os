@@ -1,0 +1,33 @@
+- [x] 已明确 `phase06-10` 的目标是“最小 Proto 合同设计冻结”，不是 proto 主线落地
+- [x] 已明确 `onboarding / export / backup / reuse_summary` 四个逻辑 Proto 文件组
+- [x] 已明确四个 package 与 `v1` 版本语义
+- [x] 已明确当前 `/spec` 轮次不要求真实 `.proto`、生成产物与源码实现同轮全部完成
+- [x] 已明确 `OnboardingService` 当前阶段只承接 `GetFirstRunState`
+- [x] 已明确 `first_run_state` 至少承接 `status / is_first_entry / current_step / completion_progress`
+- [x] 已明确四类 draft-first 创建动作继续复用既有 `CreateProduct / CreateRepository / CreateModule / CreateDecision` canonical 合同
+- [x] 已明确 draft-first 最小人工必填字段继续对齐 `phase06-02`，其余字段由默认值、可选语义或等价非人工阻断方式承接
+- [x] 已明确四类 canonical create response 不内联更新后的 `first_run_state`
+- [x] 已明确 `ExportService` 必须承接 `GetExportSnapshot / ExportCoreAssets`
+- [x] 已明确 `ExportSnapshot` 至少承接覆盖矩阵、创建时间、结果状态与结果摘要
+- [x] 已明确当前阶段不在 `.proto` 中提前冻结导出文件格式、存储介质或下载介质细节
+- [x] 已明确 `BackupService` 必须承接 `GetBackupSnapshot / CreateInstanceBackup`
+- [x] 已明确 `BackupSnapshot` 至少承接 manifest 摘要、覆盖矩阵、schema/version 前提与 verified 状态
+- [x] 已明确 `GetBackupSnapshot` 是当前阶段正式 `read / verify` 子路径合同
+- [x] 已明确 `ReuseSummaryService` 当前阶段只承接单一 `GetReuseSummary`
+- [x] 已明确 `GetReuseSummaryRequest` 以 `scope / module_id / product_id` 承接三种页面作用域
+- [x] 已明确 `GetReuseSummaryResponse` 必须同时承接 `module_reuse_summary[]` 与 `capability_summary[]`
+- [x] 已明确 `capability_summary` 在无可聚合数据时允许成功空态
+- [x] 已明确 `GetFirstRunState` 与四类既有 canonical create 的最小 HTTP 映射关系
+- [x] 已明确当前阶段不得发明 `/api/onboarding/drafts/*` 第二套路由分组
+- [x] 已明确 Onboarding 页面只是既有 canonical create 合同的消费入口，不成为新的写合同 owner
+- [x] 已明确 Export、Backup、Reuse Summary 的最小 HTTP 映射关系
+- [x] 已明确 DTO / handler / adapter 只允许从 `.proto` 单向派生或显式对齐
+- [x] 已明确四组能力的最小错误语义不混入成功 response 字段
+- [x] 已明确枚举首值必须为 `*_UNSPECIFIED = 0`
+- [x] 已明确删除字段或枚举值后必须保留 `reserved` 编号，必要时保留名称
+- [x] 已明确不得复用 tag、不得随意改字段类型或 repeated/scalar 语义
+- [x] 已明确不得新增 `required` 字段
+- [x] 已明确真实 `.proto` 合同进入主线时点不得晚于 `phase06-12` 正式规格正文
+- [x] 已明确 `phase06-13` 承接 buf 工具链、DTO 映射与生成产物收口
+- [x] 已验证本 spec 与 `phase06-05 / 08 / 09` 以及既有 proto 设计模式保持一致
+- [x] 已验证本 spec 足以直接支撑 `phase06-12` 正式规格正文与 `phase06-13` 合同主线落地
