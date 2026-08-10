@@ -1,0 +1,27 @@
+- [x] 已明确单数 `ReuseSummaryRead` 作为唯一 query owner
+- [x] 已明确 Dashboard / Module Detail / Product Detail 三种最小查询作用域
+- [x] 已明确 `ReuseSummaryRead` query key 以 `['reuse-summary']` 前缀承接局部失效
+- [x] 已明确每页只新增一个页面级 `ReuseSummaryRead` `useQuery`，其成功结果同时承接两类 summary
+- [x] 已明确 Dashboard 继续保留 `overview / feedback / recent-activity` 三路既有查询
+- [x] 已明确 Dashboard 额外新增的 `ReuseSummaryRead` 只服务 `Asset Feedback` 内的 `Reuse Snapshot` 子区域
+- [x] 已明确 `Asset Feedback` 内 `Representative Feedback Signals` 与 `Reuse Snapshot` 的独立状态模型
+- [x] 已明确 `ReuseSummaryRead` 失败不得让 Dashboard 整页回退为 `page-error`
+- [x] 已明确 Module Detail 保留 canonical detail query，并追加当前 `moduleId` 作用域的 `ReuseSummaryRead`
+- [x] 已明确 Module Detail 正式挂接位位于 `ModuleSummaryCard` 邻近区域
+- [x] 已明确 Product Detail 保留 canonical detail query，并追加当前 `productId` 作用域的 `ReuseSummaryRead`
+- [x] 已明确 Product Detail 正式挂接位位于 `ProductModuleBindingPanel` 或其邻近区域
+- [x] 已明确 `module_reuse_summary / capability_summary` 的最小统计字段与时间字段在实现层继续沿用 phase06-04 冻结口径
+- [x] 已明确复用感知新鲜度口径固定为“读取时反映最新已提交状态”
+- [x] 已明确 Dashboard / Detail 的局部重试只重读当前作用域 `ReuseSummaryRead`
+- [x] 已明确当前作用域已有上一版数据时，允许使用 `placeholderData` 保持复用快照子区域稳定
+- [x] 已明确 `FeedbackSignalRead` 继续只服务 `Current Focus` 与 representative feedback signals
+- [x] 已明确 `ReuseSummaryRead` 只服务复用快照子区域，不并入 `FeedbackSignalRead`
+- [x] 已明确复用快照不得升级为新的主 CTA、一级行动队列或第二条优先级主线
+- [x] 已明确 Dashboard 成功空态、零复用状态、有复用状态与读取失败态的展示差异
+- [x] 已明确 `capability_summary` 的唯一事实来源仍为 `Module.capability_key + 系统内置 capability_label 映射`
+- [x] 已明确 `capability_summary` 通过 `empty_state_text` 承接缺省解释文案
+- [x] 已明确未填写 `capability_key` 的 Module 不参与 capability 聚合，但不构成错误态
+- [x] 已明确当前子任务不冻结后端模块目录、candidate reader 文件名、platform 装配函数、`.proto` 文件路径或 HTTP 路由数量
+- [x] 已明确后续合同设计只需满足“每页一个页面级 `ReuseSummaryRead` query 同时承接两类 summary”
+- [x] 已验证本次规格与 `phase06-04 / 05`、shared baseline 和 `phase05` Dashboard 主线保持一致
+- [x] 已验证本次规格足以直接指导前端 query、页面挂接实现与后续 `phase06-10` 合同设计
