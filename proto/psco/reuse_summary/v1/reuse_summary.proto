@@ -1,0 +1,202 @@
+// PSCO Reuse Summary 最小 Protocol Buffers 合同源
+//
+// 文档定位：本文件是 Reuse Summary 当前阶段唯一合同定义入口（phase06-13 落地）。
+// 上游规格：
+//   - phase06-04 module_reuse_summary / capability_summary 最小读模型与页面挂接位 Spec
+//   - phase06-05 合同、传输与源码约束 Spec
+//   - phase06-09 复用感知 query / Dashboard / Detail 集成 Spec
+//                §"后端模块 owner / 接口分组 / candidate reader owner"
+//   - phase06-10 当前阶段最小 Protocol Buffers 合同设计 Spec
+//                §"ReuseSummaryService 最小合同设计冻结"
+//                / §"错误语义与 breaking 演进前提冻结"
+//   - phase06-12 Onboarding + Sovereignty + Reuse 正式规格正文 Spec
+//                §"Reuse Summary 正式读模型与页面挂接位冻结"
+//                / §"合同、传输与演进基线冻结"
+//   - phase06-13 落实当前阶段最小 Protocol Buffers 合同主线 Spec
+//
+// 落点要求：
+//   - 本文件落地到现有 proto/ 工作区，复用同一 buf workspace
+//   - 不新增第二套 buf.yaml / buf.gen.yaml / Makefile 或并列 proto 根目录
+//   - 与 Module Registry / Decision Center / Product Registry / Repository Binding /
+//     Dashboard / Onboarding / Export / Backup 在同一个 buf workspace 内共同通过校验
+//
+// Reuse Summary 读模型边界（对齐 phase06-12 §"Reuse Summary 正式读模型与页面挂接位冻结"）：
+//   - module_reuse_summary 字段集合冻结为：
+//       module_id / reuse_product_count / latest_reuse_at / explanation_text
+//   - capability_summary 字段集合冻结为：
+//       capability_key / capability_label / supporting_module_count /
+//       latest_capability_update_at / empty_state_text
+//   - module_reuse_summary 统计口径冻结为"一个 Module 当前被多少 Product 直接复用"
+//   - capability_summary 事实来源冻结为 Module.capability_key + capability_label 映射
+//   - capability_summary 在无可聚合数据时允许成功空数组或等价成功空态字段
+//
+// 作用域边界（对齐 phase06-04 / phase06-09 / phase06-12）：
+//   - GetReuseSummaryRequest 以 scope / module_id / product_id 承接三种页面作用域
+//   - scope 枚举承接 dashboard / module_detail / product_detail
+//   - module_id 与 product_id 只允许按 scope 条件性使用：
+//       dashboard：module_id 与 product_id 均不使用
+//       module_detail：使用 module_id，不使用 product_id
+//       product_detail：使用 product_id，不使用 module_id
+//   - 当前阶段不为 Dashboard / Module Detail / Product Detail 各自再建第二套平行 RPC
+//
+// 排序与裁剪边界（对齐 phase06-12 §"Reuse Summary 的排序、裁剪与展示范围"）：
+//   - Dashboard 中 module_reuse_summary 按 reuse_product_count DESC 排序，同值时按
+//     latest_reuse_at DESC 排序，最多展示前 5 条
+//   - Dashboard 中 capability_summary 按 supporting_module_count DESC 排序，同值时按
+//     latest_capability_update_at DESC 排序，最多展示前 5 条
+//   - Product Detail 中 module_reuse_summary 先限定在当前 Product 已绑定模块作用域内，
+//     再按同样排序规则全量展示
+//   - Product Detail 中 capability_summary 先限定在当前 Product 已绑定且填写了
+//     capability_key 的 Module 作用域内，再按同样排序规则全量展示
+//   - Module Detail 展示当前 module_id 的直接复用反馈，并在存在 capability_key 时
+//     展示对应 capability_summary 最小摘要
+//   - 上述排序、上限与作用域裁剪由 service 层承接，不进入 .proto 合同本体
+//
+// 过渡传输层说明：
+//   当前阶段保留 chi + JSON HTTP 作为过渡传输层（phase06-14 / 15 实现）。
+//   JSON 请求与响应语义必须从本 .proto 派生或严格对齐，不得形成第二套合同源。
+//   HTTP 路径、状态码与中间件策略不属于本合同本体，由过渡传输层独立承载。
+//   GetReuseSummary 的 scope / module_id / product_id 必须通过 query 参数映射到 Proto request，
+//   handler 必须在进入业务层前显式组装对应的 Proto request 消息，
+//   不得因 GET 入口无 body 就绕过 Proto request 这一合同边界。
+//
+// 字段编号规则：
+//   - 每个字段拥有稳定编号，不得复用已删除字段编号或字段语义
+//   - 新增字段必须使用新的递增编号，不得插入到已有编号之间
+//   - reserved 关键字用于标记已删除或预留的编号区间
+//   - 后续版本删除字段或废弃字段名时必须使用 reserved 保留字段号
+//
+// 跨包依赖策略：
+//   - ReuseSummary 当前阶段不 import 其他 psco.* 包，自有枚举（ReuseSummaryScope）
+//     在本文件内单值定义
+//   - module_id 与 product_id 以 string 形式承接，不引入对其他模块 service 或消息结构的合同依赖
+//   - capability_label 字段以 string 形式承接 Module.capability_label 的派生读结果，
+//     不通过 import 引入跨包枚举或消息
+//
+// 生成入口：
+//   在 proto/ 目录执行 make gen，或直接执行 buf generate。
+//   生成产物：
+//     - Go:    backend/internal/gen/proto/psco/reuse_summary/v1/
+//     - TS:    frontend/src/gen/proto/psco/reuse_summary/v1/
+//
+// 当前阶段边界：
+//   - 只生成消息类型，不生成 gRPC 服务桩
+//   - service 定义在 .proto 合同源中已冻结，后续迁移到 gRPC / Connect 时再加回 grpc/connect 插件
+//   - 不要求完成完整 gRPC / Connect 传输层迁移
+//   - 不要求立即用生成类型替换全部现有手写 DTO
+
+syntax = "proto3";
+
+package psco.reuse_summary.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// Go 包路径（生成代码落点）
+option go_package = "github.com/psco/backend/internal/gen/proto/psco/reuse_summary/v1;reusesummaryv1";
+
+// ============================================================================
+// 枚举
+// ============================================================================
+
+// ReuseSummaryScope — 复用感知读取的页面作用域，对齐 phase06-04 / phase06-09 / phase06-12 冻结的三种页面挂接位。
+// UNSPECIFIED 表示未指定，不得作为合法业务值。
+// 作用域与参数使用关系：
+//   - DASHBOARD：module_id 与 product_id 均不使用
+//   - MODULE_DETAIL：使用 module_id，不使用 product_id
+//   - PRODUCT_DETAIL：使用 product_id，不使用 module_id
+enum ReuseSummaryScope {
+  REUSE_SUMMARY_SCOPE_UNSPECIFIED = 0;
+  REUSE_SUMMARY_SCOPE_DASHBOARD = 1;
+  REUSE_SUMMARY_SCOPE_MODULE_DETAIL = 2;
+  REUSE_SUMMARY_SCOPE_PRODUCT_DETAIL = 3;
+}
+
+// ============================================================================
+// 核心消息
+// ============================================================================
+
+// ModuleReuseSummary — 模块复用摘要单值项，对齐 phase06-04 / phase06-12 冻结的最小读模型。
+// 统计口径冻结为"一个 Module 当前被多少 Product 直接复用"。
+// latest_reuse_at 必须使用显式 google.protobuf.Timestamp，不依赖隐式 created_at 约定。
+// explanation_text 承接面向用户的复用解释文本，由 service 层组装，不在此合同中冻结具体文案。
+message ModuleReuseSummary {
+  string module_id = 1;
+  int32 reuse_product_count = 2;
+  google.protobuf.Timestamp latest_reuse_at = 3;
+  string explanation_text = 4;
+}
+
+// CapabilitySummary — 能力聚合摘要单值项，对齐 phase06-04 / phase06-12 冻结的最小读模型。
+// 事实来源冻结为 Module.capability_key + capability_label 映射。
+// supporting_module_count 承接当前作用域内拥有相同 capability_key 的 Module 数量。
+// latest_capability_update_at 必须使用显式 google.protobuf.Timestamp，不依赖隐式 created_at 约定。
+// empty_state_text 承接 capability_summary 在无可聚合数据时的成功空态解释文本，
+// 由 service 层组装，不在此合同中冻结具体文案。
+// 当无可聚合数据时，capability_summary[] 允许为空数组或返回单一带 empty_state_text 的条目，
+// 具体空态形式由 service 层承接，不进入 .proto 合同本体。
+message CapabilitySummary {
+  string capability_key = 1;
+  string capability_label = 2;
+  int32 supporting_module_count = 3;
+  google.protobuf.Timestamp latest_capability_update_at = 4;
+  string empty_state_text = 5;
+}
+
+// ============================================================================
+// 读组请求与响应消息
+// ============================================================================
+
+// GetReuseSummaryRequest — 复用感知读取请求，以 scope / module_id / product_id 承接三种页面作用域。
+// module_id 与 product_id 只允许按 scope 条件性使用：
+//   - DASHBOARD：module_id 与 product_id 均不使用
+//   - MODULE_DETAIL：使用 module_id，不使用 product_id
+//   - PRODUCT_DETAIL：使用 product_id，不使用 module_id
+// 作用域参数非法、作用域对象不存在等错误语义由 HTTP / handler 适配层承接，
+// 不在此 request 中并列发明第二套错误业务字段。
+message GetReuseSummaryRequest {
+  ReuseSummaryScope scope = 1;
+  string module_id = 2;
+  string product_id = 3;
+}
+
+// GetReuseSummaryResponse — 复用感知读取响应。
+// 必须同时承接 module_reuse_summary[] 与 capability_summary[] 两类摘要。
+// module_reuse_summary 为空时表示当前作用域内无模块复用数据，不视为错误。
+// capability_summary 为空时表示当前作用域内无可聚合能力数据，不视为错误（成功空态）。
+// 成功空态与读取失败态必须严格区分，由 HTTP 状态码与 service 层承接。
+message GetReuseSummaryResponse {
+  repeated ModuleReuseSummary module_reuse_summary = 1;
+  repeated CapabilitySummary capability_summary = 2;
+}
+
+// ============================================================================
+// 服务接口
+// ============================================================================
+
+// ReuseSummaryService — Reuse Summary 当前阶段完整动作矩阵的 RPC 合同。
+//
+// 接口分组对齐 phase06-09 / phase06-12：
+//   - 读组：GetReuseSummary
+//   - 当前阶段不承接任何业务写入
+//
+// 当前阶段只为 Dashboard / Module Detail / Product Detail 提供单一 GetReuseSummary RPC，
+// 不为三种页面作用域各自再建第二套平行 RPC。
+// 三个页面作用域通过 GetReuseSummaryRequest.scope 区分，由 service 层按 scope 条件性
+// 使用 module_id / product_id 承接作用域裁剪。
+//
+// 错误语义：
+//   合同只承接成功路径下的合同结构，不并列发明第二套错误业务字段。
+//   作用域参数非法、读取失败、作用域对象不存在等错误语义继续由 HTTP / handler 适配层承接。
+//   空结果（空 module_reuse_summary 或空 capability_summary）必须表现为正常空列表响应，
+//   不得设计为空错误。
+//   HTTP 状态码映射继续由过渡传输层负责，不写进 .proto 合同本体。
+//
+// 过渡传输层映射：
+//   当前阶段由 chi + JSON HTTP 承接，RPC 到 HTTP 的映射约定见 proto/README.md。
+//   后续阶段可迁移到 gRPC / Connect 而不需要修改本合同源。
+service ReuseSummaryService {
+  // --- 读组 ---
+
+  // ReuseSummaryRead — 复用感知读取（Dashboard / Module Detail / Product Detail 共用）
+  rpc GetReuseSummary(GetReuseSummaryRequest) returns (GetReuseSummaryResponse);
+}

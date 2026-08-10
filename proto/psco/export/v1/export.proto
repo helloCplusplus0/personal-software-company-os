@@ -1,0 +1,179 @@
+// PSCO Export 最小 Protocol Buffers 合同源
+//
+// 文档定位：本文件是 Export 当前阶段唯一合同定义入口（phase06-13 落地）。
+// 上游规格：
+//   - phase06-03 Export / Backup / restore prerequisites 语义 Spec
+//   - phase06-05 合同、传输与源码约束 Spec
+//   - phase06-08 Export / Backup 后端模块边界设计 Spec
+//   - phase06-10 当前阶段最小 Protocol Buffers 合同设计 Spec
+//                §"ExportService 最小合同设计冻结"
+//                / §"错误语义与 breaking 演进前提冻结"
+//   - phase06-12 Onboarding + Sovereignty + Reuse 正式规格正文 Spec
+//                §"Export / Backup 正式语义与边界冻结"
+//                / §"合同、传输与演进基线冻结"
+//   - phase06-13 落实当前阶段最小 Protocol Buffers 合同主线 Spec
+//
+// 落点要求：
+//   - 本文件落地到现有 proto/ 工作区，复用同一 buf workspace
+//   - 不新增第二套 buf.yaml / buf.gen.yaml / Makefile 或并列 proto 根目录
+//   - 与 Module Registry / Decision Center / Product Registry / Repository Binding /
+//     Dashboard / Onboarding / Backup / Reuse Summary 在同一个 buf workspace 内共同通过校验
+//
+// Export 语义边界（对齐 phase06-12 §"Export / Backup 正式语义与边界冻结"）：
+//   - Export 的单值语义是"面向用户带走核心资产数据"
+//   - 最小覆盖矩阵必须至少包含 9 类核心资产：
+//       products / modules / releases / repositories / decisions /
+//       decision_links / product_modules / product_repositories / module_repositories
+//   - 不得把"只导出主实体，不导出绑定关系"判定为完成数据主权闭合
+//   - 当前阶段不在 .proto 中提前冻结导出文件格式、存储介质或下载介质细节
+//
+// 过渡传输层说明：
+//   当前阶段保留 chi + JSON HTTP 作为过渡传输层（phase06-14 / 15 实现）。
+//   JSON 请求与响应语义必须从本 .proto 派生或严格对齐，不得形成第二套合同源。
+//   HTTP 路径、状态码与中间件策略不属于本合同本体，由过渡传输层独立承载。
+//   handler 必须在进入业务层前显式组装对应的 Proto request 消息，
+//   不得因 GET 入口无 body 就绕过 Proto request 这一合同边界。
+//
+// 字段编号规则：
+//   - 每个字段拥有稳定编号，不得复用已删除字段编号或字段语义
+//   - 新增字段必须使用新的递增编号，不得插入到已有编号之间
+//   - reserved 关键字用于标记已删除或预留的编号区间
+//   - 后续版本删除字段或废弃字段名时必须使用 reserved 保留字段号
+//
+// 跨包依赖策略：
+//   - Export 当前阶段不 import 其他 psco.* 包，自有枚举
+//     （ExportAssetScope / ExportResultStatus）在本文件内单值定义
+//   - 资产覆盖矩阵以 repeated ExportAssetScope 枚举值形式承接，
+//     不在此文件中引入对其他模块 service 或消息结构的合同依赖
+//
+// 生成入口：
+//   在 proto/ 目录执行 make gen，或直接执行 buf generate。
+//   生成产物：
+//     - Go:    backend/internal/gen/proto/psco/export/v1/
+//     - TS:    frontend/src/gen/proto/psco/export/v1/
+//
+// 当前阶段边界：
+//   - 只生成消息类型，不生成 gRPC 服务桩
+//   - service 定义在 .proto 合同源中已冻结，后续迁移到 gRPC / Connect 时再加回 grpc/connect 插件
+//   - 不要求完成完整 gRPC / Connect 传输层迁移
+//   - 不要求立即用生成类型替换全部现有手写 DTO
+
+syntax = "proto3";
+
+package psco.export.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// Go 包路径（生成代码落点）
+option go_package = "github.com/psco/backend/internal/gen/proto/psco/export/v1;exportv1";
+
+// ============================================================================
+// 枚举
+// ============================================================================
+
+// ExportAssetScope — 导出 / 备份覆盖矩阵的核心资产类型，对齐 phase06-03 / phase06-12 冻结的 9 类资产。
+// UNSPECIFIED 表示未指定，不得作为合法业务值。
+// 该枚举同时被 Export 与 Backup 覆盖矩阵复用语义参考；Backup 在 backup.proto 中
+// 以独立 AssetCoverageEntry 消息承接相同 9 类资产的覆盖状态，不通过 import 引入本枚举，
+// 以保持 Export 与 Backup 模块边界互不耦合（对齐 phase06-08 模块分离冻结）。
+enum ExportAssetScope {
+  EXPORT_ASSET_SCOPE_UNSPECIFIED = 0;
+  EXPORT_ASSET_SCOPE_PRODUCTS = 1;
+  EXPORT_ASSET_SCOPE_MODULES = 2;
+  EXPORT_ASSET_SCOPE_RELEASES = 3;
+  EXPORT_ASSET_SCOPE_REPOSITORIES = 4;
+  EXPORT_ASSET_SCOPE_DECISIONS = 5;
+  EXPORT_ASSET_SCOPE_DECISION_LINKS = 6;
+  EXPORT_ASSET_SCOPE_PRODUCT_MODULES = 7;
+  EXPORT_ASSET_SCOPE_PRODUCT_REPOSITORIES = 8;
+  EXPORT_ASSET_SCOPE_MODULE_REPOSITORIES = 9;
+}
+
+// ExportResultStatus — 导出执行的结果状态，对齐 phase06-03 / phase06-08 冻结的最小失败家族。
+// UNSPECIFIED 表示未指定，不得作为合法业务值。
+// 当前阶段只承接最小状态家族：成功 / 进行中 / 失败。
+// 具体错误码、错误包络与局部错误展示仍属于 HTTP / handler 适配层，不进入 .proto 合同本体。
+enum ExportResultStatus {
+  EXPORT_RESULT_STATUS_UNSPECIFIED = 0;
+  EXPORT_RESULT_STATUS_SUCCESS = 1;
+  EXPORT_RESULT_STATUS_IN_PROGRESS = 2;
+  EXPORT_RESULT_STATUS_FAILED = 3;
+}
+
+// ============================================================================
+// 核心消息
+// ============================================================================
+
+// ExportSnapshot — 导出快照主读模型，对齐 phase06-03 / phase06-10 / phase06-12 冻结边界。
+// 该消息同时承接快照读取（GetExportSnapshot）与导出执行（ExportCoreAssets）的结果形状。
+// asset_scope 以 repeated 枚举形式承接当前阶段 9 类核心资产覆盖矩阵。
+// created_at 必须使用显式 google.protobuf.Timestamp，不依赖隐式 created_at 约定。
+// 当前阶段不在 .proto 中提前冻结导出文件格式、存储介质或下载介质细节。
+message ExportSnapshot {
+  repeated ExportAssetScope asset_scope = 1;
+  google.protobuf.Timestamp created_at = 2;
+  ExportResultStatus result_status = 3;
+  string result_summary = 4;
+}
+
+// ============================================================================
+// 读组 / 写组请求与响应消息
+// ============================================================================
+
+// GetExportSnapshotRequest — 导出快照读取请求（当前版本无字段）。
+// 保持无筛选、无分页、无排序切换的最小请求边界。
+// 后续若增加字段，只能从新的递增字段号开始，不得反向改写当前"空 request"边界。
+message GetExportSnapshotRequest {}
+
+// GetExportSnapshotResponse — 导出快照读取响应。
+// 只以单一 ExportSnapshot 承接，不并入导出页错误、局部失败标记或下载链接列表。
+message GetExportSnapshotResponse {
+  ExportSnapshot snapshot = 1;
+}
+
+// ExportCoreAssetsRequest — 导出执行请求（当前版本无字段）。
+// 当前阶段导出动作承接全部 9 类核心资产，不引入按 scope 选择性导出的 request 字段。
+// 后续若增加按 scope 过滤或下载介质参数，只能从新的递增字段号开始。
+message ExportCoreAssetsRequest {}
+
+// ExportCoreAssetsResponse — 导出执行响应。
+// 复用 ExportSnapshot 形状承接导出结果，不内联完整下载介质或文件路径细节。
+// 当前阶段导出结果不可读取时由 result_status = FAILED 承接，
+// 不在此 response 中并列发明第二套错误业务字段。
+message ExportCoreAssetsResponse {
+  ExportSnapshot snapshot = 1;
+}
+
+// ============================================================================
+// 服务接口
+// ============================================================================
+
+// ExportService — Export 当前阶段完整动作矩阵的 RPC 合同。
+//
+// 接口分组对齐 phase06-08 / phase06-12：
+//   - 读组：GetExportSnapshot
+//   - 写组：ExportCoreAssets
+//
+// 当前阶段 Export 不拆为第二套"预览 service"与"执行 service"，
+// 快照读取与导出执行共用同一 ExportSnapshot 形状。
+//
+// 错误语义：
+//   合同只承接成功路径下的合同结构，不并列发明第二套错误业务字段。
+//   资产装配失败、导出产物生成失败、导出结果不可读取等错误语义继续由
+//   HTTP / handler 适配层承接，或在 result_status = FAILED 中以最小状态承接。
+//   HTTP 状态码映射继续由过渡传输层负责，不写进 .proto 合同本体。
+//
+// 过渡传输层映射：
+//   当前阶段由 chi + JSON HTTP 承接，RPC 到 HTTP 的映射约定见 proto/README.md。
+//   后续阶段可迁移到 gRPC / Connect 而不需要修改本合同源。
+service ExportService {
+  // --- 读组 ---
+
+  // ExportSnapshotRead — 导出快照读取
+  rpc GetExportSnapshot(GetExportSnapshotRequest) returns (GetExportSnapshotResponse);
+
+  // --- 写组 ---
+
+  // ExportCoreAssetsWrite — 核心资产导出执行
+  rpc ExportCoreAssets(ExportCoreAssetsRequest) returns (ExportCoreAssetsResponse);
+}

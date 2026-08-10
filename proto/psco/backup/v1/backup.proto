@@ -1,0 +1,239 @@
+// PSCO Backup 最小 Protocol Buffers 合同源
+//
+// 文档定位：本文件是 Backup 当前阶段唯一合同定义入口（phase06-13 落地）。
+// 上游规格：
+//   - phase06-03 Export / Backup / restore prerequisites 语义 Spec
+//   - phase06-05 合同、传输与源码约束 Spec
+//                §"backup_snapshot 读取侧必须由独立读取 owner（BackupRead 或等价读取接口）承接"
+//   - phase06-08 Export / Backup 后端模块边界设计 Spec
+//   - phase06-10 当前阶段最小 Protocol Buffers 合同设计 Spec
+//                §"BackupService 最小合同设计冻结"
+//                / §"错误语义与 breaking 演进前提冻结"
+//   - phase06-12 Onboarding + Sovereignty + Reuse 正式规格正文 Spec
+//                §"Export / Backup 正式语义与边界冻结"
+//                / §"合同、传输与演进基线冻结"
+//                / §"联调验收环境与 fixture 基线冻结"
+//   - phase06-13 落实当前阶段最小 Protocol Buffers 合同主线 Spec
+//                §"Phase06 过渡传输层必须从 proto 单向承接"
+//                / §"backup_snapshot 读取侧合同一致性"
+//
+// 落点要求：
+//   - 本文件落地到现有 proto/ 工作区，复用同一 buf workspace
+//   - 不新增第二套 buf.yaml / buf.gen.yaml / Makefile 或并列 proto 根目录
+//   - 与 Module Registry / Decision Center / Product Registry / Repository Binding /
+//     Dashboard / Onboarding / Export / Reuse Summary 在同一个 buf workspace 内共同通过校验
+//
+// Backup 语义边界（对齐 phase06-12 §"Export / Backup 正式语义与边界冻结"）：
+//   - Backup 的单值语义是"面向当前实例保留与恢复前提校验"
+//   - Backup 的最小覆盖范围不得小于 Export（至少覆盖 9 类核心资产）
+//   - Backup 还必须带出 manifest、备份创建时间与 schema / version 前提
+//   - backup verified 的最小成立条件冻结为：
+//       1. 已生成可读取的备份产物
+//       2. 可重新读取并解析 manifest
+//       3. manifest 中可见核心资产覆盖矩阵
+//       4. schema / version 恢复前提可校验
+//   - 当前阶段不得把"产物写出成功"直接等价为 backup verified
+//   - 当前阶段不把真正 restore 写回动作写入该 service 合同
+//
+// 读取侧独立 owner 约束（对齐 phase06-05 / phase06-13）：
+//   - GetBackupSnapshot 必须显式承担当前阶段 read / verify 子路径语义
+//   - 当前阶段不得把"CreateInstanceBackup 写入响应里顺带返回一次 manifest"
+//     解释为已满足 snapshot 正式读取侧
+//   - manifest、覆盖矩阵与 schema / version 前提字段必须从 .proto 单向承接到
+//     HTTP DTO 与前端消费模型
+//   - 后端实现时 BackupRead（或等价读取接口）作为独立读取 owner 承接
+//     GetBackupSnapshot 的读时合同，不与 BackupWrite 写入响应耦合
+//
+// 过渡传输层说明：
+//   当前阶段保留 chi + JSON HTTP 作为过渡传输层（phase06-14 / 15 实现）。
+//   JSON 请求与响应语义必须从本 .proto 派生或严格对齐，不得形成第二套合同源。
+//   HTTP 路径、状态码与中间件策略不属于本合同本体，由过渡传输层独立承载。
+//   handler 必须在进入业务层前显式组装对应的 Proto request 消息，
+//   不得因 GET 入口无 body 就绕过 Proto request 这一合同边界。
+//
+// 字段编号规则：
+//   - 每个字段拥有稳定编号，不得复用已删除字段编号或字段语义
+//   - 新增字段必须使用新的递增编号，不得插入到已有编号之间
+//   - reserved 关键字用于标记已删除或预留的编号区间
+//   - 后续版本删除字段或废弃字段名时必须使用 reserved 保留字段号
+//
+// 跨包依赖策略：
+//   - Backup 当前阶段不 import 其他 psco.* 包，自有枚举
+//     （BackupAssetScope / BackupVerifiedStatus）在本文件内单值定义
+//   - Backup 与 Export 的资产覆盖矩阵语义对齐（9 类核心资产），但各自独立定义枚举，
+//     不通过 import 引入跨包枚举依赖，以保持 Export 与 Backup 模块边界互不耦合
+//     （对齐 phase06-08 模块分离冻结）
+//
+// 生成入口：
+//   在 proto/ 目录执行 make gen，或直接执行 buf generate。
+//   生成产物：
+//     - Go:    backend/internal/gen/proto/psco/backup/v1/
+//     - TS:    frontend/src/gen/proto/psco/backup/v1/
+//
+// 当前阶段边界：
+//   - 只生成消息类型，不生成 gRPC 服务桩
+//   - service 定义在 .proto 合同源中已冻结，后续迁移到 gRPC / Connect 时再加回 grpc/connect 插件
+//   - 不要求完成完整 gRPC / Connect 传输层迁移
+//   - 不要求立即用生成类型替换全部现有手写 DTO
+
+syntax = "proto3";
+
+package psco.backup.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// Go 包路径（生成代码落点）
+option go_package = "github.com/psco/backend/internal/gen/proto/psco/backup/v1;backupv1";
+
+// ============================================================================
+// 枚举
+// ============================================================================
+
+// BackupAssetScope — 备份覆盖矩阵的核心资产类型，对齐 phase06-03 / phase06-12 冻结的 9 类资产。
+// UNSPECIFIED 表示未指定，不得作为合法业务值。
+// Backup 覆盖范围不得小于 Export；该枚举与 ExportAssetScope 语义对齐但独立定义，
+// 以保持 Export 与 Backup 模块边界互不耦合（对齐 phase06-08 模块分离冻结）。
+enum BackupAssetScope {
+  BACKUP_ASSET_SCOPE_UNSPECIFIED = 0;
+  BACKUP_ASSET_SCOPE_PRODUCTS = 1;
+  BACKUP_ASSET_SCOPE_MODULES = 2;
+  BACKUP_ASSET_SCOPE_RELEASES = 3;
+  BACKUP_ASSET_SCOPE_REPOSITORIES = 4;
+  BACKUP_ASSET_SCOPE_DECISIONS = 5;
+  BACKUP_ASSET_SCOPE_DECISION_LINKS = 6;
+  BACKUP_ASSET_SCOPE_PRODUCT_MODULES = 7;
+  BACKUP_ASSET_SCOPE_PRODUCT_REPOSITORIES = 8;
+  BACKUP_ASSET_SCOPE_MODULE_REPOSITORIES = 9;
+}
+
+// BackupVerifiedStatus — 备份恢复前提校验状态，对齐 phase06-03 / phase06-10 / phase06-12 冻结的"backup verified"最小成立条件。
+// UNSPECIFIED 表示未指定，不得作为合法业务值。
+// 该枚举单值表达"未校验 / 已验证 / 校验失败"三类最小恢复前提状态：
+//   - UNVERIFIED：已生成备份产物但尚未完成 read / verify 校验
+//   - VERIFIED：已重新读取 manifest、可见核心资产覆盖矩阵、schema/version 前提可校验
+//   - VERIFY_FAILED：manifest 缺失或不可解析、覆盖矩阵不完整或 schema/version 前提不可校验
+// 当前阶段不得把"产物写出成功"直接等价为 VERIFIED。
+enum BackupVerifiedStatus {
+  BACKUP_VERIFIED_STATUS_UNSPECIFIED = 0;
+  BACKUP_VERIFIED_STATUS_UNVERIFIED = 1;
+  BACKUP_VERIFIED_STATUS_VERIFIED = 2;
+  BACKUP_VERIFIED_STATUS_VERIFY_FAILED = 3;
+}
+
+// ============================================================================
+// 核心消息
+// ============================================================================
+
+// AssetCoverageEntry — 备份覆盖矩阵单值项，承接某一类核心资产的覆盖状态。
+// 该消息以独立条目形式承接覆盖矩阵，使 manifest 中可见核心资产覆盖矩阵
+// （对齐 phase06-12 §"Export / Backup 正式语义与边界冻结"的 backup verified 条件 3）。
+// 当前阶段只承接"已覆盖 / 未覆盖"两类最小状态，不引入计数或时间戳细节。
+message AssetCoverageEntry {
+  BackupAssetScope asset_scope = 1;
+  bool covered = 2;
+}
+
+// ManifestSummary — 备份 manifest 摘要，对齐 phase06-03 / phase06-12 冻结边界。
+// 该消息承接 manifest 可重新读取并解析的最小结构。
+// 当前阶段不在 .proto 中提前冻结 manifest 文件格式、存储介质或下载介质细节。
+message ManifestSummary {
+  string manifest_version = 1;
+  int32 total_asset_entries = 2;
+  int32 covered_asset_entries = 3;
+}
+
+// SchemaVersionPrerequisite — 备份恢复前提的 schema / version 校验信息。
+// 对齐 phase06-12 §"Export / Backup 正式语义与边界冻结"的 backup verified 条件 4。
+// 当前阶段只承接备份时的 schema_version 与实例 version 标识，
+// 不在 .proto 中提前冻结迁移策略或兼容性矩阵。
+message SchemaVersionPrerequisite {
+  string schema_version = 1;
+  string instance_version = 2;
+  bool prerequisite_checkable = 3;
+}
+
+// BackupSnapshot — 备份快照主读模型，对齐 phase06-03 / phase06-10 / phase06-12 冻结边界。
+// 该消息同时承接读取校验（GetBackupSnapshot）与备份执行（CreateInstanceBackup）的结果形状。
+// created_at 必须使用显式 google.protobuf.Timestamp，不依赖隐式 created_at 约定。
+// asset_coverage 以 repeated AssetCoverageEntry 形式承接 9 类核心资产的覆盖矩阵。
+// verified_status 必须单值表达"未校验 / 已验证 / 校验失败"最小恢复前提状态。
+// 当前阶段不把真正 restore 写回动作写入该消息或该 service 合同。
+message BackupSnapshot {
+  google.protobuf.Timestamp created_at = 1;
+  ManifestSummary manifest_summary = 2;
+  repeated AssetCoverageEntry asset_coverage = 3;
+  SchemaVersionPrerequisite schema_version_prerequisite = 4;
+  BackupVerifiedStatus verified_status = 5;
+}
+
+// ============================================================================
+// 读组 / 写组请求与响应消息
+// ============================================================================
+
+// GetBackupSnapshotRequest — 备份快照读取请求（当前版本无字段）。
+// 该请求是当前阶段正式 read / verify 子路径合同入口。
+// 保持无筛选、无分页、无排序切换的最小请求边界。
+// 后续若增加字段，只能从新的递增字段号开始，不得反向改写当前"空 request"边界。
+message GetBackupSnapshotRequest {}
+
+// GetBackupSnapshotResponse — 备份快照读取响应。
+// 该响应是当前阶段正式 read / verify 子路径合同出口，由独立读取 owner
+// （BackupRead 或等价读取接口）承接，不与 BackupWrite 写入响应耦合。
+// 只以单一 BackupSnapshot 承接，不并入备份页错误、局部失败标记或下载链接列表。
+message GetBackupSnapshotResponse {
+  BackupSnapshot snapshot = 1;
+}
+
+// CreateInstanceBackupRequest — 备份执行请求（当前版本无字段）。
+// 当前阶段备份动作承接全部 9 类核心资产，不引入按 scope 选择性备份的 request 字段。
+// 后续若增加按 scope 过滤或备份介质参数，只能从新的递增字段号开始。
+message CreateInstanceBackupRequest {}
+
+// CreateInstanceBackupResponse — 备份执行响应。
+// 复用 BackupSnapshot 形状承接备份结果，但该响应不得替代
+// GetBackupSnapshot 的正式读取合同（对齐 phase06-05 / phase06-13 读取侧独立 owner 约束）。
+// 当前阶段备份产物生成失败、manifest 缺失或不可解析、覆盖矩阵不完整、
+// schema/version 前提不可校验等错误语义由 verified_status = VERIFY_FAILED 承接，
+// 或由 HTTP / handler 适配层承接，不在此 response 中并列发明第二套错误业务字段。
+message CreateInstanceBackupResponse {
+  BackupSnapshot snapshot = 1;
+}
+
+// ============================================================================
+// 服务接口
+// ============================================================================
+
+// BackupService — Backup 当前阶段完整动作矩阵的 RPC 合同。
+//
+// 接口分组对齐 phase06-08 / phase06-12：
+//   - 读组：GetBackupSnapshot（read / verify 子路径）
+//   - 写组：CreateInstanceBackup
+//
+// GetBackupSnapshot 必须显式承担当前阶段 read / verify 子路径语义，
+// 不得被 CreateInstanceBackup 写入响应附带的临时结果代替。
+// 后端实现时 GetBackupSnapshot 由独立读取 owner（BackupRead 或等价读取接口）承接。
+//
+// 当前阶段 Backup 不承接真正 restore 写回动作，restore 前提校验通过
+// verified_status = VERIFIED 表达，不新增 RestoreInstance RPC。
+//
+// 错误语义：
+//   合同只承接成功路径下的合同结构，不并列发明第二套错误业务字段。
+//   备份产物生成失败、manifest 缺失或不可解析、覆盖矩阵不完整、
+//   schema/version 前提不可校验等错误语义继续由 HTTP / handler 适配层承接，
+//   或在 verified_status = VERIFY_FAILED 中以最小状态承接。
+//   HTTP 状态码映射继续由过渡传输层负责，不写进 .proto 合同本体。
+//
+// 过渡传输层映射：
+//   当前阶段由 chi + JSON HTTP 承接，RPC 到 HTTP 的映射约定见 proto/README.md。
+//   后续阶段可迁移到 gRPC / Connect 而不需要修改本合同源。
+service BackupService {
+  // --- 读组 ---
+
+  // BackupSnapshotRead — 备份快照读取与恢复前提校验（read / verify 子路径）
+  rpc GetBackupSnapshot(GetBackupSnapshotRequest) returns (GetBackupSnapshotResponse);
+
+  // --- 写组 ---
+
+  // CreateInstanceBackupWrite — 实例备份执行
+  rpc CreateInstanceBackup(CreateInstanceBackupRequest) returns (CreateInstanceBackupResponse);
+}

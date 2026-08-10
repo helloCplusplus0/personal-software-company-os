@@ -1,0 +1,25 @@
+- [x] 已明确 `phase06-13` 的目标是把 `Onboarding + Sovereignty + Reuse` 合同推进为仓库内实际落地的 proto 主线，而不是重新设计一版合同
+- [x] 已明确合同源文件落点为 `proto/psco/onboarding/v1/onboarding.proto`、`proto/psco/export/v1/export.proto`、`proto/psco/backup/v1/backup.proto`、`proto/psco/reuse_summary/v1/reuse_summary.proto`
+- [x] 已明确包名与版本语义为 `psco.onboarding.v1`、`psco.export.v1`、`psco.backup.v1`、`psco.reuse_summary.v1`
+- [x] 已明确 `.proto` 是 `phase06` 当前阶段唯一合同定义入口
+- [x] 已明确 `OnboardingService` 当前阶段只承接 `GetFirstRunState`
+- [x] 已明确四类 draft-first 写入继续复用既有 `Product / Repository / Module / Decision` canonical create 合同，而不是新增 `Onboarding` create RPC
+- [x] 已明确四个既有 canonical create request 也必须同步对齐 `phase06` draft-first 最小人工必填与系统默认填充值
+- [x] 已明确 `ExportService / BackupService / ReuseSummaryService` 的最小 RPC 矩阵与消息边界必须继续对齐 `phase06-10 / 12`
+- [x] 已明确 `GetBackupSnapshot` 必须继续承担 `read / verify` 读取侧语义
+- [x] 已明确 `backup-manifest-missing / backup-coverage-incomplete / backup-schema-mismatch` 三类失败语义必须继续保留为主线合同与映射边界的一部分
+- [x] 已明确 `GetReuseSummary` 必须继续承接 `scope / module_id / product_id`，并同时返回 `module_reuse_summary[] + capability_summary[]`
+- [x] 已明确字段编号、枚举零值、`reserved` 与 breaking 演进规则必须继续对齐 `phase06-10 / 12`
+- [x] 已明确 `buf build / lint / generate / breaking` 必须继续通过既有 `proto/` 受控入口运行
+- [x] 已明确 `buf breaking` 的基准路径继续冻结为 `../.git#branch=main,subdir=proto`
+- [x] 已明确 Go 与 TypeScript 生成产物新增落点为四个 `phase06` 包对应目录
+- [x] 已明确 `proto/README.md` 必须把 `phase06` 新增合同纳入目录总览、包名表、生成产物表与 RPC → HTTP 映射矩阵
+- [x] 已明确 `GetFirstRunState / GetExportSnapshot / ExportCoreAssets / GetBackupSnapshot / CreateInstanceBackup / GetReuseSummary` 都必须显式组装 Proto request
+- [x] 已明确 `GetReuseSummary` 的 query 参数映射与 `GetBackupSnapshot` 读取侧合同一致性必须由过渡传输层显式承接
+- [x] 已明确 backup 三类失败语义不得在 DTO / HTTP / 前端消费侧被折叠为泛化的 `backup failed`
+- [x] 已明确后端 `types.go`、HTTP handler DTO、前端 `types.ts / api-adapter.ts` 只允许从 `.proto` 派生或显式对齐
+- [x] 已明确 DTO / 页面层不得新增 `.proto` 中不存在的业务字段语义
+- [x] 已明确当前阶段继续允许 `chi + JSON HTTP` 作为过渡传输层
+- [x] 已明确当前阶段不要求完成完整 gRPC / Connect 迁移或立即替换全部手写 DTO
+- [x] 已明确后续 `phase06` 实现、联调与验收必须优先引用已落地的 `phase06` `.proto` 与现有 `proto/` 工具链入口
+- [x] 已验证本 spec 与 `phase06-10`、`phase06-12`、`phase03-11`、`phase04-11`、`phase05-11` 以及现有 `proto/` workspace 基线保持一致

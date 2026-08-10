@@ -1,0 +1,170 @@
+// PSCO Onboarding 最小 Protocol Buffers 合同源
+//
+// 文档定位：本文件是 Onboarding 当前阶段唯一合同定义入口（phase06-13 落地）。
+// 上游规格：
+//   - phase06-01 Onboarding 边界、入口与最小完成条件 Spec
+//   - phase06-02 draft-first / partial-entry 写路径 Spec
+//   - phase06-05 合同、传输与源码约束 Spec
+//                §"OnboardingRead（含 first_run_state）的 .proto -> HTTP DTO -> 前端消费模型单值一致必须进入验收门禁"
+//   - phase06-10 当前阶段最小 Protocol Buffers 合同设计 Spec
+//                §"OnboardingService 最小合同设计冻结"
+//                / §"Draft-First 继续复用既有 canonical create 合同"
+//                / §"错误语义与 breaking 演进前提冻结"
+//   - phase06-12 Onboarding + Sovereignty + Reuse 正式规格正文 Spec
+//                §"first_run_state 与 Onboarding 交互主线冻结"
+//                / §"Draft-First 写模型与前端写路径边界冻结"
+//                / §"合同、传输与演进基线冻结"
+//   - phase06-13 落实当前阶段最小 Protocol Buffers 合同主线 Spec
+//
+// 落点要求：
+//   - 本文件落地到现有 proto/ 工作区，复用同一 buf workspace
+//   - 不新增第二套 buf.yaml / buf.gen.yaml / Makefile 或并列 proto 根目录
+//   - 与 Module Registry / Decision Center / Product Registry / Repository Binding /
+//     Dashboard 在同一个 buf workspace 内共同通过校验
+//
+// Draft-First 边界：
+//   - 当前阶段 OnboardingService 只承接 GetFirstRunState，不承接 CreateDraft* RPC
+//   - 四类 draft-first 创建动作（Product / Repository / Module / Decision）继续复用
+//     既有 canonical create 合同主线：
+//       ProductRegistryService.CreateProduct       -> POST /api/products
+//       RepositoryBindingService.CreateRepository  -> POST /api/repositories
+//       ModuleRegistryService.CreateModule         -> POST /api/modules
+//       DecisionCenterService.CreateDecision       -> POST /api/decisions
+//   - 当前阶段不得在 OnboardingService 下新增 CreateDraftProduct /
+//     CreateDraftRepository / CreateDraftModule / CreateDraftDecision
+//   - 当前阶段不得发明 /api/onboarding/drafts/* 第二套路由分组
+//   - Onboarding 页面只是既有 canonical create 合同的消费入口，不成为新的写合同 owner
+//
+// 过渡传输层说明：
+//   当前阶段保留 chi + JSON HTTP 作为过渡传输层（phase06-14 / 15 实现）。
+//   JSON 请求与响应语义必须从本 .proto 派生或严格对齐，不得形成第二套合同源。
+//   HTTP 路径、状态码与中间件策略不属于本合同本体，由过渡传输层独立承载。
+//   handler 必须在进入业务层前显式组装对应的 Proto request 消息，
+//   不得因 GET 入口无 body 或路径参数就绕过 Proto request 这一合同边界。
+//
+// 字段编号规则：
+//   - 每个字段拥有稳定编号，不得复用已删除字段编号或字段语义
+//   - 新增字段必须使用新的递增编号，不得插入到已有编号之间
+//   - reserved 关键字用于标记已删除或预留的编号区间
+//   - 后续版本删除字段或废弃字段名时必须使用 reserved 保留字段号
+//
+// 跨包依赖策略：
+//   - Onboarding 当前阶段不 import 其他 psco.* 包，自有枚举（FirstRunStatus /
+//     OnboardingStep）在本文件内单值定义
+//   - first_run_state 不内联在四类 canonical create response 中，进度推进必须通过
+//     后续 GetFirstRunState 重新读取承接
+//   - 后续若需跨模块关系摘要，由 ReuseSummaryService 独立承接，不在此文件中引入
+//
+// 生成入口：
+//   在 proto/ 目录执行 make gen，或直接执行 buf generate。
+//   生成产物：
+//     - Go:    backend/internal/gen/proto/psco/onboarding/v1/
+//     - TS:    frontend/src/gen/proto/psco/onboarding/v1/
+//
+// 当前阶段边界：
+//   - 只生成消息类型，不生成 gRPC 服务桩
+//   - service 定义在 .proto 合同源中已冻结，后续迁移到 gRPC / Connect 时再加回 grpc/connect 插件
+//   - 不要求完成完整 gRPC / Connect 传输层迁移
+//   - 不要求立即用生成类型替换全部现有手写 DTO
+
+syntax = "proto3";
+
+package psco.onboarding.v1;
+
+// Go 包路径（生成代码落点）
+option go_package = "github.com/psco/backend/internal/gen/proto/psco/onboarding/v1;onboardingv1";
+
+// ============================================================================
+// 枚举
+// ============================================================================
+
+// FirstRunStatus — 首轮 onboarding 运行的状态机，对齐 phase06-01 / phase06-12 冻结的状态跃迁。
+// UNSPECIFIED 表示未指定，不得作为合法业务值。
+// 状态跃迁口径：
+//   - not_started：尚未开始任何首轮对象写入
+//   - in_progress：已至少创建 1 条首轮对象记录但四类对象未全部持久化
+//   - completed：四类对象均已持久化并满足首轮成功会话条件
+enum FirstRunStatus {
+  FIRST_RUN_STATUS_UNSPECIFIED = 0;
+  FIRST_RUN_STATUS_NOT_STARTED = 1;
+  FIRST_RUN_STATUS_IN_PROGRESS = 2;
+  FIRST_RUN_STATUS_COMPLETED = 3;
+}
+
+// OnboardingStep — Onboarding 首轮录入主线的步骤分段，对齐 phase06-12 冻结的六段语义。
+// 推荐执行顺序冻结为 Product -> Repository -> Module -> Decision。
+// UNSPECIFIED 表示未指定，不得作为合法业务值。
+// COMPLETE 表示首轮成功会话已成立，Onboarding 主线不再作为主入口。
+enum OnboardingStep {
+  ONBOARDING_STEP_UNSPECIFIED = 0;
+  ONBOARDING_STEP_WELCOME = 1;
+  ONBOARDING_STEP_PRODUCT = 2;
+  ONBOARDING_STEP_REPOSITORY = 3;
+  ONBOARDING_STEP_MODULE = 4;
+  ONBOARDING_STEP_DECISION = 5;
+  ONBOARDING_STEP_COMPLETE = 6;
+}
+
+// ============================================================================
+// 核心消息
+// ============================================================================
+
+// FirstRunState — 首轮 onboarding 运行的最小读模型，对齐 phase06-01 / phase06-12 冻结边界。
+// 该消息只承接读取，不承接任何 draft-first 写入语义。
+// current_step 必须显式承接当前引导步骤，而不是要求前端自行推导。
+// completion_progress 表达首轮四类对象的完成进度，取值范围由 service 层承接，
+// 不在本合同中提前冻结具体数值格式（如百分比或分子分母）。
+message FirstRunState {
+  FirstRunStatus status = 1;
+  bool is_first_entry = 2;
+  OnboardingStep current_step = 3;
+  int32 completion_progress = 4;
+}
+
+// ============================================================================
+// 读组请求与响应消息
+// ============================================================================
+
+// GetFirstRunStateRequest — 首轮状态读取请求（当前版本无字段）。
+// 保持无筛选、无分页、无排序切换的最小请求边界。
+// 后续若增加字段，只能从新的递增字段号开始，不得反向改写当前"空 request"边界。
+message GetFirstRunStateRequest {}
+
+// GetFirstRunStateResponse — 首轮状态读取响应。
+// 只以单一 FirstRunState 承接，不并入 Onboarding 页面错误、局部失败标记或草稿摘要列表。
+message GetFirstRunStateResponse {
+  FirstRunState first_run_state = 1;
+}
+
+// ============================================================================
+// 服务接口
+// ============================================================================
+
+// OnboardingService — Onboarding 当前阶段完整动作矩阵的 RPC 合同。
+//
+// 接口分组对齐 phase06-12：
+//   - 读组：GetFirstRunState
+//   - 当前阶段不承接任何业务写入
+//
+// 当前阶段 OnboardingService 只承接 GetFirstRunState，不并列增加
+// CreateDraftProduct / CreateDraftRepository / CreateDraftModule / CreateDraftDecision。
+// 四类 draft-first 写入继续复用既有 canonical create 合同主线：
+//   - ProductRegistryService.CreateProduct
+//   - RepositoryBindingService.CreateRepository
+//   - ModuleRegistryService.CreateModule
+//   - DecisionCenterService.CreateDecision
+//
+// 错误语义：
+//   合同只承接成功路径下的合同结构，不并列发明第二套错误业务字段。
+//   状态读取失败、整页失败、局部失败展示状态等错误语义继续由 HTTP / handler 适配层承接。
+//   HTTP 状态码映射继续由过渡传输层负责，不写进 .proto 合同本体。
+//
+// 过渡传输层映射：
+//   当前阶段由 chi + JSON HTTP 承接，RPC 到 HTTP 的映射约定见 proto/README.md。
+//   后续阶段可迁移到 gRPC / Connect 而不需要修改本合同源。
+service OnboardingService {
+  // --- 读组 ---
+
+  // FirstRunStateRead — 首轮 onboarding 状态读取
+  rpc GetFirstRunState(GetFirstRunStateRequest) returns (GetFirstRunStateResponse);
+}
