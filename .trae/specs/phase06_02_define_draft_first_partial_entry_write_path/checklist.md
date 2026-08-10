@@ -1,0 +1,15 @@
+- [x] `CreateDraftProduct` 的最小必填字段与系统默认补位字段已明确冻结（`description = ''`，`status = active`）
+- [x] `CreateDraftRepository` 的最小必填字段与系统默认补位字段已明确冻结（`provider = manual`，`status = active`）
+- [x] `CreateDraftModule` 的最小必填字段与系统默认补位字段已明确冻结（`description = ''`，`status = active`）
+- [x] `CreateDraftDecision` 的最小必填字段与系统默认补位字段已明确冻结（`context = ''`，`problem = ''`，`impact = ''`，`alternatives = []`，`status = proposed`）
+- [x] 单对象 `draft created` 的成立条件已明确，不与首轮成功会话混淆
+- [x] 四类对象都已 `draft created` 后才允许成立首轮成功会话的边界已明确
+- [x] 允许后补的字段范围已明确
+- [x] 允许后补的绑定关系范围已明确
+- [x] 四类对象各自唯一 `application` 写入承接位已明确冻结
+- [x] `Onboarding` 与 canonical create 页面共享同一套写入语义的要求已明确
+- [x] `query` / read adapter 纯只读边界已明确
+- [x] phase06 新增写路径不得继续在 read adapter、query hook 或展示组件中散落 `useMutation` 的要求已明确
+- [x] `ProductCreatePage` / `RepositoryCreatePage` / `ModuleCreatePage` / `DecisionCreatePage` 的 page-level mutation 回收范围已明确
+- [x] 表单组件只保留字段收集、提交事件与表单内错误展示职责的要求已明确
+- [x] 本次规格与 `phase06-01`、`phase06` shared baseline、当前 create 页面实际分布及 `phase06-02` 子任务 DoD 保持一致
