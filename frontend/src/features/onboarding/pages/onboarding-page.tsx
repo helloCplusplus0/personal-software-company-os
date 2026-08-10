@@ -119,10 +119,10 @@ export function OnboardingPage() {
     returnSearch.decisionDraftLabel,
   ])
 
-  // status = completed 时自动进入 complete 步骤
+  // status = completed 时默认进入 complete 步骤；
+  // 若当前存在从 detail 页回流的一次性 focusedStep，则保留该步骤优先级。
   useEffect(() => {
     if (status === 'completed') {
-      setFocusedStep(null)
       setStartStep('complete')
     }
   }, [status])

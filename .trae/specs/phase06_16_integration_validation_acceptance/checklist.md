@@ -1,0 +1,12 @@
+- [x] `phase06-16` 明确要求联调验收必须复用 `reset_phase06_acceptance.sh`、默认恢复与 11 个 fixture 白名单，不允许 mock、手工 SQL 或伪结果替代。
+- [x] 规格明确覆盖 cold-start、`in_progress` 回访继续与 `completed` 成功会话三类正式状态，并要求验证根级入口行为与 `/onboarding` 回流语义。
+- [x] 规格明确要求首轮成功会话必须验证 `Product / Repository / Module / Decision` 四类对象都已真实持久化记录。
+- [x] 规格明确要求导出验收必须验证绑定 / 关联关系进入覆盖矩阵，而不是只验证主实体导出成功。
+- [x] 规格明确要求 `backup verified` 必须同时依赖 manifest、覆盖矩阵与 schema/version 前提校验，不能以文件生成成功代替。
+- [x] 规格明确要求 `manifest_missing / coverage_incomplete / schema_mismatch` 三类失败语义在 `.proto -> HTTP DTO -> 前端展示` 边界保持单值一致。
+- [x] 规格明确要求 Dashboard、Module Detail、Product Detail 的复用反馈路径都要验证，且 `module_reuse_summary / capability_summary` 必须反映最新已提交状态。
+- [x] 规格明确要求 `phase05` 已交付的 `overview / feedback-signals / recent-activities` 主线继续通过兼容性回归验收。
+- [x] 规格明确要求局部错误必须局限在对应子区域，不得把整页打回错误态。
+- [x] 规格明确要求默认恢复、fixture 恢复、导出与备份动作都可重复执行，不依赖手工清理环境。
+- [x] 规格明确要求本阶段最终产出单一 `acceptance_report.md`，并记录环境、步骤、问题、修复、复测与 DoD 达成情况。
+- [x] 规格明确要求若仍存在未修复阻断问题，则不得宣告 `phase06-16` 通过。

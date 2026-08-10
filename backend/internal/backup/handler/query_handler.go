@@ -37,7 +37,7 @@ func NewQueryHandler(q *service.QueryService) *QueryHandler {
 //
 // 返回语义：
 //   - 有备份记录 → 200 + 校验后的 BackupSnapshot（verified / verify_failed）
-//   - 无备份记录 → 200 + 空 snapshot（verified_status = unspecified）
+//   - 无备份记录 → 200 + snapshot: null
 //   - 读取失败 → 500
 func (h *QueryHandler) GetBackupSnapshot(w http.ResponseWriter, r *http.Request) {
 	snapshot, err := h.query.ReadBackupSnapshot(r.Context())
@@ -46,12 +46,10 @@ func (h *QueryHandler) GetBackupSnapshot(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// 无历史备份记录 → 返回空 snapshot（不映射为错误）
+	// 无历史备份记录时返回 snapshot: null，由前端按正式空态消费。
 	if snapshot == nil {
 		writeJSON(w, http.StatusOK, backup.BackupSnapshotReadResult{
-			Snapshot: &backup.BackupSnapshot{
-				VerifiedStatus: backup.BackupVerifiedStatusUnspecified,
-			},
+			Snapshot: nil,
 		})
 		return
 	}

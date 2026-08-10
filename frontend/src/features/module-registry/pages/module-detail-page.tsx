@@ -143,8 +143,12 @@ export function ModuleDetailPage() {
           {/*
             phase06-15 §"Module Detail 与 Product Detail 挂接位"：
             在 Module Summary 邻近区域挂接复用摘要内联组件
+
+            phase06-16 §"紧凑型优化"：
+            移除重型卡片包裹（rounded-lg border bg-muted/20 p-3），
+            改用轻量顶部分隔线（border-t pt-2），避免与 ModuleSummaryCard 形成双层卡片嵌套。
           */}
-          <div className="rounded-lg border bg-muted/20 p-3">
+          <div className="border-t pt-2">
             <ReuseSummaryInline
               status={reuseSummaryStatus}
               moduleReuseSummary={reuseSummaryQuery.data?.module_reuse_summary ?? []}

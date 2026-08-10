@@ -286,7 +286,7 @@ export function DashboardHomePage() {
               }}
               data-dashboard-section="empty-state"
               tabIndex={-1}
-              className="rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+              className="rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               <DashboardPrimaryActionPanel
                 overviewStatus="ready"
@@ -309,7 +309,7 @@ export function DashboardHomePage() {
               }}
               data-dashboard-section="overview"
               tabIndex={-1}
-              className="rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+              className="rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               <DashboardStatBar
                 overview={overviewQuery.data}
@@ -326,7 +326,7 @@ export function DashboardHomePage() {
             }}
             data-dashboard-section="current-focus"
             tabIndex={-1}
-            className="rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            className="rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             <CurrentFocusSection
               status={currentFocusStatus}
@@ -343,7 +343,7 @@ export function DashboardHomePage() {
             }}
             data-dashboard-section="asset-feedback"
             tabIndex={-1}
-            className="rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            className="rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             <AssetFeedbackSection
               status={assetFeedbackStatus}
@@ -369,7 +369,7 @@ export function DashboardHomePage() {
             }}
             data-dashboard-section="recent-activity"
             tabIndex={-1}
-            className="rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            className="rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             <RecentActivitySection
               status={activitySectionStatus}

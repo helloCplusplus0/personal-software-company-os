@@ -110,8 +110,12 @@ export function AssetFeedbackSection({
           phase06-15 §"Dashboard 复用快照挂接位"：
           Reuse Snapshot 作为 Asset Feedback 内独立子区域，必须始终独立渲染自己的
           loading / ready / empty / error 状态，不能被代表性缺口项的 loading 覆盖。
+
+          phase06-16 §"紧凑型优化"：
+          移除完整卡片包裹（rounded-lg border bg-muted/20 p-3），改用轻量顶部分隔线（border-t pt-2），
+          延续 phase05-13 紧凑化规范，避免在已有区块内嵌套重型卡片。
         */}
-        <div className="mt-3 rounded-lg border bg-muted/20 p-3">
+        <div className="mt-2 border-t pt-2">
           <ReuseSnapshotSection
             status={reuseSnapshotStatus}
             moduleReuseSummary={moduleReuseSummary}
