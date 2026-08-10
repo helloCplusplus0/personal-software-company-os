@@ -1,0 +1,26 @@
+- [x] 已明确 `phase06` 新增或扩展接口的字段、枚举、response envelope 与错误语义必须先在 `.proto` 中冻结
+- [x] 已明确 `chi + HTTP JSON` 在当前阶段只承担传输适配职责，不承担第二套合同定义职责
+- [x] 已明确不得把"当前还没切到 gRPC / Connect"误解释为可先放宽合同一致性要求
+- [x] 已明确 handler 必须把 path / query / body 显式组装为 Proto request 或与之单向对齐的 DTO
+- [x] 已明确已冻结为 envelope 的读取接口不得退回为裸对象、裸数组或临时 map
+- [x] 已明确新增字段编号、breaking 变更、`reserved` 与 `main#proto` breaking check 基准
+- [x] 已明确 breaking check 失败必须被显式处理为阻断，不得通过 `continue-on-error` / `allow-failure` 降级为 warning
+- [x] 已明确后端 `types.go` 只承接与 `.proto` 对齐的过渡 JSON DTO，不得新增并列业务语义
+- [x] 已明确前端 `types.ts` 与 `api-adapter.ts` 只能对 `.proto` 做单向承接或显式字段转换
+- [x] 已明确 `Export / Backup` 的覆盖矩阵、`manifest`、`schema / version` 与错误语义不得在 HTTP 层再长第二套口径
+- [x] 已明确 `backup_snapshot` 读取侧必须由当前阶段 `Backup` 能力中的正式读时承接位负责，不得只由 `BackupWrite` 响应附带
+- [x] 已明确 `ReuseSummaryRead` 的 `module_reuse_summary / capability_summary` 字段、空态与错误语义必须从 `.proto` 单向承接
+- [x] 已明确 `OnboardingRead`（含 `first_run_state` 状态枚举与跃迁语义）的 DTO 一致性必须从 `.proto` 单向承接
+- [x] 已明确 `query` owner 只承接读取、query key、只读解包与 `queryOptions` 级别配置
+- [x] 已明确正式 `useMutation`、失效刷新、成功回流、错误归一化统一收敛到切片内固定 `application` 承接位
+- [x] 已明确页面、表单、面板组件只保留字段收集、提交事件与局部状态展示职责
+- [x] 已明确既有 page-level / panel-level `useMutation` 可作为过渡现实保留，但 `phase06` 新增写路径不得复制这种模式
+- [x] 已明确 `shared` 晋升必须延后到跨切片稳定复用后
+- [x] 已明确 `proto/Makefile` 与 `proto/buf.yaml / buf.gen.yaml` 是唯一正式工具链入口
+- [x] 已明确当前阶段不得新增第二套 proto 根目录、私有 buf 配置或旁路生成脚本
+- [x] 已明确阶段验收至少覆盖 `buf build / lint / generate / breaking`
+- [x] 已明确阶段验收必须同时检查合同一致性与前端写路径承接位边界
+- [x] 已明确验收时必须显式验证 `OnboardingRead`（含 `first_run_state`）的 `.proto -> HTTP DTO -> 前端消费模型` 单值一致
+- [x] 已明确验收时必须显式验证 `backup_snapshot` 读取侧的 `.proto -> HTTP DTO -> 前端消费模型` 单值一致
+- [x] 已明确本次规格与 `phase06` shared baseline、architecture plan、project_rules 以及 `phase06-03 / 04` 已冻结语义保持一致
+- [x] 已明确本次规格足以支撑后续 `phase06-10` 合同实现、前端写路径回收与阶段验收
