@@ -1,0 +1,15 @@
+- [x] 已明确 `Export` 的正式语义是“面向用户带走核心资产数据”
+- [x] 已明确 `Export` 成功语义包含“用户能够确认导出完成”，而不只是后台写出动作
+- [x] 已明确 `Backup` 的正式语义是“面向当前实例保留与恢复前提校验”
+- [x] 已明确 `Export` 与 `Backup` 不是同义词
+- [x] 已明确 `Export` 最小覆盖 `products / modules / releases / repositories / decisions / decision_links / product_modules / product_repositories / module_repositories`
+- [x] 已明确 `Backup` 的最小覆盖范围不小于 `Export`
+- [x] 已明确 `Backup` 必须额外带出 `manifest / 备份创建时间 / schema / version` 恢复前提
+- [x] 已明确 `Export` 正式执行路由为 `/dashboard/export`
+- [x] 已明确 `Backup` 正式执行路由为 `/dashboard/backup`
+- [x] 已明确当前阶段“恢复前提”只承接 read / verify，不要求真正 restore 写回
+- [x] 已明确 `backup verified` 的最小成立条件是：产物可读、manifest 可读、覆盖矩阵可核对、schema / version 前提可校验
+- [x] 已明确“仅文件写出成功”不得判定为 `backup verified`
+- [x] 已明确 `Export / Backup` 的最小失败归类
+- [x] 已明确当前阶段不依赖 GitHub 或其他第三方平台作为唯一前提
+- [x] 已明确自动同步、连续备份、多端同步、复杂灾备、完整 restore 写回不进入当前范围
