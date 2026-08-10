@@ -26,14 +26,14 @@
 - [阶段路线图](file:///home/dell/Projects/personal-software-company-os/plan.md)
 - [项目规则](file:///home/dell/Projects/personal-software-company-os/project_rules.md)
 - [目录与迁移落点](file:///home/dell/Projects/personal-software-company-os/architecture_map.md)
-- 当前根级阶段状态：`phase06_onboarding_sovereignty_reuse_foundation` 已建立正式 `/plan` 入口
-- 当前下一阶段入口：待 `phase06` 正式收口后切换（不得预设新的 phase 名称）
+- 当前根级阶段状态：`phase06_onboarding_sovereignty_reuse_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
+- 当前下一阶段入口：待下一阶段正式 phase 入口建立后切换（不得预设 `phase07` 名称）
+- [phase06 正式规格正文](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase06_12_onboarding_sovereignty_reuse_formal_spec/spec.md)
+- [phase06 合同主线入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase06_13_land_minimal_proto_contract_mainline)
+- [phase06 联调验收与收口入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase06_16_integration_validation_acceptance/acceptance_report.md)
 - [phase06 规划记录：architecture_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase06_onboarding_sovereignty_reuse_foundation_architecture_plan.md)
 - [phase06 规划记录：dev_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase06_onboarding_sovereignty_reuse_foundation_dev_plan.md)
 - [phase06 规划记录：shared_baseline](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase06_onboarding_sovereignty_reuse_foundation_shared_baseline.md)
-- [phase05 正式规格正文](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase05_10_dashboard_feedback_formal_spec/dashboard_feedback_spec_v0.1.md)
-- [phase05 合同主线入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase05_11_dashboard_feedback_proto_mainline)
-- [phase05 联调验收与收口入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase05_14_dashboard_feedback_integration_validation_acceptance/acceptance_report.md)
 - [下一阶段方向评审（GPT54）](file:///home/dell/Projects/personal-software-company-os/docs/review/PSCO-next-phase-mvp02-GPT54.md)
 - [mvp0.2 专家意见交叉汇总（GPT54）](file:///home/dell/Projects/personal-software-company-os/docs/review/PSCO-mvp02-summarize-feedback-GPT54.md)
 - [mvp0.2 最终仲裁与规划基线](file:///home/dell/Projects/personal-software-company-os/PSCO-mvp02-summarize-feedback.md)
@@ -60,6 +60,6 @@
 - `Product Registry + Repository Binding` 最小主线已形成可运行交付物，并已冻结正式规格、`.proto` 合同与联调验收入口
 - `phase05_dashboard_feedback_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - `Dashboard + Feedback` 最小主线已形成可运行交付物，并已冻结正式规格、`.proto` 合同与联调验收入口
-- `phase06_onboarding_sovereignty_reuse_foundation` 已建立正式 `/plan` 入口，当前待继续进入 `/spec`
-- 当前最应优先读取的活动入口为 `PSCO-mvp02-summarize-feedback.md` 与 `phase06` 三件套；当前最应优先读取的已交付边界入口仍为 `phase05-10 / 11 / 14`
-- `phase05` 三件套保留为最近完成阶段的规划与冻结记录，不再覆盖根级当前阶段状态
+- `phase06_onboarding_sovereignty_reuse_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
+- 当前最应优先读取的活动入口为 `phase06-12` 正式规格正文、`phase06-13` 合同主线与 `phase06-16` 验收结论；`phase06` 三件套保留为该阶段 `/plan` 的规划与冻结记录
+- `phase05` 三件套保留为上一已完成阶段的规划与冻结记录，不再覆盖根级当前阶段状态

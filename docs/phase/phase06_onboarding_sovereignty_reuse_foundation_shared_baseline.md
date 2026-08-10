@@ -4,6 +4,8 @@
 
 本文档用于集中冻结 `phase06` 的共享基线，避免相同结论在 `architecture_plan`、`dev_plan`、后续 `/spec` 与根级真相源中重复发散。
 
+> 收口说明：`phase06` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`。本文保留为该阶段 `/plan` 的共享基线与冻结记录，不承担根级当前阶段状态说明；当前阶段状态以 `AGENTS.md`、`plan.md` 与 `docs/README.md` 为准。
+
 ## 2. 当前单值基线
 
 ### 2.1 项目路线
@@ -11,7 +13,7 @@
 - 当前项目：`PSCO`
 - 当前 phase：`phase06_onboarding_sovereignty_reuse_foundation`
 - 当前技术路线：`Durable System Track`
-- 当前根级阶段状态：`phase06` 已建立正式 `/plan` 入口，待继续进入 `/spec -> 实现 -> 验收 -> 收口`
+- 当前根级阶段状态：`phase06` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，当前处于收口后根级同步完成状态
 - `phase06` 的规划上游统一以 `PSCO-mvp02-summarize-feedback.md` 与 `phase05` 已交付边界为准
 
 ### 2.2 当前阶段唯一直接执行层上游

@@ -101,6 +101,9 @@ docs/
   - `.trae/specs/phase05_10_dashboard_feedback_formal_spec/dashboard_feedback_spec_v0.1.md`（`phase05` 正式规格收口入口，同时作为下一阶段直接上游）
   - `.trae/specs/phase05_11_dashboard_feedback_proto_mainline/`（`phase05` 最小 `.proto` 合同收口入口，同时作为下一阶段直接上游）
   - `.trae/specs/phase05_14_dashboard_feedback_integration_validation_acceptance/acceptance_report.md`（`phase05` 联调验收与收口结论入口，同时作为下一阶段直接上游）
+  - `.trae/specs/phase06_12_onboarding_sovereignty_reuse_formal_spec/spec.md`（`phase06` 正式规格收口入口）
+  - `.trae/specs/phase06_13_land_minimal_proto_contract_mainline/`（`phase06` 最小 `.proto` 合同收口入口）
+  - `.trae/specs/phase06_16_integration_validation_acceptance/acceptance_report.md`（`phase06` 联调验收与收口结论入口）
 - 当前项目技术路线已冻结为 `Durable System Track`
 - `phase02_module_registry_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - `phase03_decision_center_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
@@ -112,8 +115,9 @@ docs/
 - `phase04` 直接承接 `phase03` 已交付的 `Decision Center` 主线与联调验收结果，并已完成 `Product Registry + Repository Binding` 正式规格、合同、实现与联调验收收口
 - `phase05` 已直接承接 `phase04-10` 正式规格、`phase04-11` 合同主线与 `phase04-14` 验收结论，并完成 `Dashboard + Feedback` 正式规格、合同、实现与联调验收收口
 - `phase05` 三件套保留为该阶段 `/plan` 的规划与冻结记录，不再承担根级当前阶段状态说明
-- `phase06` 已直接承接 `PSCO-mvp02-summarize-feedback.md` 与 `phase05-10 / 11 / 14`，并已建立当前阶段正式 `/plan` 入口
-- 后续阶段正式 phase 入口待 `phase06` 收口后建立；根级文档不得提前猜测下一阶段名称
+- `phase06` 已直接承接 `PSCO-mvp02-summarize-feedback.md` 与 `phase05-10 / 11 / 14`，并已完成正式规格、合同、实现与联调验收收口
+- `phase06` 三件套保留为该阶段 `/plan` 的规划与冻结记录，不再承担根级当前阶段状态说明
+- 后续阶段正式 phase 入口待建立后切换；根级文档不得提前猜测 `phase07` 或其他未建立阶段名称
 
 ### 4.2 fix
 

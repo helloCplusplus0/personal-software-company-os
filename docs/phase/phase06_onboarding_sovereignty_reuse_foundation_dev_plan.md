@@ -4,6 +4,8 @@
 
 本文档定义 `phase06_onboarding_sovereignty_reuse_foundation` 的执行顺序、子任务范围、DoD 与明确不做。
 
+> 收口说明：`phase06` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`。本文保留为该阶段 `/plan` 的执行规划与冻结记录，不承担根级当前阶段状态说明；当前阶段状态以 `AGENTS.md`、`plan.md` 与 `docs/README.md` 为准。
+
 `phase06` 是 `mvp0.2` 的首个交付型 phase。它不是只冻结“下一阶段应该做什么”，而是要完成 `/plan -> /spec -> 实现 -> 验收 -> 收口` 全链路，并最终交付 `Onboarding + Data Sovereignty + Reuse Awareness` 的最小可执行主线。
 
 相较于 `phase05`，本阶段在任务拆分上显式吸取以下经验：

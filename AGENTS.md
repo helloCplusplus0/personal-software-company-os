@@ -6,9 +6,9 @@
 ## 1. 项目定位
 
 - 项目名称：`Personal Software Company OS`
-- 当前阶段：`phase06_onboarding_sovereignty_reuse_foundation`（已完成 `/plan` 建立，待进入 `/spec -> 实现 -> 验收 -> 收口`）
-- 当前主目标：交付 `Onboarding + Data Sovereignty + Reuse Awareness` 最小主线，并保持根级真相源与 `phase06` 规划入口一致
-- 当前下一阶段入口：待 `phase06` 正式收口后切换（不得预设新的 phase 名称）
+- 当前阶段：`phase06_onboarding_sovereignty_reuse_foundation`（已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，待下一阶段正式 phase 入口建立后切换）
+- 当前主目标：保持 `phase06` 已收口结论与根级真相源、活动文档入口一致，并等待下一阶段正式 phase 入口建立
+- 当前下一阶段入口：待下一阶段正式 phase 入口建立后切换（不得预设 `phase07` 名称）
 - 当前定位：PSCO 是个人软件公司的经营与资产系统，不是代码管理工具，不是 AI Chat 产品，也不是自动扫描系统
 
 ## 2. 当前唯一上游
@@ -59,8 +59,13 @@
 - `.trae/specs/phase05_14_dashboard_feedback_integration_validation_acceptance/acceptance_report.md` 已给出 `phase05` 联调验收与收口结论入口
 - `phase05` 三件套保留为该阶段 `/plan` 的规划与冻结记录，不再覆盖根级当前状态
 - `PSCO-mvp02-summarize-feedback.md` 已冻结为 `mvp0.2` 下一阶段 `/plan` 的最终仲裁与规划基线
-- `phase06_onboarding_sovereignty_reuse_foundation` 三件套已建立，并作为当前阶段正式 `/plan` 入口
-- `phase06` 直接承接 `phase05-10 / 11 / 14` 与 `PSCO-mvp02-summarize-feedback.md`，当前待继续进入 `/spec`
+- `phase06_onboarding_sovereignty_reuse_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
+- `Onboarding + Data Sovereignty + Reuse Awareness` 最小主线已形成可运行、可验收交付物，并完成正式规格、`.proto` 合同主线、前后端实现与联调验收收口
+- `.trae/specs/phase06_12_onboarding_sovereignty_reuse_formal_spec/spec.md` 已冻结为 `phase06` 当前阶段唯一规格收敛入口
+- `.trae/specs/phase06_13_land_minimal_proto_contract_mainline/` 已将 `phase06` 最小 `.proto` 合同接入仓库既有 `proto/` 主线
+- `.trae/specs/phase06_16_integration_validation_acceptance/acceptance_report.md` 已给出 `phase06` 联调验收与收口结论入口
+- `phase06` 三件套保留为该阶段 `/plan` 的规划与冻结记录，不再覆盖根级当前状态
+- `phase06` 直接承接 `phase05-10 / 11 / 14` 与 `PSCO-mvp02-summarize-feedback.md`，并已完成当前阶段收口；下一阶段待正式 phase 入口建立后切换
 
 ## 5. 推荐阅读顺序
 
@@ -96,7 +101,10 @@
 30. `docs/phase/phase06_onboarding_sovereignty_reuse_foundation_architecture_plan.md`
 31. `docs/phase/phase06_onboarding_sovereignty_reuse_foundation_dev_plan.md`
 32. `docs/phase/phase06_onboarding_sovereignty_reuse_foundation_shared_baseline.md`
-33. 当前目标对应的 `phase / fix / audit` 文档
+33. `.trae/specs/phase06_12_onboarding_sovereignty_reuse_formal_spec/spec.md`
+34. `.trae/specs/phase06_13_land_minimal_proto_contract_mainline/`
+35. `.trae/specs/phase06_16_integration_validation_acceptance/acceptance_report.md`
+36. 当前目标对应的 `phase / fix / audit` 文档
 
 ## 6. 接手提醒
 

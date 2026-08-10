@@ -4,6 +4,8 @@
 
 本文档是 `phase06_onboarding_sovereignty_reuse_foundation` 的架构规划文档。
 
+> 收口说明：`phase06` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`。本文保留为该阶段 `/plan` 的架构规划与冻结记录，不承担根级当前阶段状态说明；当前阶段状态以 `AGENTS.md`、`plan.md` 与 `docs/README.md` 为准。
+
 `phase05` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，当前阶段作为 `mvp0.2` 的首个正式交付型 phase，负责把 `PSCO-mvp02-summarize-feedback.md` 中冻结的“阶段一：Onboarding + 数据主权 + 复用感知基础”转化为可继续进入 `/spec` 与实现的正式阶段入口。
 
 当前阶段不是继续扩写新实体，而是优先闭合三个缺口：
