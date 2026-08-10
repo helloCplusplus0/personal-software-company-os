@@ -1,0 +1,22 @@
+- [x] 已明确 `phase06-12` 的目标是“首份正式规格正文”，不是合同主线落地或源码实现
+- [x] 已明确 `phase06-12` 生效后成为 `phase06` 唯一直接执行层规格入口
+- [x] 已明确 `phase06-01 ~ 11` 退为追溯来源与证据链，不再并列承担直接执行层职责
+- [x] 已完整覆盖 `phase06` 的技术路线与阶段主线
+- [x] 已完整覆盖 `Onboarding / Dashboard / Export / Backup / Detail` 页面矩阵与正式业务路由
+- [x] 已完整覆盖 `fromOnboarding / onboardingStep / validateSearch / 返回优先级` 的 Onboarding 回流链
+- [x] 已完整覆盖 `not_started / in_progress / completed` 与根级默认进入路径
+- [x] 已完整覆盖 `Product -> Repository -> Module -> Decision` 的首轮录入主线与完成条件
+- [x] 已完整覆盖 draft-first 最小人工必填字段、partial-entry 与 canonical create 合同复用关系
+- [x] 已完整覆盖 `application` 单入口、`query` 纯只读与 mutation 固定承接位
+- [x] 已完整覆盖 Export 的语义、覆盖矩阵、入口位与成功/失败语义
+- [x] 已完整覆盖 Backup 的语义、恢复前提、`backup verified` 与错误边界
+- [x] 已完整覆盖 `module_reuse_summary / capability_summary` 的事实来源、字段与页面挂接位
+- [x] 已完整覆盖 Reuse Summary 在 Dashboard / Module Detail / Product Detail 的排序、裁剪与展示范围
+- [x] 已完整覆盖 `.proto` 唯一合同源、package / service / HTTP 映射矩阵与 DTO 单向派生规则
+- [x] 已完整覆盖 `BackupWrite.read_verify` 的读取侧合同一致性约束
+- [x] 已完整覆盖 enum 零值、`reserved` 与 breaking 演进规则
+- [x] 已完整覆盖 `reset_phase06_acceptance.sh`、fixture 白名单与阶段完成验收矩阵
+- [x] 已完整覆盖不得依赖手工补数据的验收门禁
+- [x] 已完整覆盖 `phase06` 非目标矩阵与 Done 标准
+- [x] 已验证本文与 `phase06-01 ~ 11` 保持单值一致，不反向改写上游结论
+- [x] 已验证本文足以直接作为 `phase06-13`、后续实现与下一阶段的唯一上游规格来源
