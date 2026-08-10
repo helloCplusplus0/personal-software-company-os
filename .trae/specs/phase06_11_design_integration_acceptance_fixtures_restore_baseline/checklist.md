@@ -1,0 +1,27 @@
+- [x] 已明确 `phase06-11` 的目标是“联调验收环境、fixture 与恢复基线设计”，不是源码实现
+- [x] 已明确 `phase06` 验收环境必须复用既有 `database/scripts/ + database/seeds/` 模式
+- [x] 已明确 `reset_phase06_acceptance.sh` 是当前阶段唯一统一验收入口
+- [x] 已明确统一入口最少支持默认、`--clean-only`、`--restore-only`、`--fixture <name>` 四种模式
+- [x] 已明确 fixture 白名单只包含 `cold-start-empty / in-progress-partial-entry / completed-unbound / completed-bound / export-ready / backup-verified / backup-manifest-missing / backup-coverage-incomplete / backup-schema-mismatch / reuse-latest / reuse-latest-after-binding`
+- [x] 已明确 `cold-start-empty` 必须验证 `first_run_state = not_started` 与默认进入 `/onboarding`
+- [x] 已明确 `in-progress-partial-entry` 必须验证 `first_run_state = in_progress`、默认进入 `/dashboard` 与 `Continue Onboarding`
+- [x] 已明确 `completed-unbound` 必须验证四类对象都已最小持久化，但允许缺少绑定关系
+- [x] 已明确 `completed-bound` 是“绑定补全后再次验证”的独立 fixture，不依赖手工补数据
+- [x] 已明确 `export-ready` 是数据主权导出闭合的独立 fixture 证据
+- [x] 已明确 `backup-verified` 是恢复前提校验成立的独立 fixture 证据
+- [x] 已明确 `backup-manifest-missing / backup-coverage-incomplete / backup-schema-mismatch` 三类失败路径 fixture
+- [x] 已明确 `reuse-latest` 用于验证复用感知可见
+- [x] 已明确 `reuse-latest-after-binding` 用于验证读取时反映最新已提交状态
+- [x] 已明确首轮成功会话、阶段完成、失败路径与回访继续都有独立验收矩阵
+- [x] 已明确验收环境可重复建立，默认恢复与 fixture 加载都必须幂等
+- [x] 已明确验收不得依赖手工补 SQL、手工改 `first_run_state`、手工补绑定关系或手工伪造备份结果
+- [x] 已验证本 spec 与 `phase05-09 / 14` 的验收模式保持一致
+- [x] 已验证本 spec 与 `phase06-01 / 03 / 04 / 06 / 08 / 09 / 10` 的状态、合同与边界保持一致
+- [x] 已验证本 spec 足以支撑后续真实 API 联调、浏览器验收与阶段收口
+- [x] 已明确 OnboardingRead（含 `first_run_state`）的 `.proto -> HTTP DTO -> 前端消费模型` 合同一致性必须纳入验收矩阵
+- [x] 已明确 Export / Backup / Reuse Summary 的合同一致性验证不得遗漏任一能力
+- [x] 已明确 `backup_snapshot` 读取侧合同一致性必须由 `BackupWrite.read_verify` 或等价上游冻结承接位独立验证，不得以 `BackupWrite` 响应附带代替
+- [x] 已明确 `--restore-only` 模式必须处理同标题 readonly seed 的情况
+- [x] 已明确三类备份失败 fixture 只冻结结果语义与可重复复现要求，不提前冻结 SQL、文件系统或其他单一实现方式
+- [x] 已明确导出/备份验收产物只冻结清理边界，不提前冻结数据库表、文件系统目录或其他存储介质
+- [x] 已明确清理边界清理验收产物及其关联元数据，但不清理 canonical 表与 `schema_migrations`
