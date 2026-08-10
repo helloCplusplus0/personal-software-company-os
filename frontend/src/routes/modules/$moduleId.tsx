@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
 import { ModuleDetailPage } from '@/features/module-registry/pages/module-detail-page'
 import { dashboardSourceSearchSchema } from '@/features/dashboard/lib/dashboard-source-schema'
+import { onboardingSourceSearchSchema } from '@/features/onboarding/lib/onboarding-source-schema'
 
 /**
  * ModuleDetailRoute — /modules/:moduleId
@@ -15,6 +16,8 @@ const moduleDetailSearchSchema = z.object({
   queryText: z.string().optional(),
   statusFilter: z.enum(['all', 'active', 'archived']).optional(),
   ...dashboardSourceSearchSchema,
+  // phase06-15 Onboarding 来源参数
+  ...onboardingSourceSearchSchema,
 })
 
 export const Route = createFileRoute('/modules/$moduleId')({

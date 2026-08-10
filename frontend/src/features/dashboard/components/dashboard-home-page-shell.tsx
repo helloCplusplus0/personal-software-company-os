@@ -27,6 +27,8 @@ import type { ReactNode } from 'react'
 interface DashboardHomePageShellProps {
   // 主 CTA（内联到标题行右侧；CTA 5-8 时由面板自身降级为标题下条带）
   primaryActionPanel: ReactNode
+  // phase06-15：数据主权面板（Export / Backup 入口），独立全宽区块
+  sovereigntyPanel?: ReactNode
   // 资产概览 + 缺口计数合并条带
   statBar: ReactNode
   // 左栏：待办与代表性缺口
@@ -43,20 +45,23 @@ interface DashboardHomePageShellProps {
  * ┌─────────────────────────────────────────────┐
  * │ Dashboard               [主 CTA 按钮 →]      │  ← 标题行 + 主CTA内联
  * ├─────────────────────────────────────────────┤
+ * │ 数据主权：Export / Backup 入口面板           │  ← phase06-15 新增 sovereigntyPanel
+ * ├─────────────────────────────────────────────┤
  * │ [模块 n | 产品 n | ... | 完整 n | 双缺 n]    │  ← stat bar 单行
  * ├──────────────────────────┬──────────────────┤
  * │ Current Focus（待办）     │ Recent Activity  │
  * │ ...紧凑行...              │ ...限高滚动...    │
  * │ Asset Feedback（缺口）    │                  │
+ * │  └ Reuse Snapshot         │                  │  ← phase06-15 复用快照子区域
  * │ ...紧凑行...              │                  │
  * └──────────────────────────┴──────────────────┘
  *
- * 移动端（md: 以下）单列顺序（phase05-10 §9.8 字面对齐）：
- * 标题行 → CurrentFocus → statBar(dashboard_overview) → AssetFeedback → RecentActivity
- * （通过 CSS order 工具类实现：CurrentFocus order-1、statBar order-2、AssetFeedback order-3、RecentActivity order-4）
+ * 移动端（md: 以下）单列顺序（phase05-10 §9.8 字面对齐 + phase06-15 sovereigntyPanel 置顶）：
+ * 标题行 → sovereigntyPanel → CurrentFocus → statBar(overview) → AssetFeedback → RecentActivity
  */
 export function DashboardHomePageShell({
   primaryActionPanel,
+  sovereigntyPanel,
   statBar,
   currentFocusSection,
   assetFeedbackSection,
@@ -70,6 +75,13 @@ export function DashboardHomePageShell({
         <h1 className="text-xl font-bold">Dashboard</h1>
         {primaryActionPanel}
       </div>
+
+      {/*
+        phase06-15 §"Dashboard 用户入口落地"：
+        sovereigntyPanel 作为独立全宽区块，置于标题行与 stat bar 之间。
+        Export / Backup 入口稳定可见，不得做成隐藏路由或仅测试按钮。
+      */}
+      {sovereigntyPanel}
 
       {/*
         主体网格：扁平化放置 statBar + 四区块，用 CSS grid 显式定位同时满足

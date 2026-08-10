@@ -9,6 +9,12 @@ import { ArrowLeft } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { BackToDashboardButton } from '@/features/dashboard/components/back-to-dashboard-button'
 import { mergeCurrentDashboardSource } from '@/features/dashboard/lib/dashboard-source'
+import {
+  shouldReturnToOnboarding,
+  buildOnboardingReturnSearch,
+} from '@/features/onboarding/lib/onboarding-return'
+import { useReuseSummaryRead } from '@/features/reuse-summary/data/use-reuse-summary-read'
+import { ReuseSummaryInline } from '@/features/reuse-summary/components/reuse-summary-inline'
 
 /**
  * ProductDetailPage — Product Detail
@@ -47,12 +53,31 @@ export function ProductDetailPage() {
   // phase04-06 来源上下文单值判定
   const fromList = search.fromList === true
   const fromModuleDetail = search.fromModuleDetail === true
+  // phase06-15 §"detail 页来源优先级"：fromOnboarding 优先级高于其他来源
+  const fromOnboarding = shouldReturnToOnboarding(search)
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['product-detail', productId],
     queryFn: () => fetchProductDetail(productId),
     enabled: Boolean(productId),
   })
+
+  // phase06-15 §"Module Detail 与 Product Detail 挂接位"：
+  // Product Detail 只新增一个页面级 ReuseSummaryRead query（scope=product_detail）
+  // 在已绑定模块相关区域附近挂接；失败不回退整页，只影响复用摘要内联组件
+  const reuseSummaryQuery = useReuseSummaryRead(
+    { scope: 'product_detail', product_id: productId },
+    { enabled: Boolean(productId) },
+  )
+
+  const reuseSummaryStatus: 'loading' | 'ready' | 'empty' | 'error' = reuseSummaryQuery.isLoading
+    ? 'loading'
+    : reuseSummaryQuery.isError
+      ? 'error'
+      : (reuseSummaryQuery.data?.module_reuse_summary?.length ?? 0) === 0 &&
+          (reuseSummaryQuery.data?.capability_summary?.length ?? 0) === 0
+        ? 'empty'
+        : 'ready'
 
   // phase04-06 BindModuleToProduct 成功后重新读取详情结果（reread）
   const invalidateDetail = () => {
@@ -62,7 +87,15 @@ export function ProductDetailPage() {
   }
 
   // phase04-06 主动返回路径 — 按真实来源决定，刷新后恢复来源标记
+  // phase06-15：fromOnboarding 优先级最高，先于 fromList / fromModuleDetail / direct-entry
   const handleReturn = () => {
+    if (fromOnboarding) {
+      navigate({
+        to: '/onboarding',
+        search: buildOnboardingReturnSearch(search),
+      })
+      return
+    }
     if (fromList) {
       navigate({
         to: '/products',
@@ -89,6 +122,13 @@ export function ProductDetailPage() {
     }
   }
 
+  // 返回按钮文案：fromOnboarding 优先展示"返回首轮录入"
+  const returnLabel = fromOnboarding
+    ? '返回首轮录入'
+    : fromModuleDetail
+      ? '返回模块详情'
+      : '返回列表'
+
   if (isError) {
     return (
       <div className="space-y-4">
@@ -97,7 +137,7 @@ export function ProductDetailPage() {
           <BackToDashboardButton />
           <Button variant="ghost" size="sm" onClick={handleReturn}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            {fromModuleDetail ? '返回模块详情' : '返回列表'}
+            {returnLabel}
           </Button>
         </div>
         <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4">
@@ -118,7 +158,7 @@ export function ProductDetailPage() {
           <BackToDashboardButton />
           <Button variant="ghost" size="sm" onClick={handleReturn}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            {fromModuleDetail ? '返回模块详情' : '返回列表'}
+            {returnLabel}
           </Button>
         </div>
         <Skeleton className="h-32 w-full" />
@@ -136,7 +176,7 @@ export function ProductDetailPage() {
         <BackToDashboardButton />
         <Button variant="ghost" size="sm" onClick={handleReturn}>
           <ArrowLeft className="mr-2 h-4 w-4" />
-          {fromModuleDetail ? '返回模块详情' : '返回列表'}
+          {returnLabel}
         </Button>
       </div>
 
@@ -148,11 +188,25 @@ export function ProductDetailPage() {
         </div>
       )}
 
-      {/* PC：分区式布局；移动端：垂直顺序重排 — phase04-05 */}
+      {/* PC：分区式详情布局；移动端：垂直顺序重排 — phase04-05 */}
       <div className="grid gap-4 lg:grid-cols-3">
         {/* 摘要主区 — 占 1 列（PC）/ 全宽（移动） */}
-        <div className="lg:col-span-1">
+        <div className="space-y-4 lg:col-span-1">
           <ProductSummaryCard product={data.product} />
+          {/*
+            phase06-15 §"Module Detail 与 Product Detail 挂接位"：
+            在已绑定模块相关区域附近挂接复用摘要内联组件
+          */}
+          <div className="rounded-lg border bg-muted/20 p-3">
+            <ReuseSummaryInline
+              status={reuseSummaryStatus}
+              moduleReuseSummary={reuseSummaryQuery.data?.module_reuse_summary ?? []}
+              capabilitySummary={reuseSummaryQuery.data?.capability_summary ?? []}
+              error={reuseSummaryQuery.error as Error | null}
+              invalidateQueryKey={['reuse-summary', 'product_detail', productId]}
+              title="复用摘要"
+            />
+          </div>
         </div>
 
         {/* 绑定区 — 占 2 列（PC）/ 全宽（移动） */}

@@ -20,7 +20,7 @@
  * - PC：分区式详情布局，概要、已关联目标、待关联目标与候选关联区同页可见
  * - 移动浏览器：按概要、已关联目标、待关联目标、候选读取与目标关联的垂直顺序重排
  */
-import { useParams, Link, useNavigate, useSearch } from '@tanstack/react-router'
+import { useParams, useNavigate, useSearch } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { fetchDecisionDetail } from '../data/decision-center-adapter'
 import { DecisionDetailSummaryCard } from '../components/decision-detail-summary-card'
@@ -33,6 +33,10 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useDecisionListSearchStore } from '../stores/decision-list-search-store'
 import { BackToDashboardButton } from '@/features/dashboard/components/back-to-dashboard-button'
 import { mergeCurrentDashboardSource } from '@/features/dashboard/lib/dashboard-source'
+import {
+  shouldReturnToOnboarding,
+  buildOnboardingReturnSearch,
+} from '@/features/onboarding/lib/onboarding-return'
 
 export function DecisionDetailPage() {
   const { decisionId } = useParams({ from: '/decisions/$decisionId' })
@@ -41,18 +45,24 @@ export function DecisionDetailPage() {
   const detailSearch = useSearch({ from: '/decisions/$decisionId' })
   // §9.1 从 store 读取最后一次列表搜索上下文
   const lastSearch = useDecisionListSearchStore((s) => s.lastSearch)
+  // phase06-15 §"detail 页来源优先级"：fromOnboarding 优先级高于其他来源
+  const fromOnboarding = shouldReturnToOnboarding(detailSearch)
+  const returnLabel = fromOnboarding ? '返回首轮录入' : '返回列表'
   // §9.1 单值化返回参数：
+  // - fromOnboarding=true → 返回 /onboarding 并恢复 onboardingStep
   // - fromList === true（从 DecisionListPage 进入）：返回列表恢复 lastSearch
   // - fromList 不存在（从 Module Detail 入口或外部直达进入）：返回列表落默认参数，不恢复历史筛选
-  const returnSearch = mergeCurrentDashboardSource(
-    detailSearch.fromList
-      ? {
-          queryText: detailSearch.queryText ?? lastSearch.queryText,
-          statusFilter: detailSearch.statusFilter ?? lastSearch.statusFilter,
-        }
-      : { statusFilter: 'all' as const },
-    detailSearch,
-  )
+  const returnSearch = fromOnboarding
+    ? (buildOnboardingReturnSearch(detailSearch) as Record<string, unknown>)
+    : (mergeCurrentDashboardSource(
+        detailSearch.fromList
+          ? {
+              queryText: detailSearch.queryText ?? lastSearch.queryText,
+              statusFilter: detailSearch.statusFilter ?? lastSearch.statusFilter,
+            }
+          : { statusFilter: 'all' as const },
+        detailSearch,
+      ) as unknown as Record<string, unknown>)
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['decision-detail', decisionId],
@@ -60,15 +70,24 @@ export function DecisionDetailPage() {
     enabled: Boolean(decisionId),
   })
 
+  // phase06-15：返回按钮统一通过 handleReturn 承接，支持 fromOnboarding 优先级
+  const handleReturn = () => {
+    if (fromOnboarding) {
+      navigate({ to: '/onboarding', search: buildOnboardingReturnSearch(detailSearch) })
+      return
+    }
+    navigate({ to: '/decisions', search: returnSearch })
+  }
+
   if (isError) {
     return (
       <div className="space-y-4">
         {/* phase05-13：从 Dashboard 进入时同时展示"返回 Dashboard"与"返回列表" */}
         <div className="flex items-center gap-2">
           <BackToDashboardButton />
-          <Button variant="ghost" size="sm" onClick={() => navigate({ to: '/decisions', search: returnSearch })}>
+          <Button variant="ghost" size="sm" onClick={handleReturn}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            返回列表
+            {returnLabel}
           </Button>
         </div>
         <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4">
@@ -83,11 +102,9 @@ export function DecisionDetailPage() {
       <div className="space-y-4">
         <div className="flex items-center gap-2">
           <BackToDashboardButton />
-          <Button variant="ghost" size="sm" asChild>
-            <Link to="/decisions" search={returnSearch}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              返回列表
-            </Link>
+          <Button variant="ghost" size="sm" onClick={handleReturn}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            {returnLabel}
           </Button>
         </div>
         <Skeleton className="h-48 w-full" />
@@ -109,13 +126,12 @@ export function DecisionDetailPage() {
     <div className="space-y-4">
       {/* 返回列表 — §9.1 按 fromList 单值化决定恢复 lastSearch 或落默认参数 */}
       {/* phase05-13：从 Dashboard 进入时同时展示"返回 Dashboard"与"返回列表" */}
+      {/* phase06-15：fromOnboarding=true 时返回 /onboarding 并恢复 onboardingStep */}
       <div className="flex items-center gap-2">
         <BackToDashboardButton />
-        <Button variant="ghost" size="sm" asChild>
-          <Link to="/decisions" search={returnSearch}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            返回列表
-          </Link>
+        <Button variant="ghost" size="sm" onClick={handleReturn}>
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          {returnLabel}
         </Button>
       </div>
 

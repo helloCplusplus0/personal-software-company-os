@@ -9,7 +9,9 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as DecisionsIndexRouteImport } from './routes/decisions/index'
 import { Route as DecisionsDecisionIdRouteImport } from './routes/decisions/$decisionId'
 import { Route as DecisionsNewRouteImport } from './routes/decisions/new'
@@ -24,9 +26,19 @@ import { Route as RepositoriesRepositoryIdRouteImport } from './routes/repositor
 import { Route as RepositoriesNewRouteImport } from './routes/repositories/new'
 import { Route as ModulesModuleIdReleasesNewRouteImport } from './routes/modules/$moduleId/releases/new'
 
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DecisionsIndexRoute = DecisionsIndexRouteImport.update({
@@ -98,7 +110,9 @@ const ModulesModuleIdReleasesNewRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/onboarding': typeof OnboardingRoute
   '/decisions/$decisionId': typeof DecisionsDecisionIdRoute
   '/decisions/new': typeof DecisionsNewRoute
   '/modules/$moduleId': typeof ModulesModuleIdRouteWithChildren
@@ -114,7 +128,9 @@ export interface FileRoutesByFullPath {
   '/modules/$moduleId/releases/new': typeof ModulesModuleIdReleasesNewRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/onboarding': typeof OnboardingRoute
   '/decisions/$decisionId': typeof DecisionsDecisionIdRoute
   '/decisions/new': typeof DecisionsNewRoute
   '/modules/$moduleId': typeof ModulesModuleIdRouteWithChildren
@@ -131,7 +147,9 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/onboarding': typeof OnboardingRoute
   '/decisions/$decisionId': typeof DecisionsDecisionIdRoute
   '/decisions/new': typeof DecisionsNewRoute
   '/modules/$moduleId': typeof ModulesModuleIdRouteWithChildren
@@ -149,7 +167,9 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/'
     | '/dashboard'
+    | '/onboarding'
     | '/decisions/$decisionId'
     | '/decisions/new'
     | '/modules/$moduleId'
@@ -165,7 +185,9 @@ export interface FileRouteTypes {
     | '/modules/$moduleId/releases/new'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/'
     | '/dashboard'
+    | '/onboarding'
     | '/decisions/$decisionId'
     | '/decisions/new'
     | '/modules/$moduleId'
@@ -181,7 +203,9 @@ export interface FileRouteTypes {
     | '/modules/$moduleId/releases/new'
   id:
     | '__root__'
+    | '/'
     | '/dashboard'
+    | '/onboarding'
     | '/decisions/$decisionId'
     | '/decisions/new'
     | '/modules/$moduleId'
@@ -198,7 +222,9 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
+  OnboardingRoute: typeof OnboardingRoute
   DecisionsDecisionIdRoute: typeof DecisionsDecisionIdRoute
   DecisionsNewRoute: typeof DecisionsNewRoute
   ModulesModuleIdRoute: typeof ModulesModuleIdRouteWithChildren
@@ -215,11 +241,25 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/decisions/': {
@@ -329,7 +369,9 @@ const ModulesModuleIdRouteWithChildren = ModulesModuleIdRoute._addFileChildren(
 )
 
 const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
+  OnboardingRoute: OnboardingRoute,
   DecisionsDecisionIdRoute: DecisionsDecisionIdRoute,
   DecisionsNewRoute: DecisionsNewRoute,
   ModulesModuleIdRoute: ModulesModuleIdRouteWithChildren,

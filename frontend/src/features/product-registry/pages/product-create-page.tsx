@@ -1,7 +1,7 @@
 import { useSearch, useNavigate } from '@tanstack/react-router'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { createProduct } from '../data/product-registry-adapter'
+import { useCreateDraftProduct } from '../application/use-create-draft-product'
+import type { CreateProductInput } from '../types'
 import { ProductCreateForm } from '../components/product-create-form'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
@@ -39,13 +39,16 @@ import { useDashboardBackButton } from '@/features/dashboard/lib/dashboard-sourc
 export function ProductCreatePage() {
   const search = useSearch({ from: '/products/new' })
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
   const { showBackButton: isFromDashboard } = useDashboardBackButton()
 
   // phase04-06 来源上下文单值判定
   const fromList = search.fromList === true
   const fromModuleDetail = search.fromModuleDetail === true
   const hasSourceModule = Boolean(search.moduleId && search.moduleName)
+
+  // phase06-15 §"既有 create 页面回收"：
+  // 正式 create 主线已回收到 application owner，页面只保留表单编排、toast 与导航消费
+  const mutation = useCreateDraftProduct()
 
   // phase05-13 §"Create 页面取消返回 Dashboard"：
   // fromDashboard=true 时取消返回 /dashboard，而不是回列表
@@ -76,44 +79,46 @@ export function ProductCreatePage() {
     }
   }
 
-  const mutation = useMutation({
-    mutationFn: createProduct,
-    onSuccess: (response) => {
-      // phase04-06 提交成功默认回流到 ProductDetailPage
-      queryClient.invalidateQueries({ queryKey: ['product-list'] })
-      toast.success('产品创建成功')
+  // phase06-15：提交成功 / 失败的 toast 与导航由页面在 call-site 承接，
+  // application owner 内部只承接默认补值、错误归一化与 query 失效
+  const handleSubmit = (input: CreateProductInput) => {
+    mutation.mutate(input, {
+      onSuccess: (response) => {
+        // phase04-06 提交成功默认回流到 ProductDetailPage
+        toast.success('产品创建成功')
 
-      // phase04-06 回流时必须继续携带创建页已有的来源标记与必要上下文参数
-      const detailSearch: Record<string, unknown> = {}
-      if (fromList) {
-        detailSearch.fromList = true
-        detailSearch.queryText = search.queryText
-        detailSearch.statusFilter = search.statusFilter ?? 'all'
-      } else if (fromModuleDetail) {
-        detailSearch.fromModuleDetail = true
-        detailSearch.moduleId = search.moduleId
-        detailSearch.moduleName = search.moduleName
-      }
-      // phase05-13 提交成功后进入 Detail 页时必须继续保留 fromDashboard 等参数
-      // 不得因为 fromDashboard=true 就在提交成功后自动跳回 Dashboard
-      if (isFromDashboard) {
-        detailSearch.fromDashboard = true
-        detailSearch.dashboardSection = search.dashboardSection
-        detailSearch.dashboardReturnTo = search.dashboardReturnTo
-      }
-      // direct-entry → 不携带来源标记
+        // phase04-06 回流时必须继续携带创建页已有的来源标记与必要上下文参数
+        const detailSearch: Record<string, unknown> = {}
+        if (fromList) {
+          detailSearch.fromList = true
+          detailSearch.queryText = search.queryText
+          detailSearch.statusFilter = search.statusFilter ?? 'all'
+        } else if (fromModuleDetail) {
+          detailSearch.fromModuleDetail = true
+          detailSearch.moduleId = search.moduleId
+          detailSearch.moduleName = search.moduleName
+        }
+        // phase05-13 提交成功后进入 Detail 页时必须继续保留 fromDashboard 等参数
+        // 不得因为 fromDashboard=true 就在提交成功后自动跳回 Dashboard
+        if (isFromDashboard) {
+          detailSearch.fromDashboard = true
+          detailSearch.dashboardSection = search.dashboardSection
+          detailSearch.dashboardReturnTo = search.dashboardReturnTo
+        }
+        // direct-entry → 不携带来源标记
 
-      navigate({
-        to: '/products/$productId',
-        params: { productId: response.product_id },
-        search: detailSearch,
-      })
-    },
-    onError: (error: Error) => {
-      // phase04-06 提交失败时停留当前页，错误显示在表单上下文
-      toast.error('创建失败：' + error.message)
-    },
-  })
+        navigate({
+          to: '/products/$productId',
+          params: { productId: response.product_id },
+          search: detailSearch,
+        })
+      },
+      onError: (error: Error) => {
+        // phase04-06 提交失败时停留当前页，错误显示在表单上下文
+        toast.error('创建失败：' + error.message)
+      },
+    })
+  }
 
   return (
     <div className="max-w-2xl space-y-4">
@@ -140,7 +145,7 @@ export function ProductCreatePage() {
 
       <ProductCreateForm
         submitting={mutation.isPending}
-        onSubmit={(input) => mutation.mutate(input)}
+        onSubmit={handleSubmit}
         submitError={mutation.isError ? (mutation.error as Error).message : undefined}
       />
     </div>

@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
 import { RepositoryBindingDetailPage } from '@/features/repository-binding/pages/repository-binding-detail-page'
 import { dashboardSourceSearchSchema } from '@/features/dashboard/lib/dashboard-source-schema'
+import { onboardingSourceSearchSchema } from '@/features/onboarding/lib/onboarding-source-schema'
 
 /**
  * RepositoryBindingDetailRoute — /repositories/:repositoryId
@@ -51,6 +52,8 @@ const repositoryDetailSearchSchema = z.object({
   productModuleName: z.string().optional(),
   // phase05-13 Dashboard 来源参数
   ...dashboardSourceSearchSchema,
+  // phase06-15 Onboarding 来源参数
+  ...onboardingSourceSearchSchema,
 })
 
 export const Route = createFileRoute('/repositories/$repositoryId')({

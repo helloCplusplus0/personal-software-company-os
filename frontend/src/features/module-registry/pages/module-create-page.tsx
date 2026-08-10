@@ -2,8 +2,7 @@ import { useNavigate, useSearch, Link } from '@tanstack/react-router'
 import { ModuleCreateForm } from '../components/module-create-form'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
-import { createModule } from '../data/module-registry-adapter'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useCreateDraftModule } from '../application/use-create-draft-module'
 import { toast } from 'sonner'
 import type { CreateModuleInput } from '../types'
 import { useModuleListSearchStore } from '../stores/module-list-search-store'
@@ -28,40 +27,43 @@ import { useDashboardBackButton } from '@/features/dashboard/lib/dashboard-sourc
  */
 export function ModuleCreatePage() {
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
   // §7.4 从 store 读取最后一次列表搜索上下文，返回列表时恢复
   const lastSearch = useModuleListSearchStore((s) => s.lastSearch)
   // phase05-13 从路由搜索参数读取 Dashboard 来源上下文
   const dashboardSearch = useSearch({ from: '/modules/new' })
   const { showBackButton: isFromDashboard } = useDashboardBackButton()
 
-  const mutation = useMutation({
-    mutationFn: (input: CreateModuleInput) => createModule(input),
-    onSuccess: (module) => {
-      // §8.4 提交成功默认回流到 ModuleDetailPage
-      queryClient.invalidateQueries({ queryKey: ['module-list'] })
-      toast.success('模块创建成功')
+  // phase06-15 §"既有 create 页面回收"：
+  // 正式 create 主线已回收到 application owner，页面只保留表单编排、toast 与导航消费
+  const mutation = useCreateDraftModule()
 
-      // phase05-13 提交成功后进入 Detail 页时必须继续保留 fromDashboard 等参数
-      // 不得因为 fromDashboard=true 就在提交成功后自动跳回 Dashboard
-      const detailSearch: Record<string, unknown> = {}
-      if (isFromDashboard) {
-        detailSearch.fromDashboard = true
-        detailSearch.dashboardSection = dashboardSearch.dashboardSection
-        detailSearch.dashboardReturnTo = dashboardSearch.dashboardReturnTo
-      }
+  const handleSubmit = (input: CreateModuleInput) => {
+    mutation.mutate(input, {
+      onSuccess: (module) => {
+        // §8.4 提交成功默认回流到 ModuleDetailPage
+        toast.success('模块创建成功')
 
-      navigate({
-        to: '/modules/$moduleId',
-        params: { moduleId: module.id },
-        search: detailSearch,
-      })
-    },
-    onError: (error: Error) => {
-      // §8.4 提交失败时停留当前页，错误显示在表单上下文
-      toast.error('创建失败：' + error.message)
-    },
-  })
+        // phase05-13 提交成功后进入 Detail 页时必须继续保留 fromDashboard 等参数
+        // 不得因为 fromDashboard=true 就在提交成功后自动跳回 Dashboard
+        const detailSearch: Record<string, unknown> = {}
+        if (isFromDashboard) {
+          detailSearch.fromDashboard = true
+          detailSearch.dashboardSection = dashboardSearch.dashboardSection
+          detailSearch.dashboardReturnTo = dashboardSearch.dashboardReturnTo
+        }
+
+        navigate({
+          to: '/modules/$moduleId',
+          params: { moduleId: module.id },
+          search: detailSearch,
+        })
+      },
+      onError: (error: Error) => {
+        // §8.4 提交失败时停留当前页，错误显示在表单上下文
+        toast.error('创建失败：' + error.message)
+      },
+    })
+  }
 
   return (
     <div className="max-w-2xl space-y-4">
@@ -82,7 +84,7 @@ export function ModuleCreatePage() {
 
       <ModuleCreateForm
         submitting={mutation.isPending}
-        onSubmit={(input) => mutation.mutate(input)}
+        onSubmit={handleSubmit}
         submitError={mutation.isError ? (mutation.error as Error).message : undefined}
       />
     </div>

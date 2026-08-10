@@ -1,7 +1,7 @@
 import { useSearch, useNavigate } from '@tanstack/react-router'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { createRepository } from '../data/repository-binding-adapter'
+import { useCreateDraftRepository } from '../application/use-create-draft-repository'
+import type { CreateRepositoryInput } from '../types'
 import { RepositoryCreateForm } from '../components/repository-create-form'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
@@ -52,7 +52,6 @@ import { useDashboardBackButton } from '@/features/dashboard/lib/dashboard-sourc
 export function RepositoryCreatePage() {
   const search = useSearch({ from: '/repositories/new' })
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
   const { showBackButton: isFromDashboard } = useDashboardBackButton()
 
   // phase04-06 来源上下文单值判定
@@ -64,6 +63,10 @@ export function RepositoryCreatePage() {
 
   // phase04-06 Product Detail 来源上下文透传参数
   const productTransit = extractProductSourceTransit(search as RepositoryBindingSearch)
+
+  // phase06-15 §"既有 create 页面回收"：
+  // 正式 create 主线已回收到 application owner，页面只保留表单编排、toast 与导航消费
+  const mutation = useCreateDraftRepository()
 
   // phase05-13 §"Create 页面取消返回 Dashboard"：
   // fromDashboard=true 时取消返回 /dashboard，而不是回列表
@@ -100,50 +103,50 @@ export function RepositoryCreatePage() {
     }
   }
 
-  const mutation = useMutation({
-    mutationFn: createRepository,
-    onSuccess: (response) => {
-      // phase04-06 提交成功默认回流到 RepositoryBindingDetailPage
-      queryClient.invalidateQueries({ queryKey: ['repository-list'] })
-      toast.success('仓库创建成功')
+  const handleSubmit = (input: CreateRepositoryInput) => {
+    mutation.mutate(input, {
+      onSuccess: (response) => {
+        // phase04-06 提交成功默认回流到 RepositoryBindingDetailPage
+        toast.success('仓库创建成功')
 
-      // phase04-06 回流时必须继续携带创建页已有的来源标记与必要上下文参数
-      const detailSearch: Record<string, unknown> = {}
-      if (fromList) {
-        detailSearch.fromList = true
-        detailSearch.queryText = search.queryText
-        detailSearch.statusFilter = search.statusFilter ?? 'all'
-      } else if (fromProductDetail) {
-        detailSearch.fromProductDetail = true
-        detailSearch.productId = search.productId
-        detailSearch.productName = search.productName
-        // phase04-06 继续携带 Product Detail 来源透传参数
-        Object.assign(detailSearch, productTransit)
-      } else if (fromModuleDetail) {
-        detailSearch.fromModuleDetail = true
-        detailSearch.moduleId = search.moduleId
-        detailSearch.moduleName = search.moduleName
-      }
-      // phase05-13 提交成功后进入 Detail 页时必须继续保留 fromDashboard 等参数
-      // 不得因为 fromDashboard=true 就在提交成功后自动跳回 Dashboard
-      if (isFromDashboard) {
-        detailSearch.fromDashboard = true
-        detailSearch.dashboardSection = search.dashboardSection
-        detailSearch.dashboardReturnTo = search.dashboardReturnTo
-      }
-      // direct-entry → 不携带来源标记
+        // phase04-06 回流时必须继续携带创建页已有的来源标记与必要上下文参数
+        const detailSearch: Record<string, unknown> = {}
+        if (fromList) {
+          detailSearch.fromList = true
+          detailSearch.queryText = search.queryText
+          detailSearch.statusFilter = search.statusFilter ?? 'all'
+        } else if (fromProductDetail) {
+          detailSearch.fromProductDetail = true
+          detailSearch.productId = search.productId
+          detailSearch.productName = search.productName
+          // phase04-06 继续携带 Product Detail 来源透传参数
+          Object.assign(detailSearch, productTransit)
+        } else if (fromModuleDetail) {
+          detailSearch.fromModuleDetail = true
+          detailSearch.moduleId = search.moduleId
+          detailSearch.moduleName = search.moduleName
+        }
+        // phase05-13 提交成功后进入 Detail 页时必须继续保留 fromDashboard 等参数
+        // 不得因为 fromDashboard=true 就在提交成功后自动跳回 Dashboard
+        if (isFromDashboard) {
+          detailSearch.fromDashboard = true
+          detailSearch.dashboardSection = search.dashboardSection
+          detailSearch.dashboardReturnTo = search.dashboardReturnTo
+        }
+        // direct-entry → 不携带来源标记
 
-      navigate({
-        to: '/repositories/$repositoryId',
-        params: { repositoryId: response.repository_id },
-        search: detailSearch,
-      })
-    },
-    onError: (error: Error) => {
-      // phase04-06 提交失败时停留当前页，错误显示在表单上下文
-      toast.error('创建失败：' + error.message)
-    },
-  })
+        navigate({
+          to: '/repositories/$repositoryId',
+          params: { repositoryId: response.repository_id },
+          search: detailSearch,
+        })
+      },
+      onError: (error: Error) => {
+        // phase04-06 提交失败时停留当前页，错误显示在表单上下文
+        toast.error('创建失败：' + error.message)
+      },
+    })
+  }
 
   // 返回按钮文案根据来源决定
   const returnLabel = fromProductDetail
@@ -183,7 +186,7 @@ export function RepositoryCreatePage() {
 
       <RepositoryCreateForm
         submitting={mutation.isPending}
-        onSubmit={(input) => mutation.mutate(input)}
+        onSubmit={handleSubmit}
         submitError={mutation.isError ? (mutation.error as Error).message : undefined}
       />
     </div>

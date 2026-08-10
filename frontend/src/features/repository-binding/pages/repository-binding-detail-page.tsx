@@ -14,6 +14,10 @@ import {
 } from '../utils/product-source-transit'
 import { BackToDashboardButton } from '@/features/dashboard/components/back-to-dashboard-button'
 import { mergeCurrentDashboardSource } from '@/features/dashboard/lib/dashboard-source'
+import {
+  shouldReturnToOnboarding,
+  buildOnboardingReturnSearch,
+} from '@/features/onboarding/lib/onboarding-return'
 
 /**
  * panelMode — phase04-06 互斥展开状态
@@ -65,6 +69,8 @@ export function RepositoryBindingDetailPage() {
   const fromList = search.fromList === true
   const fromProductDetail = search.fromProductDetail === true
   const fromModuleDetail = search.fromModuleDetail === true
+  // phase06-15 §"detail 页来源优先级"：fromOnboarding 优先级高于其他来源
+  const fromOnboarding = shouldReturnToOnboarding(search)
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['repository-detail', repositoryId],
@@ -89,7 +95,15 @@ export function RepositoryBindingDetailPage() {
   }
 
   // phase04-06 主动返回路径 — 按真实来源决定，刷新后恢复来源标记
+  // phase06-15：fromOnboarding 优先级最高，先于 fromList / fromProductDetail / fromModuleDetail / direct-entry
   const handleReturn = () => {
+    if (fromOnboarding) {
+      navigate({
+        to: '/onboarding',
+        search: buildOnboardingReturnSearch(search),
+      })
+      return
+    }
     if (fromList) {
       navigate({
         to: '/repositories',
@@ -127,11 +141,14 @@ export function RepositoryBindingDetailPage() {
   }
 
   // 返回按钮文案根据来源决定
-  const returnLabel = fromProductDetail
-    ? '返回产品详情'
-    : fromModuleDetail
-      ? '返回模块详情'
-      : '返回列表'
+  // phase06-15：fromOnboarding 优先展示"返回首轮录入"
+  const returnLabel = fromOnboarding
+    ? '返回首轮录入'
+    : fromProductDetail
+      ? '返回产品详情'
+      : fromModuleDetail
+        ? '返回模块详情'
+        : '返回列表'
 
   if (isError) {
     return (

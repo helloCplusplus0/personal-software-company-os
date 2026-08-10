@@ -39,7 +39,10 @@ import { CurrentFocusSection } from '../components/current-focus-section'
 import { AssetFeedbackSection } from '../components/asset-feedback-section'
 import { RecentActivitySection } from '../components/recent-activity-section'
 import { DashboardPrimaryActionPanel } from '../components/dashboard-primary-action-panel'
+import { SovereigntyPanel } from '../components/sovereignty-panel'
+import { OnboardingCtaButton } from '../components/onboarding-cta-button'
 import { useDashboardReturnSection } from '../lib/dashboard-source'
+import { useReuseSummaryRead } from '@/features/reuse-summary/data/use-reuse-summary-read'
 import type { DashboardSection } from '../types'
 
 const DASHBOARD_SECTION_LABELS: Record<DashboardSection, string> = {
@@ -128,6 +131,10 @@ export function DashboardHomePage() {
     queryFn: fetchRecentActivities,
   })
 
+  // 4. ReuseSummaryRead — phase06-15 §"Dashboard 复用快照挂接位"
+  //    独立页面级只读 query，失败不回退整页，只影响 Asset Feedback 内的 Reuse Snapshot 子区域
+  const reuseSummaryQuery = useReuseSummaryRead({ scope: 'dashboard' })
+
   // ============================================================================
   // 整页视图状态派生（phase05-06 / phase05-13 spec）
   // ============================================================================
@@ -201,6 +208,17 @@ export function DashboardHomePage() {
       ? 'error'
       : 'ready'
 
+  // phase06-15：ReuseSummaryRead 局部状态派生
+  // 该 query 失败不回退整页，只影响 Asset Feedback 内的 Reuse Snapshot 子区域
+  const reuseSnapshotStatus: 'loading' | 'ready' | 'empty' | 'error' = reuseSummaryQuery.isLoading
+    ? 'loading'
+    : reuseSummaryQuery.isError
+      ? 'error'
+      : (reuseSummaryQuery.data?.module_reuse_summary?.length ?? 0) === 0 &&
+          (reuseSummaryQuery.data?.capability_summary?.length ?? 0) === 0
+        ? 'empty'
+        : 'ready'
+
   // ============================================================================
   // 渲染
   // ============================================================================
@@ -255,25 +273,34 @@ export function DashboardHomePage() {
 
       <DashboardHomePageShell
         primaryActionPanel={
-          <div
-            ref={(node) => {
-              sectionRefs.current['empty-state'] = node
-            }}
-            data-dashboard-section="empty-state"
-            tabIndex={-1}
-            className="rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-          >
-            <DashboardPrimaryActionPanel
-              overviewStatus="ready"
-              overview={overviewQuery.data}
-              feedbackStatus={ctaFeedbackStatus}
-              currentFocusSignals={feedbackQuery.data?.current_focus_signals ?? []}
-              assetFeedbackRepresentativeSignals={
-                feedbackQuery.data?.asset_feedback_summary?.representative_signals ?? []
-              }
-            />
+          <div className="flex items-center gap-2">
+            {/*
+              phase06-15 §"Dashboard 到 Onboarding 的继续入口"：
+              OnboardingCtaButton 独立于 DashboardPrimaryActionPanel，
+              作为 phase06 首轮录入的正式入口（not_started / in_progress 时可见）。
+            */}
+            <OnboardingCtaButton />
+            <div
+              ref={(node) => {
+                sectionRefs.current['empty-state'] = node
+              }}
+              data-dashboard-section="empty-state"
+              tabIndex={-1}
+              className="rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            >
+              <DashboardPrimaryActionPanel
+                overviewStatus="ready"
+                overview={overviewQuery.data}
+                feedbackStatus={ctaFeedbackStatus}
+                currentFocusSignals={feedbackQuery.data?.current_focus_signals ?? []}
+                assetFeedbackRepresentativeSignals={
+                  feedbackQuery.data?.asset_feedback_summary?.representative_signals ?? []
+                }
+              />
+            </div>
           </div>
         }
+        sovereigntyPanel={<SovereigntyPanel />}
         statBar={
           overviewQuery.data && (
             <div
@@ -325,6 +352,13 @@ export function DashboardHomePage() {
               }
               error={feedbackQuery.error as Error | null}
               onRetry={() => queryClient.invalidateQueries({ queryKey: ['dashboard-feedback-signals'] })}
+              reuseSnapshotStatus={reuseSnapshotStatus}
+              moduleReuseSummary={reuseSummaryQuery.data?.module_reuse_summary ?? []}
+              capabilitySummary={reuseSummaryQuery.data?.capability_summary ?? []}
+              reuseSnapshotError={reuseSummaryQuery.error as Error | null}
+              onReuseSnapshotRetry={() =>
+                queryClient.invalidateQueries({ queryKey: ['reuse-summary', 'dashboard'] })
+              }
             />
           </div>
         }
