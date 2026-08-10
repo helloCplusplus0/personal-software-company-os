@@ -1,0 +1,67 @@
+- [x] 已明确 4 个 feature slice 各自新增 `application/` 目录
+- [x] 已明确每个 `application/` 目录包含 `index.ts` / `normalize-error.ts` / `use-create-draft-*.ts` / `use-update-*.ts`
+- [x] 已明确 `application/` 是切片唯一正式 mutation 承接位，不得承接读取逻辑
+- [x] 已明确 `normalize-error.ts` 是切片级工具，延迟晋升到 `shared/lib/`
+- [x] 已明确 `use-update-*.ts` 在 phase06 只预留落点与接口签名，不要求实现
+- [x] 已明确 `application/` 与既有 `data/` 层的关系（data 保持纯只读 + HTTP 调用）
+- [x] 已明确 4 个 create 页面的 page-level `useMutation` 漂移点（文件、行号、mutationFn、失效 queryKey、回流、错误处理）
+- [x] 已明确 4 个 binding/link panel 的 panel-level `useMutation` 漂移点
+- [x] 已明确 release create page 的 page-level `useMutation` 漂移点
+- [x] 已明确 4 个 create 页面的共同模式（useMutation + invalidateQueries + toast + navigate）
+- [x] 已明确统一接口契约（mutate / mutateAsync / isPending / isError / error / data）
+- [x] 已明确 `error` 字段为 `NormalizedError | null`，不得暴露原始错误
+- [x] 已明确 `mutateAsync` 是包装版本，失败时 re-throw `NormalizedError`（消费方无需导入 `normalizeApiError`）
+- [x] 已明确 `mutate`（fire-and-forget）不抛出，消费方通过 `error` state 获取归一化错误
+- [x] 已明确 `useCreateDraftProduct` 输入类型（name 必填 + description? / status? 可选）
+- [x] 已明确 `useCreateDraftRepository` 输入类型（name + url 必填 + provider? / status? 可选）
+- [x] 已明确 `useCreateDraftModule` 输入类型（name 必填 + description? / status? / capability_key? 可选）
+- [x] 已明确 `useCreateDraftDecision` 输入类型（title + choice + reason 必填 + 其余可选）
+- [x] 已明确 Product 系统填充（description: '', status: 'active'）与 phase06-02 一致
+- [x] 已明确 Repository 系统填充（provider: 'manual', status: 'active'）与 phase06-02 一致
+- [x] 已明确 Module 系统填充（description: '', status: 'active', capability_key: null）与 phase06-02 一致
+- [x] 已明确 Decision 系统填充（context: '', problem: '', alternatives: [], impact: '', status: 'proposed'）与 phase06-02 一致
+- [x] 已明确 Draft Input 定义在 `application/` 目录，不修改 `types.ts` 既有 `CreateXxxInput`
+- [x] 已明确 4 个 `use-update-*.ts` 预留落点与接口签名
+- [x] 已明确 update owner 后续实现时失效目标（detail + list + onboarding read）
+- [x] 已明确 `NormalizedError` 形状（message + 可选 status / code）
+- [x] 已明确 `normalizeApiError` 函数实现（ApiError → NormalizedError，Error → NormalizedError，unknown → 兜底）
+- [x] 已明确 application owner 不得暴露原始 `unknown` / `Error` / `ApiError` 给消费方
+- [x] 已明确消费方只消费 `NormalizedError.message`
+- [x] 已明确切片级延迟晋升约束（先落切片，稳定后提升到 shared/lib/）
+- [x] 已明确消费方错误展示（create 页面 toast.error，Onboarding 步骤传入 submitError）
+- [x] 已明确 query 失效矩阵（4 个 owner 各自失效 canonical 列表 + ['onboarding', 'read']）
+- [x] 已明确回流职责拆分（application owner: API + 填充 + 失效 + 归一化；消费方: toast + navigate + 来源上下文）
+- [x] 已明确 create 页面回流模式（mutateAsync + try/catch + navigate 携带来源上下文）
+- [x] 已明确 Onboarding 步骤回流模式（mutate fire-and-forget + query 失效驱动自动前进）
+- [x] 已明确 application owner 不得调用 navigate 或 toast
+- [x] 已明确 create 页面回收后不得保留 useMutation / useQueryClient import
+- [x] 已明确必须回收的 4 个 create 页面清单与对应 application owner
+- [x] 已明确允许过渡保留的 4 个 binding/link panel + 1 个 release create page
+- [x] 已明确回收后 create 页面职责（来源上下文 + 消费 owner + toast + navigate + 表单壳层）
+- [x] 已明确回收后 create 页面禁止事项（不得 useMutation / createXxx / invalidateQueries / onSuccess / onError）
+- [x] 已明确表单组件 `onSubmit / submitting / submitError` props 接口结构不变，但字段级必填约束必须按 §7.5 放宽
+- [x] 已明确 ProductCreateForm 放宽（移除 description required + 移除 status Select + 按钮 disabled 改为 !name）
+- [x] 已明确 RepositoryCreateForm 放宽（移除 provider required + 移除 status Select + 按钮 disabled 改为 !name || !url）
+- [x] 已明确 ModuleCreateForm 放宽（移除 description required + 移除 status Select + 按钮 disabled 改为 !name）
+- [x] 已明确 DecisionCreateForm 放宽（移除 context/problem required + 移除 status Select + 只校验 title+choice+reason）
+- [x] 已明确表单 onSubmit 回调签名改为接收 Draft Input 类型（可选字段不阻断提交）
+- [x] 已明确 status 由 application owner 系统填充（Product/Repository/Module=active, Decision=proposed），表单不提供 status 选择器
+- [x] 已明确放宽后 draft-first 最小字段可在表单层直接提交，不被前端校验阻断
+- [x] 已明确 DecisionCreatePage 回收后完整保留 sourceModuleId + sourceModuleName 来源链路
+- [x] 已明确 Decision 来源链路包含 search params 读取 → DecisionContextSourcePanel 展示 → 提交 source_module_id 持久化三个环节
+- [x] 已明确 DecisionContextSourcePanel 同时展示 sourceModuleName（Badge）与 sourceModuleId（mono 文本）
+- [x] 已明确 6 个迁移阶段与依赖关系
+- [x] 已明确阶段 2-3 必须先于阶段 4-5（先验证模式再并行推广）
+- [x] 已明确迁移约束（行为不变、API 形状不变、不保留旧 import、表单字段放宽同步完成）
+- [x] 已明确 phase06 收口标准必须满足的 10 项条件（含表单字段放宽、Decision 来源链路保持）
+- [x] 已明确收口禁止事项（不得内联 useMutation、不得保留旧表单必填阻断与 status 选择器、不得承接读取、不得 navigate/toast、不得复制散装模式、不得跨切片引用 normalize-error.ts、不得丢失 Decision 来源链路）
+- [x] 已验证 4 个 owner 的系统填充默认值与 phase06-02 冻结的 draft-first 字段一致
+- [x] 已验证 application owner 命名（useCreateDraftProduct 等）与 phase06-06 §11 消费方式一致
+- [x] 已验证 query 失效包含 ['onboarding', 'read'] 与 phase06-06 §11.2 一致
+- [x] 已验证 query 纯只读、mutation 固定承接位与 phase06-05 前端四条约束一致
+- [x] 已验证既有 create 页面回收范围与 phase06-02 "既有 Create 页面回收范围冻结"一致
+- [x] 已验证过渡保留的 panel / release 旧模式与 phase06-05 "旧实现过渡与新增门禁"一致
+- [x] 已验证表单字段级放宽与 phase06-02 冻结的 draft-first 最小必填字段一致（Product=name, Repository=name+url, Module=name, Decision=title+choice+reason）
+- [x] 已验证表单 status 移除与 application owner 系统填充（active/proposed）一致
+- [x] 已验证 Decision 来源 Module 链路（sourceModuleId + sourceModuleName）与既有 routes/decisions/new.tsx validateSearch 与 decision-context-source-panel.tsx props 一致
+- [x] 已明确本次设计足以支撑后续 phase06-15 前端主线实现
