@@ -1,0 +1,27 @@
+- [x] 已明确 `module_reuse_summary` 的最小字段至少包含 `module_id / reuse_product_count / latest_reuse_at / explanation_text`
+- [x] 已明确 `module_reuse_summary` 的最小统计口径冻结为“一个 Module 当前被多少 Product 直接复用”
+- [x] 已明确 `module_reuse_summary` 不得把 `Repository` 映射数、`Decision` 链接数或 `Release` 数量混入复用计数
+- [x] 已明确 Dashboard 中 `module_reuse_summary` 的最小排序规则为 `reuse_product_count DESC`，并以 `latest_reuse_at DESC` 作为同分排序
+- [x] 已明确 Dashboard 中 `module_reuse_summary` 当前阶段最多展示前 `5` 条
+- [x] 已明确 Product Detail 中 `module_reuse_summary` 先按“当前 Product 已绑定的 Module”过滤，再按 `reuse_product_count DESC`、`latest_reuse_at DESC` 排序
+- [x] 已明确 `capability_summary` 的最小字段至少包含 `capability_key / capability_label / supporting_module_count / latest_capability_update_at / empty_state_text`
+- [x] 已明确 `capability_summary` 的最小聚合单位冻结为 `capability_key`
+- [x] 已明确 `capability_summary` 的唯一事实来源冻结为 `Module.capability_key + 系统内置 capability_label 映射`
+- [x] 已明确当前阶段不得引入独立 `Capability` 重实体、独立 `capabilities` 表或第二套事实源
+- [x] 已明确 `capability_summary` 在 Dashboard 中按 `supporting_module_count DESC`、`latest_capability_update_at DESC` 排序，最多展示前 `5` 条
+- [x] 已明确 `capability_summary` 在 Product Detail 中先按“当前 Product 已绑定且填写了 `capability_key` 的 Module”派生，再按同上规则排序，不设展示上限
+- [x] 已明确未填写 `capability_key` 的 `Module` 不参与当前阶段 `capability_summary` 聚合
+- [x] 已明确未填写 `capability_key` 的 `Module` 仍可参与 `module_reuse_summary`，且不阻断首轮成功会话
+- [x] 已明确“全部 Module 都未填写 `capability_key`”时 `capability_summary` 返回成功空态，而不是错误态
+- [x] 已明确 Dashboard 的正式挂接位冻结在现有 `Asset Feedback` 区块内部
+- [x] 已明确 Module Detail 的正式挂接位冻结在 `Module Summary` 邻近区域
+- [x] 已明确 Module Detail 在 Module 已填写 `capability_key` 时，必须展示该 Module 所属 `capability_summary` 的最小摘要
+- [x] 已明确 Product Detail 的正式挂接位冻结在已绑定模块相关区域附近
+- [x] 已明确当前阶段不得新增独立一级“复用中心”、独立 `/reuse` 页面或新的 Dashboard 一级 section
+- [x] 已明确 `ReuseSummaryRead` 为单数 query owner，承接 `ReadModuleReuseSummary` 与 `ReadCapabilitySummary` 两个读取动作
+- [x] 已明确复用感知通过独立 `ReuseSummaryRead` query 承接，不合并到 `phase05` 已冻结的 `FeedbackSignalRead` 响应中
+- [x] 已明确 `Asset Feedback` 区块内反馈信号子区域与复用快照子区域的读取状态分层独立，互不影响
+- [x] 已明确 `module_reuse_summary` 与 `capability_summary` 的最小解释文案、成功空态与读取失败态边界
+- [x] 已明确复用感知的新鲜度口径冻结为“读取时反映最新已提交状态”，不依赖异步离线刷新或后台统计表
+- [x] 已明确本次规格与 `phase06` shared baseline、architecture plan、dev plan 以及 `phase05` Dashboard `Asset Feedback` 主线保持一致
+- [x] 已明确本次规格足以支撑后续 `ReuseSummaryRead`、`.proto` 合同、页面挂接实现与验收 fixture
