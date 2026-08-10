@@ -1,0 +1,63 @@
+- [x] 已明确 Onboarding 新增文件清单（路由、页面、组件、query owner、types）
+- [x] 已明确需要修改的既有文件清单（__root.tsx、dashboard-home-page.tsx、dashboard-primary-action-panel.tsx、四类 canonical detail route/page）
+- [x] 已明确 /onboarding 路由使用单一搜索参数 step 承接当前步骤
+- [x] 已明确 step 的合法值为 welcome / product / repository / module / decision / complete
+- [x] 已明确 step 未提供或非法时默认回退为 welcome
+- [x] 已明确组件树层级（OnboardingPage → Shell → Stepper + StepRouter → 6 个步骤组件）
+- [x] 已明确每个组件的职责边界与禁止事项（不得内联 useMutation、不得承接写动作）
+- [x] 已明确 6 个步骤的标识、标题、说明文案、最小必填字段与系统填充字段
+- [x] 已明确步骤最小必填字段与 phase06-02 冻结的 draft-first 字段一致
+- [x] 已明确步骤系统填充字段与 phase06-02 冻结的占位值一致
+- [x] 已明确每个对象步骤的三种展示状态（pending / current / completed）与触发条件
+- [x] 已明确步骤自动定位规则（根据 OnboardingRead 返回的草稿状态定位）
+- [x] 已明确 URL 搜索参数 step 与自动定位结果的同步规则
+- [x] 已明确首次录入流（Welcome → Product → Repository → Module → Decision → Complete）
+- [x] 已明确草稿保存语义（表单提交即创建草稿，不提供独立保存按钮）
+- [x] 已明确继续补全流（Dashboard CTA → /onboarding → 自动定位到第一个未完成步骤）
+- [x] 已明确完成回流（Complete 步骤展示摘要 + 前往 Dashboard + first_run_state 进入 completed）
+- [x] 已明确草稿编辑回流（OnboardingDraftSummary 编辑链接 → canonical detail → 返回 /onboarding）
+- [x] 已明确四类 canonical detail route 的 `validateSearch` 与 detail page 返回逻辑必须承接 `fromOnboarding / onboardingStep`
+- [x] 已明确 cold-start（not_started）的根级默认进入、Onboarding 定位、Dashboard CTA 可见性
+- [x] 已明确 cold-start 用户直达 `/dashboard` 时，仍以 `Start Onboarding` 作为唯一主 CTA
+- [x] 已明确 in_progress 的根级默认进入、Dashboard CTA 展示、Onboarding 自动定位、canonical detail 不劫持
+- [x] 已明确 completed 的根级默认进入、Dashboard CTA 隐藏、全局导航 Onboarding 入口隐藏
+- [x] 已明确 first-run 判定由 / index 路由的 beforeLoad 承接
+- [x] 已明确 beforeLoad 通过 OnboardingRead 或等价 API 读取 first_run_state
+- [x] 已明确 not_started 重定向到 /onboarding、in_progress / completed 重定向到 /dashboard
+- [x] 已明确 beforeLoad 不得使用 sessionStorage / localStorage 作为唯一判定来源
+- [x] 已明确 Onboarding CTA 挂接在 DashboardPrimaryActionPanel
+- [x] 已明确 `not_started -> Start Onboarding`、`in_progress -> Continue Onboarding` 都作为最高优先级 CTA
+- [x] 已明确 CTA 可见性控制（`not_started / in_progress` 命中时展示，`completed / 读取失败` 隐藏）
+- [x] 已明确 Dashboard 读取 first_run_state 的方式与独立读取状态
+- [x] 已明确断点定义（PC >= 1024px、Tablet 768-1023px、Mobile < 768px）
+- [x] 已明确步骤指示器降级（Mobile 只展示当前步骤序号 + 进度条）
+- [x] 已明确表单降级（Mobile 标签在输入框上方、全宽、最小触控高度 44px）
+- [x] 已明确内容区降级（PC 最大宽度 640px 居中、Mobile 全宽 padding 16px）
+- [x] 已明确最小支持宽度 320px
+- [x] 已明确 useOnboardingRead 承接 first_run_state 与四类对象草稿存在性读取
+- [x] 已明确前端消费模型字段集合（first_run_state.status / current_step + drafts 四类对象）
+- [x] 已明确 queryKey 设计（['onboarding', 'read']）
+- [x] 已明确 query owner 纯只读约束与 .proto 单向承接要求
+- [x] 已明确四个步骤组件分别调用各 feature slice 的 application owner
+- [x] 已明确 application owner 职责（mutation、失效 OnboardingRead、失效 canonical 列表、错误归一化）
+- [x] 已明确 OnboardingDraftForm 通过 onSubmit 回调提交，不直接调用 mutation
+- [x] 已明确步骤组件负责将 application owner 的 mutate 函数传入 onSubmit
+- [x] 已明确全局导航中 Onboarding 入口的可见性（not_started / in_progress 可见、completed 隐藏）
+- [x] 已明确全局导航读取 first_run_state 的方式与读取失败时的降级
+- [x] 已明确 first_run_state 状态机与 phase06-01 冻结的三态一致
+- [x] 已明确写路径消费方式与 phase06-02/05 冻结的 application 唯一入口、query 纯只读约束一致
+- [x] 已明确路由入口守卫与 phase06-01 冻结的 beforeLoad 承接位一致
+- [x] 已明确 Dashboard CTA 优先级与 phase05 已冻结的 CTA 矩阵兼容
+- [x] 已明确本次设计足以支撑后续 phase06-15 前端主线实现
+- [x] 已明确步骤自动定位规则包含 not_started → welcome 第 1 优先级
+- [x] 已明确根级路由守卫读取失败时降级重定向到 /dashboard
+- [x] 已明确其他路由 beforeLoad 不重复承接 first-run 判定
+- [x] 已明确降级到 /dashboard 后展示正常 CTA 矩阵，不展示 Continue Onboarding CTA
+- [x] 已明确步骤间导航规则（返回上一步展示草稿摘要、不可跳过未完成步骤）
+- [x] 已明确修改已创建草稿需跳转 canonical detail，Onboarding 内不提供草稿编辑表单
+- [x] 已明确 fromOnboarding 与 fromDashboard 同时存在时 fromDashboard 优先
+- [x] 已明确 CTA 0 未命中时回退到 phase05 CTA 1-9 矩阵
+- [x] 已明确草稿摘要降级（Mobile 上下排列、PC 水平排列）
+- [x] 已明确 first_run_state 字段映射关系（shared_baseline 四项映射到前端消费模型）
+- [x] 已明确 not_started 用户直接访问 /dashboard 的边界行为（展示 Start Onboarding，抑制 phase05 CTA 1-9）
+- [x] 已明确全局导航 Onboarding 入口读取失败时默认隐藏（降级为正常导航）
