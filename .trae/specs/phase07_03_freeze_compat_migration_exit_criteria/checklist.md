@@ -1,0 +1,14 @@
+- [x] 已明确 compat 资产只允许在 phase07 迁移过程中短时并存，不得写成长期正式接口
+- [x] 已明确 compat 并存的合法前提、禁止事项与责任边界
+- [x] 已明确当前无 active caller 的 legacy adapter 导出仍属于待退场资产
+- [x] 已明确 legacy / compat 业务入口 inventory 至少覆盖 4 条 module-centered compat 路由
+- [x] 已明确每条 compat 入口的当前调用方、存在原因、替代 RPC / Connect path
+- [x] 已明确每条 compat 入口的最晚并存时点、删除证据与回归证据
+- [x] 已明确后端退场证据至少包含路由删除与 handler 删除
+- [x] 已明确前端退场证据至少包含正式 caller 切换与旧 adapter 导出删除
+- [x] 已明确回归证据至少覆盖替代 Connect path 可用与旧 JSON 路径不可再访问
+- [x] 已明确 phase07 收口时必须逐项核销 legacy inventory，而不只是证明 Connect 主线已存在
+- [x] 已明确后端仍保留 compat 业务路由时不得判定 phase07 完成
+- [x] 已明确前端仍保留未声明的长期 JSON adapter 主线时不得判定 phase07 完成
+- [x] 已明确本次规格与 phase07-01、phase07-02 的冻结结论保持一致
+- [x] 已明确本次规格可直接作为 phase07-09、phase07-10、phase07-11 的直接上游
