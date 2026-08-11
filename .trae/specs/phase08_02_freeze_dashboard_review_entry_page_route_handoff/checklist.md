@@ -1,0 +1,13 @@
+- [x] 已明确 `Dashboard Home` 在 `phase08` 中升级为"总览 + review 入口页"，但不是 review 工作会话宿主
+- [x] 已明确 daily / weekly review 必须通过两条显式独立 route 承接，而不是 `/dashboard` 搜索参数或同页切换
+- [x] 已明确 `Dashboard` 标题行动区是当前阶段唯一正式 review 入口承接位，且 `DashboardPrimaryActionPanel` 只是当前源码载体
+- [x] 已明确 `FeedbackSignalCard / RecentActivityItemCard / DashboardStatBar` 继续保持 canonical 跳转，不升级为正式 review 入口
+- [x] 已明确 `OnboardingCtaButton / SovereigntyPanel` 不升级为 review 正式入口
+- [x] 已明确 daily review 的输入优先级、最小页面区块与完成定义
+- [x] 已明确 weekly review 的输入优先级、最小页面区块与完成定义，并正式消费 `reuse snapshot`
+- [x] 已明确 daily / weekly 可复用页面壳层，但不得共用同一条 route 身份
+- [x] 已明确 review 与 `/dashboard` 之间的回流路径保持单值化
+- [x] 已明确只有已接入 `dashboardSourceSearchSchema` 的 canonical route 才能直接复用 `dashboard-source.ts` / `BackToDashboardButton`
+- [x] 已明确 `/decisions/new` 当前不属于可直接复用 Dashboard 返回链的 route，若后续需要必须单独扩展
+- [x] 已明确不得为 review 新增第二套 `/dashboard` 持久搜索参数事实源
+- [x] 已确认本规格未越权冻结 `phase08-03+` 的动作 owner、合同命名或实现细节
