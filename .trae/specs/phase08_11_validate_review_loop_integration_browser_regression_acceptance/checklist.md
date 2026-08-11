@@ -1,0 +1,16 @@
+- [x] 已明确 `phase08-11` 只承接 review loop 联调、浏览器验收、最小反回归验证与正式证据收口
+- [x] 已明确 `phase08-08 / 09 / 10` 在本阶段只作为上游输入与待复验项，不替代统一最终验收
+- [x] 已明确 `phase03 ~ phase06` 中与 review loop 直接关联的正式页面属于本阶段最小反回归范围
+- [x] 已明确前端、后端、数据库与 `/api` 主线的统一前置检查顺序
+- [x] 已明确 `buf build / gen / lint`、`go build ./...`、`npx tsc -b --noEmit`、`frontend build` 的统一验证要求
+- [x] 已明确 review 关键 Connect procedure 与 `/api` 访问 smoke 属于本阶段正式验收矩阵
+- [x] 已明确 `Dashboard -> Daily Review -> Decision -> Update` 的浏览器验收步骤、成功回流与返回链要求
+- [x] 已明确 `Dashboard -> Weekly Review -> Decision -> Update` 的浏览器验收步骤、成功回流与返回链要求
+- [x] 已明确 daily / weekly 两条路径必须分别给出通过结论，不接受单路径替代
+- [x] 已明确 Weekly Review 对 `overview / recent activity / representative signals / reuse snapshot / module_reuse_summary / capability_summary` 的正式消费验证口径
+- [x] 已明确局部失败边界、错误语义与页面稳定性属于 Weekly Review 正式验收的一部分
+- [x] 已明确 Decision、Module、Product、Repository、Dashboard、Onboarding、Reuse Summary 的最小反回归范围
+- [x] 已明确“API 成功但 UI 崩溃”“来源链丢失”“owner 越界”属于本阶段阻断问题
+- [x] 已明确 `Template Reuse / Derived Intelligence / dry-run` 继续不属于本阶段交付
+- [x] 已明确正式验收结论必须包含环境、步骤、结果、问题、复测与 DoD 判定
+- [x] 已明确 `phase08-11` 通过后才可进入 `phase08-12` 根级同步

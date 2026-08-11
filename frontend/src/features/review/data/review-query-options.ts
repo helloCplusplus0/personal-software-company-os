@@ -26,8 +26,8 @@ export const WEEKLY_REVIEW_QUERY_KEY = ['weekly-review-context'] as const
 export function dailyReviewQueryOptions() {
   return queryOptions({
     queryKey: DAILY_REVIEW_QUERY_KEY,
-    queryFn: async () => {
-      const res = await reviewClient.getDailyReviewContext({})
+    queryFn: async ({ signal }) => {
+      const res = await reviewClient.getDailyReviewContext({}, { signal })
       return res.context
     },
   })
@@ -39,8 +39,8 @@ export function dailyReviewQueryOptions() {
 export function weeklyReviewQueryOptions() {
   return queryOptions({
     queryKey: WEEKLY_REVIEW_QUERY_KEY,
-    queryFn: async () => {
-      const res = await reviewClient.getWeeklyReviewContext({})
+    queryFn: async ({ signal }) => {
+      const res = await reviewClient.getWeeklyReviewContext({}, { signal })
       return res.context
     },
   })

@@ -14,6 +14,7 @@
  *   - pending_decisions：来自 phase03 Decision Center 的 proposed 决策 top N 摘要
  */
 import { useQuery } from '@tanstack/react-query'
+import { Code, ConnectError } from '@connectrpc/connect'
 import { dailyReviewQueryOptions, DAILY_REVIEW_QUERY_KEY } from './review-query-options'
 import type { DailyReviewContext } from '@/gen/proto/psco/review/v1/review_pb'
 import type { Timestamp } from '@bufbuild/protobuf/wkt'
@@ -141,6 +142,35 @@ function protoDecisionStatusToString(s: number): string {
   }
 }
 
+/**
+ * 取消/abort 属于读取链路的瞬时中断，不应被升级为阻断级 page-error。
+ *
+ * 依据：
+ * - TanStack Query v5 区分首次加载失败与 refetch 失败
+ * - Connect client 在传入 AbortSignal 后，会以 Code.Canceled 抛出取消错误
+ */
+function isCanceledReadError(error: unknown): boolean {
+  if (error instanceof ConnectError) {
+    if (error.code === Code.Canceled) {
+      return true
+    }
+    const message = error.message.toLowerCase()
+    return message.includes('abort') || message.includes('err_aborted') || message.includes('canceled') || message.includes('cancelled')
+  }
+
+  if (error instanceof DOMException) {
+    return error.name === 'AbortError'
+  }
+
+  if (error instanceof Error) {
+    const name = error.name.toLowerCase()
+    const message = error.message.toLowerCase()
+    return name === 'aborterror' || message.includes('abort') || message.includes('err_aborted') || message.includes('canceled') || message.includes('cancelled')
+  }
+
+  return false
+}
+
 // ============================================================================
 // Hook
 // ============================================================================
@@ -160,6 +190,8 @@ export function useDailyReviewRead(): UseDailyReviewReadResult {
     ...dailyReviewQueryOptions(),
     queryKey: DAILY_REVIEW_QUERY_KEY,
   })
+  const isCanceledError = isCanceledReadError(query.error)
+  const hasBlockingLoadError = query.isLoadingError && !isCanceledError
 
   const retry = useCallback(() => {
     void query.refetch()
@@ -174,7 +206,7 @@ export function useDailyReviewRead(): UseDailyReviewReadResult {
         pendingDecisionsSectionStatus: 'ready',
       }
     }
-    if (query.isError) {
+    if (hasBlockingLoadError) {
       return {
         pageStatus: 'page-error',
         currentFocusSectionStatus: 'error',
@@ -197,7 +229,7 @@ export function useDailyReviewRead(): UseDailyReviewReadResult {
       representativeSignalsSectionStatus: data.representativeSignals.length > 0 ? 'ready' : 'empty',
       pendingDecisionsSectionStatus: data.pendingDecisions.length > 0 ? 'ready' : 'empty',
     }
-  }, [query.isLoading, query.isError, query.data])
+  }, [query.isLoading, query.data, hasBlockingLoadError])
 
   const data = useMemo((): DailyReviewReadModel | undefined => {
     const ctx = query.data
@@ -212,8 +244,8 @@ export function useDailyReviewRead(): UseDailyReviewReadResult {
   return {
     data,
     isLoading: query.isLoading,
-    isError: query.isError,
-    error: query.error as Error | null,
+    isError: hasBlockingLoadError,
+    error: hasBlockingLoadError ? (query.error as Error) : null,
     pageState,
     retry,
   }
