@@ -1,0 +1,13 @@
+- [x] 已明确 review 后端正式合同落点为 `proto/psco/review/v1/review.proto`
+- [x] 已明确 `ReviewService` 的最小 RPC 矩阵为 `GetDailyReviewContext / GetWeeklyReviewContext / SubmitReviewResult`
+- [x] 已明确 review proto 直接复用 canonical message，而不是重复定义等价 overview / feedback / decision / reuse 字段
+- [x] 已明确 `review.QueryService` 的正式落点以及对 `Dashboard / Decision / Reuse Summary` 既有 query service 的消费边界
+- [x] 已明确 `phase05 / phase06` 既有服务与读模型如何进入 review 后端消费范围
+- [x] 已明确实体写入继续复用 `Decision / Product / Repository` 既有 canonical command owner，并补齐 `Module Registry` 的 canonical handoff 服务边界
+- [x] 已明确 `SubmitReviewResult` 只承接最小流程结果，不复制实体写模型
+- [x] 已明确 `review_records` 单表的最小字段集合与 `next-step result` 的正式落点
+- [x] 已明确 `decision handoff / entity handoff` 允许无 review record 路径
+- [x] 已明确 review Connect handler、`mountReviewConnect(...)` 与单一 `/api` 挂载方式
+- [x] 已明确 review 新增错误继续统一收敛到 `connecterrors.MapToConnectError`
+- [x] 已明确 `buf / go build / API smoke` 的正式验收口径，且 API smoke 纳入至少一种实体回流或 canonical action handoff
+- [x] 设计结果足以直接进入 `/spec`
