@@ -1,0 +1,16 @@
+- [x] 已明确 review 前端正式切片落点为 `frontend/src/features/review/`
+- [x] 已明确 `query` 与 `application` 的边界，且 review 页面不再直接组合底层 query / mutation hooks
+- [x] 已明确 `useDailyReviewRead()` 的正式消费位置、`pending decisions` 的最小前端口径与 top N 摘要边界
+- [x] 已明确 `useWeeklyReviewRead()` 对 `reuse snapshot / module_reuse_summary / capability_summary` 的唯一正式消费路径
+- [x] 已明确 review 聚合读层继续建立在底层 canonical query key 之上，不把 `['review']` 冻结成必需主缓存
+- [x] 已明确 review 页面级状态模型与区块级状态模型
+- [x] 已明确 `Review action application owner` 的最小接口与 success envelope
+- [x] 已明确 `Decision` 相关动作、实体 handoff 与 `next-step result` 的 owner 分工
+- [x] 已明确 canonical owner 与 review owner 各自负责的 query 失效矩阵
+- [x] 已明确 `BindModuleToProduct / BindRepositoryToProduct / MapModuleToRepository` 三类实体 mutation 的回流与失效矩阵
+- [x] 已明确所有进入 canonical 页的 success envelope 都继续透传 `fromDashboard / dashboardSection / dashboardReturnTo`
+- [x] 已明确错误归一化留在 `Review action application owner`，页面只展示稳定 review-facing error
+- [x] 已明确 review 不得复制 `invalidateDetail`、组件级 mutation 包装、Dashboard 页面级 retry 编排等临时模式
+- [x] 已明确 caller 不会跨页面漂移成第二套 owner
+- [x] 已明确 `DashboardPrimaryActionPanel / DailyReviewPage / WeeklyReviewPage / ReviewActionFooter / BackToDashboardButton` 的一对一 caller-owner 映射
+- [x] 设计结果足以直接指导后续源码实现
