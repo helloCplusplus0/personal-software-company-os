@@ -1,0 +1,16 @@
+- [x] 已明确 phase07-01 的 34 条 canonical RPC 是本次迁移矩阵的唯一业务接口上游
+- [x] 已明确 phase07-03 的 4 条 legacy / compat endpoint 必须逐项进入退场证据矩阵
+- [x] 已明确 phase07-05 的 11 项 frontend 正式写动作 owner 必须进入验收映射表
+- [x] 已明确迁移矩阵必须下钻到 `service / RPC / 当前入口路径 / 方法 / 当前 owner / 目标 Connect path / 迁移 owner / 波次 / 回归项 / 最终证据`
+- [x] 已明确 9 个业务模块与 34 条 RPC 都有对应迁移 owner、波次与回归项
+- [x] 已明确 ModuleRegistryService 下 4 条 compat 语义 RPC 的 transport inventory 与正式业务 owner 区分规则
+- [x] 已明确跨模块回归清单必须覆盖页面、组件与 route caller（9 条跨模块联动 + 6 条 route 级回归）
+- [x] 已明确 Dashboard / Onboarding / Reuse / Sovereignty 继续复用 phase05-14 与 phase06-16 的正式验收边界
+- [x] 已明确现有 5 个 database/scripts/reset_*.sh 是 fixture / 联调 / 验收矩阵的正式入口
+- [x] 已明确每条 legacy endpoint 都要绑定路由删除证据、handler / adapter 删除证据与替代 Connect 回归证据
+- [x] 已明确 candidate read、mutation owner 与成功回流必须作为同一条前端验收链验证（4 组联合验收）
+- [x] 已明确 /api 单一前缀在 Vite、本地启动、验收脚本与部署链路中的承接要求
+- [x] 已明确 proto/Makefile、buf.gen.yaml 与前端运行时依赖变更必须进入工具链迁移清单
+- [x] 已明确当前仓库没有现成 CI workflow 的事实必须作为显式迁移缺口建账
+- [x] 已明确 phase07-11 的最终证据包结构（8 份证据文件）与 8 条阻断条件
+- [x] 已明确本次规格足以直接指导 phase07-07 ~ phase07-11 的实现、回归与收口
