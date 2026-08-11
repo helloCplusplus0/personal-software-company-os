@@ -1,0 +1,18 @@
+- [x] 已明确 `.proto` 继续作为唯一长期合同源，review 继续走 ConnectRPC
+- [x] 已明确 review 合同只承接 review context、最小动作命令与可选过程记录
+- [x] 已明确不得扩写 `dashboard.proto` / `reuse_summary.proto` 去吞并 review session / review result
+- [x] 已明确 daily review 的最小正式消费范围
+- [x] 已明确 weekly review 的最小正式消费范围，并正式消费 `phase06` dashboard scope 下的 `module_reuse_summary / capability_summary`
+- [x] 已明确 review read model 是对既有 canonical fact 的轻量组合层，而不是第二套事实主线
+- [x] 已明确 review-local write model 不得复制既有 `Decision / Product / Module / Repository` 写模型
+- [x] 已明确 `phase05` Feedback 与 `phase06` Reuse Awareness 的正式消费范围是当前 `/spec` 必答项
+- [x] 已明确 review 不得合并或重写 `FeedbackSignalRead` 与 `ReuseSummaryRead` 的 canonical 职责
+- [x] 已明确 `phase08` 不以引入 review 记录为前置阻断项
+- [x] 已明确无 review record 路径当前只覆盖 `decision handoff / entity handoff`
+- [x] 已明确 `next-step result` 若作为正式输出，必须落到轻量 review record
+- [x] 已明确若新增 review 记录，其身份只能是经营回路过程记录，而不是新的长期核心实体
+- [x] 已明确若新增 review 记录，其最小字段边界与禁止复制的影子状态
+- [x] 已明确当前真实 `caller / route / query owner / application owner` inventory 必须逐项进入后续 `/spec`
+- [x] 已明确 `OnboardingCtaButton / SovereigntyPanel` 继续保持既有入口职责，不升级为正式 review 入口
+- [x] 已明确 `CurrentFocusSection / AssetFeedbackSection / RecentActivitySection` 只承接页面编排与只读展示，不升级为新的写路径 owner
+- [x] 已确认本规格未越权冻结 review proto 文件名、RPC 名称、query key 细节或实现目录结构
