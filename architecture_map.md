@@ -111,9 +111,10 @@ docs/
   - `.trae/specs/phase06_16_integration_validation_acceptance/acceptance_report.md`（`phase06` 联调验收与收口结论入口）
   - `.trae/specs/phase07_07_formal_transport_mainline_cutover_spec/transport_mainline_cutover_spec_v0.1.md`（`phase07` 正式规格收口入口）
   - `.trae/specs/phase07_11_validate_phase01_phase06_regression_retirement_acceptance/acceptance_report.md`（`phase07` 联调、退场验收与收口结论入口）
-  - `docs/phase/phase08_operating_review_loop_foundation_architecture_plan.md`（当前活动阶段的架构规划入口）
-  - `docs/phase/phase08_operating_review_loop_foundation_dev_plan.md`（当前活动阶段的任务与 DoD 入口）
-  - `docs/phase/phase08_operating_review_loop_foundation_shared_baseline.md`（当前活动阶段的共享基线入口）
+  - `docs/phase/phase08_operating_review_loop_foundation_architecture_plan.md`（最近完成正式业务 phase 的架构规划与冻结记录）
+  - `docs/phase/phase08_operating_review_loop_foundation_dev_plan.md`（最近完成正式业务 phase 的任务与 DoD 冻结记录）
+  - `docs/phase/phase08_operating_review_loop_foundation_shared_baseline.md`（最近完成正式业务 phase 的共享基线冻结记录）
+  - `.trae/specs/phase08_11_validate_review_loop_integration_browser_regression_acceptance/acceptance_report.md`（`phase08` 正式验收与收口结论入口）
 - 当前项目技术路线已冻结为 `Durable System Track`
 - `phase02_module_registry_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - `phase03_decision_center_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
@@ -128,11 +129,12 @@ docs/
 - `phase06` 已直接承接 `PSCO-mvp02-summarize-feedback.md` 与 `phase05-10 / 11 / 14`，并已完成正式规格、合同、实现与联调验收收口
 - `phase06` 三件套保留为该阶段 `/plan` 的规划与冻结记录，不再承担根级当前阶段状态说明
 - `phase07` 已直接承接 `PSCO-mvp03-summarize-feedback.md`、`audit_001` 审计结论与 `phase06-12 / 13 / 16`，并已完成正式规格、实现、验收与根级收口
-- `phase07` 三件套在收口后只承担最近完成阶段的规划与冻结记录角色；执行层正式入口只收敛到 `phase07-07` 正式规格与 `phase07-11` 验收结论
+- `phase07` 三件套在收口后只承担最近完成前置基础阶段的规划与冻结记录角色；执行层正式入口只收敛到 `phase07-07` 正式规格与 `phase07-11` 验收结论，不再覆盖当前业务状态
 - `phase07-08 / 09 / 10` 只保留为生成链、后端与前端迁移实现结论记录，不提升为根级长期主入口
-- `phase08` 已正式建立为 `Operating Review Loop` 的当前业务 phase；其三件套位于 `docs/phase/`，并作为当前活动阶段入口
-- `phase08` 只承接 `Operating Review Loop`，不把 `Template Reuse / Derived Intelligence / Real-Project Dry-Run` 混写为当前并列主交付
-- 后续 `mvp0.3` 支撑能力 phase 与 dry-run phase 需待 `phase08` 收口后再建立正式入口；根级文档只允许写进入条件，不得提前猜测任何未建立阶段名称
+- `phase08` 已直接承接 `PSCO-mvp03-summarize-feedback.md`、`phase07-07` 正式规格与 `phase07-11` 验收结论，并已完成 `Operating Review Loop` 的正式交付、统一验收与根级收口
+- `phase08` 三件套在收口后只承担最近完成正式业务 phase 的规划与冻结记录角色；正式验收与收口入口收敛到 `phase08-11` acceptance_report
+- `phase08` 只承接 `Operating Review Loop`，不把 `Template Reuse / Derived Intelligence / dry-run` 混写为当前并列主交付
+- 后续支撑能力 phase 与 dry-run phase 只允许在直接承接 `phase08-11` 验收结论、`phase08` 根级收口结论与当前根级真相源后建立正式入口；根级文档只写进入条件，不得提前猜测任何未建立阶段名称
 
 ### 4.2 fix
 
