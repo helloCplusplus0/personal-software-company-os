@@ -1,16 +1,12 @@
 # proto/Makefile — PSCO Proto 合同生成与校验入口
 #
-# 上游规格：phase02-11A spec §"生成链与实现边界"
-#           phase03-08 spec §"生成链与校验链必须冻结"（补全 build 受控入口）
-#           phase03-11 spec §"buf 工具链入口必须可运行且复用现有入口"
-#           phase04-08 spec §"合同演进与 breaking check 规则必须冻结"
-#           phase04-11 spec §"buf 工具链入口必须可运行且复用现有入口"
-#           phase05-08 spec §"合同演进与 Buf 校验规则必须冻结"
-#           phase05-11 spec §"buf 工具链入口必须可运行且复用现有入口"
+# 上游规格：phase07-07 formal spec §3.3（buf 3 插件正式矩阵）
+#           phase07-02 frozen_scope.md §3（工具链入口）
+#           历史上游：phase02-11A / phase03-08/11 / phase04-08/11 / phase05-08/11
 #
 # 使用方式：
 #   make build     — 编译 proto 文件为 buf image，验证合同源可被正确解析与编译
-#   make gen       — 生成 Go + TypeScript 合同产物
+#   make gen       — 生成 Go protobuf + Go Connect + TypeScript 合同产物
 #   make lint      — 校验 Proto 文件规范性
 #   make breaking  — 检测破坏性变更（对比 main 分支，需要 git 基准）
 #   make clean     — 清理生成产物
@@ -22,7 +18,7 @@
 build:
 	buf build
 
-# 生成 Go + TypeScript 合同产物
+# 生成 Go protobuf + Go Connect + TypeScript 合同产物
 gen:
 	buf generate
 
@@ -42,7 +38,8 @@ lint:
 breaking:
 	buf breaking --against '../.git#branch=main,subdir=proto'
 
-# 清理生成产物
+# 清理生成产物（覆盖 Go protobuf + Go Connect + TypeScript 三个生成目录）
 clean:
 	rm -rf ../backend/internal/gen/proto
+	rm -rf ../backend/internal/gen/connect
 	rm -rf ../frontend/src/gen/proto

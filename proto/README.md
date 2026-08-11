@@ -111,31 +111,15 @@ buf generate
 
 ### 生成产物落点
 
-| 语言 | 模块 | 落点 | 说明 |
+| 语言 | 产物类型 | 插件 | 落点 |
 | --- | --- | --- | --- |
-| Go | Common | `backend/internal/gen/proto/psco/common/v1/` | 共享枚举类型 |
-| Go | Module Registry | `backend/internal/gen/proto/psco/module_registry/v1/` | 消息类型（service 定义已冻结在 .proto 中，后续迁移时再加回 grpc/connect 插件） |
-| Go | Decision Center | `backend/internal/gen/proto/psco/decision_center/v1/` | 消息类型（同上） |
-| Go | Product Registry | `backend/internal/gen/proto/psco/product_registry/v1/` | 消息类型（同上） |
-| Go | Repository Binding | `backend/internal/gen/proto/psco/repository_binding/v1/` | 消息类型（同上） |
-| Go | Dashboard | `backend/internal/gen/proto/psco/dashboard/v1/` | 消息类型（同上） |
-| Go | Onboarding | `backend/internal/gen/proto/psco/onboarding/v1/` | 消息类型（同上） |
-| Go | Export | `backend/internal/gen/proto/psco/export/v1/` | 消息类型（同上） |
-| Go | Backup | `backend/internal/gen/proto/psco/backup/v1/` | 消息类型（同上） |
-| Go | Reuse Summary | `backend/internal/gen/proto/psco/reuse_summary/v1/` | 消息类型（同上） |
-| TypeScript | Common | `frontend/src/gen/proto/psco/common/v1/` | 共享枚举类型 |
-| TypeScript | Module Registry | `frontend/src/gen/proto/psco/module_registry/v1/` | 消息类型（同上） |
-| TypeScript | Decision Center | `frontend/src/gen/proto/psco/decision_center/v1/` | 消息类型（同上） |
-| TypeScript | Product Registry | `frontend/src/gen/proto/psco/product_registry/v1/` | 消息类型（同上） |
-| TypeScript | Repository Binding | `frontend/src/gen/proto/psco/repository_binding/v1/` | 消息类型（同上） |
-| TypeScript | Dashboard | `frontend/src/gen/proto/psco/dashboard/v1/` | 消息类型（同上） |
-| TypeScript | Onboarding | `frontend/src/gen/proto/psco/onboarding/v1/` | 消息类型（同上） |
-| TypeScript | Export | `frontend/src/gen/proto/psco/export/v1/` | 消息类型（同上） |
-| TypeScript | Backup | `frontend/src/gen/proto/psco/backup/v1/` | 消息类型（同上） |
-| TypeScript | Reuse Summary | `frontend/src/gen/proto/psco/reuse_summary/v1/` | 消息类型（同上） |
+| Go | Proto 消息类型 | `buf.build/protocolbuffers/go` | `backend/internal/gen/proto/psco/**/*.pb.go` |
+| Go | Connect handler + client（simple 模式） | `buf.build/connectrpc/gosimple` | `backend/internal/gen/connect/psco/**/*.connect.go` |
+| TypeScript | Proto 消息类型 + service descriptor | `buf.build/bufbuild/es` | `frontend/src/gen/proto/psco/**/*_pb.ts` |
 
 > 生成产物已加入 `.gitignore`，不进入版本控制。每次 `make gen` 重新生成。
-> 当前阶段所有模块只生成消息类型与 service 描述符，不生成 gRPC 服务桩或客户端桩。后续迁移到 gRPC / Connect 时在 `buf.gen.yaml` 中加回对应插件，不需要修改 `.proto` 合同源。
+> `phase07-08` 已将生成链从 2 插件（Go protobuf + TS）升级为 3 插件正式矩阵（Go protobuf + Go Connect simple + TS）。
+> Connect handler 的 simple 模式直接使用 proto 消息类型作为 handler 签名（如 `(ctx, *pb.ListModulesRequest) (*pb.ListModulesResponse, error)`），与现有 Go service 层签名风格一致。
 
 ## 4. 过渡传输层映射
 
@@ -155,7 +139,8 @@ buf generate
 | `BindModuleToProduct` | POST | `/api/modules/{moduleId}/bindings/products` | JSON body + URL path（兼容委派到 Product Registry） |
 | `MapModuleToRepository` | POST | `/api/modules/{moduleId}/bindings/repositories` | JSON body + URL path（兼容委派到 Repository Binding） |
 
-> phase04-12 起已移除旧候选读取入口 `/api/candidates/products` 与 `/api/candidates/repositories`。
+> phase04-12 起 canonical 候选读取已切换到 Product Registry / Repository Binding；
+> `/api/candidates/products` 与 `/api/candidates/repositories` 当前仍作为 Module Registry 历史入口的 compat 路由保留，最晚在 `phase07-09` 退场。
 > canonical 候选读取由 Product Registry 的 `ListProductModuleCandidates` 与 Repository Binding 的
 > `ListRepositoryProductCandidates` / `ListRepositoryModuleCandidates` 各自承接。
 
@@ -465,11 +450,13 @@ buf generate
 
 ## 6. 当前阶段不做
 
-- 不完成完整 gRPC / Connect 传输层迁移
-- 不替换 `chi + JSON HTTP` 为 gRPC 服务器
-- 不将生成代码集成到现有 handler / adapter 中
+- 不完成完整 Connect 传输层迁移（Go handler + 前端 client 实现由后续 phase07 子任务承接）
+- 不替换 `chi + JSON HTTP` 为 Connect 服务器
+- 不将 Connect 生成代码集成到现有 handler / adapter 中（由 phase07 后续实现子任务承接）
 - 不引入 gRPC 网关或连接池
-- 以上属于后续 phase 的范围
+- 以上属于后续 phase07 子任务的范围
+
+> `phase07-08` 已落地 3 插件正式生成链与 Connect runtime 依赖，后续 `phase07` 实现、退场与验收必须以此生成链为唯一上游。
 
 ## 7. 校验命令
 

@@ -1,0 +1,18 @@
+- [x] 已明确 `phase07-08` 的目标是落实生成链与正式合同产物主线，而不是并行展开 handler / frontend owner 实现
+- [x] 已明确 `phase07-08` 直接继承 `phase07-07 formal spec` 的 3 插件矩阵、产物目录与统一调用口径
+- [x] 已明确 `proto/buf.gen.yaml` 已从当前 2 插件升级为 `protocolbuffers/go + connectrpc/gosimple + bufbuild/es`（含 `simple` 选项）
+- [x] 已明确 Go Connect 产物已输出到 `backend/internal/gen/connect/**`（9 个业务模块 `.connect.go`）
+- [x] 已明确 TS 合同产物已继续单值输出到 `frontend/src/gen/proto/**`（10 个 `_pb.ts`）
+- [x] 已明确 `simple` 模式已生效：handler 签名直接使用 `*pb.ListModulesRequest`，无 `connect.Request` 包装
+- [x] 已明确 `proto/Makefile` 继续作为 `build / gen / lint / breaking / clean` 的唯一受控入口
+- [x] 已明确 `make gen` 与 `buf generate` 在 `proto/` 目录产出同一套正式合同产物
+- [x] 已明确 `make clean` 已覆盖 `backend/internal/gen/proto`、`backend/internal/gen/connect` 与 `frontend/src/gen/proto`
+- [x] 已明确 `frontend/package.json` 已新增 `@connectrpc/connect@^2.1.2` 与 `@connectrpc/connect-web@^2.1.2`
+- [x] 已明确 `@bufbuild/protobuf` 继续保留
+- [x] 已明确 lockfile 与正式依赖同步更新
+- [x] 已明确 Go 后端已安装 `connectrpc.com/connect@v1.20.0`
+- [x] 已明确 `go build ./...`、`npx tsc -b --noEmit`、`make build`、`make lint` 全部通过
+- [x] 已明确 `proto/README.md` 已更新为 3 插件矩阵表与 phase07-08 落地说明
+- [x] 已明确 `toolchain_migration.csv` 与 `build_verification.txt` 必须以 `phase07-08` 落地后的生成链为基准
+- [x] 已明确后续实现不得再以"缺少 Connect 产物 / 缺少前端 Connect 依赖"为默认前提
+- [x] 已验证本 spec 与 `phase07-02`、`phase07-06`、`phase07-07` 及当前仓库现状一致

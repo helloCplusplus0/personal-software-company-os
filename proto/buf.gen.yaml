@@ -1,10 +1,12 @@
 # buf.gen.yaml — PSCO Proto 代码生成配置
 #
-# 上游规格：phase02-11A spec §"生成链与实现边界"
+# 上游规格：phase07-07 formal spec §3.3（buf 3 插件正式矩阵）
+#           phase07-02 frozen_scope.md §3（插件矩阵与产物落点）
 #
 # 生成产物落点：
-#   - Go:    backend/internal/gen/proto/（通过 go_package 选项解析子路径）
-#   - TS:    frontend/src/gen/proto/
+#   - Go protobuf:  backend/internal/gen/proto/（通过 go_package 选项解析子路径）
+#   - Go Connect:   backend/internal/gen/connect/（Connect-Go simple 模式 handler + client）
+#   - TS:           frontend/src/gen/proto/（含 service descriptor，供前端 createClient 使用）
 #
 # 执行方式：在 proto/ 目录执行 make gen，或直接执行 buf generate。
 # 生成产物已加入 .gitignore，不进入版本控制（由 CI 或本地 make gen 重新生成）。
@@ -19,14 +21,21 @@ managed:
       value: github.com/psco/backend/internal/gen/proto
 
 plugins:
-  # Go 消息类型（protoc-gen-go）
-  # 当前阶段只生成消息类型，不生成 gRPC 服务桩。
-  # service 定义在 .proto 合同源中已冻结，后续迁移到 gRPC / Connect 时再加回 grpc/go 插件。
+  # 1. Go protobuf 消息类型（protoc-gen-go）
   - remote: buf.build/protocolbuffers/go
     out: ../backend/internal/gen/proto
     opt: paths=source_relative
 
-  # TypeScript 消息类型（@bufbuild/es）
+  # 2. Go Connect handler + client（connectrpc/gosimple，simple 模式）
+  # phase07-02 §2.4 冻结：simple 模式直接使用 proto 消息类型作为 handler 签名，
+  # 与现有 Go service 层签名风格一致，减少迁移摩擦。
+  - remote: buf.build/connectrpc/gosimple
+    out: ../backend/internal/gen/connect
+    opt:
+      - paths=source_relative
+      - simple
+
+  # 3. TypeScript protobuf + service descriptor（@bufbuild/es）
   - remote: buf.build/bufbuild/es
     out: ../frontend/src/gen/proto
     opt:
