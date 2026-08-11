@@ -6,9 +6,9 @@
 ## 1. 项目定位
 
 - 项目名称：`Personal Software Company OS`
-- 当前阶段：`phase07_transport_contract_mainline_migration`（已完成 `/plan -> /spec -> 实现 -> 验收 -> 根级同步` 收口，当前作为后续 `mvp0.3` 业务阶段之前的前置基础结论保留）
-- 当前主目标：保持根级真相源与 `phase07` 收口结论单值一致，并以后续 `mvp0.3` 业务阶段正式 phase 入口建立为切换条件
-- 当前下一阶段入口：后续 `mvp0.3` 业务阶段需直接承接 `phase07-07` 正式规格与 `phase07-11` 验收结论；在正式 phase 入口建立前，只允许保留进入条件表达
+- 当前阶段：`phase08_operating_review_loop_foundation`（已建立正式 `/plan` 入口，当前作为 `mvp0.3` 的首个正式业务 phase 推进）
+- 当前主目标：让 Dashboard 正式承担经营动作入口，并闭合 `Feedback -> Decision -> Update` 最小经营回路
+- 当前下一阶段入口：待 `phase08` 正式收口后，后续 `mvp0.3` 支撑能力 phase 才允许建立正式入口；当前只保留进入条件表达
 - 当前定位：PSCO 是个人软件公司的经营与资产系统，不是代码管理工具，不是 AI Chat 产品，也不是自动扫描系统
 
 ## 2. 当前唯一上游
@@ -66,13 +66,14 @@
 - `.trae/specs/phase06_13_land_minimal_proto_contract_mainline/` 已将 `phase06` 最小 `.proto` 合同接入仓库既有 `proto/` 主线
 - `.trae/specs/phase06_16_integration_validation_acceptance/acceptance_report.md` 已给出 `phase06` 联调验收与收口结论入口
 - `phase06` 三件套保留为该阶段 `/plan` 的规划与冻结记录，不再覆盖根级当前状态
-- `PSCO-mvp03-summarize-feedback.md` 已冻结为 `phase07` 与后续 `mvp0.3` 业务阶段的最终仲裁与规划基线
+- `PSCO-mvp03-summarize-feedback.md` 已冻结为 `phase08` 与后续 `mvp0.3` 业务阶段的最终仲裁与规划基线
 - `docs/audit/audit_001_transport_contract_mainline_issue.md` 与 `docs/audit/audit_001_transport_contract_mainline_analysis.md` 已冻结为当前传输主线收敛议题的正式审计入口
 - `.trae/specs/phase07_07_formal_transport_mainline_cutover_spec/transport_mainline_cutover_spec_v0.1.md` 已冻结为 `phase07` 当前阶段唯一正式规格入口
 - `.trae/specs/phase07_11_validate_phase01_phase06_regression_retirement_acceptance/acceptance_report.md` 已给出 `phase07` 联调、退场验收与可进入后续 `mvp0.3` 业务阶段的正式结论入口
-- `phase07_transport_contract_mainline_migration` 三件套保留为该阶段 `/plan` 的规划与冻结记录，不再承担根级当前状态说明
+- `phase07_transport_contract_mainline_migration` 三件套保留为最近完成阶段的 `/plan` 规划与冻结记录，不再承担根级当前状态说明
+- `phase08_operating_review_loop_foundation` 三件套已建立，并作为当前正式业务 phase 的 `/plan` 入口
 - `phase07-08 / 09 / 10` 规格目录保留为生成链、后端与前端迁移实现结论记录，不提升为新的根级长期入口
-- 后续 `mvp0.3` 业务阶段只有在正式 phase 入口建立后才允许切换，且必须直接承接 `phase07-07` 与 `phase07-11`
+- 后续 `mvp0.3` 支撑能力 phase 只有在 `phase08` 正式收口后才允许建立正式入口，且必须直接承接 `phase08` 收口结论
 
 ## 5. 推荐阅读顺序
 
@@ -108,15 +109,18 @@
 30. `PSCO-mvp03-summarize-feedback.md`
 31. `docs/audit/audit_001_transport_contract_mainline_issue.md`
 32. `docs/audit/audit_001_transport_contract_mainline_analysis.md`
-33. `docs/phase/phase07_transport_contract_mainline_migration_architecture_plan.md`
-34. `docs/phase/phase07_transport_contract_mainline_migration_dev_plan.md`
-35. `docs/phase/phase07_transport_contract_mainline_migration_shared_baseline.md`
-36. `.trae/specs/phase07_07_formal_transport_mainline_cutover_spec/transport_mainline_cutover_spec_v0.1.md`
-37. `.trae/specs/phase07_11_validate_phase01_phase06_regression_retirement_acceptance/acceptance_report.md`
-38. `.trae/specs/phase06_12_onboarding_sovereignty_reuse_formal_spec/spec.md`
-39. `.trae/specs/phase06_13_land_minimal_proto_contract_mainline/`
-40. `.trae/specs/phase06_16_integration_validation_acceptance/acceptance_report.md`
-41. 当前目标对应的 `phase / fix / audit` 文档
+33. `docs/phase/phase08_operating_review_loop_foundation_architecture_plan.md`
+34. `docs/phase/phase08_operating_review_loop_foundation_dev_plan.md`
+35. `docs/phase/phase08_operating_review_loop_foundation_shared_baseline.md`
+36. `docs/phase/phase07_transport_contract_mainline_migration_architecture_plan.md`
+37. `docs/phase/phase07_transport_contract_mainline_migration_dev_plan.md`
+38. `docs/phase/phase07_transport_contract_mainline_migration_shared_baseline.md`
+39. `.trae/specs/phase07_07_formal_transport_mainline_cutover_spec/transport_mainline_cutover_spec_v0.1.md`
+40. `.trae/specs/phase07_11_validate_phase01_phase06_regression_retirement_acceptance/acceptance_report.md`
+41. `.trae/specs/phase06_12_onboarding_sovereignty_reuse_formal_spec/spec.md`
+42. `.trae/specs/phase06_13_land_minimal_proto_contract_mainline/`
+43. `.trae/specs/phase06_16_integration_validation_acceptance/acceptance_report.md`
+44. 当前目标对应的 `phase / fix / audit` 文档
 
 ## 6. 接手提醒
 

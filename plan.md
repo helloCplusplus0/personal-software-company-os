@@ -4,10 +4,10 @@
 
 ## 1. 当前状态
 
-- 当前阶段：`phase07_transport_contract_mainline_migration`
-- 当前状态：`phase07` 已完成基础传输主线迁移、统一联调回归、legacy / compat 退场验收与根级同步，当前以收口后的前置基础阶段结论存在
-- 当前目标：保持 `phase07` 收口结论、根级状态与活动文档入口单值一致，并为后续 `mvp0.3` 业务阶段建立清楚但不命名的进入条件
-- 当前下一阶段入口：后续 `mvp0.3` 业务阶段需先建立正式 phase 入口，并直接承接 `phase07-07` 正式规格、`phase07-11` 验收结论与当前根级真相源
+- 当前阶段：`phase08_operating_review_loop_foundation`
+- 当前状态：`phase08` 已建立正式 `/plan` 入口，当前作为 `mvp0.3` 的首个正式业务 phase 推进
+- 当前目标：让 Dashboard 正式承担经营动作入口，并闭合 `Feedback -> Decision -> Update` 最小经营回路
+- 当前下一阶段入口：待 `phase08` 正式收口后，后续 `mvp0.3` 支撑能力 phase 才允许建立正式入口；当前只保留进入条件表达
 
 ## 2. 当前进度概览
 
@@ -51,10 +51,12 @@
 - `.trae/specs/phase06_13_land_minimal_proto_contract_mainline/` 已将 `phase06` 最小 `.proto` 合同落地为仓库主线
 - `.trae/specs/phase06_16_integration_validation_acceptance/acceptance_report.md` 已形成 `phase06` 联调验收与收口结论入口
 - `phase06` 三件套保留为该阶段 `/plan` 的规划与冻结记录，不再覆盖根级当前状态
-- `PSCO-mvp03-summarize-feedback.md` 已冻结为 `phase07` 与后续 `mvp0.3` 业务阶段的最终仲裁与完整路线规划基线
+- `PSCO-mvp03-summarize-feedback.md` 已冻结为 `phase08` 与后续 `mvp0.3` 业务阶段的最终仲裁与完整路线规划基线
 - `docs/audit/audit_001_transport_contract_mainline_issue.md` 与 `docs/audit/audit_001_transport_contract_mainline_analysis.md` 已冻结为当前传输主线收敛议题的正式审计入口
 - `phase07_transport_contract_mainline_migration` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，当前作为 `mvp0.3` 业务阶段之前的前置基础结论保留
 - `phase07` 的正式执行层入口已收敛到 `phase07-07` 正式规格与 `phase07-11` 验收报告；三件套只保留为规划与冻结记录
+- `phase08_operating_review_loop_foundation` 已建立正式 `/plan` 入口，当前作为 `mvp0.3` 的首个正式业务 phase 推进
+- `phase08` 当前只承接 `Operating Review Loop`，不把 `Template Reuse / Derived Intelligence / Real-Project Dry-Run` 混写为并列主交付
 
 ## 3. Phase 路线预览
 
@@ -117,18 +119,27 @@
 - 状态：`completed`
 - 当前收口结果：已完成 `phase01 ~ phase06` canonical 业务接口向 `.proto + ConnectRPC` 的正式传输主线切换；`phase07-07` 为正式规格入口，`phase07-11` 为联调、退场验收与收口结论入口；三件套保留为规划与冻结记录
 
+### phase08：`phase08_operating_review_loop_foundation`
+
+- 目标：交付 `Operating Review Loop` 最小经营回路
+- 进入条件：直接承接 `PSCO-mvp03-summarize-feedback.md`、`phase07-07` 正式规格、`phase07-11` 验收结论，以及 `phase03 ~ phase06` 已冻结的业务规格与验收结果
+- 范围约束：不得把 `Template Reuse / Derived Intelligence Deepening / Real-Project Dry-Run` 混写为本 phase 并列主交付；不得把 review loop 演化为通用任务管理器
+- 交付要求：作为交付型 phase 推进，必须完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
+- 状态：`current`
+- 当前阶段结果：已建立 `phase08` 三件套，当前待进入 `/spec` 收敛 `Dashboard -> Review -> Decision -> Update` 的正式执行边界
+
 ## 4. 下一阶段切换条件
 
-当以下条件同时满足时，根级入口才允许从 `phase07` 收口状态切换到后续 `mvp0.3` 业务阶段正式 phase 入口：
+当以下条件同时满足时，根级入口才允许从 `phase08` 当前阶段切换到后续 `mvp0.3` 支撑能力 phase 的正式入口：
 
-1. `phase07` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口` 全链路
-2. `phase07` 对应正式规格正文已冻结为当前阶段唯一正式规格入口
-3. `phase07` 对应 `buf` 生成链、Go Connect 产物与前端客户端主线已稳定落地
-4. `phase07` 对应联调回归验收与旧 JSON 业务主线退场结论已形成正式入口
-5. 下一阶段正式 `phase` 入口文档已在仓库中建立，并明确直接承接 `phase07` 已冻结的规格、迁移结果与验收结论
-6. 根级真相源已完成状态切换回写，且未在根级文档中凭空猜测未建立的 phase 名称
+1. `phase08` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口` 全链路
+2. Dashboard 已正式承担 review 入口职责，而不再只是总览页
+3. `Feedback -> Decision -> Update` 已形成可重复执行的最小闭环
+4. `phase08` 对应正式规格、验收结论与根级同步入口已形成正式证据
+5. 下一阶段正式 `phase` 入口文档已在仓库中建立，并明确直接承接 `phase08` 已冻结的边界与收口结论
+6. 根级真相源已完成状态切换回写，且未在根级文档中凭空猜测未建立的后续 phase 名称
 
-当前结论：`phase07` 已完成收口，当前直接上游与进入条件已冻结为 `PSCO-mvp03-summarize-feedback.md`、`audit_001` 审计结论、`phase07-07` 正式规格、`phase07-11` 验收结论与根级真相源；在后续正式 phase 入口建立前，不得在根级文档预设任何新的阶段名称。
+当前结论：`phase08` 已建立正式 `/plan` 入口，当前直接上游已冻结为 `PSCO-mvp03-summarize-feedback.md`、`phase07-07` 正式规格、`phase07-11` 验收结论与相关已交付业务规格；在 `phase08` 正式收口前，后续支撑能力 phase 与 dry-run phase 只保留进入条件表达，不预设新的正式阶段名称。
 
 ## 5. 说明
 

@@ -1,0 +1,11 @@
+- [x] 已明确 `phase08` 的唯一中心主线为 `Operating Review Loop`
+- [x] 已明确 `Dashboard -> Review -> Decision -> Update` 为最小经营回路
+- [x] 已明确 daily / weekly review 属于两条独立成功会话，而不是"同页双按钮"
+- [x] 已明确"页面出现 review 入口"不能单独构成阶段成功
+- [x] 已明确 `phase05` Feedback 与 `phase06` Reuse Awareness 的正式消费属于当前阶段成功标准
+- [x] 已明确 `Template Reuse / Derived Intelligence Deepening / Real-Project Dry-Run` 为当前阶段非目标
+- [x] 已明确 review loop 不得演化为通用任务管理器、backlog 系统或 review-local 并列状态体系
+- [x] 已明确 `Decision` 中心地位、`.proto + ConnectRPC` 主线与既有 canonical owner 不可回退
+- [x] 已明确后续 `phase08-02+` `/spec` 必须以本规格作为强制边界上游
+- [x] 已明确后续 `phase08-02+` `/spec` 必须直接消费 `shared_baseline` 已冻结的真实 caller / route / owner inventory
+- [x] 已确认本规格未越权冻结页面、合同命名、接口名或后续阶段正式命名
