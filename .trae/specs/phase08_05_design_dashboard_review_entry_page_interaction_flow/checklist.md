@@ -1,0 +1,16 @@
+- [x] 已明确 `Dashboard` 标题行动区是 daily / weekly review 的唯一正式入口承接位
+- [x] 已明确 `DashboardPrimaryActionPanel` 从单主 CTA 命中器迁移为稳定可见的 dual review launcher
+- [x] 已明确标题行动区的响应式重排责任由页面壳层承接，移动浏览器下不会把三类入口压成同排微型按钮
+- [x] 已明确 `Daily Review` 的最小页面骨架、区块顺序与完成语义
+- [x] 已明确 `pending decisions` 来源于既有 `Decision` canonical fact 的最小范围，且已冻结 top N 摘要展示口径
+- [x] 已明确 `Weekly Review` 的最小页面骨架、区块顺序与完成语义
+- [x] 已明确 `Weekly Review` 正式消费 `reuse snapshot / module_reuse_summary / capability_summary`
+- [x] 已明确 daily / weekly 允许复用共享 shell，但不得退化为同一份无差别模板
+- [x] 已明确移动浏览器下的最小降级策略，且不引入第二套移动端页面体系
+- [x] 已明确 review 主动离开统一返回 `/dashboard`
+- [x] 已明确 review 完成后进入 `Decision / Product / Module / Repository` 既有 canonical 页的页面流
+- [x] 已明确 review route 必须承接并透传 `fromDashboard / dashboardSection / dashboardReturnTo`，确保 canonical 页返回链继续可用
+- [x] 已明确 `next-step result` 只保留为后续 `review record` 出口，不发明第二套 sink
+- [x] 已明确 `dashboard-source.ts` 与 `BackToDashboardButton` 继续作为 canonical 页面回 Dashboard 的返回链事实源
+- [x] 已明确 `CurrentFocusSection / AssetFeedbackSection / RecentActivitySection` 只复用语义与展示模式，不升级为新的写路径 owner
+- [x] 已明确 `FeedbackSignalCard / RecentActivityItemCard / DashboardStatBar / OnboardingCtaButton / SovereigntyPanel` 不升级为正式 review 入口
