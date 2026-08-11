@@ -198,6 +198,13 @@ DoD：
 - 已按 inventory 清退或关闭所有列入退场范围的 legacy / compat 业务入口
 - 不再新增或保留手写 JSON 业务主线
 
+状态同步：
+
+- `2026-08-11`：`phase07-09` 已完成源码优先独立复核、阻断修复与运行时验收
+- 当前后端结论：canonical Connect transport 已切到正式主线；L1/L2 候选 compat 路由已退场；L3/L4 绑定 compat 薄壳仍保留到 `phase07-10`
+- 当前证据入口：`.trae/specs/phase07_09_cut_go_backend_transport_mainline/checklist.md`
+- 下一步：进入 `phase07-10`，继续完成前端客户端、adapter 与 mutation owner 收口
+
 ### phase07-10 落实前端客户端与业务切片调用切换
 
 范围：

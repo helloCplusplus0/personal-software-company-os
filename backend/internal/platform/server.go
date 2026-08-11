@@ -25,15 +25,13 @@ type Server struct {
 
 // NewServer 装配并返回 Server。
 //
-// 装配顺序：
+// phase07-09 装配顺序（Connect handler 主线）：
 //  1. 应用基础中间件（RequestID / Logger / Recoverer / CORS）
 //  2. 注册健康检查端点
 //  3. 构造 Product Registry / Repository Binding 的 service 层（供 Module Registry 兼容委派复用）
-//  4. 通过 mountModuleRegistry 把 Module Registry 路由挂到 /api 下（注入兼容委派目标）
-//  5. 通过 mountDecisionCenter 把 Decision Center 路由挂到 /api 下（phase03-12）
-//  6. 通过 mountProductRegistry 把 Product Registry 路由挂到 /api 下（phase04-12）
-//  7. 通过 mountRepositoryBinding 把 Repository Binding 路由挂到 /api 下（phase04-12）
-//  8. 构造 http.Server
+//  4. 通过 mount*Connect 把各业务模块的 canonical Connect handler 挂到 /api 下
+//  5. 通过 mountCompatRoutes 挂载 L3/L4 绑定 compat 过渡路由（phase07-10 退场）
+//  6. 构造 http.Server
 func NewServer(cfg Config, pool *pgxpool.Pool) *Server {
 	r := chi.NewRouter()
 
@@ -50,8 +48,8 @@ func NewServer(cfg Config, pool *pgxpool.Pool) *Server {
 
 	// 装配业务模块路由到 /api
 	r.Route("/api", func(r chi.Router) {
-		// phase04-12: 先构造 Product Registry / Repository Binding 的 service 层，
-		// 供 Module Registry 的旧绑定入口做兼容委派注入。
+		// phase07-09: 先构造 Product Registry / Repository Binding 的 service 层，
+		// 供 Module Registry Connect handler 的 L3/L4 兼容委派注入。
 		//
 		// 装配顺序约束（phase04-07 L162-181）：
 		//   Repository Binding 必须先构造，将其 BindingStore 作为 BoundRepositoryReader
@@ -59,36 +57,30 @@ func NewServer(cfg Config, pool *pgxpool.Pool) *Server {
 		repoQuerySvc, repoCommandSvc, repoBindingStore := buildRepositoryBinding(pool)
 		productQuerySvc, productCommandSvc := buildProductRegistry(pool, repoBindingStore)
 
-		mountModuleRegistry(r, pool, productQuerySvc, productCommandSvc, repoQuerySvc, repoCommandSvc)
-		mountDecisionCenter(r, pool)
-		mountProductRegistry(r, productQuerySvc, productCommandSvc)
-		mountRepositoryBinding(r, repoQuerySvc, repoCommandSvc)
+		// --- canonical Connect handler 挂载（phase07-09 主线） ---
+		mountModuleRegistryConnect(r, pool, productQuerySvc, productCommandSvc, repoQuerySvc, repoCommandSvc)
+		mountDecisionCenterConnect(r, pool)
+		mountProductRegistryConnect(r, productQuerySvc, productCommandSvc)
+		mountRepositoryBindingConnect(r, repoQuerySvc, repoCommandSvc)
 
-		// phase05-12: Dashboard 必须在既有四个 canonical 模块装配之后装配
-		// （Dashboard 跨模块读取依赖 canonical 模块的表已建表）。
-		// Dashboard 只承接只读聚合，跨模块读依赖在 platform 装配点注入（phase05-07）。
+		// phase06 模块：Dashboard / Onboarding / Export / Backup / ReuseSummary
 		dashboardQuerySvc := buildDashboard(pool)
-		mountDashboard(r, dashboardQuerySvc)
+		mountDashboardConnect(r, dashboardQuerySvc)
 
-		// phase06-14: Onboarding / Export / Backup / ReuseSummary 必须在既有
-		// canonical 模块与 Dashboard 之后装配（phase06 模块依赖 canonical 模块的表已建表）。
-		// phase06 模块只承接只读聚合或独立写入，跨模块读依赖在 platform 装配点注入。
-
-		// Onboarding：首轮状态读取（只读，读时派生 first_run_state）
 		onboardingQuerySvc := buildOnboarding(pool)
-		mountOnboarding(r, onboardingQuerySvc)
+		mountOnboardingConnect(r, onboardingQuerySvc)
 
-		// Export：导出快照读取 + 导出执行
 		exportQuerySvc, exportCommandSvc := buildExport(pool)
-		mountExport(r, exportQuerySvc, exportCommandSvc)
+		mountExportConnect(r, exportQuerySvc, exportCommandSvc)
 
-		// Backup：备份快照读取（read / verify 子路径）+ 备份执行
 		backupQuerySvc, backupCommandSvc := buildBackup(pool)
-		mountBackup(r, backupQuerySvc, backupCommandSvc)
+		mountBackupConnect(r, backupQuerySvc, backupCommandSvc)
 
-		// ReuseSummary：复用感知派生读（只读，读时聚合）
 		reuseSummaryQuerySvc := buildReuseSummary(pool)
-		mountReuseSummary(r, reuseSummaryQuerySvc)
+		mountReuseSummaryConnect(r, reuseSummaryQuerySvc)
+
+		// --- L3/L4 compat 过渡组（phase07-09 保留，phase07-10 退场） ---
+		mountCompatRoutes(r, productCommandSvc, repoCommandSvc)
 	})
 
 	return &Server{

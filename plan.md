@@ -5,7 +5,7 @@
 ## 1. 当前状态
 
 - 当前阶段：`phase07_transport_contract_mainline_migration`
-- 当前状态：`phase07` 已建立正式 `/plan` 入口，当前作为 `mvp0.3` 业务阶段之前的前置基础 phase 推进
+- 当前状态：`phase07` 已进入实现与验收推进段；`phase07-08` 生成链主线与 `phase07-09` Go 后端传输主线切换已完成，当前待继续推进 `phase07-10 ~ phase07-12`
 - 当前目标：完成 `phase01 ~ phase06` canonical 业务接口向 `.proto + ConnectRPC` 正式主线的一次性迁移，并为后续 `mvp0.3` 业务主线清空传输层历史负担
 - 当前下一阶段入口：待 `phase07` 正式收口后，切换到 `mvp0.3` 业务主线对应的正式 phase 入口（不得预设 `phase08` 名称）
 
@@ -42,6 +42,8 @@
 - `PSCO-mvp02-summarize-feedback.md` 已冻结为 `mvp0.2` 下一阶段 `/plan` 的最终仲裁与规划基线
 - `phase06_onboarding_sovereignty_reuse_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - `Onboarding + Data Sovereignty + Reuse Awareness` 最小主线已形成可运行、可验收交付物
+- `phase07-08` 已完成 `buf + ConnectRPC` 正式合同产物主线切换，并通过 `proto / backend / frontend` 生成链验证
+- `phase07-09` 已完成 Go 后端业务传输主线切换、源码优先独立复核、阻断修复与运行时验收
 - `.trae/specs/phase06_12_onboarding_sovereignty_reuse_formal_spec/spec.md` 已冻结为 `phase06` 当前阶段唯一规格收敛入口
 - `.trae/specs/phase06_13_land_minimal_proto_contract_mainline/` 已将 `phase06` 最小 `.proto` 合同落地为仓库主线
 - `.trae/specs/phase06_16_integration_validation_acceptance/acceptance_report.md` 已形成 `phase06` 联调验收与收口结论入口
@@ -110,7 +112,7 @@
 - 范围约束：不得把本 phase 收窄为“新增接口默认走 ConnectRPC”的试点；必须完成既有 canonical 业务接口迁移，同时保留 `chi` 作为装配层与 `healthz / readyz / metrics / debug` 等非业务端点承载层
 - 交付要求：作为交付型 phase 推进，必须完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - 状态：`current`
-- 当前阶段结果：已建立 `phase07` 三件套，待继续进入 `/spec`、实现、回归验收与根级收口
+- 当前阶段结果：`phase07-01 ~ phase07-09` 已完成冻结、规格、生成链与 Go 后端主线切换；下一步继续推进 `phase07-10` 前端调用切换、`phase07-11` 联调回归验收与 `phase07-12` 根级收口
 
 ### `mvp0.3` 业务候选阶段结构（承接 `phase07` 之后）
 
