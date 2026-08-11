@@ -1,6 +1,5 @@
 import { useSearch, useNavigate, Link } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
-import { fetchRepositoryList } from '../data/repository-binding-adapter'
+import { useRepositoryListRead } from '../data/use-repository-list-read'
 import { RepositoryBindingListToolbar } from '../components/repository-binding-list-toolbar'
 import {
   RepositoryBindingListContent,
@@ -46,10 +45,7 @@ export function RepositoryBindingListPage() {
   const search = useSearch({ from: '/repositories/' })
   const navigate = useNavigate({ from: '/repositories/' })
 
-  const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ['repository-list', search],
-    queryFn: () => fetchRepositoryList(search),
-  })
+  const { data, isLoading, isError, error, refetch } = useRepositoryListRead(search)
 
   const isFiltered = Boolean(search.queryText) || (search.statusFilter !== 'all')
   const isEmpty = !isLoading && !isError && (data?.length ?? 0) === 0

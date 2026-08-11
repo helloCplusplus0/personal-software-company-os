@@ -17,7 +17,8 @@
  *   - 成功后失效 onboarding-state（首轮录入状态与 Dashboard CTA 重新派生）
  */
 import { useMutation, useQueryClient, type UseMutationResult } from '@tanstack/react-query'
-import { createModule, ApiError } from '../data/api-adapter'
+import { timestampDate } from '@bufbuild/protobuf/wkt'
+import { moduleRegistryClient } from '../data/connect-client'
 import type { CreateModuleInput, Module } from '../types'
 import { ONBOARDING_STATE_QUERY_KEY } from '@/features/onboarding/data/use-onboarding-read'
 
@@ -29,16 +30,6 @@ function applyDefaults(input: CreateModuleInput): CreateModuleInput {
   }
 }
 
-function normalizeError(err: unknown): Error {
-  if (err instanceof ApiError) {
-    return new Error(err.message)
-  }
-  if (err instanceof Error) {
-    return err
-  }
-  return new Error('模块创建失败，请稍后重试')
-}
-
 export type UseCreateDraftModule = UseMutationResult<Module, Error, CreateModuleInput, unknown>
 
 export function useCreateDraftModule(): UseCreateDraftModule {
@@ -46,10 +37,20 @@ export function useCreateDraftModule(): UseCreateDraftModule {
 
   return useMutation<Module, Error, CreateModuleInput, unknown>({
     mutationFn: async (input: CreateModuleInput) => {
-      try {
-        return await createModule(applyDefaults(input))
-      } catch (err) {
-        throw normalizeError(err)
+      const defaults = applyDefaults(input)
+      const res = await moduleRegistryClient.createModule({
+        name: defaults.name,
+        description: defaults.description ?? '',
+        status: (defaults.status === 'active' ? 1 : defaults.status === 'archived' ? 2 : 0),
+      })
+      const m = res.module
+      if (!m) throw new Error('模块创建失败：未返回模块数据')
+      return {
+        id: m.id ?? '',
+        name: m.name ?? '',
+        description: m.description ?? '',
+        status: (m.status === 1 ? 'active' : m.status === 2 ? 'archived' : '') as Module['status'],
+        created_at: m.createdAt ? timestampDate(m.createdAt).toISOString() : '',
       }
     },
     onSuccess: () => {

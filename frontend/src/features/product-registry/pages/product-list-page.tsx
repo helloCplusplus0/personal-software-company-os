@@ -1,6 +1,5 @@
 import { useSearch, useNavigate, Link } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
-import { fetchProductList } from '../data/product-registry-adapter'
+import { useProductListRead } from '../data/use-product-list-read'
 import { ProductListToolbar } from '../components/product-list-toolbar'
 import { ProductListContent } from '../components/product-list-content'
 import { Button } from '@/components/ui/button'
@@ -34,10 +33,7 @@ export function ProductListPage() {
   const search = useSearch({ from: '/products/' })
   const navigate = useNavigate({ from: '/products/' })
 
-  const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ['product-list', search],
-    queryFn: () => fetchProductList(search),
-  })
+  const { data, isLoading, isError, error, refetch } = useProductListRead(search)
 
   const isFiltered = Boolean(search.queryText) || (search.statusFilter !== 'all')
   const isEmpty = !isLoading && !isError && (data?.length ?? 0) === 0

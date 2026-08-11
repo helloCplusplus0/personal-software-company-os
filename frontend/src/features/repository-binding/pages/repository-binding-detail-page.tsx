@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useParams, useSearch, useNavigate } from '@tanstack/react-router'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { fetchRepositoryDetail } from '../data/repository-binding-adapter'
+import { useQueryClient } from '@tanstack/react-query'
+import { useRepositoryDetailRead } from '../data/use-repository-detail-read'
 import { RepositorySummaryCard } from '../components/repository-summary-card'
 import { RepositoryProductBindingPanel } from '../components/repository-product-binding-panel'
 import { RepositoryModuleMappingPanel } from '../components/repository-module-mapping-panel'
@@ -72,11 +72,7 @@ export function RepositoryBindingDetailPage() {
   // phase06-15 §"detail 页来源优先级"：fromOnboarding 优先级高于其他来源
   const fromOnboarding = shouldReturnToOnboarding(search)
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['repository-detail', repositoryId],
-    queryFn: () => fetchRepositoryDetail(repositoryId),
-    enabled: Boolean(repositoryId),
-  })
+  const { data, isLoading, isError, error } = useRepositoryDetailRead(repositoryId)
 
   // phase04-06 绑定成功后重新读取详情结果（reread）
   const invalidateDetail = () => {

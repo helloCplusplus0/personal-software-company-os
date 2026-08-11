@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useProductModuleCandidatesRead } from '../data/use-product-module-candidates-read'
+import { useBindModuleToProduct } from '../application/use-bind-module-to-product'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -11,7 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { fetchProductModuleCandidates, bindModuleToProduct } from '../data/product-registry-adapter'
 import { toast } from 'sonner'
 import type { BoundModuleSummary } from '../types'
 
@@ -51,11 +51,7 @@ export function ProductModuleBindingPanel({
   const prefillHandledRef = useRef(false)
 
   // 候选读取 — phase04-06 候选读取独立于详情读取
-  const { data: candidates, isLoading: candidatesLoading, isError: candidatesError } = useQuery({
-    queryKey: ['product-module-candidates', productId],
-    queryFn: () => fetchProductModuleCandidates(productId),
-    enabled: panelOpen,
-  })
+  const { data: candidates, isLoading: candidatesLoading, isError: candidatesError } = useProductModuleCandidatesRead(productId)
 
   // phase04-06 来源上下文预填：从 Module Detail 首次进入时自动打开面板并预选。
   // 成功提交或用户主动关闭后，不应因为同一个来源参数再次自动重开面板。
@@ -76,21 +72,28 @@ export function ProductModuleBindingPanel({
     }
   }, [prefillModuleId, candidates, selectedModuleId])
 
-  const mutation = useMutation({
-    mutationFn: () => bindModuleToProduct({ productId, moduleId: selectedModuleId }),
-    onSuccess: () => {
-      // phase04-06 绑定成功后停留在 ProductDetailPage 并重新读取详情结果
-      toast.success('模块绑定成功')
-      setPanelOpen(false)
-      setSelectedModuleId('')
-      setSubmitError(undefined)
-      onBindingSuccess()
-    },
-    onError: (error: Error) => {
-      // phase04-06 绑定失败时错误停留在面板上下文，保留当前已选候选
-      setSubmitError(error.message)
-    },
-  })
+  const mutation = useBindModuleToProduct()
+
+  /** 包装绑定操作以添加页面级 toast 与回调 */
+  const handleBind = () => {
+    mutation.mutate(
+      { productId, moduleId: selectedModuleId },
+      {
+        onSuccess: () => {
+          // phase04-06 绑定成功后停留在 ProductDetailPage 并重新读取详情结果
+          toast.success('模块绑定成功')
+          setPanelOpen(false)
+          setSelectedModuleId('')
+          setSubmitError(undefined)
+          onBindingSuccess()
+        },
+        onError: (error: Error) => {
+          // phase04-06 绑定失败时错误停留在面板上下文，保留当前已选候选
+          setSubmitError(error.message)
+        },
+      },
+    )
+  }
 
   const handleTogglePanel = () => {
     setSubmitError(undefined)
@@ -163,7 +166,7 @@ export function ProductModuleBindingPanel({
                 <Button
                   size="sm"
                   disabled={!selectedModuleId || mutation.isPending}
-                  onClick={() => mutation.mutate()}
+                  onClick={handleBind}
                 >
                   {mutation.isPending ? '提交中...' : '确认绑定'}
                 </Button>

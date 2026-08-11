@@ -1,6 +1,6 @@
 import { useParams, useSearch, useNavigate } from '@tanstack/react-router'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { fetchProductDetail } from '../data/product-registry-adapter'
+import { useQueryClient } from '@tanstack/react-query'
+import { useProductDetailRead } from '../data/use-product-detail-read'
 import { ProductSummaryCard } from '../components/product-summary-card'
 import { ProductModuleBindingPanel } from '../components/product-module-binding-panel'
 import { ProductBoundRepositoryListSection } from '../components/product-bound-repository-list-section'
@@ -56,11 +56,7 @@ export function ProductDetailPage() {
   // phase06-15 §"detail 页来源优先级"：fromOnboarding 优先级高于其他来源
   const fromOnboarding = shouldReturnToOnboarding(search)
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['product-detail', productId],
-    queryFn: () => fetchProductDetail(productId),
-    enabled: Boolean(productId),
-  })
+  const { data, isLoading, isError, error } = useProductDetailRead(productId)
 
   // phase06-15 §"Module Detail 与 Product Detail 挂接位"：
   // Product Detail 只新增一个页面级 ReuseSummaryRead query（scope=product_detail）

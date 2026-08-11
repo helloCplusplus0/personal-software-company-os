@@ -1,10 +1,10 @@
 import { useParams, Link, useNavigate } from '@tanstack/react-router'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ReleaseCreateForm } from '../components/release-create-form'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
-import { createRelease, fetchModuleDetail } from '../data/module-registry-adapter'
+import { useModuleDetailRead } from '../data/use-module-detail-read'
+import { useCreateRelease } from '../application/use-create-release'
 import { toast } from 'sonner'
 import type { CreateReleaseInput } from '../types'
 import { useModuleListSearchStore } from '../stores/module-list-search-store'
@@ -28,28 +28,28 @@ import { useModuleListSearchStore } from '../stores/module-list-search-store'
 export function ReleaseCreatePage() {
   const { moduleId } = useParams({ from: '/modules/$moduleId/releases/new' })
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
   const lastSearch = useModuleListSearchStore((s) => s.lastSearch)
 
   // 校验当前模块是否存在 — Release Create 必须依附有效当前模块上下文
-  const { data: moduleData, isLoading, isError } = useQuery({
-    queryKey: ['module-detail', moduleId],
-    queryFn: () => fetchModuleDetail(moduleId),
-    enabled: Boolean(moduleId),
-  })
+  const { data: moduleData, isLoading, isError } = useModuleDetailRead(moduleId)
 
-  const mutation = useMutation({
-    mutationFn: (input: CreateReleaseInput) => createRelease(input),
-    onSuccess: () => {
-      // §8.4 提交成功回流后 ModuleDetailPage 必须承接最新版本列表读取
-      queryClient.invalidateQueries({ queryKey: ['module-detail', moduleId] })
-      toast.success('版本登记成功')
-      navigate({ to: '/modules/$moduleId', params: { moduleId } })
-    },
-    onError: (error: Error) => {
-      toast.error('版本登记失败：' + error.message)
-    },
-  })
+  const mutation = useCreateRelease()
+
+  // 包装提交以添加页面级 toast 与导航
+  const handleSubmit = (input: CreateReleaseInput) => {
+    mutation.mutate(
+      { ...input, moduleId },
+      {
+        onSuccess: () => {
+          toast.success('版本登记成功')
+          navigate({ to: '/modules/$moduleId', params: { moduleId } })
+        },
+        onError: (error: Error) => {
+          toast.error('版本登记失败：' + error.message)
+        },
+      },
+    )
+  }
 
   // 加载中：校验模块存在性
   if (isLoading) {
@@ -101,7 +101,7 @@ export function ReleaseCreatePage() {
       <ReleaseCreateForm
         moduleId={moduleId}
         submitting={mutation.isPending}
-        onSubmit={(input) => mutation.mutate(input)}
+        onSubmit={handleSubmit}
         submitError={mutation.isError ? (mutation.error as Error).message : undefined}
       />
     </div>

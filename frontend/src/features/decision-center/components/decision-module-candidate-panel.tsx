@@ -18,14 +18,15 @@
  * - DecisionModuleCandidatePanel 承接候选读取与目标选择
  * - DecisionLinkActions 内联于此组件
  */
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Plus, AlertCircle } from 'lucide-react'
 import { toast } from 'sonner'
-import { fetchDecisionModuleCandidates, linkDecisionToTarget } from '../data/decision-center-adapter'
+import { useDecisionModuleCandidatesRead } from '../data/use-decision-module-candidates-read'
+import { useLinkDecisionToTarget } from '../application/use-link-decision-to-target'
 import type { DecisionModuleCandidate } from '../types'
 
 interface DecisionModuleCandidatePanelProps {
@@ -42,31 +43,28 @@ export function DecisionModuleCandidatePanel({ decisionId }: DecisionModuleCandi
   const queryClient = useQueryClient()
 
   // §5.10 候选读取
-  const { data: candidates, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ['decision-module-candidates', decisionId],
-    queryFn: () => fetchDecisionModuleCandidates(decisionId),
-    enabled: Boolean(decisionId),
-  })
+  const { data: candidates, isLoading, isError, error, refetch } = useDecisionModuleCandidatesRead(decisionId)
 
   // §5.10 LinkDecisionToTarget 写入
-  const linkMutation = useMutation({
-    mutationFn: (moduleId: string) =>
-      linkDecisionToTarget({
-        decisionId,
-        target_type: 'module',
-        module_id: moduleId,
-      }),
-    onSuccess: () => {
-      // phase03-13 spec：失效当前详情、候选列表与决策列表
-      queryClient.invalidateQueries({ queryKey: ['decision-detail', decisionId] })
-      queryClient.invalidateQueries({ queryKey: ['decision-module-candidates', decisionId] })
-      queryClient.invalidateQueries({ queryKey: ['decision-list'] })
-      toast.success('关联成功')
-    },
-    onError: (err: Error) => {
-      toast.error('关联失败：' + err.message)
-    },
-  })
+  const linkMutation = useLinkDecisionToTarget()
+
+  /** 包装链接操作以添加页面级 toast 与决策列表失效 */
+  const handleLink = (moduleId: string) => {
+    linkMutation.mutate(
+      { decisionId, moduleId },
+      {
+        onSuccess: () => {
+          // phase03-13 spec：失效当前详情、候选列表与决策列表
+          queryClient.invalidateQueries({ queryKey: ['decision-detail', decisionId] })
+          queryClient.invalidateQueries({ queryKey: ['decision-list'] })
+          toast.success('关联成功')
+        },
+        onError: (err: Error) => {
+          toast.error('关联失败：' + err.message)
+        },
+      },
+    )
+  }
 
   /** 渲染候选列表项 */
   const renderCandidate = (c: DecisionModuleCandidate) => (
@@ -85,7 +83,7 @@ export function DecisionModuleCandidatePanel({ decisionId }: DecisionModuleCandi
         size="sm"
         variant="outline"
         disabled={linkMutation.isPending}
-        onClick={() => linkMutation.mutate(c.module_id)}
+        onClick={() => handleLink(c.module_id)}
       >
         <Plus className="mr-1 h-3 w-3" />
         关联

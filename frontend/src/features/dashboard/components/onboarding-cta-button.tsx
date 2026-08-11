@@ -13,14 +13,11 @@
  * 不承接 mutation，只承接读取 first_run_state 与导航到 /onboarding。
  */
 import { useNavigate } from '@tanstack/react-router'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Sparkles, ArrowRight } from 'lucide-react'
-import { fetchFirstRunState } from '@/features/onboarding/data/api-adapter'
-import { ONBOARDING_STATE_QUERY_KEY } from '@/features/onboarding/data/use-onboarding-read'
-
-const ONBOARDING_CTA_QUERY_KEY = ['onboarding-cta-state'] as const
+import { useOnboardingRead, ONBOARDING_STATE_QUERY_KEY } from '@/features/onboarding/data/use-onboarding-read'
 
 /**
  * OnboardingCtaButton — Dashboard 内的 onboarding CTA 按钮。
@@ -32,10 +29,7 @@ export function OnboardingCtaButton() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
-  const onboardingStateQuery = useQuery({
-    queryKey: ONBOARDING_CTA_QUERY_KEY,
-    queryFn: fetchFirstRunState,
-  })
+  const onboardingStateQuery = useOnboardingRead()
 
   // loading：渲染骨架占位，保持布局稳定
   if (onboardingStateQuery.isLoading) {

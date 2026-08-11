@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useRepositoryProductCandidatesRead } from '../data/use-repository-product-candidates-read'
+import { useBindRepositoryToProduct } from '../application/use-bind-repository-to-product'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -11,7 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { fetchRepositoryProductCandidates, bindRepositoryToProduct } from '../data/repository-binding-adapter'
 import { toast } from 'sonner'
 import type { BoundProductSummary } from '../types'
 
@@ -55,11 +55,7 @@ export function RepositoryProductBindingPanel({
   const prefillHandledRef = useRef(false)
 
   // 候选读取 — phase04-06 候选读取独立于详情读取
-  const { data: candidates, isLoading: candidatesLoading, isError: candidatesError } = useQuery({
-    queryKey: ['repository-product-candidates', repositoryId],
-    queryFn: () => fetchRepositoryProductCandidates(repositoryId),
-    enabled: open,
-  })
+  const { data: candidates, isLoading: candidatesLoading, isError: candidatesError } = useRepositoryProductCandidatesRead(repositoryId)
 
   // phase04-06 来源上下文预填：从 Product Detail 首次进入时自动打开面板并预选。
   // 成功提交或用户主动关闭后，不应因为同一个来源参数再次自动重开面板。
@@ -80,21 +76,28 @@ export function RepositoryProductBindingPanel({
     }
   }, [prefillProductId, candidates, selectedProductId])
 
-  const mutation = useMutation({
-    mutationFn: () => bindRepositoryToProduct({ repositoryId, productId: selectedProductId }),
-    onSuccess: () => {
-      // phase04-06 绑定成功后停留在 RepositoryBindingDetailPage 并重新读取详情结果
-      toast.success('产品绑定成功')
-      onOpenChange(false)
-      setSelectedProductId('')
-      setSubmitError(undefined)
-      onBindingSuccess()
-    },
-    onError: (error: Error) => {
-      // phase04-06 绑定失败时错误停留在面板上下文，保留当前已选候选
-      setSubmitError(error.message)
-    },
-  })
+  const mutation = useBindRepositoryToProduct()
+
+  /** 包装绑定操作以添加页面级 toast 与回调 */
+  const handleBind = () => {
+    mutation.mutate(
+      { repositoryId, productId: selectedProductId },
+      {
+        onSuccess: () => {
+          // phase04-06 绑定成功后停留在 RepositoryBindingDetailPage 并重新读取详情结果
+          toast.success('产品绑定成功')
+          onOpenChange(false)
+          setSelectedProductId('')
+          setSubmitError(undefined)
+          onBindingSuccess()
+        },
+        onError: (error: Error) => {
+          // phase04-06 绑定失败时错误停留在面板上下文，保留当前已选候选
+          setSubmitError(error.message)
+        },
+      },
+    )
+  }
 
   const handleToggle = () => {
     setSubmitError(undefined)
@@ -164,7 +167,7 @@ export function RepositoryProductBindingPanel({
                 <Button
                   size="sm"
                   disabled={!selectedProductId || mutation.isPending}
-                  onClick={() => mutation.mutate()}
+                  onClick={handleBind}
                 >
                   {mutation.isPending ? '提交中...' : '确认绑定'}
                 </Button>

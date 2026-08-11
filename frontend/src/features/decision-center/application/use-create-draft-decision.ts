@@ -1,8 +1,7 @@
 /**
- * useCreateDraftDecision — Decision Create 的固定 mutation 承接位
+ * useCreateDraftDecision — Decision Create 的固定 mutation 承接位。
  *
- * phase06-07 §"四类 canonical create 必须收敛到固定 mutation 承接位"
- * phase06-15 §"application owner 物理落点"
+ * phase07-10 §5.5：canonical 写动作单一正式 owner。
  *
  * 职责：
  *   - 承接 Decision create 的默认补值、错误归一化与 query 失效
@@ -18,7 +17,8 @@
  *   - 成功后失效 onboarding-state（首轮录入状态与 Dashboard CTA 重新派生）
  */
 import { useMutation, useQueryClient, type UseMutationResult } from '@tanstack/react-query'
-import { createDecision, ApiError } from '../data/api-adapter'
+import { decisionCenterClient } from '../data/connect-client'
+import { DecisionStatus } from '@/gen/proto/psco/decision_center/v1/decision_center_pb'
 import type { CreateDecisionInput, CreateDecisionResponse } from '../types'
 import { ONBOARDING_STATE_QUERY_KEY } from '@/features/onboarding/data/use-onboarding-read'
 
@@ -37,9 +37,6 @@ function applyDefaults(input: CreateDecisionInput): CreateDecisionInput {
 }
 
 function normalizeError(err: unknown): Error {
-  if (err instanceof ApiError) {
-    return new Error(err.message)
-  }
   if (err instanceof Error) {
     return err
   }
@@ -59,14 +56,26 @@ export function useCreateDraftDecision(): UseCreateDraftDecision {
   return useMutation<CreateDecisionResponse, Error, CreateDecisionInput, unknown>({
     mutationFn: async (input: CreateDecisionInput) => {
       try {
-        return await createDecision(applyDefaults(input))
+        const defaults = applyDefaults(input)
+        const res = await decisionCenterClient.createDecision({
+          title: defaults.title,
+          context: defaults.context ?? '',
+          problem: defaults.problem ?? '',
+          alternatives: defaults.alternatives ?? [],
+          choice: defaults.choice,
+          reason: defaults.reason,
+          impact: defaults.impact ?? '',
+          status: defaults.status === 'proposed' ? DecisionStatus.PROPOSED : defaults.status === 'active' ? DecisionStatus.ACTIVE : DecisionStatus.SUPERSEDED,
+          sourceModuleId: defaults.source_module_id ?? '',
+        })
+        return { decision_id: res.decisionId ?? '' }
       } catch (err) {
         throw normalizeError(err)
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['decision-list'] })
-        queryClient.invalidateQueries({ queryKey: ONBOARDING_STATE_QUERY_KEY })
+      queryClient.invalidateQueries({ queryKey: ONBOARDING_STATE_QUERY_KEY })
     },
   })
 }

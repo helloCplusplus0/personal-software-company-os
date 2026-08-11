@@ -1,6 +1,5 @@
 import { useParams, useNavigate, useSearch } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
-import { fetchModuleDetail } from '../data/module-registry-adapter'
+import { useModuleDetailRead } from '../data/use-module-detail-read'
 import { ModuleSummaryCard } from '../components/module-summary-card'
 import { ModuleReleaseListSection } from '../components/module-release-list-section'
 import { ModuleBindingPanel } from '../components/module-binding-panel'
@@ -55,11 +54,7 @@ export function ModuleDetailPage() {
         detailSearch,
       ) as unknown as Record<string, unknown>)
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['module-detail', moduleId],
-    queryFn: () => fetchModuleDetail(moduleId),
-    enabled: Boolean(moduleId),
-  })
+  const { data, isLoading, isError, error } = useModuleDetailRead(moduleId)
 
   // phase06-15 §"Module Detail 与 Product Detail 挂接位"：
   // Module Detail 只新增一个页面级 ReuseSummaryRead query（scope=module_detail）

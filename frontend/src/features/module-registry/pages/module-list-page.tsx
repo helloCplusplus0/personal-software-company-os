@@ -1,7 +1,6 @@
 import { useSearch, useNavigate, Link } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { fetchModuleList } from '../data/module-registry-adapter'
+import { useModuleListRead } from '../data/use-module-list-read'
 import { ModuleListToolbar } from '../components/module-list-toolbar'
 import { ModuleListContent } from '../components/module-list-content'
 import { Button } from '@/components/ui/button'
@@ -33,10 +32,7 @@ export function ModuleListPage() {
     })
   }, [search.queryText, search.statusFilter, setLastSearch])
 
-  const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ['module-list', search],
-    queryFn: () => fetchModuleList(search),
-  })
+  const { data, isLoading, isError, error, refetch } = useModuleListRead(search)
 
   const isFiltered = Boolean(search.queryText) || (search.statusFilter !== 'all')
   const isEmpty = !isLoading && !isError && (data?.length ?? 0) === 0

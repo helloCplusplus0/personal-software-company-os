@@ -16,15 +16,15 @@
  *   - 不得在 / 路由内内联正式 mutation 或 create 语义
  */
 import { createFileRoute, redirect } from '@tanstack/react-router'
-import { fetchFirstRunState } from '@/features/onboarding/data/api-adapter'
+import { fetchOnboardingRead } from '@/features/onboarding/data/use-onboarding-read'
 
 export const Route = createFileRoute('/')({
   beforeLoad: async () => {
     let target = '/dashboard'
 
     try {
-      const result = await fetchFirstRunState()
-      const status = result.first_run_state?.status
+      const result = await fetchOnboardingRead()
+      const status = result.first_run_state.status
 
       if (status === 'not_started') {
         target = '/onboarding'

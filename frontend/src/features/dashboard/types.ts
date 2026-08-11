@@ -190,3 +190,67 @@ export interface DashboardSourceSearch {
   dashboardSection?: DashboardSection
   dashboardReturnTo?: string
 }
+
+// ============================================================================
+// Export / Backup 类型（对齐 proto export/v1/export.proto 与 backup/v1/backup.proto）
+// 从 sovereignty-api-adapter.ts 迁移到此处，作为 canonical 类型定义源。
+// ============================================================================
+
+export type ExportAssetScope =
+  | 'products'
+  | 'modules'
+  | 'releases'
+  | 'repositories'
+  | 'decisions'
+  | 'decision_links'
+  | 'product_modules'
+  | 'product_repositories'
+  | 'module_repositories'
+
+export type ExportResultStatus = 'success' | 'in_progress' | 'failed'
+
+export interface ExportSnapshot {
+  asset_scope: ExportAssetScope[]
+  created_at: string
+  result_status: ExportResultStatus
+  result_summary: string
+}
+
+export interface ExportSnapshotReadResult {
+  snapshot: ExportSnapshot | null
+}
+
+export type BackupVerifiedStatus = 'unverified' | 'verified' | 'verify_failed'
+
+export type VerifyFailureCode = 'manifest_missing' | 'coverage_incomplete' | 'schema_mismatch'
+
+export interface ManifestSummary {
+  manifest_version: string
+  total_asset_entries: number
+  covered_asset_entries: number
+}
+
+export interface AssetCoverageEntry {
+  asset_scope: string
+  covered: boolean
+}
+
+export interface SchemaVersionPrerequisite {
+  schema_version: string
+  instance_version: string
+  prerequisite_checkable: boolean
+}
+
+export interface BackupSnapshot {
+  created_at: string
+  manifest_summary: ManifestSummary | null
+  asset_coverage: AssetCoverageEntry[]
+  schema_version_prerequisite: SchemaVersionPrerequisite | null
+  verified_status: BackupVerifiedStatus
+  /** 仅在 verified_status = verify_failed 时有值 */
+  verify_failure_code?: VerifyFailureCode
+}
+
+export interface BackupSnapshotReadResult {
+  snapshot: BackupSnapshot | null
+}

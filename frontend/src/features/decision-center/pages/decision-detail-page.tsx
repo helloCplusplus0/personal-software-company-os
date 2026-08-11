@@ -21,8 +21,7 @@
  * - 移动浏览器：按概要、已关联目标、待关联目标、候选读取与目标关联的垂直顺序重排
  */
 import { useParams, useNavigate, useSearch } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
-import { fetchDecisionDetail } from '../data/decision-center-adapter'
+import { useDecisionDetailRead } from '../data/use-decision-detail-read'
 import { DecisionDetailSummaryCard } from '../components/decision-detail-summary-card'
 import { DecisionLinkedTargetsSection } from '../components/decision-linked-targets-section'
 import { DecisionPendingLinkTargetCard } from '../components/decision-pending-link-target-card'
@@ -64,11 +63,7 @@ export function DecisionDetailPage() {
         detailSearch,
       ) as unknown as Record<string, unknown>)
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['decision-detail', decisionId],
-    queryFn: () => fetchDecisionDetail(decisionId),
-    enabled: Boolean(decisionId),
-  })
+  const { data, isLoading, isError, error } = useDecisionDetailRead(decisionId)
 
   // phase06-15：返回按钮统一通过 handleReturn 承接，支持 fromOnboarding 优先级
   const handleReturn = () => {

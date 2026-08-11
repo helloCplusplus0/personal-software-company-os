@@ -23,16 +23,14 @@
  *   - 资产概览数字 + 缺口计数合并到 DashboardStatBar（取代原 DashboardOverviewSection）
  *   - AssetFeedback 区块状态基于 representative_signals 独立派生（不再与 CurrentFocus 共享）
  */
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate, type HistoryState } from '@tanstack/react-router'
 import { useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import {
-  fetchDashboardOverview,
-  fetchFeedbackSignals,
-  fetchRecentActivities,
-} from '../data/api-adapter'
+import { useDashboardOverviewRead } from '../data/use-dashboard-overview-read'
+import { useFeedbackSignalsRead } from '../data/use-feedback-signals-read'
+import { useRecentActivitiesRead } from '../data/use-recent-activities-read'
 import { DashboardHomePageShell } from '../components/dashboard-home-page-shell'
 import { DashboardStatBar } from '../components/dashboard-stat-bar'
 import { CurrentFocusSection } from '../components/current-focus-section'
@@ -114,22 +112,13 @@ export function DashboardHomePage() {
   // ============================================================================
 
   // 1. DashboardOverviewRead — 主聚合读取
-  const overviewQuery = useQuery({
-    queryKey: ['dashboard-overview'],
-    queryFn: fetchDashboardOverview,
-  })
+  const overviewQuery = useDashboardOverviewRead()
 
   // 2. FeedbackSignalRead — 附属聚合读取（current_focus_signals + asset_feedback_summary）
-  const feedbackQuery = useQuery({
-    queryKey: ['dashboard-feedback-signals'],
-    queryFn: fetchFeedbackSignals,
-  })
+  const feedbackQuery = useFeedbackSignalsRead()
 
   // 3. RecentActivityRead — 附属聚合读取
-  const activityQuery = useQuery({
-    queryKey: ['dashboard-recent-activities'],
-    queryFn: fetchRecentActivities,
-  })
+  const activityQuery = useRecentActivitiesRead()
 
   // 4. ReuseSummaryRead — phase06-15 §"Dashboard 复用快照挂接位"
   //    独立页面级只读 query，失败不回退整页，只影响 Asset Feedback 内的 Reuse Snapshot 子区域

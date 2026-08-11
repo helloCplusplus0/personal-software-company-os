@@ -223,6 +223,14 @@ DoD：
 - 所有 canonical 写动作都已有单一正式 owner；若仍存在过渡 mutation，已被显式列入允许清单并附退场条件
 - 不保留第二套长期 fetch / JSON 主线
 
+状态同步：
+
+- `2026-08-11`：`phase07-10` 已完成前端 generated client / read owner / mutation owner 收口、旧 adapter 与 compat facade 退场、以及独立复核后的阻断修复
+- 当前前端结论：浏览器侧已冻结为单一 `/api` + shared Connect transport + slice-local client 主线；`/` 路由与 Dashboard CTA 已回收到同一 Onboarding 只读 helper
+- 当前验收结论：`tsc -b --noEmit` 与 `npm run build` 均通过；旧 adapter import、L3/L4 compat 前端路径引用、页面级长期正式 mutation 均已核销，仅 `SovereigntyPanel` 内保留 2 个显式允许过渡位
+- 当前证据入口：`.trae/specs/phase07_10_cut_frontend_client_slice_mainline/checklist.md`
+- 下一步：进入 `phase07-11`，完成 phase01 ~ phase06 联调、回归与 legacy / compat 退场验收
+
 ### phase07-11 完成 phase01 ~ phase06 联调、回归与退场验收
 
 范围：

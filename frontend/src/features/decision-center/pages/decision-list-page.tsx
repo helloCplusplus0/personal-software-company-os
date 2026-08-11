@@ -13,9 +13,8 @@
  * - 移动浏览器：单列卡片重排
  */
 import { useSearch, useNavigate, Link } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { fetchDecisionList } from '../data/decision-center-adapter'
+import { useDecisionListRead } from '../data/use-decision-list-read'
 import { DecisionListToolbar } from '../components/decision-list-toolbar'
 import { DecisionListContent } from '../components/decision-list-content'
 import { Button } from '@/components/ui/button'
@@ -37,10 +36,7 @@ export function DecisionListPage() {
     })
   }, [search.queryText, search.statusFilter, setLastSearch])
 
-  const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ['decision-list', search],
-    queryFn: () => fetchDecisionList(search),
-  })
+  const { data, isLoading, isError, error, refetch } = useDecisionListRead(search)
 
   const isFiltered = Boolean(search.queryText) || (search.statusFilter !== 'all')
   const isEmpty = !isLoading && !isError && (data?.length ?? 0) === 0

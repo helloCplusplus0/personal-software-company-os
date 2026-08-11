@@ -20,19 +20,14 @@
  *
  * 字段语义从 .proto -> HTTP DTO 单向派生（phase06-05 / phase06-13 合同约束）。
  */
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Download, ShieldCheck, RefreshCw } from 'lucide-react'
-import {
-  fetchExportSnapshot,
-  triggerExportCoreAssets,
-  fetchBackupSnapshot,
-  triggerCreateInstanceBackup,
-  type ExportSnapshot,
-  type BackupSnapshot,
-  type VerifyFailureCode,
-} from '../data/sovereignty-api-adapter'
+import { useExportSnapshotRead } from '../data/use-export-snapshot-read'
+import { useBackupSnapshotRead } from '../data/use-backup-snapshot-read'
+import { exportClient, backupClient } from '../data/connect-client'
+import type { ExportSnapshot, BackupSnapshot, VerifyFailureCode } from '../types'
 
 const EXPORT_SNAPSHOT_QUERY_KEY = ['export-snapshot'] as const
 const BACKUP_SNAPSHOT_QUERY_KEY = ['backup-snapshot'] as const
@@ -61,30 +56,24 @@ export function SovereigntyPanel() {
   const queryClient = useQueryClient()
 
   // ============================================================================
-  // Export Snapshot query + mutation
+  // Export Snapshot read + mutation
   // ============================================================================
-  const exportQuery = useQuery({
-    queryKey: EXPORT_SNAPSHOT_QUERY_KEY,
-    queryFn: fetchExportSnapshot,
-  })
+  const exportQuery = useExportSnapshotRead()
 
   const exportMutation = useMutation({
-    mutationFn: triggerExportCoreAssets,
+    mutationFn: () => exportClient.exportCoreAssets({}),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: EXPORT_SNAPSHOT_QUERY_KEY })
     },
   })
 
   // ============================================================================
-  // Backup Snapshot query + mutation
+  // Backup Snapshot read + mutation
   // ============================================================================
-  const backupQuery = useQuery({
-    queryKey: BACKUP_SNAPSHOT_QUERY_KEY,
-    queryFn: fetchBackupSnapshot,
-  })
+  const backupQuery = useBackupSnapshotRead()
 
   const backupMutation = useMutation({
-    mutationFn: triggerCreateInstanceBackup,
+    mutationFn: () => backupClient.createInstanceBackup({}),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: BACKUP_SNAPSHOT_QUERY_KEY })
     },

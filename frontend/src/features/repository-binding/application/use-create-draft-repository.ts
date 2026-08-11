@@ -1,8 +1,7 @@
 /**
- * useCreateDraftRepository — Repository Create 的固定 mutation 承接位
+ * useCreateDraftRepository — Repository Create 的固定 mutation 承接位。
  *
- * phase06-07 §"四类 canonical create 必须收敛到固定 mutation 承接位"
- * phase06-15 §"application owner 物理落点"
+ * phase07-10 §5.5：canonical 写动作单一正式 owner。
  *
  * 职责：
  *   - 承接 Repository create 的默认补值、错误归一化与 query 失效
@@ -17,7 +16,8 @@
  *   - 成功后失效 onboarding-state（首轮录入状态与 Dashboard CTA 重新派生）
  */
 import { useMutation, useQueryClient, type UseMutationResult } from '@tanstack/react-query'
-import { createRepository, ApiError } from '../data/api-adapter'
+import { repositoryBindingClient } from '../data/connect-client'
+import { ActiveArchivedStatus } from '@/gen/proto/psco/common/v1/common_pb'
 import type { CreateRepositoryInput, CreateRepositoryResponse } from '../types'
 import { ONBOARDING_STATE_QUERY_KEY } from '@/features/onboarding/data/use-onboarding-read'
 
@@ -31,9 +31,6 @@ function applyDefaults(input: CreateRepositoryInput): CreateRepositoryInput {
 }
 
 function normalizeError(err: unknown): Error {
-  if (err instanceof ApiError) {
-    return new Error(err.message)
-  }
   if (err instanceof Error) {
     return err
   }
@@ -53,14 +50,21 @@ export function useCreateDraftRepository(): UseCreateDraftRepository {
   return useMutation<CreateRepositoryResponse, Error, CreateRepositoryInput, unknown>({
     mutationFn: async (input: CreateRepositoryInput) => {
       try {
-        return await createRepository(applyDefaults(input))
+        const defaults = applyDefaults(input)
+        const res = await repositoryBindingClient.createRepository({
+          name: defaults.name,
+          url: defaults.url,
+          provider: defaults.provider ?? '',
+          status: defaults.status === 'active' ? ActiveArchivedStatus.ACTIVE : ActiveArchivedStatus.ARCHIVED,
+        })
+        return { repository_id: res.repositoryId ?? '' }
       } catch (err) {
         throw normalizeError(err)
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['repository-list'] })
-        queryClient.invalidateQueries({ queryKey: ONBOARDING_STATE_QUERY_KEY })
+      queryClient.invalidateQueries({ queryKey: ONBOARDING_STATE_QUERY_KEY })
     },
   })
 }

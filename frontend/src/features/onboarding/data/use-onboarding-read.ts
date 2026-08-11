@@ -12,17 +12,58 @@
  * 失效策略：由消费方（OnboardingPage / DashboardHomePage / index route）在写操作成功后显式失效
  */
 import { useQuery, type UseQueryResult } from '@tanstack/react-query'
-import { fetchFirstRunState } from './api-adapter'
-import type { OnboardingReadResult } from '../types'
+import { onboardingClient } from './connect-client'
+import { FirstRunStatus as ProtoFirstRunStatus } from '@/gen/proto/psco/onboarding/v1/onboarding_pb'
+import type { OnboardingReadResult, FirstRunStatus, OnboardingStep } from '../types'
 
 export type UseOnboardingRead = UseQueryResult<OnboardingReadResult, Error>
 
 /** Onboarding state 的缓存键，供消费方显式失效使用 */
 export const ONBOARDING_STATE_QUERY_KEY = ['onboarding-state'] as const
 
+/** Proto FirstRunStatus 枚举值映射到前端字符串 */
+function mapProtoFirstRunStatus(v: ProtoFirstRunStatus): FirstRunStatus {
+  switch (v) {
+    case ProtoFirstRunStatus.NOT_STARTED: return 'not_started'
+    case ProtoFirstRunStatus.IN_PROGRESS: return 'in_progress'
+    case ProtoFirstRunStatus.COMPLETED: return 'completed'
+    default: return 'not_started'
+  }
+}
+
+/** Proto OnboardingStep 枚举值映射到前端字符串 */
+function mapProtoOnboardingStep(v: number): OnboardingStep {
+  switch (v) {
+    case 1: return 'welcome'
+    case 2: return 'product'
+    case 3: return 'repository'
+    case 4: return 'module'
+    case 5: return 'decision'
+    case 6: return 'complete'
+    default: return 'welcome'
+  }
+}
+
+/**
+ * fetchOnboardingRead — Onboarding 共享只读 helper。
+ *
+ * 供 React Query hook 与根路由 `/` 共同复用，避免长出第二条读取主线。
+ */
+export async function fetchOnboardingRead(): Promise<OnboardingReadResult> {
+  const res = await onboardingClient.getFirstRunState({})
+  return {
+    first_run_state: {
+      status: mapProtoFirstRunStatus(res.firstRunState?.status ?? ProtoFirstRunStatus.UNSPECIFIED),
+      is_first_entry: res.firstRunState?.isFirstEntry ?? false,
+      current_step: mapProtoOnboardingStep(res.firstRunState?.currentStep ?? 0),
+      completion_progress: res.firstRunState?.completionProgress ?? 0,
+    },
+  }
+}
+
 export function useOnboardingRead(): UseOnboardingRead {
   return useQuery<OnboardingReadResult, Error>({
     queryKey: ONBOARDING_STATE_QUERY_KEY,
-    queryFn: fetchFirstRunState,
+    queryFn: fetchOnboardingRead,
   })
 }
