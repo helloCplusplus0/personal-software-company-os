@@ -1,0 +1,13 @@
+- [x] 已明确 `chi` 只承担顶层 HTTP shell、middleware、infra keep list 与 `/api` mount 外壳职责
+- [x] 已明确 `healthz / readyz / metrics / debug / pprof` 是唯一允许长期保留在 `chi + net/http` 的 infra 端点
+- [x] 已明确 canonical 业务 RPC 必须统一在单一 `/api` 前缀下挂载 Connect procedure path
+- [x] 已明确禁止新增 `/rpc`、`/connect`、`/grpc` 等并列业务基址
+- [x] 已明确 `proto/Makefile + proto/buf.gen.yaml` 继续是唯一 proto 工具链入口
+- [x] 已明确正式插件矩阵为 `protocolbuffers/go`、`connectrpc/gosimple`、`bufbuild/es`
+- [x] 已明确 Go protobuf、Go Connect、TypeScript 产物各自的唯一目录根
+- [x] 已明确 TypeScript 正式客户端组合为 `bufbuild/es` 产物 + `@connectrpc/connect` + `@connectrpc/connect-web` + `createClient()`
+- [x] 已明确前端 transport 迁移只能发生在切片 `query / application` 固定承接位，不得长期留在 route 或展示组件
+- [x] 已明确浏览器、Vite dev proxy、本地启动链与 Caddy 共同维持单一 `/api` 外部访问面
+- [x] 已明确 `VITE_API_BASE_URL` 只能表达 origin / 部署入口，不得扩写成第二条业务前缀
+- [x] 已明确旧 `chi + JSON HTTP` 业务 handler 只能视为迁移过程 compat 资产，不得继续作为长期 canonical 业务主线
+- [x] 已明确本次规格可直接作为 `phase07-04 / 05 / 06 / 11` 的直接上游
