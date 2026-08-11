@@ -4,11 +4,11 @@
 // 四层装配到 chi 子路由上。放在 platform 包而非各业务模块根包，
 // 是为了避免业务模块根包（持有 types/errors）与子包之间的导入循环。
 //
-// phase07-09 正式传输主线切换：
-//   - canonical 业务接口统一切换到 Connect handler（.proto + ConnectRPC）
-//   - chi 只保留 /api shell、middleware、非业务端点与 compat 过渡组
+// phase07-11 正式传输主线（compat 已全部退场）：
+//   - canonical 业务接口统一通过 Connect handler（.proto + ConnectRPC）运行
+//   - chi 只保留 /api shell、middleware 与非业务端点
 //   - L1/L2 候选 compat 入口（GET /api/candidates/products, GET /api/candidates/repositories）已退场
-//   - L3/L4 绑定 compat 入口保留为过渡薄壳，标注最晚 phase07-10 退场
+//   - L3/L4 绑定 compat 入口（POST /api/modules/{moduleId}/bindings/*）已退场
 //
 // 路由设计对齐：
 //   - phase07-07 formal spec §4 canonical Connect transport 装配规则
@@ -41,7 +41,6 @@ import (
 	exportservice "github.com/psco/backend/internal/export/service"
 	"github.com/psco/backend/internal/moduleregistry"
 	mrconnect "github.com/psco/backend/internal/moduleregistry/connect"
-	mrhandler "github.com/psco/backend/internal/moduleregistry/handler"
 	"github.com/psco/backend/internal/moduleregistry/repository"
 	"github.com/psco/backend/internal/moduleregistry/service"
 	onboardingcandidate "github.com/psco/backend/internal/onboarding/candidate"
@@ -257,32 +256,6 @@ func mountReuseSummaryConnect(r chi.Router, querySvc *reusesummaryservice.QueryS
 	connectSvc := reusesummaryconnect.NewServer(querySvc)
 	path, handler := reusesummaryv1connect.NewReuseSummaryServiceHandler(connectSvc)
 	r.Handle(path+"*", http.StripPrefix("/api", handler))
-}
-
-// ============================================================================
-// L3/L4 compat 过渡组（phase07-09 保留，phase07-10 退场）
-// ============================================================================
-
-// mountCompatRoutes 挂载 L3/L4 绑定 compat 过渡路由。
-//
-// phase07-09：以下两条路由保留为后端 compat 薄壳，委派到 canonical Connect handler 的 service 层。
-// 最晚 phase07-10 退场，届时前端 adapter / mutation owner 已全部切换到 Connect 主线。
-//
-//	POST /api/modules/{moduleId}/bindings/products     → ProductRegistryService.BindModuleToProduct
-//	POST /api/modules/{moduleId}/bindings/repositories → RepositoryBindingService.MapModuleToRepository
-func mountCompatRoutes(
-	r chi.Router,
-	productBindingSvc *productservice.CommandService,
-	repositoryMappingSvc *reposervice.CommandService,
-) {
-	// 复用既有 compat handler，避免在 platform 层长出第二套成功/错误语义。
-	compatHandler := mrhandler.NewCommandHandler(nil, productBindingSvc, repositoryMappingSvc)
-
-	// L3: POST /api/modules/{moduleId}/bindings/products
-	r.Post("/modules/{moduleId}/bindings/products", compatHandler.BindModuleToProduct)
-
-	// L4: POST /api/modules/{moduleId}/bindings/repositories
-	r.Post("/modules/{moduleId}/bindings/repositories", compatHandler.MapModuleToRepository)
 }
 
 // ============================================================================

@@ -6,24 +6,93 @@
  */
 import { useQuery, type UseQueryResult } from '@tanstack/react-query'
 import { dashboardClient } from './connect-client'
-import type { FeedbackSignalsResponse } from '../types'
+import {
+  DashboardTargetType,
+  FeedbackSignalCode,
+  FeedbackSignalFamily,
+  FeedbackSignalPriority,
+} from '@/gen/proto/psco/dashboard/v1/dashboard_pb'
+import type {
+  DashboardTargetType as DashboardTargetTypeValue,
+  FeedbackSignalCode as FeedbackSignalCodeValue,
+  FeedbackSignalFamily as FeedbackSignalFamilyValue,
+  FeedbackSignalPriority as FeedbackSignalPriorityValue,
+  FeedbackSignalsResponse,
+} from '../types'
 
 export type UseFeedbackSignalsRead = UseQueryResult<FeedbackSignalsResponse, Error>
+
+function mapSignalFamily(v: FeedbackSignalFamily): FeedbackSignalFamilyValue {
+  switch (v) {
+    case FeedbackSignalFamily.PENDING_DECISION:
+      return 'pending_decision'
+    case FeedbackSignalFamily.PRODUCT_ASSET_COVERAGE:
+      return 'product_asset_coverage'
+    default:
+      return 'pending_decision'
+  }
+}
+
+function mapSignalCode(v: FeedbackSignalCode): FeedbackSignalCodeValue {
+  switch (v) {
+    case FeedbackSignalCode.PENDING_DECISION:
+      return 'pending_decision'
+    case FeedbackSignalCode.PRODUCT_MISSING_BOTH_BINDINGS:
+      return 'product_missing_both_bindings'
+    case FeedbackSignalCode.PRODUCT_MISSING_REPOSITORY_BINDING:
+      return 'product_missing_repository_binding'
+    case FeedbackSignalCode.PRODUCT_MISSING_MODULE_BINDING:
+      return 'product_missing_module_binding'
+    default:
+      return 'pending_decision'
+  }
+}
+
+function mapSignalPriority(v: FeedbackSignalPriority): FeedbackSignalPriorityValue {
+  switch (v) {
+    case FeedbackSignalPriority.P1_PENDING_DECISION:
+      return 'p1_pending_decision'
+    case FeedbackSignalPriority.P2_PRODUCT_MISSING_BOTH_BINDINGS:
+      return 'p2_product_missing_both_bindings'
+    case FeedbackSignalPriority.P3_PRODUCT_MISSING_REPOSITORY_BINDING:
+      return 'p3_product_missing_repository_binding'
+    case FeedbackSignalPriority.P4_PRODUCT_MISSING_MODULE_BINDING:
+      return 'p4_product_missing_module_binding'
+    default:
+      return 'p1_pending_decision'
+  }
+}
+
+function mapTargetType(v: DashboardTargetType): DashboardTargetTypeValue {
+  switch (v) {
+    case DashboardTargetType.DECISION_DETAIL:
+      return 'decision_detail'
+    case DashboardTargetType.DECISION_LIST:
+      return 'decision_list'
+    case DashboardTargetType.PRODUCT_DETAIL:
+      return 'product_detail'
+    case DashboardTargetType.MODULE_DETAIL:
+      return 'module_detail'
+    case DashboardTargetType.REPOSITORY_DETAIL:
+      return 'repository_detail'
+    default:
+      return 'decision_list'
+  }
+}
 
 export function useFeedbackSignalsRead(): UseFeedbackSignalsRead {
   return useQuery<FeedbackSignalsResponse, Error>({
     queryKey: ['dashboard-feedback-signals'],
     queryFn: async (): Promise<FeedbackSignalsResponse> => {
       const res = await dashboardClient.getFeedbackSignals({})
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const mapSignal = (s: any) => ({
-        signal_family: s.signalFamily ?? '',
-        signal_code: s.signalCode ?? '',
-        priority: s.priority,
+      const mapSignal = (s: NonNullable<typeof res.currentFocusSignals>[number]) => ({
+        signal_family: mapSignalFamily(s.signalFamily),
+        signal_code: mapSignalCode(s.signalCode),
+        priority: mapSignalPriority(s.priority),
         title: s.title ?? '',
         summary: s.summary ?? '',
         action_label: s.actionLabel ?? '',
-        target_type: s.targetType,
+        target_type: mapTargetType(s.targetType),
         target_id: s.targetId ?? '',
         target_label: s.targetLabel ?? '',
       })

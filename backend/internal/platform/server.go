@@ -25,13 +25,12 @@ type Server struct {
 
 // NewServer 装配并返回 Server。
 //
-// phase07-09 装配顺序（Connect handler 主线）：
-//  1. 应用基础中间件（RequestID / Logger / Recoverer / CORS）
-//  2. 注册健康检查端点
-//  3. 构造 Product Registry / Repository Binding 的 service 层（供 Module Registry 兼容委派复用）
-//  4. 通过 mount*Connect 把各业务模块的 canonical Connect handler 挂到 /api 下
-//  5. 通过 mountCompatRoutes 挂载 L3/L4 绑定 compat 过渡路由（phase07-10 退场）
-//  6. 构造 http.Server
+// phase07-11 装配顺序（Connect handler 主线，compat 已退场）：
+	//  1. 应用基础中间件（RequestID / Logger / Recoverer / CORS）
+	//  2. 注册健康检查端点
+	//  3. 构造 Product Registry / Repository Binding 的 service 层
+	//  4. 通过 mount*Connect 把各业务模块的 canonical Connect handler 挂到 /api 下
+	//  5. 构造 http.Server
 func NewServer(cfg Config, pool *pgxpool.Pool) *Server {
 	r := chi.NewRouter()
 
@@ -78,9 +77,6 @@ func NewServer(cfg Config, pool *pgxpool.Pool) *Server {
 
 		reuseSummaryQuerySvc := buildReuseSummary(pool)
 		mountReuseSummaryConnect(r, reuseSummaryQuerySvc)
-
-		// --- L3/L4 compat 过渡组（phase07-09 保留，phase07-10 退场） ---
-		mountCompatRoutes(r, productCommandSvc, repoCommandSvc)
 	})
 
 	return &Server{

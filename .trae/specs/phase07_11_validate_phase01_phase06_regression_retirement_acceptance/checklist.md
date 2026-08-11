@@ -1,0 +1,34 @@
+- [x] 已明确 `phase07-11` 只承接联调、回归、退场核销与正式证据收口，不回卷 `phase07-08 ~ 10` 的实现设计正文
+- [x] 已明确 `phase07-11` 统一验收以单一 `/api` + Connect 主线为唯一运行口径
+- [x] 已明确开发、验收与部署等价环境不得引入第二套 API 基址、第二套 transport 主线或旧 hand-written JSON 业务入口
+- [x] 已明确数据库 reset 脚本、后端启动、前端启动与 `/api` 路由检查的统一顺序
+- [x] 已明确 `(cd proto && make build && make gen && make lint)`、`(cd backend && go build ./...)`、`(cd frontend && npx tsc -b --noEmit)`、`(cd frontend && npm run build)` 的验证要求
+- [x] 已明确当前仓库若无正式 CI workflow，则以上命令链只作为"CI 等价验证"证据，不写成 CI 已落地事实
+- [x] 已明确 `34` 条 canonical RPC 的统一回归矩阵与模块内最小路径
+- [x] 已明确 `CR1 ~ CR9` 跨模块联动回归矩阵
+- [x] 已明确 `/`、`/onboarding`、各模块 list/detail/new 路径的 route 级验证
+- [x] 已明确 Dashboard / Onboarding / Export / Backup / Reuse Summary 的正式验收范围
+- [x] 已明确 `L1 ~ L4` legacy / compat endpoint inventory 的逐项 `404 + 删除证据 + 替代 Connect path` 核销要求
+- [x] 已明确 `11` 项 frontend mutation owner inventory 的逐项核销要求
+- [x] 已明确页面 / 组件级 `useMutation` 的静态核销规则，以及 `SovereigntyPanel` 2 个允许过渡位的验收边界
+- [x] 已明确单一正式验收记录的结构，至少包含环境、步骤、结果、问题、复测与 DoD 判定
+- [x] 已明确 `phase07-11` 通过后才可进入 `phase07-12`，并为 `mvp0.3` 提供直接承接的正式结论
+
+## 实现验收
+
+- [x] 数据库 baseline 已通过 `reset_phase06_acceptance.sh` 重建
+- [x] 后端已在隔离端口 `:18081` 启动复测，`healthz` 返回 200
+- [x] 工具链验证全部通过：proto make build/gen/lint + backend go build + frontend tsc + build
+- [x] L1-L4 legacy/compat 端点全部返回 404
+- [x] L3/L4 compat 路由代码已删除（server.go + router.go）
+- [x] 9 个业务模块遗留的 hand-written JSON `handler/` 包已整体删除，不再保留旧业务主线源码
+- [x] 34 条 canonical RPC 全部回归通过
+- [x] 9 个业务模块（Module/Decision/Product/Repository/Dashboard/Onboarding/Export/Backup/ReuseSummary）全部通过 Connect 主线验证
+- [x] CR1-CR9 跨模块联动回归全部通过
+- [x] 前端静态核销：0 个旧 adapter 文件、0 个旧 adapter import、0 个 legacy 路径引用
+- [x] 11 项 frontend mutation owner 全部核销（9 项正式 owner + 2 项过渡位）
+- [x] 浏览器关键路径验收通过：`/ -> /dashboard` 分流正常，Dashboard / Module / Decision / Product / Repository / Onboarding 关键页面可访问
+- [x] Dashboard 浏览器阻断已修复：`FeedbackSignalCard` 不再因 proto enum 映射缺失触发 `Cannot read properties of undefined (reading 'className')`
+- [x] Dashboard 浏览器复测通过：关键统计、Current Focus、Asset Feedback、Recent Activity、Reuse Snapshot、Export、Backup 可见，console 无 runtime error
+- [x] 正式验收记录 `acceptance_report.md` 已产出
+- [x] 具备进入 phase07-12 根级收口条件
