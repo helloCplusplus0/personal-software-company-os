@@ -66,12 +66,23 @@ DoD：
 
 - 冻结迁移过程是否允许短时并存 JSON adapter
 - 冻结临时并存的使用前提与禁止事项
+- 冻结当前真实 legacy / compat 业务入口的退场清单
 - 冻结 phase 收口前的退场标准
 
 DoD：
 
 - 已明确“兼容只允许存在于迁移过程”
 - 不允许把临时 adapter 写成长期正式接口
+- 已明确当前 legacy / compat 业务入口 inventory，至少覆盖：
+  - `/api/candidates/products`
+  - `/api/candidates/repositories`
+  - `/api/modules/{moduleId}/bindings/products`
+  - `/api/modules/{moduleId}/bindings/repositories`
+- 每个 legacy / compat 入口都已明确：
+  - 当前调用方
+  - 对应替代 RPC / Connect path
+  - 允许并存的最晚时点
+  - 退场时的删除证据与回归证据
 - phase 收口时旧 JSON 业务主线必须退场
 
 ### 第二组：实现设计产出类子任务
@@ -99,12 +110,26 @@ DoD：
 
 - 产出前端生成客户端承接位
 - 产出 query / application 层的调用切换策略
+- 产出前端正式写动作的 mutation owner inventory 与收口策略
 - 产出旧 API adapter 的回收顺序
 
 DoD：
 
 - 前端不会因切传输层而长出第二套调用组织
 - query 与 mutation 边界继续保持清晰
+- 已明确当前组件 / 页面级 mutation 清单，并对每一项给出：
+  - 回收到 `application` owner
+  - 暂时保留在切片内固定承接位
+  - 或明确标记为 phase07 允许存在的短时过渡位及退场条件
+- canonical 写动作至少覆盖：
+  - create product / repository / module / decision
+  - create release
+  - bind module to product
+  - map module to repository
+  - bind repository to product
+  - link decision to target
+  - trigger export
+  - trigger backup verify
 - 设计结果足以直接指导现有 adapter 回收
 
 ### phase07-06 产出 phase01 ~ phase06 业务接口迁移矩阵与回归验收设计
@@ -114,6 +139,7 @@ DoD：
 - 产出 `service / RPC / 当前入口路径 / 页面动作 owner` 级别的业务接口迁移顺序
 - 产出跨模块回归清单
 - 产出 fixture、联调、验收与退场证据矩阵
+- 产出 legacy endpoint retirement inventory 与 frontend mutation owner inventory 的验收映射
 - 产出 Vite、本地启动脚本、验收脚本与 CI 中 proto 生成链的迁移清单
 
 DoD：
@@ -121,6 +147,8 @@ DoD：
 - 每个已交付业务模块、每个 canonical RPC 都有对应迁移 owner 与回归项
 - 已明确 `/api` 单一访问前缀在 dev、验收与部署链路中的承接位
 - 已明确现有验收脚本、reset 脚本与构建脚本的迁移要求
+- 已明确 legacy / compat 入口退场所需的 endpoint 级证据
+- 已明确前端正式写动作 owner 收口完成态与允许保留的过渡项清单
 - 回归验收足以证明主线等价迁移成立
 - 已明确 phase 收口所需的最终证据
 
@@ -159,6 +187,7 @@ DoD：
 - 调整 `router.go` 与相关 transport owner
 - 落实 `/api` 前缀下的 Connect procedure path 挂载与 `chi` middleware 继承
 - 落实 Connect interceptor 与错误语义映射
+- 按 legacy endpoint retirement inventory 清退旧 compat 业务入口
 - 清退旧手写 JSON 业务 handler 主线
 
 DoD：
@@ -166,6 +195,7 @@ DoD：
 - canonical 业务接口已完成正式切换
 - `chi` 只保留 shell 与非业务端点职责
 - 外部访问路径对浏览器侧保持单一 `/api` 基址
+- 已按 inventory 清退或关闭所有列入退场范围的 legacy / compat 业务入口
 - 不再新增或保留手写 JSON 业务主线
 
 ### phase07-10 落实前端客户端与业务切片调用切换
@@ -175,6 +205,7 @@ DoD：
 - 将前端业务调用切到生成客户端或等价 Connect transport adapter
 - 回收旧 API adapter
 - 调整开发环境代理与传输层承接位
+- 按 mutation owner inventory 回收或冻结正式写动作承接位
 - 保持既有 query / application 边界
 
 DoD：
@@ -182,6 +213,7 @@ DoD：
 - 前端业务主线已完成正式切换
 - 页面与切片行为保持等价
 - 不引入第二套前端 API 基址或第二套 transport owner
+- 所有 canonical 写动作都已有单一正式 owner；若仍存在过渡 mutation，已被显式列入允许清单并附退场条件
 - 不保留第二套长期 fetch / JSON 主线
 
 ### phase07-11 完成 phase01 ~ phase06 联调、回归与退场验收
@@ -191,12 +223,15 @@ DoD：
 - 覆盖 Module / Decision / Product / Repository / Dashboard / Onboarding / Export / Backup / Reuse Summary
 - 覆盖本地启动链、验收脚本与 CI 生成链
 - 验证旧业务主线退场
+- 验证 legacy endpoint retirement inventory 与 frontend mutation owner inventory 已按计划收口
 - 留存正式验收记录
 
 DoD：
 
 - 回归通过
 - 开发、验收与部署链路均已通过单一 `/api` + Connect 主线运行
+- legacy / compat 业务入口 inventory 已逐项核销，不存在未声明残留
+- canonical 写动作 owner 已逐项核销，不存在未声明的页面 / 组件级长期正式 mutation 主线
 - phase 收口时不再保留旧手写 JSON 业务主线
 - 已形成可供后续 `mvp0.3` 业务 phase 直接承接的正式结论
 

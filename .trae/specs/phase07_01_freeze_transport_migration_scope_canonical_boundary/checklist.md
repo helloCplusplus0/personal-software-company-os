@@ -1,0 +1,17 @@
+- [x] 已明确 `phase07` 必须迁移的 9 个 canonical 业务模块清单
+- [x] 已明确 `phase07` 不是"新增接口默认走 ConnectRPC"的试点，而是 `phase01 ~ phase06` canonical 业务接口的一次性正式切换
+- [x] 已明确 canonical 迁移总表必须下钻到 `service / RPC / 当前入口路径 / 页面或动作 owner`
+- [x] 已明确迁移总表中必须包含当前入口路径、目标 Connect procedure path、当前 transport owner 与迁移后正式 owner
+- [x] 已明确允许继续保留在 `chi + net/http` 的非业务基础设施端点 only 为 `healthz / readyz / metrics / debug / pprof`
+- [x] 已明确除 keep list 外，其余业务主线接口不得以"暂时先不迁"名义留在正式完成态
+- [x] 已明确当前真实 `legacy / compat` 业务入口 inventory 必须显式建账
+- [x] 已明确至少覆盖 `/api/candidates/products`、`/api/candidates/repositories`、`/api/modules/{moduleId}/bindings/products`、`/api/modules/{moduleId}/bindings/repositories`
+- [x] 已明确每个 legacy / compat 入口都需要记录当前调用方、存在原因、替代 RPC / Connect path、最晚并存时点与删除证据
+- [x] 已明确这些 legacy / compat 入口不得作为 `phase07` 收口后的长期兼容层继续保留
+- [x] 已明确 `phase07` 收口时"业务主线已切换"的最小判定标准
+- [x] 已明确 canonical 业务接口全部切到 ConnectRPC、legacy inventory 逐项核销、单一 `/api` 基址继续成立才可视为完成
+- [x] 已明确不允许"新 Connect 主线 + 旧 JSON 主线"并列正式存在
+- [x] 已明确前端页面或动作 owner 必须进入迁移范围表
+- [x] 已明确当前页面 / 组件中的正式 mutation 必须标记为"回收至 application owner"或"短时过渡位"
+- [x] 已明确本次规格与 `phase07` shared baseline、architecture plan、`audit_001` 及 `phase06` 正式规格和验收结论保持一致
+- [x] 已明确本次规格足以直接支撑后续 `phase07-02 ~ phase07-07` 子任务
