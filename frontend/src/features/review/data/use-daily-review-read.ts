@@ -18,7 +18,7 @@ import { dailyReviewQueryOptions, DAILY_REVIEW_QUERY_KEY } from './review-query-
 import type { DailyReviewContext } from '@/gen/proto/psco/review/v1/review_pb'
 import type { Timestamp } from '@bufbuild/protobuf/wkt'
 import type { FeedbackSignal } from '@/features/dashboard/types'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 
 // ============================================================================
 // 页面级状态模型
@@ -151,6 +151,8 @@ export interface UseDailyReviewReadResult {
   isError: boolean
   error: Error | null
   pageState: DailyReviewPageState
+  /** 整页重试：重新触发 daily review context 查询 */
+  retry: () => void
 }
 
 export function useDailyReviewRead(): UseDailyReviewReadResult {
@@ -158,6 +160,10 @@ export function useDailyReviewRead(): UseDailyReviewReadResult {
     ...dailyReviewQueryOptions(),
     queryKey: DAILY_REVIEW_QUERY_KEY,
   })
+
+  const retry = useCallback(() => {
+    void query.refetch()
+  }, [query])
 
   const pageState = useMemo((): DailyReviewPageState => {
     if (query.isLoading && !query.data) {
@@ -209,5 +215,6 @@ export function useDailyReviewRead(): UseDailyReviewReadResult {
     isError: query.isError,
     error: query.error as Error | null,
     pageState,
+    retry,
   }
 }

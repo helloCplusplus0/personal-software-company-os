@@ -1,0 +1,16 @@
+- [x] 已明确 `DashboardPrimaryActionPanel` 作为当前阶段唯一正式 review 入口 caller 的集成边界
+- [x] 已明确 `/dashboard -> /reviews/daily` 与 `/dashboard -> /reviews/weekly` 的正式进入与返回链要求
+- [x] 已明确 `Daily Review` 的最小区块顺序、正式读模型来源与非目标区块约束
+- [x] 已明确 `Weekly Review` 的最小区块顺序，以及对 `phase05 / phase06` 读模型的正式消费边界
+- [x] 已明确 `reuse snapshot / module_reuse_summary / capability_summary` 只通过 weekly review read owner 正式消费
+- [x] 已明确 `ReviewPageShell + ReviewActionFooter + useReviewAction()` 的统一动作承接语义
+- [x] 已明确 review 页面复用 Dashboard 展示组件时不得重新引入 page-local query / retry / mutation 编排
+- [x] 已明确 `Decision / Product / Module / Repository` handoff 与 `next-step result` 的最小关键路径验收口径
+- [x] 已明确 `phase08-09` 不接受"同模板不同标题"的伪双路径实现
+- [x] 实现执行完毕：全部 5 个 Task 及 17 个子任务已完成
+- [x] 修复 useDailyReviewRead 缺少 retry 暴露（对齐 useWeeklyReviewRead）
+- [x] 修复 ReviewPageShell page-error 缺少重试按钮（新增 onRetry prop）
+- [x] 修复 `ReviewActionFooter` 将 weekly 动作返回链误落到 daily `current-focus` 语义的问题；`Weekly Review` 已显式传入 `overview / asset-feedback` 动作映射
+- [x] API 双路径验证：Daily (currentFocus+pendingDecisions+representative，无 overview/recent/reuse) ≠ Weekly (overview+recent+representative+reuse，无 currentFocus/pendingDecisions)
+- [x] 构建验证：frontend (npm run build) ✅ | backend (go build) ✅
+- [x] SubmitReviewResult 路径验证通过 ✅

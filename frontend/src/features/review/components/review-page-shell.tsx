@@ -29,6 +29,8 @@ interface ReviewPageShellProps {
   pageStatus: PageStatus
   /** 返回 Dashboard 的回调 */
   onBackToDashboard: () => void
+  /** 整页重试回调（由 read owner 暴露），page-error 时显示重试按钮 */
+  onRetry?: () => void
   /** 页面主体内容 */
   children: ReactNode
   /** 底部动作区 */
@@ -40,6 +42,7 @@ export function ReviewPageShell({
   subtitle,
   pageStatus,
   onBackToDashboard,
+  onRetry,
   children,
   actionFooter,
 }: ReviewPageShellProps) {
@@ -84,14 +87,26 @@ export function ReviewPageShell({
           <p className="text-sm text-destructive mb-3">
             Review 上下文加载失败，请稍后重试
           </p>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onBackToDashboard}
-            className="h-7"
-          >
-            返回 Dashboard
-          </Button>
+          <div className="flex items-center gap-2">
+            {onRetry && (
+              <Button
+                variant="default"
+                size="sm"
+                onClick={onRetry}
+                className="h-7"
+              >
+                重试
+              </Button>
+            )}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onBackToDashboard}
+              className="h-7"
+            >
+              返回 Dashboard
+            </Button>
+          </div>
         </div>
       )}
 

@@ -37,6 +37,14 @@ import type {
 import type { ReviewActionInput } from '../application/review-action-types'
 import { toast } from 'sonner'
 
+const WEEKLY_REVIEW_ACTION_SECTIONS = {
+  decision: 'overview',
+  product: 'asset-feedback',
+  module: 'asset-feedback',
+  repository: 'asset-feedback',
+  submitNextStep: 'overview',
+} as const
+
 export function WeeklyReviewPage() {
   const navigate = useNavigate()
   const navigateBack = useNavigateBackToDashboard()
@@ -91,6 +99,7 @@ export function WeeklyReviewPage() {
       subtitle="本周资产盘点与整理"
       pageStatus={review.pageState.pageStatus}
       onBackToDashboard={handleBackToDashboard}
+      onRetry={review.retry}
       actionFooter={
         <ReviewActionFooter
           isPending={action.isPending}
@@ -99,6 +108,7 @@ export function WeeklyReviewPage() {
           onSubmitAction={handleSubmitAction}
           onReset={action.reset}
           reviewKind="weekly"
+            actionSections={WEEKLY_REVIEW_ACTION_SECTIONS}
         />
       }
     >

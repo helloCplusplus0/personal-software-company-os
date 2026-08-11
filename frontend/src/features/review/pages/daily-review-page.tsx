@@ -32,6 +32,14 @@ import type { ReviewActionInput } from '../application/review-action-types'
 import type { PendingDecision } from '../data/use-daily-review-read'
 import { toast } from 'sonner'
 
+const DAILY_REVIEW_ACTION_SECTIONS = {
+  decision: 'current-focus',
+  product: 'asset-feedback',
+  module: 'current-focus',
+  repository: 'asset-feedback',
+  submitNextStep: 'current-focus',
+} as const
+
 export function DailyReviewPage() {
   const navigate = useNavigate()
   const navigateBack = useNavigateBackToDashboard()
@@ -59,11 +67,12 @@ export function DailyReviewPage() {
 
   return (
     <ReviewPageShell
-      title="Daily Review"
-      subtitle="今日要处理的焦点与决策"
-      pageStatus={review.pageState.pageStatus}
-      onBackToDashboard={handleBackToDashboard}
-      actionFooter={
+        title="Daily Review"
+        subtitle="今日要处理的焦点与决策"
+        pageStatus={review.pageState.pageStatus}
+        onBackToDashboard={handleBackToDashboard}
+        onRetry={review.retry}
+        actionFooter={
         <ReviewActionFooter
           isPending={action.isPending}
           hasError={action.isError}
@@ -71,6 +80,7 @@ export function DailyReviewPage() {
           onSubmitAction={handleSubmitAction}
           onReset={action.reset}
           reviewKind="daily"
+          actionSections={DAILY_REVIEW_ACTION_SECTIONS}
         />
       }
     >

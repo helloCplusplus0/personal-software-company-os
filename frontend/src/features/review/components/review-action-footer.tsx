@@ -18,6 +18,15 @@
 import { Button } from '@/components/ui/button'
 import { ArrowRight, CheckCircle } from 'lucide-react'
 import type { ReviewActionInput } from '../application/review-action-types'
+import type { DashboardSection } from '@/features/dashboard/types'
+
+interface ReviewActionSectionMap {
+  decision: DashboardSection
+  product: DashboardSection
+  module: DashboardSection
+  repository: DashboardSection
+  submitNextStep: DashboardSection
+}
 
 interface ReviewActionFooterProps {
   /** 是否正在提交 */
@@ -32,6 +41,8 @@ interface ReviewActionFooterProps {
   onReset: () => void
   /** 当前 review 会话类型，用于 submit_next_step 时区分 daily/weekly */
   reviewKind?: 'daily' | 'weekly'
+  /** 当前 review 会话的动作返回链语义映射 */
+  actionSections: ReviewActionSectionMap
 }
 
 export function ReviewActionFooter({
@@ -41,6 +52,7 @@ export function ReviewActionFooter({
   onSubmitAction,
   onReset,
   reviewKind,
+  actionSections,
 }: ReviewActionFooterProps) {
   return (
     <div className="border-t pt-3 space-y-3">
@@ -70,7 +82,7 @@ export function ReviewActionFooter({
           disabled={isPending}
           onClick={() => onSubmitAction({
             actionType: 'go_to_decision',
-            dashboardSection: 'current-focus',
+              dashboardSection: actionSections.decision,
           })}
           className="w-full sm:w-auto h-9 shrink-0"
         >
@@ -85,7 +97,7 @@ export function ReviewActionFooter({
             disabled={isPending}
             onClick={() => onSubmitAction({
               actionType: 'go_to_product',
-              dashboardSection: 'asset-feedback',
+                dashboardSection: actionSections.product,
             })}
             className="w-full sm:w-auto h-8 shrink-0 text-xs"
           >
@@ -98,7 +110,7 @@ export function ReviewActionFooter({
             disabled={isPending}
             onClick={() => onSubmitAction({
               actionType: 'go_to_module',
-              dashboardSection: 'current-focus',
+                dashboardSection: actionSections.module,
             })}
             className="w-full sm:w-auto h-8 shrink-0 text-xs"
           >
@@ -111,7 +123,7 @@ export function ReviewActionFooter({
             disabled={isPending}
             onClick={() => onSubmitAction({
               actionType: 'go_to_repository',
-              dashboardSection: 'asset-feedback',
+                dashboardSection: actionSections.repository,
             })}
             className="w-full sm:w-auto h-8 shrink-0 text-xs"
           >
@@ -134,7 +146,7 @@ export function ReviewActionFooter({
           disabled={isPending}
           onClick={() => onSubmitAction({
             actionType: 'submit_next_step',
-            dashboardSection: 'current-focus',
+              dashboardSection: actionSections.submitNextStep,
             summaryText: 'Review 完成',
             reviewKind,
           })}
