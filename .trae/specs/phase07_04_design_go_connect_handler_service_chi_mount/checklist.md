@@ -1,0 +1,12 @@
+- [x] 已明确 generated Connect handler 与既有 service implementation 的正式接线方式
+- [x] 已明确 `platform` 装配层、`build*`、Connect service implementation、generated handler 各自职责
+- [x] 已明确 compat JSON handler 在迁移期的允许位置与 canonical owner 的主次关系
+- [x] 已明确 `chi` middleware 与 Connect interceptor 的唯一承接位
+- [x] 已明确 request id、logging、recovery、timeout、auth / context 注入等横切逻辑的正式承接边界
+- [x] 已明确 canonical Connect tree、infra keep list 与 compat 过渡组在 router 结构中的边界
+- [x] 已明确 `/api` 下 procedure path 的 mount 组织方式且不引入第二套路由组织模式
+- [x] 已明确 domain error -> proto error code -> Connect error 的单值映射要求
+- [x] 已明确固定错误映射承接位，避免模块各自维护第二套长期错误映射
+- [x] 已明确 transport 迁移后既有 repository / candidate / service 分层仍为 canonical 业务实现主线
+- [x] 已明确本次设计与 `phase07-02`、`phase07-03` 的冻结结论保持一致
+- [x] 已明确本次设计可直接作为 `phase07-08` 后端实现与 `phase07-09` compat 退场的直接上游
