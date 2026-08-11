@@ -1,0 +1,16 @@
+- [x] 已明确 phase07-07 的目标是产出单一 formal spec，而不是再次产出并列设计文档
+- [x] 已明确正式正文文件落点 `transport_mainline_cutover_spec_v0.1.md`
+- [x] 已明确该 formal spec 将成为 phase07-08 ~ 11 的唯一直接上游规格入口
+- [x] 已明确 phase07-01 ~ 06 在 formal spec 生效后退为冻结来源与证据链
+- [x] 已明确正文必须完整覆盖 9 个 canonical 业务模块、34 条 canonical RPC、4 条 legacy / compat endpoint 与 infra keep list
+- [x] 已明确正文必须完整覆盖 .proto 唯一合同源、单一 /api 前缀与 ConnectRPC 正式传输主线
+- [x] 已明确正文必须完整覆盖 buf 三插件矩阵、proto/Makefile、Go / TS 产物落点、前端 Connect runtime 依赖与当前 CI 缺口
+- [x] 已明确正文必须完整覆盖后端 chi + Connect handler + existing service 的正式接线方式
+- [x] 已明确正文必须完整覆盖前端 shared transport、slice-local generated client、query owner、application owner 与 adapter 退场规则
+- [x] 已明确正文必须完整覆盖 11 项 mutation owner、Onboarding route caller、candidate read 与 SovereigntyPanel 过渡位
+- [x] 已明确正文必须完整覆盖 34 条 RPC 迁移矩阵、跨模块回归清单与 route 级回归要求
+- [x] 已明确正文必须完整覆盖 4 条 legacy / compat endpoint 的删除证据、替代 Connect 回归证据与最晚退场时点
+- [x] 已明确正文必须完整覆盖 11 项 frontend mutation owner 验收映射、最终 evidence package 与 phase 收口阻断条件
+- [x] 已明确 formal spec 与 phase07-01 ~ 06 的修正后结论一致，不回退到旧口径
+- [x] 已明确 formal spec 与根级真相源、phase07 architecture/shared baseline/dev plan 及 project_rules.md 一致
+- [x] 已明确后续阶段不得再并列引用 phase07-01 ~ 06 作为长期直接执行入口
