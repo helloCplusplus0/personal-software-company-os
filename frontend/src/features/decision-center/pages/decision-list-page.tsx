@@ -58,7 +58,10 @@ export function DecisionListPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Decision Center</h1>
         <Button asChild>
-          <Link to="/decisions/new" search={{ fromList: true }}>
+            <Link
+              to="/decisions/new"
+              search={mergeCurrentDashboardSource({ fromList: true }, search)}
+            >
             <Plus className="mr-2 h-4 w-4" />
             记录决策
           </Link>
@@ -94,7 +97,10 @@ export function DecisionListPage() {
         <div className="rounded-lg border border-dashed p-8 text-center">
           <p className="text-muted-foreground mb-4">系统中尚无任何决策，先记录首条决策</p>
           <Button asChild>
-            <Link to="/decisions/new" search={{ fromList: true }}>
+              <Link
+                to="/decisions/new"
+                search={mergeCurrentDashboardSource({ fromList: true }, search)}
+              >
               <Plus className="mr-2 h-4 w-4" />
               记录首条决策
             </Link>

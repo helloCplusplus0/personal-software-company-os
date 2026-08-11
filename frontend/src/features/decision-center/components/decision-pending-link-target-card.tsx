@@ -16,8 +16,10 @@
  * - source_context 作为入口历史记录保留，后端无清除接口，
  *   待关联目标持续展示直到正式关联完成，不因用户放弃而清除
  */
+import { Link } from '@tanstack/react-router'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Link2 } from 'lucide-react'
 
 interface DecisionPendingLinkTargetCardProps {
@@ -25,9 +27,14 @@ interface DecisionPendingLinkTargetCardProps {
   sourceModuleId: string
   /** 待关联 Module 名称 */
   sourceModuleName: string
+  moduleDetailSearch: Record<string, unknown>
 }
 
-export function DecisionPendingLinkTargetCard({ sourceModuleId, sourceModuleName }: DecisionPendingLinkTargetCardProps) {
+export function DecisionPendingLinkTargetCard({
+  sourceModuleId,
+  sourceModuleName,
+  moduleDetailSearch,
+}: DecisionPendingLinkTargetCardProps) {
   return (
     <Card className="border-primary/30 bg-primary/5">
       <CardHeader>
@@ -46,9 +53,20 @@ export function DecisionPendingLinkTargetCard({ sourceModuleId, sourceModuleName
           </Badge>
           <span className="text-xs text-muted-foreground font-mono">{sourceModuleId}</span>
         </div>
-        <p className="mt-2 text-xs text-muted-foreground">
-          可在下方候选列表中完成正式关联，关联后此卡片将自动消失。
-        </p>
+        <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs text-muted-foreground">
+            可在下方候选列表中完成正式关联，关联后此卡片将自动消失。
+          </p>
+          <Button variant="outline" size="sm" asChild>
+            <Link
+              to="/modules/$moduleId"
+              params={{ moduleId: sourceModuleId }}
+              search={moduleDetailSearch}
+            >
+              查看模块详情
+            </Link>
+          </Button>
+        </div>
       </CardContent>
     </Card>
   )

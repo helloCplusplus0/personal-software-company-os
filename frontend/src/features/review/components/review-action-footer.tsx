@@ -6,7 +6,7 @@
  *
  * phase08-08 UI 对齐 Dashboard 基线（验收后调整）：
  *   - 分层为主行动区 + 完成区，对齐 phase08-05 spec §"review 完成与主动离开的交互流必须单值化"
- *   - 主行动区：进入决策（主按钮）+ 实体 handoff 次按钮组（产品/模块/仓库）
+ *   - 主行动区：记录决策（主按钮）+ 决策中心 / 实体 handoff 次按钮组
  *   - 完成区：完成 Review（submit_next_step，secondary 风格）+ 说明文案
  *   - 移动端按钮纵向堆叠 w-full，桌面端紧凑排列
  *   - 错误态样式对齐 dashboard 错误态
@@ -73,7 +73,7 @@ export function ReviewActionFooter({
         </div>
       )}
 
-      {/* 主行动区：进入决策（主按钮）+ 实体 handoff 次按钮组
+      {/* 主行动区：记录决策（主按钮）+ 决策中心 / 实体 handoff 次按钮组
           移动端纵向堆叠 w-full，桌面端紧凑排列 */}
       <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
         <Button
@@ -81,16 +81,29 @@ export function ReviewActionFooter({
           variant="default"
           disabled={isPending}
           onClick={() => onSubmitAction({
-            actionType: 'go_to_decision',
-              dashboardSection: actionSections.decision,
+            actionType: 'create_decision',
+            dashboardSection: actionSections.decision,
           })}
           className="w-full sm:w-auto h-9 shrink-0"
         >
-          进入决策
+          记录决策
           <ArrowRight className="ml-1.5 h-4 w-4" />
         </Button>
 
         <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={isPending}
+            onClick={() => onSubmitAction({
+              actionType: 'go_to_decision',
+              dashboardSection: actionSections.decision,
+            })}
+            className="w-full sm:w-auto h-8 shrink-0 text-xs"
+          >
+            决策中心
+            <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+          </Button>
           <Button
             size="sm"
             variant="outline"

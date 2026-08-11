@@ -33,6 +33,8 @@ import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
 import { useDecisionListSearchStore } from '../stores/decision-list-search-store'
 import type { CreateDecisionInput } from '../types'
+import { BackToDashboardButton } from '@/features/dashboard/components/back-to-dashboard-button'
+import { mergeCurrentDashboardSource } from '@/features/dashboard/lib/dashboard-source'
 
 export function DecisionCreatePage() {
   // §5.11 从路由搜索参数承接来源上下文；§9.1 fromList 承接列表上下文标记
@@ -43,7 +45,10 @@ export function DecisionCreatePage() {
   // §9.1 单值化"来源列表上下文存在 / 不存在"：
   // - fromList === true（从 DecisionListPage 进入）：返回列表恢复 lastSearch
   // - fromList 不存在（从 Module Detail 或外部直达进入）：返回列表落默认参数，不恢复历史筛选
-  const returnSearch = search.fromList ? lastSearch : { statusFilter: 'all' as const }
+  const returnSearch = mergeCurrentDashboardSource(
+    search.fromList ? lastSearch : { statusFilter: 'all' as const },
+    search,
+  ) as unknown as Record<string, unknown>
 
   const hasSourceContext = Boolean(search.sourceModuleId && search.sourceModuleName)
 
@@ -62,7 +67,10 @@ export function DecisionCreatePage() {
         navigate({
           to: '/decisions/$decisionId',
           params: { decisionId: response.decision_id },
-          search: { fromList: search.fromList },
+            search: mergeCurrentDashboardSource(
+              { fromList: search.fromList },
+              search,
+            ) as unknown as Record<string, unknown>,
         })
       },
       onError: (error: Error) => {
@@ -76,6 +84,7 @@ export function DecisionCreatePage() {
     <div className="max-w-2xl space-y-4">
       {/* 返回列表 — §9.1 按 fromList 单值化决定恢复 lastSearch 或落默认参数 */}
       <div className="flex items-center gap-3">
+        <BackToDashboardButton />
         <Button variant="ghost" size="sm" asChild>
           <Link to="/decisions" search={returnSearch}>
             <ArrowLeft className="mr-2 h-4 w-4" />

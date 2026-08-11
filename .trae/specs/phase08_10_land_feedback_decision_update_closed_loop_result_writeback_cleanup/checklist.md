@@ -1,0 +1,14 @@
+- [x] 已明确 `phase08-10` 的通过结论必须建立在 `Feedback -> Decision -> canonical update -> reread` 的最小闭环之上
+- [x] 已明确 `Decision` 继续作为 review loop 的正式中心，实体 handoff 不能替代正式决策承接
+- [x] 已明确至少一条实体 canonical update 路径必须真实执行成功，而不是只完成 route handoff
+- [x] 已明确 `SubmitReviewResult` 继续只承接轻量流程记录，不冒充实体更新或决策写入
+- [x] 已明确 review、decision 与实体 canonical owner 之间的成功回流、错误语义与 query 失效分工
+- [x] 已明确前端必须回收哪些 page-local mutation / invalidation / success handling 临时编排点
+- [x] 已明确后端不得保留 review-local 并列 command 主线或第二套成功 / 错误 envelope
+- [x] 已明确 `phase08-10` 的验收矩阵至少覆盖浏览器闭环、API smoke 与构建三类证据
+- [x] 已明确 `phase08-10` 不接受"只跳转页面"或"只提交 review record"的伪闭环实现
+- [x] 已修复 `Review -> Decision Create` 主动作仍停在 `/decisions` 列表的问题，Review 主按钮现已正式进入 `/decisions/new`
+- [x] 已修复 `Decision List -> Decision Create -> Decision Detail` 分支丢失 dashboard/review 来源链的问题
+- [x] 已修复 `Decision Detail` 只停留在 `Decision -> Module` 只读展示、缺少后续 canonical update 正式下一跳的问题
+- [x] 真实浏览器已完成 `Dashboard -> Daily Review -> Decision Create -> Decision Detail -> Module Detail -> Dashboard` 闭环走查，来源链参数与返回链保持成立
+- [x] 当前验收证据已覆盖：frontend build、backend build、backend health check、API smoke 与真实浏览器交互验收；`phase08-10` 可按通过验收收口

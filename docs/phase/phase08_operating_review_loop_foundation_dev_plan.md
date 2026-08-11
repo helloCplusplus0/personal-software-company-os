@@ -206,6 +206,12 @@ DoD：
 - 不引入第二套长期任务系统
 - 前后端不保留并列临时主线
 
+收口补记：
+
+- `phase08-10` 已完成源码修复、构建验证、运行时健康检查与真实浏览器/E2E 走查
+- 已验证 `Dashboard -> Daily Review -> Decision Create -> Decision Detail -> Module Detail -> Dashboard` 真实可交互闭环
+- 当前可按通过验收并完结该子任务；后续仅需在 `phase08-11` 继续覆盖更完整的联调、反回归与双路径浏览器验收
+
 ### 第四组：验证验收类子任务
 
 ### phase08-11 完成 review loop 联调、浏览器验收与反回归验证

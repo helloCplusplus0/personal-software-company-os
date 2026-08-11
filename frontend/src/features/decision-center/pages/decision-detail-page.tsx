@@ -62,6 +62,10 @@ export function DecisionDetailPage() {
           : { statusFilter: 'all' as const },
         detailSearch,
       ) as unknown as Record<string, unknown>)
+  const moduleDetailSearch = mergeCurrentDashboardSource(
+    {},
+    detailSearch,
+  ) as unknown as Record<string, unknown>
 
   const { data, isLoading, isError, error } = useDecisionDetailRead(decisionId)
 
@@ -143,18 +147,25 @@ export function DecisionDetailPage() {
         {/* 已关联目标 + 待关联目标 + 候选关联区 — 占 2 列（PC）/ 全宽（移动） */}
         <div className="space-y-4 lg:col-span-2">
           {/* §5.8 已关联目标展示 */}
-          <DecisionLinkedTargetsSection linkedModules={data.linked_modules} />
+          <DecisionLinkedTargetsSection
+            linkedModules={data.linked_modules}
+            moduleDetailSearch={moduleDetailSearch}
+          />
 
           {/* §5.11 待关联目标展示 — 仅在有待关联目标时展示，正式关联后由 reread 驱动消失 */}
           {hasPendingLinkTarget && (
             <DecisionPendingLinkTargetCard
               sourceModuleId={pendingTargetModuleId}
               sourceModuleName={data.source_context.source_module_name}
+              moduleDetailSearch={moduleDetailSearch}
             />
           )}
 
           {/* §5.10 候选读取与最小目标关联 */}
-          <DecisionModuleCandidatePanel decisionId={decisionId} />
+          <DecisionModuleCandidatePanel
+            decisionId={decisionId}
+            moduleDetailSearch={moduleDetailSearch}
+          />
         </div>
       </div>
     </div>

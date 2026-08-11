@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
 import { DecisionCreatePage } from '@/features/decision-center/pages/decision-create-page'
+import { dashboardSourceSearchSchema } from '@/features/dashboard/lib/dashboard-source-schema'
 
 /**
  * DecisionCreateRoute — /decisions/new
@@ -23,6 +24,7 @@ const decisionCreateSearchSchema = z.object({
   sourceModuleId: z.string().optional(),
   sourceModuleName: z.string().optional(),
   fromList: z.boolean().optional(),
+  ...dashboardSourceSearchSchema,
 })
 
 export const Route = createFileRoute('/decisions/new')({

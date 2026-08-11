@@ -18,6 +18,7 @@
  * - DecisionModuleCandidatePanel 承接候选读取与目标选择
  * - DecisionLinkActions 内联于此组件
  */
+import { Link } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -31,6 +32,7 @@ import type { DecisionModuleCandidate } from '../types'
 
 interface DecisionModuleCandidatePanelProps {
   decisionId: string
+  moduleDetailSearch: Record<string, unknown>
 }
 
 /** 候选 Module 状态标签 */
@@ -39,7 +41,10 @@ const STATUS_LABEL: Record<string, string> = {
   archived: 'Archived',
 }
 
-export function DecisionModuleCandidatePanel({ decisionId }: DecisionModuleCandidatePanelProps) {
+export function DecisionModuleCandidatePanel({
+  decisionId,
+  moduleDetailSearch,
+}: DecisionModuleCandidatePanelProps) {
   const queryClient = useQueryClient()
 
   // §5.10 候选读取
@@ -53,10 +58,12 @@ export function DecisionModuleCandidatePanel({ decisionId }: DecisionModuleCandi
     linkMutation.mutate(
       { decisionId, moduleId },
       {
-        onSuccess: () => {
+          onSuccess: async () => {
           // phase03-13 spec：失效当前详情、候选列表与决策列表
-          queryClient.invalidateQueries({ queryKey: ['decision-detail', decisionId] })
-          queryClient.invalidateQueries({ queryKey: ['decision-list'] })
+            await Promise.all([
+              queryClient.invalidateQueries({ queryKey: ['decision-detail', decisionId] }),
+              queryClient.invalidateQueries({ queryKey: ['decision-list'] }),
+            ])
           toast.success('关联成功')
         },
         onError: (err: Error) => {
@@ -78,16 +85,27 @@ export function DecisionModuleCandidatePanel({ decisionId }: DecisionModuleCandi
           {STATUS_LABEL[c.status] ?? c.status}
         </Badge>
       </div>
-      <Button
-        type="button"
-        size="sm"
-        variant="outline"
-        disabled={linkMutation.isPending}
-        onClick={() => handleLink(c.module_id)}
-      >
-        <Plus className="mr-1 h-3 w-3" />
-        关联
-      </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="sm" asChild>
+            <Link
+              to="/modules/$moduleId"
+              params={{ moduleId: c.module_id }}
+              search={moduleDetailSearch}
+            >
+              查看模块
+            </Link>
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            disabled={linkMutation.isPending}
+            onClick={() => handleLink(c.module_id)}
+          >
+            <Plus className="mr-1 h-3 w-3" />
+            关联
+          </Button>
+        </div>
     </div>
   )
 

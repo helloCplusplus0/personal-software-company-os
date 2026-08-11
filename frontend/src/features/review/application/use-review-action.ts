@@ -39,6 +39,14 @@ function buildSuccessEnvelope(
   const sourceParams = buildDashboardSourceParams(input.dashboardSection)
 
   switch (input.actionType) {
+    case 'create_decision':
+      return {
+        resultKind: 'decision_handoff',
+        navigateTo: '/decisions/new',
+        search: sourceParams,
+        successMessage: undefined,
+      }
+
     case 'go_to_decision':
       return {
         resultKind: 'decision_handoff',
@@ -144,14 +152,15 @@ export function useReviewAction(): UseReviewAction {
         throw normalizeError(err)
       }
     },
-    onSuccess: () => {
-      // 失效 review 相关 query
-      queryClient.invalidateQueries({ queryKey: DAILY_REVIEW_QUERY_KEY })
-      queryClient.invalidateQueries({ queryKey: WEEKLY_REVIEW_QUERY_KEY })
-      // 失效 dashboard 相关 query（review 结果可能影响 dashboard 数据）
-      queryClient.invalidateQueries({ queryKey: ['dashboard-overview'] })
-      queryClient.invalidateQueries({ queryKey: ['dashboard-feedback-signals'] })
-      queryClient.invalidateQueries({ queryKey: ['dashboard-recent-activities'] })
+      onSuccess: async () => {
+        // 统一等待相关读取完成失效，避免页面拿到旧的 review/dashboard 快照。
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: DAILY_REVIEW_QUERY_KEY }),
+          queryClient.invalidateQueries({ queryKey: WEEKLY_REVIEW_QUERY_KEY }),
+          queryClient.invalidateQueries({ queryKey: ['dashboard-overview'] }),
+          queryClient.invalidateQueries({ queryKey: ['dashboard-feedback-signals'] }),
+          queryClient.invalidateQueries({ queryKey: ['dashboard-recent-activities'] }),
+        ])
     },
   })
 }

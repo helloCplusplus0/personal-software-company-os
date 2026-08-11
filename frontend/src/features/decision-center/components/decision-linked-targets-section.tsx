@@ -4,15 +4,20 @@
  * §5.8 详情读取中的 linked_modules 展示。
  * phase03-05 组件树冻结：只承接已建立的 Decision -> Module 关联结果展示。
  */
+import { Link } from '@tanstack/react-router'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import type { LinkedModule } from '../types'
 
 interface DecisionLinkedTargetsSectionProps {
   linkedModules: LinkedModule[]
+  moduleDetailSearch: Record<string, unknown>
 }
 
-export function DecisionLinkedTargetsSection({ linkedModules }: DecisionLinkedTargetsSectionProps) {
+export function DecisionLinkedTargetsSection({
+  linkedModules,
+  moduleDetailSearch,
+}: DecisionLinkedTargetsSectionProps) {
   return (
     <Card>
       <CardHeader>
@@ -24,9 +29,17 @@ export function DecisionLinkedTargetsSection({ linkedModules }: DecisionLinkedTa
         ) : (
           <div className="flex flex-wrap gap-2">
             {linkedModules.map((lm) => (
-              <Badge key={lm.module_id} variant="secondary">
-                {lm.module_name}
-              </Badge>
+                <Link
+                  key={lm.module_id}
+                  to="/modules/$moduleId"
+                  params={{ moduleId: lm.module_id }}
+                  search={moduleDetailSearch}
+                  className="inline-block"
+                >
+                  <Badge variant="secondary" className="cursor-pointer hover:bg-accent transition-colors">
+                    {lm.module_name}
+                  </Badge>
+                </Link>
             ))}
           </div>
         )}

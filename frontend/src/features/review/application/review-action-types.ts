@@ -25,11 +25,13 @@ export type ReviewResultKind =
 /**
  * ReviewActionType — review 动作类型。
  *
+ * - create_decision：进入 Decision Create，形成新的正式经营判断
  * - decision_handoff：进入既有 Decision canonical 页面
  * - entity_handoff：进入既有 Product / Module / Repository canonical 页面
  * - next_step_result：提交 review 过程记录
  */
 export type ReviewActionType =
+  | 'create_decision'
   | 'go_to_decision'
   | 'go_to_product'
   | 'go_to_module'
