@@ -59,6 +59,9 @@ import (
 	reusesummarycandidate "github.com/psco/backend/internal/reusesummary/candidate"
 	reusesummaryconnect "github.com/psco/backend/internal/reusesummary/connect"
 	reusesummaryservice "github.com/psco/backend/internal/reusesummary/service"
+	reviewconnect "github.com/psco/backend/internal/review/connect"
+	reviewrepo "github.com/psco/backend/internal/review/repository"
+	reviewservice "github.com/psco/backend/internal/review/service"
 
 	// generated Connect handler constructors
 	backupv1connect "github.com/psco/backend/internal/gen/connect/psco/backup/v1/backupv1connect"
@@ -70,6 +73,7 @@ import (
 	productregistryv1connect "github.com/psco/backend/internal/gen/connect/psco/product_registry/v1/product_registryv1connect"
 	repositorybindingv1connect "github.com/psco/backend/internal/gen/connect/psco/repository_binding/v1/repository_bindingv1connect"
 	reusesummaryv1connect "github.com/psco/backend/internal/gen/connect/psco/reuse_summary/v1/reuse_summaryv1connect"
+	reviewv1connect "github.com/psco/backend/internal/gen/connect/psco/review/v1/reviewv1connect"
 )
 
 // ============================================================================
@@ -199,11 +203,7 @@ func mountModuleRegistryConnect(
 
 // mountDecisionCenterConnect 把 Decision Center 的 canonical Connect handler 挂到 /api 下。
 func mountDecisionCenterConnect(r chi.Router, pool *pgxpool.Pool) {
-	decisionStore := dcrepository.NewDecisionStore(pool)
-	linkStore := dcrepository.NewLinkStore(pool)
-	moduleCandidateRead := dccandidate.NewModuleCandidateRead(pool)
-	querySvc := dcservice.NewQueryService(decisionStore, linkStore, moduleCandidateRead)
-	commandSvc := dcservice.NewCommandService(decisionStore, linkStore, moduleCandidateRead)
+	querySvc, commandSvc := buildDecisionCenter(pool)
 	connectSvc := dcconnect.NewServer(querySvc, commandSvc)
 	path, handler := decisioncenterv1connect.NewDecisionCenterServiceHandler(connectSvc)
 	r.Handle(path+"*", http.StripPrefix("/api", handler))
@@ -258,9 +258,27 @@ func mountReuseSummaryConnect(r chi.Router, querySvc *reusesummaryservice.QueryS
 	r.Handle(path+"*", http.StripPrefix("/api", handler))
 }
 
+// mountReviewConnect 把 Review 的 canonical Connect handler 挂到 /api 下。
+func mountReviewConnect(r chi.Router, querySvc *reviewservice.QueryService, commandSvc *reviewservice.CommandService) {
+	connectSvc := reviewconnect.NewServer(querySvc, commandSvc)
+	path, handler := reviewv1connect.NewReviewServiceHandler(connectSvc)
+	r.Handle(path+"*", http.StripPrefix("/api", handler))
+}
+
 // ============================================================================
 // phase06 模块构造器
 // ============================================================================
+
+// buildDecisionCenter 构造 Decision Center 的 service 层并返回。
+// 供 mountDecisionCenterConnect 与 buildReview 共用，避免重复构造。
+func buildDecisionCenter(pool *pgxpool.Pool) (*dcservice.QueryService, *dcservice.CommandService) {
+	decisionStore := dcrepository.NewDecisionStore(pool)
+	linkStore := dcrepository.NewLinkStore(pool)
+	moduleCandidateRead := dccandidate.NewModuleCandidateRead(pool)
+	querySvc := dcservice.NewQueryService(decisionStore, linkStore, moduleCandidateRead)
+	commandSvc := dcservice.NewCommandService(decisionStore, linkStore, moduleCandidateRead)
+	return querySvc, commandSvc
+}
 
 // buildDashboard 构造 Dashboard 的 QueryService 并返回。
 func buildDashboard(pool *pgxpool.Pool) *dashboardservice.QueryService {
@@ -298,6 +316,15 @@ func buildBackup(pool *pgxpool.Pool) (*backupservice.QueryService, *backupservic
 func buildReuseSummary(pool *pgxpool.Pool) *reusesummaryservice.QueryService {
 	reuseReaders := reusesummarycandidate.NewReuseReaders(pool)
 	return reusesummaryservice.NewQueryService(reuseReaders)
+}
+
+// buildReview 构造 Review 的 QueryService 和 CommandService 并返回。
+// 依赖 dashboard、decisioncenter、reusesummary 的既有 QueryService。
+func buildReview(pool *pgxpool.Pool, dashboardQuerySvc *dashboardservice.QueryService, decisionCenterQuerySvc *dcservice.QueryService, reuseSummaryQuerySvc *reusesummaryservice.QueryService) (*reviewservice.QueryService, *reviewservice.CommandService) {
+	reviewRecordStore := reviewrepo.NewReviewRecordStore(pool)
+	querySvc := reviewservice.NewQueryService(dashboardQuerySvc, decisionCenterQuerySvc, reuseSummaryQuerySvc)
+	commandSvc := reviewservice.NewCommandService(reviewRecordStore)
+	return querySvc, commandSvc
 }
 
 // ============================================================================

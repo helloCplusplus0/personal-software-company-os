@@ -72,6 +72,7 @@
 - `.trae/specs/phase07_11_validate_phase01_phase06_regression_retirement_acceptance/acceptance_report.md` 已给出 `phase07` 联调、退场验收与可进入后续 `mvp0.3` 业务阶段的正式结论入口
 - `phase07_transport_contract_mainline_migration` 三件套保留为最近完成阶段的 `/plan` 规划与冻结记录，不再承担根级当前状态说明
 - `phase08_operating_review_loop_foundation` 三件套已建立，并作为当前正式业务 phase 的 `/plan` 入口
+- `phase08-08` 已完成 review 合同、后端承接、前端 owner 收敛、独立复核修复与浏览器/API 验收；当前仓库已具备 `Dashboard -> Daily / Weekly Review` 正式入口、`ReviewService` 最小读写路径与 `Decision / Product / Module / Repository` canonical handoff
 - `phase07-08 / 09 / 10` 规格目录保留为生成链、后端与前端迁移实现结论记录，不提升为新的根级长期入口
 - 后续 `mvp0.3` 支撑能力 phase 只有在 `phase08` 正式收口后才允许建立正式入口，且必须直接承接 `phase08` 收口结论
 

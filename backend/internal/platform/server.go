@@ -77,6 +77,11 @@ func NewServer(cfg Config, pool *pgxpool.Pool) *Server {
 
 		reuseSummaryQuerySvc := buildReuseSummary(pool)
 		mountReuseSummaryConnect(r, reuseSummaryQuerySvc)
+
+		// phase08 review 模块：消费 Dashboard / Decision Center / Reuse Summary 既有 service
+		dcQuerySvc, _ := buildDecisionCenter(pool)
+		reviewQuerySvc, reviewCommandSvc := buildReview(pool, dashboardQuerySvc, dcQuerySvc, reuseSummaryQuerySvc)
+		mountReviewConnect(r, reviewQuerySvc, reviewCommandSvc)
 	})
 
 	return &Server{

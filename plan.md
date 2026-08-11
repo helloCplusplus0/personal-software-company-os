@@ -126,7 +126,7 @@
 - 范围约束：不得把 `Template Reuse / Derived Intelligence Deepening / Real-Project Dry-Run` 混写为本 phase 并列主交付；不得把 review loop 演化为通用任务管理器
 - 交付要求：作为交付型 phase 推进，必须完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - 状态：`current`
-- 当前阶段结果：已建立 `phase08` 三件套，当前待进入 `/spec` 收敛 `Dashboard -> Review -> Decision -> Update` 的正式执行边界
+- 当前阶段结果：已完成 `phase08-05 ~ phase08-08` 的规格收敛与 `phase08-08` 源码落地验收；`DashboardPrimaryActionPanel` 已正式承接 dual review launcher，`ReviewService`、daily / weekly review 路由、前后端 owner 与最小 handoff / next-step result 路径已具备正式使能位
 
 ## 4. 下一阶段切换条件
 

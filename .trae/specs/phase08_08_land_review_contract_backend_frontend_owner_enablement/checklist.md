@@ -1,0 +1,21 @@
+- [x] 已明确 `review.proto` 的新增落点、最小 RPC 矩阵与既有 `buf` 生成主线的接入方式
+- [x] 已明确后端生成产物与前端生成产物继续只落到既有 `backend/internal/gen/*` 与 `frontend/src/gen/proto/*`
+- [x] 已明确 `backend/internal/review/` 的最小模块结构与 `platform/router.go` 的正式挂载方式
+- [x] 已明确 `review.QueryService` 只组合 `Dashboard / Decision / Reuse Summary` 既有 service
+- [x] 已明确 `review.CommandService` 与 `review_records` 只承接最小 `next-step result` 持久化
+- [x] 已明确 `frontend/src/features/review/` 的最小切片结构、read owner 与 application owner
+- [x] 已明确 `useDailyReviewRead / useWeeklyReviewRead` 在本阶段通过 `ReviewService` generated client 收敛正式 transport
+- [x] 已明确 `/reviews/daily` 与 `/reviews/weekly` 两条独立 route 的正式落点与 `validateSearch` 约束
+- [x] 已明确 `DashboardPrimaryActionPanel` 在本阶段正式收敛为 dual review launcher
+- [x] 已明确 review 页面与动作流的最小 enablement 不再依赖页面级临时编排
+- [x] 已明确 `buf / go build / frontend build / review smoke` 的正式验收口径
+- [x] 设计结果足以直接进入 `phase08-08` 的实现执行
+- [x] 实现执行完毕：全部 6 个 Task 及 20 个子任务已完成
+- [x] 修复 `SubmitReviewResult` NULL 扫描错误（中间 `*string` 变量承接可空列）
+- [x] 构建验证：proto (buf build/gen/lint) ✅ | backend (go build) ✅ | frontend (npm run build) ✅
+- [x] API smoke：GetDailyReviewContext ✅ | GetWeeklyReviewContext ✅ | SubmitReviewResult ✅
+- [x] 数据库记录验证：review_records 正确写入 ✅
+- [x] 独立复核后已移除 review 完成区未冻结的 `Decision Create` 正式入口，避免 Dashboard 来源参数在 `/decisions/new` 被路由 schema 静默剥离
+- [x] 独立复核后已补齐 `Repository` handoff 的用户可达入口，review 正式动作面与 `phase08-08` smoke 口径重新对齐
+- [x] 浏览器验收：`/dashboard -> /reviews/daily` ✅ | `/dashboard -> /reviews/weekly` ✅ | `Decision / Product / Module / Repository` canonical handoff 参数透传 ✅
+- [x] 动作闭环验收：`Weekly Review -> SubmitReviewResult -> /dashboard` ✅，浏览器与后端访问日志均确认请求成功命中

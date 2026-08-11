@@ -24,6 +24,8 @@ import { Route as ProductsNewRouteImport } from './routes/products/new'
 import { Route as RepositoriesIndexRouteImport } from './routes/repositories/index'
 import { Route as RepositoriesRepositoryIdRouteImport } from './routes/repositories/$repositoryId'
 import { Route as RepositoriesNewRouteImport } from './routes/repositories/new'
+import { Route as ReviewsDailyRouteImport } from './routes/reviews/daily'
+import { Route as ReviewsWeeklyRouteImport } from './routes/reviews/weekly'
 import { Route as ModulesModuleIdReleasesNewRouteImport } from './routes/modules/$moduleId/releases/new'
 
 const IndexRoute = IndexRouteImport.update({
@@ -102,6 +104,16 @@ const RepositoriesNewRoute = RepositoriesNewRouteImport.update({
   path: '/repositories/new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReviewsDailyRoute = ReviewsDailyRouteImport.update({
+  id: '/reviews/daily',
+  path: '/reviews/daily',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReviewsWeeklyRoute = ReviewsWeeklyRouteImport.update({
+  id: '/reviews/weekly',
+  path: '/reviews/weekly',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ModulesModuleIdReleasesNewRoute =
   ModulesModuleIdReleasesNewRouteImport.update({
     id: '/releases/new',
@@ -121,6 +133,8 @@ export interface FileRoutesByFullPath {
   '/products/new': typeof ProductsNewRoute
   '/repositories/$repositoryId': typeof RepositoriesRepositoryIdRoute
   '/repositories/new': typeof RepositoriesNewRoute
+  '/reviews/daily': typeof ReviewsDailyRoute
+  '/reviews/weekly': typeof ReviewsWeeklyRoute
   '/decisions/': typeof DecisionsIndexRoute
   '/modules/': typeof ModulesIndexRoute
   '/products/': typeof ProductsIndexRoute
@@ -139,6 +153,8 @@ export interface FileRoutesByTo {
   '/products/new': typeof ProductsNewRoute
   '/repositories/$repositoryId': typeof RepositoriesRepositoryIdRoute
   '/repositories/new': typeof RepositoriesNewRoute
+  '/reviews/daily': typeof ReviewsDailyRoute
+  '/reviews/weekly': typeof ReviewsWeeklyRoute
   '/decisions': typeof DecisionsIndexRoute
   '/modules': typeof ModulesIndexRoute
   '/products': typeof ProductsIndexRoute
@@ -158,6 +174,8 @@ export interface FileRoutesById {
   '/products/new': typeof ProductsNewRoute
   '/repositories/$repositoryId': typeof RepositoriesRepositoryIdRoute
   '/repositories/new': typeof RepositoriesNewRoute
+  '/reviews/daily': typeof ReviewsDailyRoute
+  '/reviews/weekly': typeof ReviewsWeeklyRoute
   '/decisions/': typeof DecisionsIndexRoute
   '/modules/': typeof ModulesIndexRoute
   '/products/': typeof ProductsIndexRoute
@@ -178,6 +196,8 @@ export interface FileRouteTypes {
     | '/products/new'
     | '/repositories/$repositoryId'
     | '/repositories/new'
+    | '/reviews/daily'
+    | '/reviews/weekly'
     | '/decisions/'
     | '/modules/'
     | '/products/'
@@ -196,6 +216,8 @@ export interface FileRouteTypes {
     | '/products/new'
     | '/repositories/$repositoryId'
     | '/repositories/new'
+    | '/reviews/daily'
+    | '/reviews/weekly'
     | '/decisions'
     | '/modules'
     | '/products'
@@ -214,6 +236,8 @@ export interface FileRouteTypes {
     | '/products/new'
     | '/repositories/$repositoryId'
     | '/repositories/new'
+    | '/reviews/daily'
+    | '/reviews/weekly'
     | '/decisions/'
     | '/modules/'
     | '/products/'
@@ -233,6 +257,8 @@ export interface RootRouteChildren {
   ProductsNewRoute: typeof ProductsNewRoute
   RepositoriesRepositoryIdRoute: typeof RepositoriesRepositoryIdRoute
   RepositoriesNewRoute: typeof RepositoriesNewRoute
+  ReviewsDailyRoute: typeof ReviewsDailyRoute
+  ReviewsWeeklyRoute: typeof ReviewsWeeklyRoute
   DecisionsIndexRoute: typeof DecisionsIndexRoute
   ModulesIndexRoute: typeof ModulesIndexRoute
   ProductsIndexRoute: typeof ProductsIndexRoute
@@ -346,6 +372,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RepositoriesNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reviews/daily': {
+      id: '/reviews/daily'
+      path: '/reviews/daily'
+      fullPath: '/reviews/daily'
+      preLoaderRoute: typeof ReviewsDailyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reviews/weekly': {
+      id: '/reviews/weekly'
+      path: '/reviews/weekly'
+      fullPath: '/reviews/weekly'
+      preLoaderRoute: typeof ReviewsWeeklyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/modules/$moduleId/releases/new': {
       id: '/modules/$moduleId/releases/new'
       path: '/releases/new'
@@ -380,6 +420,8 @@ const rootRouteChildren: RootRouteChildren = {
   ProductsNewRoute: ProductsNewRoute,
   RepositoriesRepositoryIdRoute: RepositoriesRepositoryIdRoute,
   RepositoriesNewRoute: RepositoriesNewRoute,
+  ReviewsDailyRoute: ReviewsDailyRoute,
+  ReviewsWeeklyRoute: ReviewsWeeklyRoute,
   DecisionsIndexRoute: DecisionsIndexRoute,
   ModulesIndexRoute: ModulesIndexRoute,
   ProductsIndexRoute: ProductsIndexRoute,

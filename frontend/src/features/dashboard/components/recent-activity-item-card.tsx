@@ -24,11 +24,17 @@
  */
 import { useNavigate } from '@tanstack/react-router'
 import { ArrowRight } from 'lucide-react'
-import type { RecentActivityItem } from '../types'
+import type { RecentActivityItem, DashboardSection } from '../types'
 import { buildDashboardSourceParams } from '../lib/dashboard-source'
 
 interface RecentActivityItemCardProps {
   activity: RecentActivityItem
+  /**
+   * 来源区块：决定跳转时携带的 dashboardSection 值。
+   * - Dashboard RecentActivitySection 调用方保持默认 'recent-activity'
+   * - Weekly Review 复用时也传入 'recent-activity'，保持返回 dashboard 后定位一致
+   */
+  section?: DashboardSection
 }
 
 /**
@@ -71,12 +77,12 @@ function formatActivityAtShort(isoString: string): string {
  *
  * 整行可点击跳转，按 target_type 决定跳转目标。
  */
-export function RecentActivityItemCard({ activity }: RecentActivityItemCardProps) {
+export function RecentActivityItemCard({ activity, section = 'recent-activity' }: RecentActivityItemCardProps) {
   const navigate = useNavigate()
 
   const handleClick = () => {
-    // 活动项跳转统一携带 dashboardSection=recent-activity
-    const sourceParams = buildDashboardSourceParams('recent-activity')
+    // 活动项跳转统一携带传入的 section 作为 dashboardSection（默认 'recent-activity'）
+    const sourceParams = buildDashboardSourceParams(section)
 
     switch (activity.target_type) {
       case 'module_detail':

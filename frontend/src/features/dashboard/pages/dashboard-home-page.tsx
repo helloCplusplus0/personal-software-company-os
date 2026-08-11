@@ -190,12 +190,7 @@ export function DashboardHomePage() {
         ? 'empty'
         : 'ready'
 
-  // 主 CTA 面板所需的 feedback 状态（loading / ready / error，不含 empty）
-  const ctaFeedbackStatus: 'loading' | 'ready' | 'error' = feedbackLoading
-    ? 'loading'
-    : feedbackError
-      ? 'error'
-      : 'ready'
+  
 
   // phase06-15：ReuseSummaryRead 局部状态派生
   // 该 query 失败不回退整页，只影响 Asset Feedback 内的 Reuse Snapshot 子区域
@@ -277,15 +272,7 @@ export function DashboardHomePage() {
               tabIndex={-1}
               className="rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
-              <DashboardPrimaryActionPanel
-                overviewStatus="ready"
-                overview={overviewQuery.data}
-                feedbackStatus={ctaFeedbackStatus}
-                currentFocusSignals={feedbackQuery.data?.current_focus_signals ?? []}
-                assetFeedbackRepresentativeSignals={
-                  feedbackQuery.data?.asset_feedback_summary?.representative_signals ?? []
-                }
-              />
+              <DashboardPrimaryActionPanel />
             </div>
           </div>
         }

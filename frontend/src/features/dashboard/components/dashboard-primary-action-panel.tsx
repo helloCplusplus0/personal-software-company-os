@@ -1,186 +1,81 @@
 /**
- * DashboardPrimaryActionPanel — 主 CTA 面板
+ * DashboardPrimaryActionPanel — 主 CTA 面板（phase08-08 收敛为 dual review launcher）。
  *
- * phase05-13 体验修复：
- * - 主 CTA 内联到 Dashboard 标题行右侧，不再独占一行带边框面板
- * - CTA 1-4（创建导向，无副标题）：渲染单个紧凑 Button
- * - CTA 5-8（有 target_label 副标题）：在 Button 前追加 muted 前缀文本（sm+ 屏幕可见）
- * - computing / hidden / suppressed 状态仍返回 null（不渲染）
+ * phase08-08 §"Dashboard 标题行动区必须在本阶段完成 dual review launcher 收敛"：
+ *   - 本面板从旧的单 CTA 命中器正式收敛为 dual review launcher
+ *   - 稳定渲染 Daily Review 与 Weekly Review 两个显式入口
+ *   - 只负责组装 /reviews/daily 或 /reviews/weekly 的 route search 并透传
+ *     buildDashboardSourceParams('empty-state')
+ *   - 不得继续保留 computePrimaryCta() 驱动的旧单主 CTA 作为 formal review 入口 owner
  *
- * phase05-10 §4.5 DashboardPrimaryActionPanel 语义不变：
- *   - 独立于四区块，直接挂载在 DashboardHomePageShell 标题行
- *   - 只承接主 CTA 优先级矩阵的命中与展示
- *   - 同一时刻只展示一个主 CTA
- *
- * 状态机（phase05-13 §"主 CTA 状态机"）：
- *   - computing：overview query 未成功，或 overview 成功未命中 CTA 1-4 且 feedback query 未成功 → 不渲染
- *   - ready：命中 CTA 1-8 → 渲染对应主 CTA 按钮
- *   - hidden：命中 CTA 9（无缺口）→ 不渲染
- *   - suppressed：overview 成功未命中 CTA 1-4，feedback query 失败 → 不渲染
- *
- * CTA 1-4 跳转参数（phase05-13 §"CTA 1-4 跳转参数"）：
- *   - 携带 fromDashboard=true / dashboardSection=empty-state / dashboardReturnTo=/dashboard
+ * phase08-06 §"DashboardPrimaryActionPanel 的前端职责解释"：
+ *   - 本面板被解释为 review route launcher caller，而不是 review 读层或写层的编排 owner
+ *   - 只能负责组装 route search 并导航到对应 review route
+ *   - 不得直接读取 pending decisions、reuse snapshot 或持有 Review action application owner
  */
 import { useNavigate } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
-import { ArrowRight } from 'lucide-react'
-import type {
-  DashboardOverview,
-  FeedbackSignal,
-} from '../types'
-import {
-  computePrimaryCta,
-  type ComputePrimaryCtaResult,
-} from '../lib/cta-matrix'
+import { Calendar, Clock } from 'lucide-react'
 import { buildDashboardSourceParams } from '../lib/dashboard-source'
 
-interface DashboardPrimaryActionPanelProps {
-  // overview query 状态
-  overviewStatus: 'loading' | 'ready' | 'error'
-  overview: DashboardOverview | undefined
-  // feedback query 状态
-  feedbackStatus: 'loading' | 'ready' | 'error'
-  currentFocusSignals: FeedbackSignal[]
-  assetFeedbackRepresentativeSignals: FeedbackSignal[]
-}
-
 /**
- * DashboardPrimaryActionPanel — 主 CTA 面板（内联到标题行）。
+ * DashboardPrimaryActionPanel — dual review launcher。
  *
- * 面板状态派生规则：
- * 1. overview 未成功 → computing（不渲染）
- * 2. overview 成功，调用 computePrimaryCta 初步判定：
- *    - 命中 CTA 1-4 → ready（不依赖 feedback query）
- *    - 命中 CTA 9 → hidden
- *    - 需要判定 CTA 5-8 → 进入步骤 3
- * 3. 需要 CTA 5-8 判定时：
- *    - feedback loading → computing
- *    - feedback error → suppressed
- *    - feedback ready → 调用 computePrimaryCta 完整判定
+ * 始终渲染 Daily Review 与 Weekly Review 两个显式入口按钮，
+ * 不再依赖 overview / feedback 的命中状态决定是否显示。
  *
- * 注意：CTA 1-4 命中时直接 ready，不等 feedback query；
- * 这样空状态冷启动时能立即展示创建导向 CTA，不被 feedback query 阻塞。
+ * phase08-05 §"Dashboard 标题行动区的信息密度约束"：
+ *   - 不得因为新增 daily / weekly review 双入口而把首屏改造成大块工作台
+ *   - PC 下允许双按钮并排或主次按钮组合
+ *   - 移动浏览器下必须降级为紧凑双按钮，不得压缩成难以点击的微型入口
+ *
+ * 视觉风格对齐 dashboard 紧凑化基线：
+ *   - 采用 segmented control 风格（共享边框 + ghost 按钮 + divide-x 分隔）
+ *   - 按钮高度 h-8、字号 text-xs，与 dashboard stat bar 视觉重量协调
+ *   - 不再使用 default 紫主色 + outline 灰色的双独立大按钮组合
+ *   - 移动端可水平一行展示，不换行、不撑破 header
  */
-export function DashboardPrimaryActionPanel({
-  overviewStatus,
-  overview,
-  feedbackStatus,
-  currentFocusSignals,
-  assetFeedbackRepresentativeSignals,
-}: DashboardPrimaryActionPanelProps) {
+export function DashboardPrimaryActionPanel() {
   const navigate = useNavigate()
 
-  // 步骤 1：overview 未成功 → computing
-  if (overviewStatus !== 'ready' || !overview) {
-    return null
+  const handleDailyReview = () => {
+    const sourceParams = buildDashboardSourceParams('empty-state')
+    navigate({
+      to: '/reviews/daily',
+      search: sourceParams,
+    })
   }
 
-  // 步骤 2：先用 overview 判定 CTA 1-4 或 CTA 9
-  // 此时 currentFocusSignals / representativeSignals 传空数组，
-  // computePrimaryCta 只会命中 CTA 1-4 或回退到 CTA 5-8 检查（空数组找不到信号，最终 CTA 9）
-  const overviewOnlyResult = computePrimaryCta(overview, [], [])
-
-  // 命中 CTA 1-4：直接 ready，不等 feedback query
-  if (overviewOnlyResult.state === 'ready' && overviewOnlyResult.ctaId !== 'CTA_9') {
-    // overviewOnlyResult 此时只可能是 CTA 1-4（传空 signals 时 computePrimaryCta
-    // 只能命中 CTA 1-4 或回退 CTA 9；CTA 9 已被上方 !== 'CTA_9' 守卫排除）
-    return <ReadyCtaButton result={overviewOnlyResult} navigate={navigate} />
-  }
-
-  // 步骤 3：需要 CTA 5-8 判定
-  // feedback loading → computing
-  if (feedbackStatus === 'loading') {
-    return null
-  }
-
-  // feedback error → suppressed
-  if (feedbackStatus === 'error') {
-    return null
-  }
-
-  // feedback ready → 完整判定
-  if (feedbackStatus === 'ready') {
-    const fullResult = computePrimaryCta(
-      overview,
-      currentFocusSignals,
-      assetFeedbackRepresentativeSignals,
-    )
-
-    // 命中 CTA 5-8 → ready
-    if (fullResult.state === 'ready') {
-      return <ReadyCtaButton result={fullResult} navigate={navigate} />
-    }
-
-    // 命中 CTA 9 → hidden
-    return null
-  }
-
-  // 兜底：不应到达
-  return null
-}
-
-/**
- * ReadyCtaButton — 命中 CTA 1-8 时渲染的紧凑主 CTA（内联到标题行右侧）。
- *
- * 渲染形态：
- * - CTA 1-4（无 feedbackSignal）：单个紧凑 Button
- * - CTA 5-8（有 feedbackSignal.target_label）：muted 前缀文本 + Button（前缀在 sm+ 屏幕可见）
- *
- * 跳转参数：
- * - CTA 1-4：dashboardSection=empty-state
- * - CTA 5-8：dashboardSection=current-focus（由 computePrimaryCta 已设置）
- */
-function ReadyCtaButton({
-  result,
-  navigate,
-}: {
-  result: Extract<ComputePrimaryCtaResult, { state: 'ready' }>
-  navigate: ReturnType<typeof useNavigate>
-}) {
-  const handleClick = () => {
-    const sourceParams = buildDashboardSourceParams(result.dashboardSection)
-
-    // 按 result.to 路由模式决定 params
-    if (result.to === '/modules/new' || result.to === '/products/new' || result.to === '/repositories/new') {
-      // CTA 1-4：创建导向，无 params
-      navigate({
-        to: result.to,
-        search: sourceParams,
-      })
-    } else if (result.to === '/decisions/$decisionId' && result.feedbackSignal) {
-      // CTA 5：单项决策信号
-      navigate({
-        to: '/decisions/$decisionId',
-        params: { decisionId: result.feedbackSignal.target_id },
-        search: sourceParams,
-      })
-    } else if (result.to === '/decisions') {
-      // CTA 5：聚合决策信号
-      navigate({
-        to: '/decisions',
-        search: sourceParams,
-      })
-    } else if (result.to === '/products/$productId' && result.feedbackSignal) {
-      // CTA 6-8：产品缺口
-      navigate({
-        to: '/products/$productId',
-        params: { productId: result.feedbackSignal.target_id },
-        search: sourceParams,
-      })
-    }
+  const handleWeeklyReview = () => {
+    const sourceParams = buildDashboardSourceParams('empty-state')
+    navigate({
+      to: '/reviews/weekly',
+      search: sourceParams,
+    })
   }
 
   return (
-    <div className="flex items-center gap-2">
-      {/* CTA 5-8 副标题：目标 label，仅在 sm+ 屏幕展示，避免窄屏拥挤 */}
-      {result.feedbackSignal && (
-        <span className="hidden max-w-[160px] truncate text-xs text-muted-foreground sm:inline">
-          {result.feedbackSignal.target_label}
-        </span>
-      )}
-      <Button onClick={handleClick} size="sm" className="shrink-0">
-        {result.actionLabel}
-        <ArrowRight className="ml-1.5 h-4 w-4" />
+    <div className="inline-flex items-center rounded-md border bg-muted/30 divide-x divide-border overflow-hidden">
+      <Button
+        onClick={handleDailyReview}
+        size="sm"
+        variant="ghost"
+        className="h-8 px-2.5 sm:px-3 text-xs rounded-none gap-1 sm:gap-1.5 hover:bg-background hover:shadow-sm"
+      >
+        <Clock className="h-3.5 w-3.5 text-amber-500" />
+        {/* 移动端文案简化为 "Daily" 节省宽度；桌面端展示完整 "Daily Review" 表达 review 会话语义 */}
+        <span>Daily</span>
+        <span className="hidden sm:inline">&nbsp;Review</span>
+      </Button>
+      <Button
+        onClick={handleWeeklyReview}
+        size="sm"
+        variant="ghost"
+        className="h-8 px-2.5 sm:px-3 text-xs rounded-none gap-1 sm:gap-1.5 hover:bg-background hover:shadow-sm"
+      >
+        <Calendar className="h-3.5 w-3.5 text-blue-500" />
+        <span>Weekly</span>
+        <span className="hidden sm:inline">&nbsp;Review</span>
       </Button>
     </div>
   )

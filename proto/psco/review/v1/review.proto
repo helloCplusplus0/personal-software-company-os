@@ -1,0 +1,189 @@
+// PSCO Review 最小 Protocol Buffers 合同源
+//
+// 文档定位：本文件是 Review 当前阶段唯一合同定义入口（phase08-08 落地）。
+// 上游规格：
+//   - phase08-04 冻结本阶段合同、读模型与记录模型的最小边界 Spec
+//   - phase08-07 产出后端服务、合同与最小数据承接设计 Spec
+//   - phase08-08 落实 review 相关合同、后端承接与前端 owner 收敛 Spec
+//
+// 落点要求：
+//   - 本文件落地到现有 proto/ 工作区，复用同一 buf workspace
+//   - 不新增第二套 buf.yaml / buf.gen.yaml / Makefile 或并列 proto 根目录
+//   - 与 Dashboard / Decision Center / Reuse Summary / Module Registry / Product Registry /
+//     Repository Binding 在同一个 buf workspace 内共同通过校验
+//
+// 合同边界（对齐 phase08-04 / phase08-07）：
+//   - ReviewService 只承接 review context 读取与最小 review-local 结果提交
+//   - review context message 必须复用既有 canonical message，不重新定义等价字段
+//   - review 合同只允许新增承接 review 流程语义的包装 message 与 enum
+//   - 实体写入继续直走既有 canonical service，不在 review 中复制第二套写路径
+//
+// 字段编号规则：
+//   - 每个字段拥有稳定编号，不得复用已删除字段编号或字段语义
+//   - 新增字段必须使用新的递增编号，不得插入到已有编号之间
+//   - reserved 关键字用于标记已删除或预留的编号区间
+//
+// 生成入口：
+//   在 proto/ 目录执行 make gen，或直接执行 buf generate。
+//   生成产物：
+//     - Go:    backend/internal/gen/proto/psco/review/v1/
+//     - Go Connect: backend/internal/gen/connect/psco/review/v1/
+//     - TS:    frontend/src/gen/proto/psco/review/v1/
+
+syntax = "proto3";
+
+package psco.review.v1;
+
+import "google/protobuf/timestamp.proto";
+import "psco/dashboard/v1/dashboard.proto";
+import "psco/decision_center/v1/decision_center.proto";
+import "psco/reuse_summary/v1/reuse_summary.proto";
+
+// Go 包路径（生成代码落点）
+option go_package = "github.com/psco/backend/internal/gen/proto/psco/review/v1;reviewv1";
+
+// ============================================================================
+// 枚举
+// ============================================================================
+
+// ReviewKind — review 会话类型，对齐 phase08-02 冻结的 daily / weekly 双路径。
+// UNSPECIFIED 表示未指定，不得作为合法业务值。
+enum ReviewKind {
+  REVIEW_KIND_UNSPECIFIED = 0;
+  REVIEW_KIND_DAILY = 1;
+  REVIEW_KIND_WEEKLY = 2;
+}
+
+// ReviewResultKind — review 结果类型，对齐 phase08-03 冻结的三类输出。
+// UNSPECIFIED 表示未指定，不得作为合法业务值。
+// NEXT_STEP_RESULT 表示 review 形成一条明确的下一步动作结果。
+enum ReviewResultKind {
+  REVIEW_RESULT_KIND_UNSPECIFIED = 0;
+  REVIEW_RESULT_KIND_DECISION_HANDOFF = 1;
+  REVIEW_RESULT_KIND_ENTITY_HANDOFF = 2;
+  REVIEW_RESULT_KIND_NEXT_STEP_RESULT = 3;
+}
+
+// ============================================================================
+// Daily Review Context 消息
+// ============================================================================
+
+// GetDailyReviewContextRequest — Daily Review 上下文读取请求（当前版本无字段）。
+// 保持无筛选的最小请求边界。
+message GetDailyReviewContextRequest {}
+
+// DailyReviewContext — Daily Review 的正式上下文，对齐 phase08-04 / 08-07 冻结的消费范围。
+// 当前阶段只承接 current_focus_signals、representative_signals 与 pending_decisions。
+message DailyReviewContext {
+  // current_focus_signals 来自 phase05 Dashboard FeedbackSignalRead
+  repeated psco.dashboard.v1.FeedbackSignal current_focus_signals = 1;
+  // representative_signals 来自 phase05 Dashboard FeedbackSignalRead 的 asset_feedback_summary
+  repeated psco.dashboard.v1.FeedbackSignal representative_signals = 2;
+  // pending_decisions 来自 phase03 Decision Center 的 proposed 决策 top N 摘要
+  repeated psco.decision_center.v1.DecisionListItem pending_decisions = 3;
+}
+
+// GetDailyReviewContextResponse — Daily Review 上下文读取响应。
+message GetDailyReviewContextResponse {
+  DailyReviewContext context = 1;
+}
+
+// ============================================================================
+// Weekly Review Context 消息
+// ============================================================================
+
+// GetWeeklyReviewContextRequest — Weekly Review 上下文读取请求（当前版本无字段）。
+// 保持无筛选的最小请求边界。
+message GetWeeklyReviewContextRequest {}
+
+// WeeklyReviewContext — Weekly Review 的正式上下文，对齐 phase08-04 / 08-07 冻结的消费范围。
+// 当前阶段承接 overview、recent activities、representative_signals 与 reuse snapshot。
+message WeeklyReviewContext {
+  // overview 来自 phase05 Dashboard DashboardOverview
+  psco.dashboard.v1.DashboardOverview overview = 1;
+  // recent_activities 来自 phase05 Dashboard RecentActivityRead
+  repeated psco.dashboard.v1.RecentActivityItem recent_activities = 2;
+  // representative_signals 来自 phase05 Dashboard FeedbackSignalRead 的 asset_feedback_summary
+  repeated psco.dashboard.v1.FeedbackSignal representative_signals = 3;
+  // module_reuse_summary 来自 phase06 ReuseSummary
+  repeated psco.reuse_summary.v1.ModuleReuseSummary module_reuse_summary = 4;
+  // capability_summary 来自 phase06 ReuseSummary
+  repeated psco.reuse_summary.v1.CapabilitySummary capability_summary = 5;
+}
+
+// GetWeeklyReviewContextResponse — Weekly Review 上下文读取响应。
+message GetWeeklyReviewContextResponse {
+  WeeklyReviewContext context = 1;
+}
+
+// ============================================================================
+// Review Result 提交消息
+// ============================================================================
+
+// SubmitReviewResultRequest — 提交 review 结果的最小请求，对齐 phase08-04 / 08-07 冻结的字段边界。
+// 只承接 review 流程语义字段，不承接完整实体写入 input。
+// 对 decision handoff / entity handoff 路径，允许不调用此 RPC。
+message SubmitReviewResultRequest {
+  ReviewKind review_kind = 1;
+  ReviewResultKind result_kind = 2;
+  // 可选：关联的 decision_id
+  string decision_id = 3;
+  // 可选：关联的目标实体类型
+  string target_type = 4;
+  // 可选：关联的目标实体 id
+  string target_id = 5;
+  // 最小摘要文本
+  string summary_text = 6;
+  // review 开始时间
+  google.protobuf.Timestamp started_at = 7;
+  // review 完成时间
+  google.protobuf.Timestamp completed_at = 8;
+}
+
+// SubmitReviewResultResponse — 提交 review 结果的最小响应，对齐 phase08-04 / 08-07 冻结的响应边界。
+// 只返回记录标识与结果类型，不内嵌完整实体详情。
+message SubmitReviewResultResponse {
+  // 可选：review record id
+  string review_record_id = 1;
+  ReviewResultKind result_kind = 2;
+  // 可选：关联的 decision_id
+  string decision_id = 3;
+  // 可选：关联的目标实体类型
+  string target_type = 4;
+  // 可选：关联的目标实体 id
+  string target_id = 5;
+}
+
+// ============================================================================
+// 服务接口
+// ============================================================================
+
+// ReviewService — Review 当前阶段完整动作矩阵的 RPC 合同。
+//
+// 接口分组：
+//   - 读组：GetDailyReviewContext / GetWeeklyReviewContext
+//   - 写组：SubmitReviewResult（仅 next-step result 路径）
+//
+// 当前阶段不得新增 CreateDecisionFromReview、BindModuleFromReview 等
+// 复制既有实体写入的 review-local RPC。
+//
+// 错误语义：
+//   合同只承接成功路径下的合同结构，不并列发明第二套错误业务字段。
+//   整页失败、局部失败展示状态等错误语义继续由 Connect handler 适配层承接。
+//   空结果（空 current_focus_signals、空 pending_decisions、空 recent_activities 等）
+//   必须表现为正常空列表响应，不得设计为空错误。
+//   Connect 错误码映射继续由 connecterrors.MapToConnectError 负责。
+service ReviewService {
+  // --- 读组 ---
+
+  // DailyReviewContextRead — Daily Review 上下文读取
+  rpc GetDailyReviewContext(GetDailyReviewContextRequest) returns (GetDailyReviewContextResponse);
+
+  // WeeklyReviewContextRead — Weekly Review 上下文读取
+  rpc GetWeeklyReviewContext(GetWeeklyReviewContextRequest) returns (GetWeeklyReviewContextResponse);
+
+  // --- 写组 ---
+
+  // SubmitReviewResult — 提交 review 结果（仅 next-step result 路径）
+  rpc SubmitReviewResult(SubmitReviewResultRequest) returns (SubmitReviewResultResponse);
+}
