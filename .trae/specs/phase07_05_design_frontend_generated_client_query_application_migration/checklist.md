@@ -1,0 +1,14 @@
+- [x] 已明确共享 Connect transport 的唯一落点与 `/api` baseUrl 规则
+- [x] 已明确各业务切片 generated client 的正式承接位，禁止页面/组件直接创建 client
+- [x] 已明确 query 层迁移后继续保持纯只读，且由 slice-local read owner 承接
+- [x] 已明确当前 page / component / route 级读取 caller 的回收策略与 read owner 落点
+- [x] 已明确根路由 `/` 与 Dashboard `OnboardingCtaButton` 不得继续直接 import `onboarding/data/api-adapter.ts`
+- [x] 已明确 Product / Repository / Decision 三个切片的 candidate reads 必须先迁到 `use-*-candidates-read.ts` 再删除旧 adapter
+- [x] 已明确 11 个 canonical 写动作各自对应的 mutation owner 类型
+- [x] 已明确 `CreateRelease / Bind / Map / Link` 的正式切片承接位
+- [x] 已明确 `Export / Backup` 当前允许短时过渡，且标注最晚核销时点
+- [x] 已明确成功回流、query 失效与错误归一化由 `application` owner 或固定承接位负责
+- [x] 已明确 8 份 `api-adapter.ts` 与 4 份 adapter 壳的回收顺序
+- [x] 已明确 `module-registry/data/module-registry-adapter.ts` 与 dormant compat export 的最终收口规则
+- [x] 已明确本次设计与 `phase07-01` 到 `phase07-04` 的冻结结论保持一致
+- [x] 已明确本次设计足以直接指导 `phase07-07` 前端 Connect client 实现与 `phase07-10` adapter 回收
