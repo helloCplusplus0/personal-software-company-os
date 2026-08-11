@@ -109,6 +109,8 @@ docs/
   - `.trae/specs/phase06_12_onboarding_sovereignty_reuse_formal_spec/spec.md`（`phase06` 正式规格收口入口）
   - `.trae/specs/phase06_13_land_minimal_proto_contract_mainline/`（`phase06` 最小 `.proto` 合同收口入口）
   - `.trae/specs/phase06_16_integration_validation_acceptance/acceptance_report.md`（`phase06` 联调验收与收口结论入口）
+  - `.trae/specs/phase07_07_formal_transport_mainline_cutover_spec/transport_mainline_cutover_spec_v0.1.md`（`phase07` 正式规格收口入口）
+  - `.trae/specs/phase07_11_validate_phase01_phase06_regression_retirement_acceptance/acceptance_report.md`（`phase07` 联调、退场验收与收口结论入口）
 - 当前项目技术路线已冻结为 `Durable System Track`
 - `phase02_module_registry_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - `phase03_decision_center_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
@@ -122,8 +124,10 @@ docs/
 - `phase05` 三件套保留为该阶段 `/plan` 的规划与冻结记录，不再承担根级当前阶段状态说明
 - `phase06` 已直接承接 `PSCO-mvp02-summarize-feedback.md` 与 `phase05-10 / 11 / 14`，并已完成正式规格、合同、实现与联调验收收口
 - `phase06` 三件套保留为该阶段 `/plan` 的规划与冻结记录，不再承担根级当前阶段状态说明
-- `phase07` 已直接承接 `PSCO-mvp03-summarize-feedback.md`、`audit_001` 审计结论与 `phase06-12 / 13 / 16`，当前作为 `mvp0.3` 业务阶段之前的前置基础 phase 推进
-- 后续业务阶段正式 phase 入口待 `phase07` 收口后切换；根级文档不得提前猜测 `phase08` 或其他未建立阶段名称
+- `phase07` 已直接承接 `PSCO-mvp03-summarize-feedback.md`、`audit_001` 审计结论与 `phase06-12 / 13 / 16`，并已完成正式规格、实现、验收与根级收口
+- `phase07` 三件套在收口后只承担该阶段规划与冻结记录角色；执行层正式入口只收敛到 `phase07-07` 正式规格与 `phase07-11` 验收结论
+- `phase07-08 / 09 / 10` 只保留为生成链、后端与前端迁移实现结论记录，不提升为根级长期主入口
+- 后续 `mvp0.3` 业务阶段正式 phase 入口待仓库建立后切换；根级文档只允许写进入条件与上游输入，不得提前猜测任何未建立阶段名称
 
 ### 4.2 fix
 

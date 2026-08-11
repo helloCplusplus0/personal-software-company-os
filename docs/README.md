@@ -26,11 +26,13 @@
 - [阶段路线图](file:///home/dell/Projects/personal-software-company-os/plan.md)
 - [项目规则](file:///home/dell/Projects/personal-software-company-os/project_rules.md)
 - [目录与迁移落点](file:///home/dell/Projects/personal-software-company-os/architecture_map.md)
-- 当前根级阶段状态：`phase07_transport_contract_mainline_migration` 已建立正式 `/plan` 入口
-- 当前下一阶段入口：待 `phase07` 正式收口后切换（不得预设 `phase08` 名称）
+- 当前根级阶段状态：`phase07_transport_contract_mainline_migration` 已完成收口，当前作为后续 `mvp0.3` 业务阶段之前的前置基础结论保留
+- 当前下一阶段入口：后续 `mvp0.3` 业务阶段需在正式 phase 入口建立后切换，并直接承接 `phase07-07` 与 `phase07-11`
 - [phase07 规划记录：architecture_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase07_transport_contract_mainline_migration_architecture_plan.md)
 - [phase07 规划记录：dev_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase07_transport_contract_mainline_migration_dev_plan.md)
 - [phase07 规划记录：shared_baseline](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase07_transport_contract_mainline_migration_shared_baseline.md)
+- [phase07 正式规格正文](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase07_07_formal_transport_mainline_cutover_spec/transport_mainline_cutover_spec_v0.1.md)
+- [phase07 联调验收与收口入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase07_11_validate_phase01_phase06_regression_retirement_acceptance/acceptance_report.md)
 - [phase06 正式规格正文](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase06_12_onboarding_sovereignty_reuse_formal_spec/spec.md)
 - [phase06 合同主线入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase06_13_land_minimal_proto_contract_mainline)
 - [phase06 联调验收与收口入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase06_16_integration_validation_acceptance/acceptance_report.md)
@@ -69,6 +71,6 @@
 - `phase05_dashboard_feedback_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - `Dashboard + Feedback` 最小主线已形成可运行交付物，并已冻结正式规格、`.proto` 合同与联调验收入口
 - `phase06_onboarding_sovereignty_reuse_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
-- `phase07_transport_contract_mainline_migration` 已建立正式 `/plan` 入口，当前作为 `mvp0.3` 业务阶段之前的前置基础 phase 推进
-- 当前最应优先读取的活动入口为 `phase07` 三件套、`audit_001` 审计结论与 `phase06-12 / 13 / 16`；`phase06` 三件套保留为上一已完成阶段的规划与冻结记录
+- `phase07_transport_contract_mainline_migration` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
+- 当前最应优先读取的活动入口为 `phase07` 三件套、`phase07-07` 正式规格、`phase07-11` 验收结论与 `audit_001` 审计结论；`phase07` 三件套保留为收口后的规划与冻结记录
 - `phase05` 三件套保留为上一已完成阶段的规划与冻结记录，不再覆盖根级当前阶段状态

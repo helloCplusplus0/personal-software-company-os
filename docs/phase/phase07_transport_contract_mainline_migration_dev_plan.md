@@ -259,6 +259,13 @@ DoD：
 - 回写 `docs/README.md`
 - 回写 `architecture_map.md`
 
+状态同步：
+
+- `2026-08-11`：`phase07-12` 已完成根级同步与进入条件回写
+- 当前收口结论：根级真相源已统一更新为 `phase07` 基础主线迁移已完成；执行层正式入口收敛到 `phase07-07` 正式规格与 `phase07-11` 验收结论；未在根级文档预设任何后续阶段名称
+- 当前证据入口：`AGENTS.md`、`plan.md`、`docs/README.md`、`architecture_map.md`
+- 下一步：等待后续 `mvp0.3` 业务阶段正式 phase 入口建立后切换
+
 DoD：
 
 - 根级入口已反映 `phase07` 的前置基础地位
