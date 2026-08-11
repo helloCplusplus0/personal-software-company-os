@@ -1,0 +1,15 @@
+- [x] 已明确 review 中的反馈信号、代表性缺口与 pending decision 的正式输出允许 `Decision / entity handoff / next-step result` 三类结果并存
+- [x] 已明确存在既有决策上下文时优先进入 `Decision Center` canonical 路径
+- [x] 已明确不存在既有决策上下文时，只有在需要形成新的正式经营判断时才必须先创建 `decision draft` 并回流到 `Decision Detail`
+- [x] 已明确 `Decision / Module / Product / Repository` 的允许动作与禁止动作矩阵
+- [x] 已明确最小成功闭环为 `Decision` 正式承接 + 至少一种实体回流落地
+- [x] 已明确 `Product / Repository` 当前阶段可先以 canonical action handoff 落地，不强制要求新增专用直写 API
+- [x] 已明确前端 review 写路径必须收敛到单一 `Review action application owner`
+- [x] 已明确 `Review action application owner` 只能编排既有 canonical application owner 与 canonical action handoff
+- [x] 已明确 route / page / panel / card 不得直接成为新的 mutation owner
+- [x] 已明确 `FeedbackSignalCard / RecentActivityItemCard` 继续保持只读 caller 身份
+- [x] 已明确后端 `Decision` 写入必须复用既有 `Decision Center` command owner
+- [x] 已明确 `Product / Repository / Module` 相关写入不得创建 review-local 并列 command 主线
+- [x] 已明确前端错误归一化收敛在 review action owner 边界，页面不直接消费 raw transport error
+- [x] 已明确后端继续保持既有 domain error → proto / Connect error 单值映射
+- [x] 已确认本规格未越权冻结 `phase08-04+` 的合同命名、读模型结构或具体 hook / query key 细节
