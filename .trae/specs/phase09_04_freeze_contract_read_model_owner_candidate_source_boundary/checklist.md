@@ -1,0 +1,19 @@
+- [x] 已明确 `.proto` 继续是 `phase09` 的唯一长期合同源
+- [x] 已明确 `review.proto`、`reuse_summary.proto`、`product_registry.proto` 与新增 `template_reuse.proto` 的职责边界
+- [x] 已明确 `TemplateReuseService` 是模板读能力的唯一 canonical transport owner，`ReviewService` 只承接页面级组合读取
+- [x] 已明确 `TemplateCandidateSummary / TemplateModuleRef / TemplateCandidatePrefill / DerivedInsightHint` 的最小正式字段边界
+- [x] 已明确模板候选继续只从 `product_modules` 已持久化事实读时派生
+- [x] 已明确 `templateCandidateId` 继续由后端根据 normalized module-set key 单向派生并解析
+- [x] 已最终拍板当前阶段不允许引入轻量快照持久化或第二套候选稳态
+- [x] 已明确 `templateCandidateId` 在读时派生下失效时返回可恢复 unavailable 成功态，而不是页面级 fatal error
+- [x] 已明确 `phase06 reuse_summary` 只承接摘要事实，不承接模板候选、预填与提示编排
+- [x] 已明确 `phase08 review` 只承接页面级组合上下文，不直接拥有模板候选 derivation 逻辑
+- [x] 已明确 `phase04 product create` 继续是唯一正式创建写路径，不得内联模板写动作
+- [x] 已明确后端 `review / reusesummary / templatereuse / productregistry` 的 query owner 分工
+- [x] 已明确后端不新增 `TemplateReuseCommandService` 或第二套 create 写 RPC
+- [x] 已明确前端 `useWeeklyReviewRead / useReviewAction / useCreateDraftProduct` 的继续职责与禁止项
+- [x] 已列出当前真实 route / page / query owner / application owner inventory，作为后续 `/spec` 强制输入
+- [x] 已明确 `fromTemplateReuse + templateCandidateId + templateSource` 在 `Product Create -> Product Detail` 成功回流链中的保留方式
+- [x] 已明确 `Product Detail` 只能通过模板来源参数复读摘要，并继续导向 canonical binding 路径
+- [x] 已明确 `Product Create` 与 `Product Detail` 在模板来源失效时的可恢复空态/降级行为
+- [x] 已确认本规格与 `phase09-02 / 03` 冻结的模板 handoff、提示矩阵与成功回流链保持一致
