@@ -58,6 +58,23 @@
   - [x] SubTask 6.4: 复核本阶段没有重演"提示只落解释文案、不落动作链"和"重新长出第二套智能主线"的偏差
     - 验证：所有提示均配备 CTA 按钮与正式 handoff 链，无独立提示中心
 
+- [x] Task 7: phase09-10 新增前端 UI 与 dashboard 紧凑化基线对齐
+  - 范围：对照 phase05-13 / phase06-16 / phase08-08 已建立的 dashboard 紧凑化基线，对齐 phase09-10 新增的 Weekly Review / Product Create / Product Detail 内模板与提示组件样式，确保不引入第二套视觉模式
+  - [x] SubTask 7.1: WeeklyReviewPage ReuseSnapshotSection 容器从 `rounded-lg border bg-card p-3` 改为 `border-t pt-2`
+    - 实现：`weekly-review-page.tsx` L179-194 对齐 dashboard AssetFeedbackSection L118 与 ProductDetailPage L221 轻量分隔方式
+  - [x] SubTask 7.2: WeeklyReviewPage TemplateCandidateSection 候选卡片 padding 从 `p-3` 改为 `p-2`
+    - 实现：`weekly-review-page.tsx` L417 对齐 dashboard 紧凑卡片 padding 规格
+  - [x] SubTask 7.3: WeeklyReviewPage TemplateCandidateSection CTA Button 对齐紧凑化按钮规格
+    - 实现：`weekly-review-page.tsx` L462-469 从默认 `size="sm"` (h-8 px-3) 改为 `h-7 px-2 text-xs`，与同 section 内 DerivedHintsSection 提示 CTA 一致
+  - [x] SubTask 7.4: WeeklyReviewPage DerivedHintsSection 提示卡片 padding 与字号对齐紧凑化
+    - 实现：`weekly-review-page.tsx` L563/L588 emerald/amber 卡片 `p-3` → `p-2`；标题 `text-sm` → `text-xs`；描述 `text-xs` → `text-[10px]`
+  - [x] SubTask 7.5: ProductCreatePage CapabilityGapHintsSection 提示卡片 padding 与字号对齐紧凑化
+    - 实现：`product-create-page.tsx` L324 提示卡片 `p-3` → `p-2`；标题 `text-sm` → `text-xs`；描述 `text-xs` → `text-[10px]`，与 WeeklyReviewPage gap 提示一致
+  - [x] SubTask 7.6: ProductDetailPage TemplateSourceSummarySection 字号对齐 ReuseSnapshotSection
+    - 实现：`product-detail-page.tsx` L347-353 来源标签 `text-xs` → `text-[10px]`；模板标题 `text-sm font-medium` → `text-xs font-semibold`；描述 `text-xs` → `text-[10px]`，对齐同页面 ReuseSnapshotSection 紧凑化规范
+  - [x] SubTask 7.7: ProductCreatePage 模板来源摘要区字号对齐 ProductDetailPage TemplateSourceSummarySection（子代理复核补齐）
+    - 实现：`product-create-page.tsx` L189-201 来源标签 `text-xs` → `text-[10px]`；模板标题 `text-sm font-medium` → `text-xs font-semibold`；描述 `text-xs` → `text-[10px]`；模块 badge `text-xs` → `text-[10px]`，确保同一来源信息在 Product Create 与 Product Detail 间视觉单值一致
+
 # Task Dependencies
 
 - Task 2 depends on Task 1
@@ -65,3 +82,4 @@
 - Task 4 depends on Task 2
 - Task 5 depends on Task 1, Task 2, Task 3, Task 4
 - Task 6 depends on Task 1, Task 2, Task 3, Task 4, Task 5
+- Task 7 depends on Task 6 (基线对齐在原实现收口后执行，确保不破坏既有提示主链)

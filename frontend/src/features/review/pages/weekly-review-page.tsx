@@ -176,12 +176,13 @@ export function WeeklyReviewPage() {
         />
       </section>
 
-      {/* Reuse Snapshot 区块 — 直接复用 dashboard 的 ReuseSnapshotSection */}
+      {/* Reuse Snapshot 区块 — 直接复用 dashboard 的 ReuseSnapshotSection
+          phase09-10 基线对齐：容器从 rounded-lg border bg-card p-3 改为 border-t pt-2，
+          对齐 dashboard AssetFeedbackSection L118 与 ProductDetailPage L221 的轻量分隔方式，
+          避免在 review 顶层 section 内嵌套双层卡片 */}
       <section className="space-y-2" aria-label="Reuse Snapshot">
         <h2 className="text-base font-semibold">复用感知快照</h2>
-        {/* ReuseSnapshotSection 内部已建立 loading/ready/empty/error 四态样式
-            作为 review 顶层区块用 border bg-card 包裹，对齐 dashboard 紧凑列表的容器风格 */}
-        <div className="rounded-lg border bg-card p-3">
+        <div className="border-t pt-2">
           {/* 重试能力由 read owner 暴露，页面不直接触碰 queryClient / queryKey。 */}
           <ReuseSnapshotSection
             status={review.pageState.reuseSnapshotSectionStatus}
@@ -413,7 +414,7 @@ function TemplateCandidateSection({
               key={candidate.templateCandidateId}
               type="button"
               onClick={() => onSelectCandidate(candidate.templateCandidateId)}
-              className={`w-full rounded-lg border p-3 text-left transition-colors ${
+              className={`w-full rounded-lg border p-2 text-left transition-colors ${
                 isActive
                   ? 'ring-2 ring-primary border-primary bg-primary/5'
                   : 'border-border bg-card hover:bg-muted/50'
@@ -454,16 +455,17 @@ function TemplateCandidateSection({
         })}
       </div>
 
-      {/* Active candidate CTA */}
+      {/* Active candidate CTA — 紧凑化按钮规格 h-7 px-2 text-xs，
+          对齐 DerivedHintsSection 提示 CTA 与 dashboard 紧凑化基线 */}
       {activeCandidate && (
         <div className="border-t pt-2">
           <Button
             onClick={() => onCreateProduct(activeCandidate.templateCandidateId)}
-            className="w-full"
+            className="w-full h-7 px-2 text-xs"
             size="sm"
           >
             以该模板创建产品
-            <ArrowRight className="ml-2 h-4 w-4" />
+            <ArrowRight className="ml-2 h-3 w-3" />
           </Button>
         </div>
       )}
@@ -554,17 +556,17 @@ function DerivedHintsSection({
     <section className="space-y-2" aria-label="Derived Hints">
       <h2 className="text-base font-semibold">派生智能提示</h2>
 
-      {/* 复用机会提示 */}
+      {/* 复用机会提示 — phase09-10 基线对齐：p-3 → p-2，text-sm → text-xs */}
       {reuseHints.map((hint) => (
         <div
           key={`reuse-${hint.templateCandidateId}`}
-          className="rounded-lg border border-emerald-200 bg-emerald-50/50 p-3"
+          className="rounded-lg border border-emerald-200 bg-emerald-50/50 p-2"
         >
           <div className="flex items-start gap-2">
             <Lightbulb className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" />
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-emerald-800">{hint.title}</p>
-              <p className="text-xs text-emerald-700 mt-0.5">{hint.explanationText}</p>
+              <p className="text-xs font-medium text-emerald-800">{hint.title}</p>
+              <p className="text-[10px] text-emerald-700 mt-0.5">{hint.explanationText}</p>
               <Button
                 variant="outline"
                 size="sm"
@@ -579,17 +581,17 @@ function DerivedHintsSection({
         </div>
       ))}
 
-      {/* 能力缺口提示 */}
+      {/* 能力缺口提示 — phase09-10 基线对齐：p-3 → p-2，text-sm → text-xs */}
       {gapHints.map((hint) => (
         <div
           key={`gap-${hint.templateCandidateId}-${hint.capabilityKey ?? ''}`}
-          className="rounded-lg border border-amber-200 bg-amber-50/50 p-3"
+          className="rounded-lg border border-amber-200 bg-amber-50/50 p-2"
         >
           <div className="flex items-start gap-2">
             <AlertCircle className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-amber-800">{hint.title}</p>
-              <p className="text-xs text-amber-700 mt-0.5">{hint.explanationText}</p>
+              <p className="text-xs font-medium text-amber-800">{hint.title}</p>
+              <p className="text-[10px] text-amber-700 mt-0.5">{hint.explanationText}</p>
               <Button
                 variant="outline"
                 size="sm"

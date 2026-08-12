@@ -340,11 +340,15 @@ function TemplateSourceSummarySection({
 
   return (
     <div className="border-t pt-2">
-      <div className="text-xs text-muted-foreground mb-1">
+      {/* phase09-10 基线对齐：字号对齐 ReuseSnapshotSection 紧凑化规范
+          - 来源标签：text-[10px]（元信息）
+          - 模板标题：text-xs font-semibold（主信息，对齐 ReuseSnapshotSection 标题）
+          - 模板描述：text-[10px]（次要信息） */}
+      <div className="text-[10px] text-muted-foreground mb-1">
         来源：{sourceLabel}
       </div>
-      <h4 className="text-sm font-medium">{sourceSummary.templateTitle}</h4>
-      <p className="text-xs text-muted-foreground mt-0.5">
+      <h4 className="text-xs font-semibold">{sourceSummary.templateTitle}</h4>
+      <p className="text-[10px] text-muted-foreground mt-0.5">
         {sourceSummary.templateDescription}
       </p>
       {sourceSummary.modules.length > 0 && (

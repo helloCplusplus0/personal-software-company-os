@@ -180,14 +180,17 @@ export function ProductCreatePage() {
         </h1>
       </div>
 
-      {/* phase09-09 模板来源摘要区 */}
+      {/* phase09-09 模板来源摘要区
+          phase09-10 基线对齐（子代理复核补齐）：字号与 product-detail-page.tsx
+          TemplateSourceSummarySection 单值一致，确保用户从 Product Create 进入
+          Product Detail 时同一来源信息视觉一致 */}
       {templateHandoff.isFromTemplate && templateHandoff.templateSummary && (
         <div className="border-t pt-2">
-          <div className="text-xs text-muted-foreground mb-1">
+          <div className="text-[10px] text-muted-foreground mb-1">
             来源：{templateHandoff.templateSummary.sourceLabel}
           </div>
-          <h3 className="text-sm font-medium">{templateHandoff.templateSummary.templateTitle}</h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          <h3 className="text-xs font-semibold">{templateHandoff.templateSummary.templateTitle}</h3>
+          <p className="text-[10px] text-muted-foreground mt-0.5">
             {templateHandoff.templateSummary.templateDescription}
           </p>
           {templateHandoff.templateSummary.moduleNames.length > 0 && (
@@ -195,7 +198,7 @@ export function ProductCreatePage() {
               {templateHandoff.templateSummary.moduleNames.map((name) => (
                 <span
                   key={name}
-                  className="inline-flex items-center rounded-md bg-muted px-2 py-0.5 text-xs font-medium"
+                  className="inline-flex items-center rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium"
                 >
                   {name}
                 </span>
@@ -321,13 +324,13 @@ function CapabilityGapHintsSection({
       {gapHints.map((hint) => (
         <div
           key={`gap-${hint.templateCandidateId}-${hint.capabilityKey ?? ''}`}
-          className="rounded-lg border border-amber-200 bg-amber-50/50 p-3"
+          className="rounded-lg border border-amber-200 bg-amber-50/50 p-2"
         >
           <div className="flex items-start gap-2">
             <AlertCircle className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-amber-800">{hint.title}</p>
-              <p className="text-xs text-amber-700 mt-0.5">{hint.explanationText}</p>
+              <p className="text-xs font-medium text-amber-800">{hint.title}</p>
+              <p className="text-[10px] text-amber-700 mt-0.5">{hint.explanationText}</p>
               <Button
                 variant="outline"
                 size="sm"

@@ -1,0 +1,15 @@
+- [x] 已明确 `phase09-11` 只承接模板复用与派生提示的统一联调、浏览器验收、最小反回归与正式证据收口
+- [x] 已明确 `phase09-08 / 09 / 10` 在本阶段只作为上游输入与待复验项，不替代统一最终验收
+- [x] 已明确本阶段不把 `dry-run / AI Context Enhancement / Venture` 写成当前交付
+- [x] 已明确前端、后端、数据库与 `/api` 主线的统一前置检查顺序
+- [x] 已明确 `buf / frontend type-check / build / backend build` 的统一验证要求
+- [x] 已明确模板候选读取、模板预填详情读取、派生提示读取三类 API smoke 属于本阶段正式验收矩阵
+- [x] 已明确 `Weekly Review` 中模板候选、active candidate 与派生提示的成功/空态/失败态判定标准
+- [x] 已明确是否通过 `templateCandidateId` 进入可编辑预填创建页属于正式浏览器断言
+- [x] 已明确 `Product Create` 的字段级预填判定标准，能够证明模板预填真实缩短创建路径
+- [x] 已明确创建成功后在 `Product Detail` 中必须看到模板来源摘要、候选 `Module` 组合摘要与 canonical binding CTA
+- [x] 已明确 `Dashboard / Review / Product Detail / ReuseSummary` 属于最小反回归页面清单
+- [x] 已明确 `Dashboard / Review / ReuseSummary` 的成功 reread 判定必须避免把“无统计变化”误判为失败
+- [x] 已明确页面崩溃、来源链丢失、reread 语义漂移与 owner 越界属于本阶段阻断问题
+- [x] 已明确正式验收结论必须包含环境、步骤、结果、问题、复测与 DoD 判定
+- [x] 已明确本阶段统一验收结论只作为后续收口上游，不拆散为多个并列临时说明

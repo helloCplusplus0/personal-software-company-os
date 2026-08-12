@@ -28,3 +28,24 @@
   - 验证方式：`proto make gen` / `go build ./...` / `npm run build` 三层构建验证通过，TypeScript 类型检查通过
 - [x] 浏览器端已可直接验证 `reuse_opportunity_hint` 与 `capability_gap_hint` 两条正式路径
   - 代码实现完整覆盖三条关键路径：`Weekly Review -> reuse_opportunity_hint -> Product Create -> Product Detail`、`Weekly Review -> capability_gap_hint -> Module -> Weekly Review`、`Product Create -> capability_gap_hint -> Module -> Product Create`
+
+## phase09-10 基线对齐检查项（Task 7）
+
+- [x] WeeklyReviewPage ReuseSnapshotSection 容器已对齐 dashboard AssetFeedbackSection 与 ProductDetailPage 的 `border-t pt-2` 轻量分隔方式
+  - 实现位置：`weekly-review-page.tsx` L179-194，移除 `rounded-lg border bg-card p-3` 双层卡片嵌套
+- [x] WeeklyReviewPage TemplateCandidateSection 候选卡片 padding 已对齐 dashboard 紧凑卡片 `p-2` 规格
+  - 实现位置：`weekly-review-page.tsx` L417
+- [x] WeeklyReviewPage TemplateCandidateSection CTA Button 已对齐紧凑化按钮规格 `h-7 px-2 text-xs`
+  - 实现位置：`weekly-review-page.tsx` L462-469，与同 section 内 DerivedHintsSection 提示 CTA 单值一致
+- [x] WeeklyReviewPage DerivedHintsSection emerald/amber 提示卡片 padding 已从 `p-3` 改为 `p-2`
+  - 实现位置：`weekly-review-page.tsx` L563（emerald）/ L588（amber）
+- [x] WeeklyReviewPage DerivedHintsSection 提示标题字号已从 `text-sm` 改为 `text-xs`，描述从 `text-xs` 改为 `text-[10px]`
+  - 实现位置：`weekly-review-page.tsx` L568-569（emerald）/ L593-594（amber）
+- [x] ProductCreatePage CapabilityGapHintsSection 提示卡片 padding 与字号已与 WeeklyReviewPage gap 提示单值一致
+  - 实现位置：`product-create-page.tsx` L324 `p-2`，L329 `text-xs`，L330 `text-[10px]`
+- [x] ProductDetailPage TemplateSourceSummarySection 字号已对齐同页面 ReuseSnapshotSection 紧凑化规范
+  - 实现位置：`product-detail-page.tsx` L347-353，来源标签 `text-[10px]`、模板标题 `text-xs font-semibold`、描述 `text-[10px]`
+- [x] ProductCreatePage 模板来源摘要区字号已对齐 ProductDetailPage TemplateSourceSummarySection（子代理复核补齐）
+  - 实现位置：`product-create-page.tsx` L189-201，来源标签 `text-[10px]`、模板标题 `text-xs font-semibold`、描述 `text-[10px]`、模块 badge `text-[10px]`
+- [x] phase09-10 新增前端 UI 与 dashboard 紧凑化基线（phase05-13 / phase06-16 / phase08-08）单值一致，未引入第二套视觉模式
+  - 验证：所有新增组件的 padding/字号/按钮规格已与既有 dashboard 紧凑化基线对齐
