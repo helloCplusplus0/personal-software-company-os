@@ -1,0 +1,16 @@
+- [x] 已明确模板候选、模板预填、模板来源复读与派生提示的 read layer 只落在单一 `template-reuse` 切片
+- [x] 已明确 `product-registry/data/` 不再承接任何模板预填、模板来源复读或提示读取 owner
+- [x] 已明确 `Weekly Review` 页面继续只消费 `useWeeklyReviewRead`，不直接并排消费底层模板 read hooks
+- [x] 已明确 `Weekly Review` 新增模板消费位与既有 `reuseSnapshot / representativeSignals` 的边界矩阵
+- [x] 已明确 `Product Create` 模板 handoff 只通过单一 application owner 编排
+- [x] 已明确 `useCreateDraftProduct` 继续是唯一正式 create mutation owner，不被模板逻辑侵入替换
+- [x] 已明确模板预填只允许进入既有 create form state 主线，不会新增第二套表单状态
+- [x] 已明确当前 `ProductCreateForm` 本地字段状态必须升级为唯一正式 create form state owner，而不是与额外临时 store 并存
+- [x] 已明确从 `Module Registry / Module Detail` 返回时，当前 create 草稿只通过同一条 form state 主线恢复
+- [x] 已明确成功回流、query 失效、错误反馈与 unavailable 成功态的分层承接位
+- [x] 已明确 `Product Detail` 模板来源复读只能通过单一 read owner 消费
+- [x] 已明确 `Product Detail` 模板来源复读不会长出第二套详情写路径，并继续导向 canonical binding path
+- [x] 已产出 `Weekly Review / Product Create / Product Detail` 的 caller-owner 一对一映射表
+- [x] 已识别并禁止继续扩写页面级临时编排点
+- [x] 已确认 `query` 与 `application` 边界明确，caller 不会跨页面漂移成第二套 owner
+- [x] 已确认设计结果足以直接指导后续源码实现
