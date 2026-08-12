@@ -7,6 +7,7 @@
   - [x] SubTask 1.4: 实现 `handleReturn()` 基于 `templateSource` 的返回路径
   - [x] SubTask 1.5: 实现 `buildSuccessSearch()` 创建成功回流参数
   - [x] SubTask 1.6: 实现非法参数回退（`fromTemplateReuse=true` 但 `templateCandidateId` 为空 → direct-entry）
+  - [x] SubTask 1.7: 在 `templateSource=product-detail` 时补充 `templateSourceProductId`，确保取消返回能回到原 `Product Detail`
 
 - [x] Task 2: 实现 `use-product-create-form-state` 正式 form state owner
   - [x] SubTask 2.1: 新增 `frontend/src/features/product-registry/application/use-product-create-form-state.ts`
@@ -44,6 +45,7 @@
 - [x] Task 8: 更新路由搜索参数
   - [x] SubTask 8.1: `/products/new` 新增 `fromTemplateReuse / templateCandidateId / templateSource`
   - [x] SubTask 8.2: `/products/$productId` 新增 `fromTemplateReuse / templateCandidateId / templateSource`
+  - [x] SubTask 8.3: `/products/new` 在 `templateSource=product-detail` 场景新增 `templateSourceProductId`
 
 - [x] Task 9: 完成构建验证与浏览器验收
   - [x] SubTask 9.1: `(cd frontend && npm run build)` 通过

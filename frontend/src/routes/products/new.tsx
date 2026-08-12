@@ -28,6 +28,7 @@ const productCreateSearchSchema = z.object({
   fromTemplateReuse: z.boolean().optional(),
   templateCandidateId: z.string().optional(),
   templateSource: z.enum(['weekly-review', 'dashboard', 'product-detail']).optional(),
+  templateSourceProductId: z.string().optional(),
   // phase05-13 Dashboard 来源参数
   ...dashboardSourceSearchSchema,
 })

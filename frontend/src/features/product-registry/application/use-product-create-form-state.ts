@@ -14,7 +14,7 @@
  *   - useMutation / createProduct 调用（由 useCreateDraftProduct 承接）
  *   - 模板来源逻辑（由 use-product-create-template-handoff 承接）
  */
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { ProductStatus } from '@/features/product-registry/types'
 
 // ============================================================================
@@ -51,9 +51,49 @@ export interface UseProductCreateFormStateResult {
 export function useProductCreateFormState(
   initialValues?: FormStateInitialValues,
 ): UseProductCreateFormStateResult {
-  const [name, setName] = useState<string>(initialValues?.name ?? '')
-  const [description, setDescription] = useState<string>(initialValues?.description ?? '')
-  const [status, setStatus] = useState<ProductStatus>(initialValues?.status ?? 'active')
+  const [name, setNameValue] = useState<string>(initialValues?.name ?? '')
+  const [description, setDescriptionValue] = useState<string>(initialValues?.description ?? '')
+  const [status, setStatusValue] = useState<ProductStatus>(initialValues?.status ?? 'active')
+  const hasUserEditedRef = useRef(false)
+  const lastAppliedInitialValuesRef = useRef<string>('')
+
+  const initialValuesSignature = useMemo(
+    () => JSON.stringify({
+      name: initialValues?.name ?? '',
+      description: initialValues?.description ?? '',
+      status: initialValues?.status ?? 'active',
+    }),
+    [initialValues?.description, initialValues?.name, initialValues?.status],
+  )
+
+  useEffect(() => {
+    if (hasUserEditedRef.current) {
+      return
+    }
+    if (lastAppliedInitialValuesRef.current === initialValuesSignature) {
+      return
+    }
+
+    setNameValue(initialValues?.name ?? '')
+    setDescriptionValue(initialValues?.description ?? '')
+    setStatusValue(initialValues?.status ?? 'active')
+    lastAppliedInitialValuesRef.current = initialValuesSignature
+  }, [initialValues?.description, initialValues?.name, initialValues?.status, initialValuesSignature])
+
+  const setName = useCallback((value: string) => {
+    hasUserEditedRef.current = true
+    setNameValue(value)
+  }, [])
+
+  const setDescription = useCallback((value: string) => {
+    hasUserEditedRef.current = true
+    setDescriptionValue(value)
+  }, [])
+
+  const setStatus = useCallback((value: ProductStatus) => {
+    hasUserEditedRef.current = true
+    setStatusValue(value)
+  }, [])
 
   const isDirty = useMemo(
     () => name.trim() !== '' || description.trim() !== '',

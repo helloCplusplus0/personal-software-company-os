@@ -15,6 +15,7 @@
 - [x] 模板 unavailable 成功态展示可恢复提示，表单退化为空白但仍可编辑
 - [x] 模板预填请求失败态展示局部失败提示+重试，表单仍可编辑
 - [x] 取消返回按 `templateSource` 决定目的地（weekly-review → Weekly Review 等）
+- [x] `templateSource=product-detail` 时已携带 `templateSourceProductId`，取消返回能定位到原 `Product Detail`
 - [x] 创建成功回流携带 `fromTemplateReuse / templateCandidateId / templateSource` 参数
 - [x] `ProductDetailPage` 在 `fromTemplateReuse=true` 时通过 `use-template-source-read` 读取模板来源摘要
 - [x] 模板来源摘要区位于 `ProductSummaryCard` 与 `ReuseSummaryInline` 之间

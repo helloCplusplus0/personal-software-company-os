@@ -11,7 +11,7 @@
 - `Product Create` 新增单一 `use-product-create-form-state` owner，回收组件本地 `useState` 为正式 form state 主线
 - `Product Create` 新增 `use-product-create-template-handoff` application owner，编排模板预填、返回路径与成功回流
 - `Product Detail` 页面新增模板来源摘要区与 canonical binding CTA
-- 路由新增 `fromTemplateReuse / templateCandidateId / templateSource` 搜索参数
+- 路由新增 `fromTemplateReuse / templateCandidateId / templateSource` 搜索参数，并在 `templateSource=product-detail` 时补充 `templateSourceProductId`
 - 实现 `templateSource` 驱动的返回链、非法参数回退与空候选回退
 
 ## Impact
@@ -166,6 +166,8 @@
   - `templateSource=weekly-review` → 返回 `Weekly Review`
   - `templateSource=dashboard` → 返回 `Dashboard`
   - `templateSource=product-detail` → 返回原 `Product Detail`
+- **AND** 当 `templateSource=product-detail` 时，进入 `/products/new` 的 search 参数必须同时携带 `templateSourceProductId`
+- **AND** 返回原 `Product Detail` 时必须使用该 `templateSourceProductId`，而不是模糊回退到 `/products`
 - **AND** 若无模板来源（direct-entry），保持原有返回逻辑
 - **AND** 不得统一退回浏览器历史或根路由
 
@@ -223,8 +225,13 @@
   - `fromTemplateReuse: z.boolean().optional()`
   - `templateCandidateId: z.string().optional()`
   - `templateSource: z.enum(['weekly-review', 'dashboard', 'product-detail']).optional()`
-- **AND** `/products/$productId` 的 `productDetailSearchSchema` 必须新增相同字段
-- **AND** 这三个字段均为可选，不影响 direct-entry 的既有行为
+  - `templateSourceProductId: z.string().optional()`
+- **AND** `/products/$productId` 的 `productDetailSearchSchema` 必须新增：
+  - `fromTemplateReuse: z.boolean().optional()`
+  - `templateCandidateId: z.string().optional()`
+  - `templateSource: z.enum(['weekly-review', 'dashboard', 'product-detail']).optional()`
+- **AND** `templateSourceProductId` 仅在 `templateSource=product-detail` 时有值，其余来源保持为空
+- **AND** 其余字段均为可选，不影响 direct-entry 的既有行为
 
 ### Requirement: 非法参数与空候选必须回退为可恢复状态
 

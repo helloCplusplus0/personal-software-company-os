@@ -101,7 +101,7 @@ export function ProductModuleBindingPanel({
   }
 
   return (
-    <Card>
+    <Card id="product-module-binding">
       <CardHeader>
         <CardTitle className="flex items-center justify-between gap-2">
           <span>已绑定模块</span>

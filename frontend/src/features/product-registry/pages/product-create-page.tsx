@@ -42,6 +42,7 @@ export function ProductCreatePage() {
     fromTemplateReuse: (search as any).fromTemplateReuse,
     templateCandidateId: (search as any).templateCandidateId,
     templateSource: (search as any).templateSource,
+    templateSourceProductId: (search as any).templateSourceProductId,
     fromDashboard: (search as any).fromDashboard,
     dashboardSection: (search as any).dashboardSection,
     dashboardReturnTo: (search as any).dashboardReturnTo,

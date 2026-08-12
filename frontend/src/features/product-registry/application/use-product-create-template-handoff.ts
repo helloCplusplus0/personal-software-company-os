@@ -34,6 +34,7 @@ export interface TemplateHandoffSearchParams {
   fromTemplateReuse?: boolean
   templateCandidateId?: string
   templateSource?: string
+  templateSourceProductId?: string
   /** 辅助返回链元数据（fromDashboard 等） */
   fromDashboard?: boolean
   dashboardSection?: string
@@ -68,7 +69,7 @@ export interface TemplateHandoffResult {
   /** 取消/返回处理函数 */
   handleReturn: () => void
   /** 创建成功回流参数构建函数 */
-  buildSuccessSearch: () => Record<string, string | undefined>
+  buildSuccessSearch: () => Record<string, unknown>
   /** 模板候选 ID（用于 Product Detail 回流） */
   templateCandidateId: string
   /** 模板来源（用于 Product Detail 回流） */
@@ -86,9 +87,20 @@ const TEMPLATE_SOURCE_LABELS: Record<string, string> = {
 }
 
 const TEMPLATE_SOURCE_RETURN_PATHS: Record<string, string> = {
-  'weekly-review': '/review/weekly',
+  'weekly-review': '/reviews/weekly',
   'dashboard': '/dashboard',
-  'product-detail': '/products',
+}
+
+function buildDashboardReturnSearch(search: TemplateHandoffSearchParams): Record<string, unknown> | undefined {
+  if (search.fromDashboard !== true) {
+    return undefined
+  }
+
+  return {
+    fromDashboard: true,
+    dashboardSection: search.dashboardSection,
+    dashboardReturnTo: search.dashboardReturnTo ?? '/dashboard',
+  }
 }
 
 // ============================================================================
@@ -103,6 +115,7 @@ export function useProductCreateTemplateHandoff(
   const fromTemplateReuse = search.fromTemplateReuse === true
   const templateCandidateId = search.templateCandidateId ?? ''
   const templateSource = search.templateSource ?? ''
+  const templateSourceProductId = search.templateSourceProductId ?? ''
 
   // 模板预填只读
   const prefillQuery = useTemplatePrefillRead(
@@ -154,19 +167,38 @@ export function useProductCreateTemplateHandoff(
   )
 
   const handleReturn = useCallback(() => {
+    const dashboardSearch = buildDashboardReturnSearch(search)
+
+    if (templateSource === 'product-detail' && templateSourceProductId !== '') {
+      navigate({
+        to: '/products/$productId',
+        params: { productId: templateSourceProductId },
+        search: dashboardSearch,
+      })
+      return
+    }
+
     const returnPath = TEMPLATE_SOURCE_RETURN_PATHS[templateSource]
+    if (returnPath === '/reviews/weekly') {
+      navigate({
+        to: '/reviews/weekly',
+        search: dashboardSearch,
+      })
+      return
+    }
+
     if (returnPath) {
       navigate({ to: returnPath })
     } else {
       // 无模板来源回退：保持原有逻辑（回列表）
       navigate({ to: '/products' })
     }
-  }, [navigate, templateSource])
+  }, [navigate, search, templateSource, templateSourceProductId])
 
-  const buildSuccessSearch = useCallback((): Record<string, string | undefined> => {
+  const buildSuccessSearch = useCallback((): Record<string, unknown> => {
     if (!isFromTemplate) return {}
     return {
-      fromTemplateReuse: 'true',
+      fromTemplateReuse: true,
       templateCandidateId,
       templateSource,
     }
