@@ -1,0 +1,13 @@
+- [x] 已明确模板级复用资产的正式语义只包含 `Module` 组合快照与 `Product Create` 预填辅助
+- [x] 已明确模板候选只从 `product_modules` 已持久化绑定事实派生
+- [x] 已明确模板候选默认排序规则，用于确定 `Weekly Review` 的默认 active candidate
+- [x] 已明确 `Review` 不直接生成模板候选，只提供消费作用域与返回链上下文
+- [x] 已明确 `Weekly Review` 模板候选采用单选模型，并冻结默认 active candidate、切换规则与无候选空态
+- [x] 已明确 `/products/new` 模板 handoff 的正式参数为 `fromTemplateReuse + templateCandidateId + templateSource`
+- [x] 已明确 `fromTemplateReuse` 与 `fromList / fromModuleDetail / fromDashboard` 的优先级、共存与互斥关系
+- [x] 已明确 `templateCandidateId` 是唯一正式预填读取入口，前端按 opaque string 消费
+- [x] 已明确"预填成立"的最小字段级判定，不能只以跳转到创建页视为成功
+- [x] 已明确 `Product Create` 提交成功时不自动写入 `product_modules`
+- [x] 已明确创建成功回流到 `Product Detail` 时继续携带 `fromTemplateReuse + templateCandidateId + templateSource`
+- [x] 已明确 `Product Detail` 必须继续复读模板来源摘要、候选 `Module` 组合摘要，并提供 canonical `Product <-> Module Binding` CTA
+- [x] 已确认本规格未越权冻结 `phase09-03` 的提示矩阵或 `phase09-04` 的合同 / owner 细节
