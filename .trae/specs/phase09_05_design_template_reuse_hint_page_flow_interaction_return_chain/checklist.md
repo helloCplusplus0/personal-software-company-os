@@ -1,0 +1,16 @@
+- [x] 已明确 `Weekly Review -> Template / Hint -> Product Create -> Product Detail` 是 `phase09` 的正式单一主页面流
+- [x] 已明确 `capability_gap_hint` 走 `Module Registry / Module Detail` 补齐支链，而不是进入 `Product Create` 主创建链
+- [x] 已明确 `Weekly Review` 是模板候选与提示的唯一主消费宿主
+- [x] 已明确 `Product Create` 不重新承接模板候选选择主线，只承接预填与解释延续
+- [x] 已明确 `Product Detail` 只承接模板来源摘要与 canonical `Product <-> Module Binding` CTA
+- [x] 已明确模板候选默认 active candidate、单选切换与 CTA/解释同步更新的用户可见行为
+- [x] 已明确 `reuse_opportunity_hint` 与 `capability_gap_hint` 的最小展示层级与 CTA 承接方式
+- [x] 已明确 `Product Create` 中模板摘要、可编辑预填与取消返回规则
+- [x] 已明确 `capability_gap_hint` 从 `Weekly Review` 与 `Product Create` 出发时的进入页、返回页与上下文保留规则
+- [x] 已明确 `templateSource` 与 `fromDashboard` 元数据并存时的主来源语义与返回链优先级
+- [x] 已明确模板候选空态、提示空态、局部失败态与 `templateCandidateId` unavailable 成功态
+- [x] 已明确模板预填请求失败时至少存在“重试”和“继续普通 create”两条恢复路径
+- [x] 已明确 `Product Detail` 中模板来源摘要的可见行为与来源失效时的可恢复空态
+- [x] 已明确移动浏览器下继续沿用单一 `React Web` 主线，并通过单列布局降级
+- [x] 已确认 `Weekly Review / Product Create / Product Detail` 不会各自长出第二套模板工作台
+- [x] 已确认页面流、交互流、空态、失败态与回退路径可以直接被浏览器验收逐步核对
