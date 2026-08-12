@@ -119,6 +119,10 @@ docs/
   - `docs/phase/phase08_operating_review_loop_foundation_dev_plan.md`（最近完成正式业务 phase 的任务与 DoD 冻结记录）
   - `docs/phase/phase08_operating_review_loop_foundation_shared_baseline.md`（最近完成正式业务 phase 的共享基线冻结记录）
   - `.trae/specs/phase08_11_validate_review_loop_integration_browser_regression_acceptance/acceptance_report.md`（`phase08` 正式验收与收口结论入口）
+  - `docs/phase/phase09_template_reuse_derived_intelligence_foundation_architecture_plan.md`（最近完成正式支撑能力 phase 的架构规划与冻结记录）
+  - `docs/phase/phase09_template_reuse_derived_intelligence_foundation_dev_plan.md`（最近完成正式支撑能力 phase 的任务与 DoD 冻结记录）
+  - `docs/phase/phase09_template_reuse_derived_intelligence_foundation_shared_baseline.md`（最近完成正式支撑能力 phase 的共享基线冻结记录）
+  - `.trae/specs/phase09_11_validate_template_reuse_derived_hint_integration_browser_regression_acceptance/acceptance_report.md`（`phase09` 正式验收与收口结论入口）
 - 当前项目技术路线已冻结为 `Durable System Track`
 - `phase02_module_registry_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - `phase03_decision_center_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
@@ -138,9 +142,10 @@ docs/
 - `phase08` 已直接承接 `PSCO-mvp03-summarize-feedback.md`、`phase07-07` 正式规格与 `phase07-11` 验收结论，并已完成 `Operating Review Loop` 的正式交付、统一验收与根级收口
 - `phase08` 三件套在收口后只承担最近完成正式业务 phase 的规划与冻结记录角色；正式验收与收口入口收敛到 `phase08-11` acceptance_report
 - `phase08` 只承接 `Operating Review Loop`，不把 `Template Reuse / Derived Intelligence / dry-run` 混写为当前并列主交付
-- `phase09` 已直接承接 `PSCO-mvp03-summarize-feedback.md`、`phase08-11` 验收结论、`phase08` 三件套规划记录与 `phase06` 复用摘要主线，并已建立正式 `/plan` 入口
-- `phase09` 三件套承担当前支撑能力 phase 的规划与冻结记录角色；当前只承接 `Template Reuse + Derived Intelligence Deepening` 的最小支撑能力
-- 后续 `dry-run` 只允许在直接承接 `phase09` 验收结论、`phase08` 根级收口结论与当前根级真相源后建立正式入口；根级文档只写进入条件，不得提前猜测任何未建立阶段名称
+- `phase09` 已直接承接 `PSCO-mvp03-summarize-feedback.md`、`phase08-11` 验收结论、`phase08` 三件套规划记录与 `phase06` 复用摘要主线，并已完成 `Template Reuse + Derived Intelligence Deepening` 的正式交付、统一验收与收口
+- `phase09` 三件套在收口后只承担最近完成正式支撑能力 phase 的规划与冻结记录角色；正式验收与收口入口收敛到 `phase09-11` acceptance_report
+- `phase09-08 / 09 / 10` 只保留为合同落地、模板预填回流与派生提示实现结论记录，不提升为根级长期主入口
+- 后续 `dry-run` 只允许在直接承接 `phase09-11` 验收结论、`phase09` 根级收口结论、`phase08` 根级收口结论与当前根级真相源后建立正式入口；根级文档只写进入条件，不得提前扩大 `mvp0.4+`、猜测任何未建立阶段名称或拆分范围
 
 ### 4.2 fix
 

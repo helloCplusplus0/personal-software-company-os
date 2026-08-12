@@ -6,9 +6,9 @@
 ## 1. 项目定位
 
 - 项目名称：`Personal Software Company OS`
-- 当前阶段：`phase09_template_reuse_derived_intelligence_foundation`（已进入 `/plan`，当前处于支撑能力阶段规划与边界冻结中）
-- 当前主目标：完成 `Template Reuse + Derived Intelligence Deepening` 的阶段级 `/plan`，冻结 `phase09` 的范围、DoD、非目标与后续 `dry-run` 进入条件
-- 当前下一阶段入口：待 `phase09` 三件套复核通过后进入 `/spec`；`phase08` 继续作为最近完成的正式业务 phase 保留，后续 `dry-run` 仍为独立验收闸，不提前扩大为当前实现承诺
+- 当前阶段：`phase09_template_reuse_derived_intelligence_foundation`（已完成正式收口，当前作为最近完成正式支撑能力 phase 保留）
+- 当前主目标：以 `phase09-11` 正式验收结论与当前根级收口结论作为直接上游，只保留后续 `dry-run` 的进入条件与独立验收闸定位
+- 当前下一阶段入口：后续 `dry-run` 只允许在 `phase09-11` 通过验收、`phase09` 根级收口完成且正式入口建立后切换；`phase08` 继续作为最近完成正式业务 phase 保留，不提前扩大为 `mvp0.4+` 或新的既成事实
 - 当前定位：PSCO 是个人软件公司的经营与资产系统，不是代码管理工具，不是 AI Chat 产品，也不是自动扫描系统
 
 ## 2. 当前唯一上游
@@ -71,14 +71,15 @@
 - `.trae/specs/phase07_07_formal_transport_mainline_cutover_spec/transport_mainline_cutover_spec_v0.1.md` 已冻结为 `phase07` 最近完成前置基础阶段的正式规格入口
 - `.trae/specs/phase07_11_validate_phase01_phase06_regression_retirement_acceptance/acceptance_report.md` 已给出 `phase07` 联调、退场验收与前置基础阶段收口结论入口
 - `phase07_transport_contract_mainline_migration` 三件套保留为最近完成前置基础阶段的 `/plan` 规划与冻结记录，不再覆盖当前业务状态
-- `docs/phase/phase09_template_reuse_derived_intelligence_foundation_architecture_plan.md`、`docs/phase/phase09_template_reuse_derived_intelligence_foundation_dev_plan.md` 与 `docs/phase/phase09_template_reuse_derived_intelligence_foundation_shared_baseline.md` 已建立为当前 `phase09` 的正式 `/plan` 入口
+- `docs/phase/phase09_template_reuse_derived_intelligence_foundation_architecture_plan.md`、`docs/phase/phase09_template_reuse_derived_intelligence_foundation_dev_plan.md` 与 `docs/phase/phase09_template_reuse_derived_intelligence_foundation_shared_baseline.md` 已保留为 `phase09` 的 `/plan` 规划与冻结记录入口
 - `phase09` 当前只承接 `Template Reuse + Derived Intelligence Deepening` 的最小支撑能力，不把 `Real-Project Dry-Run`、`Venture` 或 `AI Context Enhancement` 偷渡为当前并列主交付
 - `phase08_operating_review_loop_foundation` 三件套已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，当前作为最近完成正式业务 phase 的 `/plan` 规划与冻结记录保留
 - `.trae/specs/phase08_11_validate_review_loop_integration_browser_regression_acceptance/acceptance_report.md` 已给出 `phase08` 统一联调、浏览器验收、反回归验证与正式收口结论入口
 - `phase08` 已完成 `Dashboard` review 入口、Daily / Weekly Review 双路径会话承接，以及 `Feedback -> Decision -> Update` 最小经营回路，并通过统一联调与浏览器验收收口
 - `phase07-08 / 09 / 10` 规格目录保留为生成链、后端与前端迁移实现结论记录，不提升为新的根级长期入口
-- `phase09` 已直接承接 `phase08-11` 验收结论与 `phase06` 复用摘要主线，当前正在冻结 `Template Reuse + Derived Intelligence` 如何正式服务“下一次创造”
-- 后续 `dry-run` 只允许在 `phase09` 收口并建立独立正式入口后推进；根级文档不得提前把 `dry-run` 或 `mvp0.4+` 写成当前版本既成事实
+- `.trae/specs/phase09_11_validate_template_reuse_derived_hint_integration_browser_regression_acceptance/acceptance_report.md` 已给出 `phase09` 统一联调、浏览器验收、反回归验证与正式收口结论入口
+- `phase09` 已完成模板候选、`Product Create` 预填回流、派生提示展示与 handoff 的正式交付，并通过统一联调、浏览器验收与反回归验证收口，当前作为最近完成正式支撑能力 phase 保留
+- 后续 `dry-run` 只允许直接承接 `phase09-11` 验收结论与当前根级收口结论，在独立正式入口建立后切换；根级文档不得提前把 `dry-run` 或 `mvp0.4+` 写成当前版本既成事实
 
 ## 5. 推荐阅读顺序
 

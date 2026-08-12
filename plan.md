@@ -5,9 +5,9 @@
 ## 1. 当前状态
 
 - 当前阶段：`phase09_template_reuse_derived_intelligence_foundation`
-- 当前状态：`phase08` 已完成正式收口；`phase09` 已建立正式 `/plan` 入口，当前处于支撑能力阶段规划与边界冻结中
-- 当前目标：完成 `Template Reuse + Derived Intelligence Deepening` 的阶段级 `/plan`，冻结范围、DoD、非目标、直接上游与后续 `dry-run` 进入条件
-- 当前下一阶段入口：待 `phase09` 三件套复核通过后进入 `/spec`；`phase08` 继续作为最近完成的正式业务 phase 保留，`dry-run` 继续保留为后续独立验收闸
+- 当前状态：`phase08` 已退回最近完成正式业务 phase；`phase09` 已完成正式收口，当前作为最近完成正式支撑能力 phase 保留
+- 当前目标：以 `phase09-11` 正式验收结论与当前根级收口结论作为直接上游，只保留后续 `dry-run` 的进入条件与独立验收闸定位
+- 当前下一阶段入口：后续 `dry-run` 只允许在 `phase09-11` 通过验收、`phase09` 根级收口完成且正式入口建立后切换；不提前扩大为 `mvp0.4+`、新的阶段名称或并列主交付
 
 ## 2. 当前进度概览
 
@@ -56,7 +56,10 @@
 - `.trae/specs/phase08_11_validate_review_loop_integration_browser_regression_acceptance/acceptance_report.md` 已形成 `phase08` 统一联调、浏览器验收、反回归验证与正式收口结论入口
 - `phase08` 已完成 `Dashboard` review 入口、Daily / Weekly Review 双路径会话承接，以及 `Feedback -> Decision -> Update` 最小经营回路，并通过统一联调与浏览器验收收口
 - `phase08` 当前只承接 `Operating Review Loop`，不把 `Template Reuse / Derived Intelligence / Real-Project Dry-Run` 混写为并列主交付
-- `docs/phase/phase09_template_reuse_derived_intelligence_foundation_architecture_plan.md`、`docs/phase/phase09_template_reuse_derived_intelligence_foundation_dev_plan.md` 与 `docs/phase/phase09_template_reuse_derived_intelligence_foundation_shared_baseline.md` 已建立为当前 `phase09` 的正式 `/plan` 入口
+- `phase09_template_reuse_derived_intelligence_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，当前作为最近完成正式支撑能力 phase 保留
+- `docs/phase/phase09_template_reuse_derived_intelligence_foundation_architecture_plan.md`、`docs/phase/phase09_template_reuse_derived_intelligence_foundation_dev_plan.md` 与 `docs/phase/phase09_template_reuse_derived_intelligence_foundation_shared_baseline.md` 已保留为 `phase09` 的规划与冻结记录入口
+- `.trae/specs/phase09_11_validate_template_reuse_derived_hint_integration_browser_regression_acceptance/acceptance_report.md` 已形成 `phase09` 统一联调、浏览器验收、反回归验证与正式收口结论入口
+- `phase09` 已完成模板候选、`Product Create` 预填回流、派生提示展示与 handoff 的正式交付，并通过统一联调、浏览器验收与反回归验证收口
 - `phase09` 当前只承接 `Template Reuse + Derived Intelligence Deepening` 的最小支撑能力，不把 `Real-Project Dry-Run`、`Venture` 或 `AI Context Enhancement` 偷渡为并列主交付
 
 ## 3. Phase 路线预览
@@ -135,20 +138,20 @@
 - 进入条件：直接承接 `PSCO-mvp03-summarize-feedback.md`、`phase08-11` 正式验收结论、`phase08` 三件套规划记录、`phase06` 复用摘要主线，以及 `phase03 ~ phase05` 已冻结的 `Decision / Product / Dashboard` 正式规格与验收结果
 - 范围约束：不得把本 phase 扩写为模板平台、AI 工作台或 `dry-run`；`Product Create` 必须继续保持唯一 canonical 创建承接位；支撑能力必须直接服务“下一次创造”，而不是另起第二条业务主线
 - 交付要求：作为交付型 phase 推进，必须完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
-- 状态：`planning`
-- 当前规划结果：已建立 `architecture_plan / dev_plan / shared_baseline` 三件套；当前正在冻结模板候选、create 预填、派生提示、owner 边界与后续 `dry-run` 进入条件
+- 状态：`completed`
+- 当前收口结果：已完成模板候选、`Product Create` 预填回流、派生提示展示与 handoff 的正式交付；`phase09-11` 为统一联调、浏览器验收、反回归验证与正式收口结论入口，三件套保留为规划与冻结记录；当前作为最近完成正式支撑能力 phase 保留
 
-## 4. 当前阶段切换条件
+## 4. 后续 `dry-run` 进入条件
 
-当以下条件同时满足时，`phase09` 才允许从当前 `/plan` 状态进入正式 `/spec`：
+当以下条件同时满足时，后续 `dry-run` 才允许建立正式入口并从当前收口状态切换：
 
-1. `phase08-11` 正式验收结论与 `phase08` 根级收口结论继续作为直接上游输入
-2. `phase09` 三件套已明确 `Template Reuse + Derived Intelligence` 的单一主交付能力、成功标准、非目标与正式消费面
-3. 模板候选、create 预填、派生提示、`Product Create` canonical write owner 与前后端 owner 边界已冻结
-4. 根级真相源与 `docs` 入口已完成 `phase09` `/plan` 同步，且不把 `dry-run` 或 `mvp0.4+` 写成当前既成事实
-5. 当前阶段正式 `/spec` 入口与子任务顺序已能直接承接 `phase09_dev_plan`
+1. `phase09-11` 正式验收结论继续作为直接验收上游输入
+2. `AGENTS.md` 与 `plan.md` 已完成 `phase09` 根级收口同步，并保持“`phase09` 为最近完成正式支撑能力 phase、`phase08` 为最近完成正式业务 phase”的单值口径
+3. 后续 `dry-run` 已建立独立正式入口，并明确范围、DoD、非目标与独立验收闸
+4. `dry-run` 的直接上游已清楚承接 `phase09-11`、当前根级真相源与既有业务主线结论，且不引入第二套根级状态口径
+5. 根级文档仍只保留进入条件表达，不把 `dry-run` 之后的 `mvp0.4+` 写成当前既成事实
 
-当前结论：`phase09` 已建立正式 `/plan` 入口，当前正在冻结 `Template Reuse + Derived Intelligence` 的支撑能力边界；`phase08` 继续作为最近完成的正式业务 phase 保留。后续 `dry-run` 只保留进入条件表达，不预设新的正式阶段名称或编号。
+当前结论：`phase09` 已完成正式收口，当前作为最近完成正式支撑能力 phase 保留；`phase08` 继续作为最近完成正式业务 phase 保留。后续 `dry-run` 只保留进入条件表达，待正式入口建立后切换，不预设新的正式阶段名称、编号或 `mvp0.4+` 既成事实。
 
 ## 5. 说明
 
