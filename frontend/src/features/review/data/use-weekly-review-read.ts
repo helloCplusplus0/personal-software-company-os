@@ -20,7 +20,7 @@ import { weeklyReviewQueryOptions, WEEKLY_REVIEW_QUERY_KEY } from './review-quer
 import type { WeeklyReviewContext } from '@/gen/proto/psco/review/v1/review_pb'
 import type { Timestamp } from '@bufbuild/protobuf/wkt'
 import type { DashboardOverview, FeedbackSignal, RecentActivityItem } from '@/features/dashboard/types'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTemplateCandidatesRead } from '@/features/template-reuse/data/use-template-candidates-read'
 import { useDerivedInsightHintsRead } from '@/features/template-reuse/data/use-derived-insight-hints-read'
 import { TemplateConsumerSurface } from '@/gen/proto/psco/template_reuse/v1/template_reuse_pb'
@@ -216,9 +216,11 @@ export interface UseWeeklyReviewReadResult {
   setActiveCandidateId: (id: string) => void
   /** phase09-09 派生提示列表 */
   hints: DerivedInsightHint[]
+  /** phase09-10 派生提示局部重试 */
+  retryHints: () => Promise<unknown>
 }
 
-export function useWeeklyReviewRead(): UseWeeklyReviewReadResult {
+export function useWeeklyReviewRead(returnCandidateId?: string): UseWeeklyReviewReadResult {
   const query = useQuery({
     ...weeklyReviewQueryOptions(),
     queryKey: WEEKLY_REVIEW_QUERY_KEY,
@@ -230,12 +232,25 @@ export function useWeeklyReviewRead(): UseWeeklyReviewReadResult {
   )
 
   // phase09-09：模板候选默认选中第一个
-  const candidates = templateCandidatesQuery.data?.candidates ?? []
+  // phase09-10：returnCandidateId 优先于 defaultActiveId（用于 hint 消费后的 reread）
+  const rawCandidates = templateCandidatesQuery.data?.candidates
+  const candidates = useMemo(() => rawCandidates ?? [], [rawCandidates])
   const defaultActiveId = templateCandidatesQuery.data?.defaultActiveCandidateId ?? ''
-  const [activeCandidateId, setActiveCandidateId] = useState<string>(defaultActiveId)
+  const [activeCandidateId, setActiveCandidateId] = useState<string>(
+    returnCandidateId && candidates.find((c) => c.templateCandidateId === returnCandidateId)
+      ? returnCandidateId
+      : defaultActiveId,
+  )
+
+  // phase09-10：returnCandidateId 变化时恢复 active candidate
+  useEffect(() => {
+    if (returnCandidateId && candidates.find((c) => c.templateCandidateId === returnCandidateId)) {
+      setActiveCandidateId(returnCandidateId)
+    }
+  }, [returnCandidateId, candidates])
 
   // 当候选列表更新时，如果 activeCandidateId 不在新列表中，重置为默认
-  useMemo(() => {
+  useEffect(() => {
     if (candidates.length > 0 && !candidates.find((c) => c.templateCandidateId === activeCandidateId)) {
       setActiveCandidateId(defaultActiveId)
     }
@@ -251,6 +266,8 @@ export function useWeeklyReviewRead(): UseWeeklyReviewReadResult {
   const retry = useCallback(() => {
     void query.refetch()
   }, [query])
+
+  const retryHints = useCallback(() => hintsQuery.retry(), [hintsQuery])
 
   const pageState = useMemo((): WeeklyReviewPageState => {
     if (query.isLoading && !query.data) {
@@ -287,6 +304,14 @@ export function useWeeklyReviewRead(): UseWeeklyReviewReadResult {
         hintsSectionStatus: 'empty',
       }
     }
+    // phase09-10：hintsSectionStatus 由 hints query 实际状态派生
+    const hintsSectionStatus = ((): SectionStatus => {
+      if (hintsQuery.isError) return 'error'
+      if (candidates.length === 0) return 'empty'
+      if (hintsQuery.data && hintsQuery.data.hints.length > 0) return 'ready'
+      return 'empty'
+    })()
+
     return {
       pageStatus: 'ready',
       overviewSectionStatus: data.overview ? 'ready' : 'empty',
@@ -294,9 +319,9 @@ export function useWeeklyReviewRead(): UseWeeklyReviewReadResult {
       representativeSignalsSectionStatus: data.representativeSignals.length > 0 ? 'ready' : 'empty',
       reuseSnapshotSectionStatus: (data.moduleReuseSummary.length > 0 || data.capabilitySummary.length > 0) ? 'ready' : 'empty',
       templateSectionStatus: candidates.length > 0 ? 'ready' : 'empty',
-      hintsSectionStatus: 'ready',
+      hintsSectionStatus,
     }
-  }, [query.isLoading, query.isError, query.data, candidates.length])
+  }, [query.isLoading, query.isError, query.data, candidates.length, hintsQuery.isError, hintsQuery.data])
 
   const data = useMemo((): WeeklyReviewReadModel | undefined => {
     const ctx = query.data
@@ -322,5 +347,6 @@ export function useWeeklyReviewRead(): UseWeeklyReviewReadResult {
     activeCandidateId,
     setActiveCandidateId,
     hints: hintsQuery.data?.hints ?? [],
+    retryHints,
   }
 }

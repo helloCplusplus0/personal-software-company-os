@@ -31,6 +31,7 @@ export interface UseTemplatePrefillReadResult {
   error: Error | null
   /** 派生状态：resolved（可用）、unavailable（模板已失效但可继续创建）、error（请求失败） */
   pageStatus: TemplatePrefillPageStatus
+  retry: () => Promise<unknown>
 }
 
 // ============================================================================
@@ -70,5 +71,6 @@ export function useTemplatePrefillRead(
     isError: query.isError,
     error: query.error as Error | null,
     pageStatus,
+    retry: query.refetch,
   }
 }

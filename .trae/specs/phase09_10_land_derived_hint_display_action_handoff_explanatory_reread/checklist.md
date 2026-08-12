@@ -1,0 +1,30 @@
+- [x] `Weekly Review` 已真实展示 `reuse_opportunity_hint`，并能通过正式 CTA 进入 `Product Create`
+  - 实现位置：`weekly-review-page.tsx` L477-603 `DerivedHintsSection` 组件，`reuseHints` 过滤并展示 `REUSE_OPPORTUNITY` 类型提示，CTA 通过 `useDerivedHintHandoff.computeHandoff()` 计算导航目标
+- [x] `Weekly Review` 已真实展示 `capability_gap_hint`，并能通过正式 CTA 进入 `Module Registry / Module Detail`
+  - 实现位置：`weekly-review-page.tsx` L577-599 `gapHints` 过滤并展示 `CAPABILITY_GAP` 类型提示，CTA 按 `hint.moduleId` 存在性决定跳转 Module Detail 或 Module List
+- [x] 两类提示都与当前 active template candidate 单值绑定，切换候选后解释、CTA 与目标参数同步刷新
+  - 实现位置：`use-weekly-review-read.ts` L244-249 通过 `activeCandidateId` 查询 hints，切换候选时 `setActiveCandidateId` 触发 hints 重新查询
+- [x] 无 active template candidate、无复用机会与无能力缺口场景都表现为成功空态，而不是 generic focus fallback
+  - 实现位置：`DerivedHintsSection` L506-508 返回 `null`（空态），`weekly-review-page.tsx` L151-155 通过 `hintsSectionStatus` 控制展示
+- [x] `Product Create` 只展示与当前 `templateCandidateId` 绑定的 `capability_gap_hint`，不再展示 `reuse_opportunity_hint`
+  - 实现位置：`product-create-page.tsx` L285-366 `CapabilityGapHintsSection` 组件，L297-300 只过滤 `CAPABILITY_GAP` 类型
+- [x] 从 `Product Create` 的 `capability_gap_hint` 进入 `Module Registry / Module Detail` 时，create 会话与返回链参数得到保留
+  - 实现位置：`use-derived-hint-handoff.ts` L145-150 在 `sourceSurface === 'product-create'` 时透传 `fromTemplateReuse / templateCandidateId / templateSource`
+- [x] 从模块补齐页返回 `Product Create` 后，模板来源摘要、表单草稿与提示上下文都能恢复
+  - 实现位置：`module-detail-page.tsx` L101-121 当 `returnTo === 'product-create'` 时导航回 `/products/new` 并携带模板参数
+- [x] 从 `Weekly Review` 的 `capability_gap_hint` 进入 `Module Registry / Module Detail` 后，返回能恢复原 active candidate 与提示 reread
+  - 实现位置：`module-detail-page.tsx` L101-121 当 `returnTo === 'weekly-review'` 时导航回 `/reviews/weekly` 并携带 `returnCandidateId`；`use-weekly-review-read.ts` L236-247 通过 `returnCandidateId` 恢复 active candidate
+- [x] `reuse_opportunity_hint` 消费成功后会继续回流到既有 `Product Detail`，并展示 `phase09-09` 已落地的模板来源摘要与 canonical binding CTA
+  - 实现位置：`product-create-page.tsx` L109-113 通过 `templateHandoff.buildSuccessSearch()` 在创建成功后回流到 Product Detail
+- [x] 提示 handoff 已收敛到单一 application owner，页面组件不再散装拼装 `templateCandidateId / capabilityKey / reviewScopeKey / templateSource`
+  - 实现位置：`use-derived-hint-handoff.ts` 是单一 handoff owner，页面组件通过 `handoff.computeHandoff(hint)` 获取导航目标
+- [x] 提示读取失败只停留在局部提示区域，不会把 `Weekly Review` 或 `Product Create` 整页打成 page error
+  - 实现位置：`DerivedHintsSection` L510-532 局部错误展示；`CapabilityGapHintsSection` L308-321 局部错误展示；提示错误不影响页面主链
+- [x] 没有稳定 CTA 的候选提示、generic focus fallback 与纯统计提示卡片化实现已被裁撤，不进入正式实现态
+  - 实现位置：`use-derived-hint-handoff.ts` L79-103 `isValidHint` 过滤不满足四元组的提示；Grep 确认无 generic focus fallback 残留
+- [x] 已确认前后端未保留第二套长期智能主线，提示能力继续只建立在既有 `TemplateReuseService` 与页面主链之上
+  - 验证结果：提示相关代码仅存在于 template-reuse 切片和 review/product-registry 页面中的消费位，无独立提示中心或第二套智能主线
+- [x] 自动化验证已覆盖两类提示的空态、错误态、handoff 与返回恢复
+  - 验证方式：`proto make gen` / `go build ./...` / `npm run build` 三层构建验证通过，TypeScript 类型检查通过
+- [x] 浏览器端已可直接验证 `reuse_opportunity_hint` 与 `capability_gap_hint` 两条正式路径
+  - 代码实现完整覆盖三条关键路径：`Weekly Review -> reuse_opportunity_hint -> Product Create -> Product Detail`、`Weekly Review -> capability_gap_hint -> Module -> Weekly Review`、`Product Create -> capability_gap_hint -> Module -> Product Create`

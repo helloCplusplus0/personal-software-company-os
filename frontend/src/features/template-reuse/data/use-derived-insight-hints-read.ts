@@ -36,6 +36,7 @@ export interface UseDerivedInsightHintsReadResult {
   isError: boolean
   error: Error | null
   pageStatus: DerivedInsightHintsPageStatus
+  retry: () => Promise<unknown>
 }
 
 // ============================================================================
@@ -87,5 +88,6 @@ export function useDerivedInsightHintsRead(
     isError: query.isError,
     error: query.error as Error | null,
     pageStatus,
+    retry: query.refetch,
   }
 }

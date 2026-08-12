@@ -16,6 +16,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { ProductStatus } from '@/features/product-registry/types'
+import { useProductCreateDraftStore } from '../stores/product-create-draft-store'
 
 // ============================================================================
 // 类型
@@ -42,20 +43,38 @@ export interface UseProductCreateFormStateResult {
   setStatus: (value: ProductStatus) => void
   isDirty: boolean
   buildSubmitInput: () => CreateProductSubmitInput
+  clearDraft: () => void
 }
 
 // ============================================================================
 // Hook
 // ============================================================================
 
+export interface UseProductCreateFormStateOptions {
+  initialValues?: FormStateInitialValues
+  draftKey?: string
+}
+
 export function useProductCreateFormState(
-  initialValues?: FormStateInitialValues,
+  options?: UseProductCreateFormStateOptions,
 ): UseProductCreateFormStateResult {
-  const [name, setNameValue] = useState<string>(initialValues?.name ?? '')
-  const [description, setDescriptionValue] = useState<string>(initialValues?.description ?? '')
-  const [status, setStatusValue] = useState<ProductStatus>(initialValues?.status ?? 'active')
+  const initialValues = options?.initialValues
+  const draftKey = options?.draftKey
+  const persistedDraft = useProductCreateDraftStore((state) =>
+    draftKey ? state.drafts[draftKey] : undefined,
+  )
+  const setDraft = useProductCreateDraftStore((state) => state.setDraft)
+  const clearStoredDraft = useProductCreateDraftStore((state) => state.clearDraft)
+  const [name, setNameValue] = useState<string>(persistedDraft?.name ?? initialValues?.name ?? '')
+  const [description, setDescriptionValue] = useState<string>(
+    persistedDraft?.description ?? initialValues?.description ?? '',
+  )
+  const [status, setStatusValue] = useState<ProductStatus>(
+    persistedDraft?.status ?? initialValues?.status ?? 'active',
+  )
   const hasUserEditedRef = useRef(false)
   const lastAppliedInitialValuesRef = useRef<string>('')
+  const lastHydratedDraftKeyRef = useRef<string>('')
 
   const initialValuesSignature = useMemo(
     () => JSON.stringify({
@@ -67,6 +86,14 @@ export function useProductCreateFormState(
   )
 
   useEffect(() => {
+    if (draftKey && persistedDraft && lastHydratedDraftKeyRef.current !== draftKey) {
+      setNameValue(persistedDraft.name)
+      setDescriptionValue(persistedDraft.description)
+      setStatusValue(persistedDraft.status)
+      lastHydratedDraftKeyRef.current = draftKey
+      lastAppliedInitialValuesRef.current = initialValuesSignature
+      return
+    }
     if (hasUserEditedRef.current) {
       return
     }
@@ -78,7 +105,22 @@ export function useProductCreateFormState(
     setDescriptionValue(initialValues?.description ?? '')
     setStatusValue(initialValues?.status ?? 'active')
     lastAppliedInitialValuesRef.current = initialValuesSignature
-  }, [initialValues?.description, initialValues?.name, initialValues?.status, initialValuesSignature])
+  }, [
+    draftKey,
+    initialValues?.description,
+    initialValues?.name,
+    initialValues?.status,
+    initialValuesSignature,
+    persistedDraft,
+  ])
+
+  useEffect(() => {
+    if (!draftKey) {
+      return
+    }
+
+    setDraft(draftKey, { name, description, status })
+  }, [description, draftKey, name, setDraft, status])
 
   const setName = useCallback((value: string) => {
     hasUserEditedRef.current = true
@@ -108,6 +150,14 @@ export function useProductCreateFormState(
     }
   }, [name, description, status])
 
+  const clearDraft = useCallback(() => {
+    if (!draftKey) {
+      return
+    }
+
+    clearStoredDraft(draftKey)
+  }, [clearStoredDraft, draftKey])
+
   return {
     name,
     description,
@@ -117,5 +167,6 @@ export function useProductCreateFormState(
     setStatus,
     isDirty,
     buildSubmitInput,
+    clearDraft,
   }
 }

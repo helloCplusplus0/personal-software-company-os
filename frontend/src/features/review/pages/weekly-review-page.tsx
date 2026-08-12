@@ -19,7 +19,7 @@
  *   - 不得直接 import 底层 canonical query hook
  *   - 不得在页面内直接 createClient()、createConnectTransport()、useMutation()
  */
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, useSearch } from '@tanstack/react-router'
 import { ReviewPageShell } from '../components/review-page-shell'
 import { ReviewActionFooter } from '../components/review-action-footer'
 import { useWeeklyReviewRead } from '../data/use-weekly-review-read'
@@ -30,14 +30,16 @@ import { RecentActivityItemCard } from '@/features/dashboard/components/recent-a
 import { ReuseSnapshotSection } from '@/features/dashboard/components/reuse-snapshot-section'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Layers, ArrowRight, LayoutTemplate } from 'lucide-react'
+import { Layers, ArrowRight, LayoutTemplate, Lightbulb, AlertCircle, ExternalLink } from 'lucide-react'
 import type { FeedbackSignal, RecentActivityItem, DashboardOverview } from '@/features/dashboard/types'
 import type {
   ModuleReuseSummaryEntry,
   CapabilitySummaryEntry,
 } from '@/features/reuse-summary/types'
 import type { ReviewActionInput } from '../application/review-action-types'
-import type { TemplateCandidateSummary } from '@/gen/proto/psco/template_reuse/v1/template_reuse_pb'
+import type { TemplateCandidateSummary, DerivedInsightHint } from '@/gen/proto/psco/template_reuse/v1/template_reuse_pb'
+import { DerivedInsightHintType } from '@/gen/proto/psco/template_reuse/v1/template_reuse_pb'
+import { useDerivedHintHandoff } from '@/features/template-reuse/application/use-derived-hint-handoff'
 import { toast } from 'sonner'
 
 const WEEKLY_REVIEW_ACTION_SECTIONS = {
@@ -50,8 +52,9 @@ const WEEKLY_REVIEW_ACTION_SECTIONS = {
 
 export function WeeklyReviewPage() {
   const navigate = useNavigate()
+  const search = useSearch({ from: '/reviews/weekly' })
   const navigateBack = useNavigateBackToDashboard()
-  const review = useWeeklyReviewRead()
+  const review = useWeeklyReviewRead((search as any).returnCandidateId)
   const action = useReviewAction()
 
   const handleBackToDashboard = () => {
@@ -122,7 +125,7 @@ export function WeeklyReviewPage() {
           onSubmitAction={handleSubmitAction}
           onReset={action.reset}
           reviewKind="weekly"
-            actionSections={WEEKLY_REVIEW_ACTION_SECTIONS}
+          actionSections={WEEKLY_REVIEW_ACTION_SECTIONS}
         />
       }
     >
@@ -144,6 +147,14 @@ export function WeeklyReviewPage() {
           onCreateProduct={handleNavigateToCreateFromTemplate}
         />
       </section>
+
+      {/* phase09-10 派生提示展示区 — 位于模板候选区与 Recent Activity 之间 */}
+      <DerivedHintsSection
+        hints={review.hints}
+        activeCandidateId={review.activeCandidateId}
+        hintsSectionStatus={review.pageState.hintsSectionStatus}
+        onRetry={review.retryHints}
+      />
 
       {/* Recent Activity 区块 — 复用 RecentActivityItemCard
           section="recent-activity"，跳转后回到 dashboard 的 recent-activity 区块 */}
@@ -170,16 +181,16 @@ export function WeeklyReviewPage() {
         <h2 className="text-base font-semibold">复用感知快照</h2>
         {/* ReuseSnapshotSection 内部已建立 loading/ready/empty/error 四态样式
             作为 review 顶层区块用 border bg-card 包裹，对齐 dashboard 紧凑列表的容器风格 */}
-          <div className="rounded-lg border bg-card p-3">
-            {/* 重试能力由 read owner 暴露，页面不直接触碰 queryClient / queryKey。 */}
-            <ReuseSnapshotSection
-              status={review.pageState.reuseSnapshotSectionStatus}
-              moduleReuseSummary={moduleReuseSummary}
-              capabilitySummary={capabilitySummary}
-              error={review.error}
-              onRetry={review.retry}
-            />
-          </div>
+        <div className="rounded-lg border bg-card p-3">
+          {/* 重试能力由 read owner 暴露，页面不直接触碰 queryClient / queryKey。 */}
+          <ReuseSnapshotSection
+            status={review.pageState.reuseSnapshotSectionStatus}
+            moduleReuseSummary={moduleReuseSummary}
+            capabilitySummary={capabilitySummary}
+            error={review.error}
+            onRetry={review.retry}
+          />
+        </div>
       </section>
     </ReviewPageShell>
   )
@@ -457,5 +468,141 @@ function TemplateCandidateSection({
         </div>
       )}
     </div>
+  )
+}
+
+// ============================================================================
+// Derived Hints Section — phase09-10 派生提示展示区
+// ============================================================================
+
+function DerivedHintsSection({
+  hints,
+  activeCandidateId,
+  hintsSectionStatus,
+  onRetry,
+}: {
+  hints: DerivedInsightHint[]
+  activeCandidateId: string
+  hintsSectionStatus: 'ready' | 'empty' | 'error'
+  onRetry: () => Promise<unknown>
+}) {
+  const navigate = useNavigate()
+
+  // 单一提示 handoff owner
+  const handoff = useDerivedHintHandoff({
+    sourceSurface: 'weekly-review',
+    activeCandidateId,
+    templateSource: 'weekly-review',
+  })
+
+  // 过滤出合法提示（四元组完整）
+  const validHints = hints.filter((h) => handoff.isValidHint(h))
+
+  // 按类型分组
+  const reuseHints = validHints.filter(
+    (h) => h.hintType === DerivedInsightHintType.REUSE_OPPORTUNITY,
+  )
+  const gapHints = validHints.filter(
+    (h) => h.hintType === DerivedInsightHintType.CAPABILITY_GAP,
+  )
+
+  if (hintsSectionStatus === 'error') {
+    return (
+      <section className="space-y-2" aria-label="Derived Hints">
+        <h2 className="text-base font-semibold">派生智能提示</h2>
+        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3">
+          <div className="flex items-start gap-2">
+            <AlertCircle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
+            <div>
+              <p className="text-xs text-destructive">提示数据加载失败，不影响其他功能</p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-2 h-7 px-2 text-xs"
+                onClick={() => {
+                  void onRetry()
+                }}
+              >
+                重试
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  // 无 active candidate 或无有效提示时退回成功空态
+  if (hintsSectionStatus === 'empty' || !activeCandidateId || validHints.length === 0) {
+    return null
+  }
+
+  const handleHintCTA = (hint: DerivedInsightHint) => {
+    const result = handoff.computeHandoff(hint)
+    if (!result) {
+      toast.error('无法处理该提示动作')
+      return
+    }
+    navigate({
+      to: result.to as any,
+      params: result.params as any,
+      search: result.search as any,
+    })
+  }
+
+  return (
+    <section className="space-y-2" aria-label="Derived Hints">
+      <h2 className="text-base font-semibold">派生智能提示</h2>
+
+      {/* 复用机会提示 */}
+      {reuseHints.map((hint) => (
+        <div
+          key={`reuse-${hint.templateCandidateId}`}
+          className="rounded-lg border border-emerald-200 bg-emerald-50/50 p-3"
+        >
+          <div className="flex items-start gap-2">
+            <Lightbulb className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" />
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium text-emerald-800">{hint.title}</p>
+              <p className="text-xs text-emerald-700 mt-0.5">{hint.explanationText}</p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-2 h-7 px-2 text-xs border-emerald-300 text-emerald-700 hover:bg-emerald-100"
+                onClick={() => handleHintCTA(hint)}
+              >
+                基于模板创建产品
+                <ExternalLink className="ml-1 h-3 w-3" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      ))}
+
+      {/* 能力缺口提示 */}
+      {gapHints.map((hint) => (
+        <div
+          key={`gap-${hint.templateCandidateId}-${hint.capabilityKey ?? ''}`}
+          className="rounded-lg border border-amber-200 bg-amber-50/50 p-3"
+        >
+          <div className="flex items-start gap-2">
+            <AlertCircle className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium text-amber-800">{hint.title}</p>
+              <p className="text-xs text-amber-700 mt-0.5">{hint.explanationText}</p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-2 h-7 px-2 text-xs border-amber-300 text-amber-700 hover:bg-amber-100"
+                onClick={() => handleHintCTA(hint)}
+              >
+                {hint.moduleId ? '查看模块详情' : '前往 Module Registry'}
+                <ExternalLink className="ml-1 h-3 w-3" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      ))}
+    </section>
   )
 }

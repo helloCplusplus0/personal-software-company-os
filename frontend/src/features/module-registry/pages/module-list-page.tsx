@@ -1,10 +1,10 @@
 import { useSearch, useNavigate, Link } from '@tanstack/react-router'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useModuleListRead } from '../data/use-module-list-read'
 import { ModuleListToolbar } from '../components/module-list-toolbar'
 import { ModuleListContent } from '../components/module-list-content'
 import { Button } from '@/components/ui/button'
-import { Plus } from 'lucide-react'
+import { Plus, ArrowLeft } from 'lucide-react'
 import { useModuleListSearchStore } from '../stores/module-list-search-store'
 import { BackToDashboardButton } from '@/features/dashboard/components/back-to-dashboard-button'
 import { mergeCurrentDashboardSource } from '@/features/dashboard/lib/dashboard-source'
@@ -36,6 +36,37 @@ export function ModuleListPage() {
 
   const isFiltered = Boolean(search.queryText) || (search.statusFilter !== 'all')
   const isEmpty = !isLoading && !isError && (data?.length ?? 0) === 0
+
+  // phase09-10 模板复用提示返回链
+  const fromTemplateReturn = (search as any).returnTo === 'weekly-review' || (search as any).returnTo === 'product-create'
+  const templateReturnLabel = (search as any).returnTo === 'weekly-review' ? '返回 Weekly Review' : '返回创建产品'
+
+  const handleTemplateReturn = useMemo(() => {
+    if (!fromTemplateReturn) return undefined
+    return () => {
+      const rs = (search as any).returnTo as string
+      const returnSearch: Record<string, unknown> = {}
+      if ((search as any).returnCandidateId) {
+        returnSearch.returnCandidateId = (search as any).returnCandidateId
+      }
+      if ((search as any).fromTemplateReuse) {
+        returnSearch.fromTemplateReuse = true
+        returnSearch.templateCandidateId = (search as any).templateCandidateId
+        returnSearch.templateSource = (search as any).templateSource
+      }
+      if ((search as any).fromDashboard) {
+        returnSearch.fromDashboard = true
+        returnSearch.dashboardSection = (search as any).dashboardSection
+        returnSearch.dashboardReturnTo = (search as any).dashboardReturnTo
+      }
+      if (rs === 'weekly-review') {
+        navigate({ to: '/reviews/weekly', search: returnSearch })
+      } else if (rs === 'product-create') {
+        navigate({ to: '/products/new', search: returnSearch })
+      }
+    }
+  }, [fromTemplateReturn, navigate, search])
+
   const detailSearch: Record<string, unknown> = mergeCurrentDashboardSource(
     {
       fromList: true,
@@ -44,12 +75,38 @@ export function ModuleListPage() {
     },
     search,
   ) as unknown as Record<string, unknown>
+
+  // phase09-10 模板返回链参数透传到 detail 页
+  if (fromTemplateReturn) {
+    detailSearch.returnTo = (search as any).returnTo
+    if ((search as any).returnCandidateId) detailSearch.returnCandidateId = (search as any).returnCandidateId
+    if ((search as any).fromTemplateReuse) {
+      detailSearch.fromTemplateReuse = true
+      detailSearch.templateCandidateId = (search as any).templateCandidateId
+      detailSearch.templateSource = (search as any).templateSource
+    }
+    if ((search as any).fromDashboard) {
+      detailSearch.fromDashboard = true
+      detailSearch.dashboardSection = (search as any).dashboardSection
+      detailSearch.dashboardReturnTo = (search as any).dashboardReturnTo
+    }
+  }
+
   const createSearch: Record<string, unknown> = mergeCurrentDashboardSource({}, search) as unknown as Record<string, unknown>
 
   return (
     <div className="space-y-4">
       {/* phase05-13：从 Dashboard 进入时展示"返回 Dashboard"按钮 */}
-      <BackToDashboardButton />
+      {/* phase09-10：模板复用提示返回链按钮 */}
+      <div className="flex items-center gap-2">
+        <BackToDashboardButton />
+        {fromTemplateReturn && handleTemplateReturn && (
+          <Button variant="ghost" size="sm" onClick={handleTemplateReturn}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            {templateReturnLabel}
+          </Button>
+        )}
+      </div>
 
       {/* 页面标题与创建入口 */}
       <div className="flex items-center justify-between">

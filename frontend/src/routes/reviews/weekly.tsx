@@ -17,6 +17,8 @@ import { WeeklyReviewPage } from '@/features/review/pages/weekly-review-page'
  */
 const weeklyReviewSearchSchema = z.object({
   ...dashboardSourceSearchSchema,
+  // phase09-10 模板复用提示返回链参数（用于 reread active candidate 恢复）
+  returnCandidateId: z.string().optional(),
 })
 
 export const Route = createFileRoute('/reviews/weekly')({

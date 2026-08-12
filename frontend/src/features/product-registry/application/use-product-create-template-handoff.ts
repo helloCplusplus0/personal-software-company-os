@@ -25,6 +25,7 @@ import {
   TemplateConsumerSurface,
 } from '@/gen/proto/psco/template_reuse/v1/template_reuse_pb'
 import { useTemplatePrefillRead } from '@/features/template-reuse/data/use-template-prefill-read'
+import type { DerivedInsightHint } from '@/gen/proto/psco/template_reuse/v1/template_reuse_pb'
 
 // ============================================================================
 // 搜索参数类型
@@ -60,6 +61,8 @@ export interface TemplateHandoffResult {
   templateSummary: TemplateSummary | undefined
   /** 表单预填初始值 */
   prefillInitialValues: { name: string; description: string }
+  /** Product Create 场景下由 prefill 内联返回的 capability gap hints */
+  capabilityGapHints: DerivedInsightHint[]
   /** 模板解析状态 */
   resolutionStatus: TemplateResolutionStatus
   /** 是否来自模板（fromTemplateReuse=true 且 templateCandidateId 非空） */
@@ -70,6 +73,10 @@ export interface TemplateHandoffResult {
   handleReturn: () => void
   /** 创建成功回流参数构建函数 */
   buildSuccessSearch: () => Record<string, unknown>
+  /** 模板预填的正式局部重试 */
+  retryPrefill: () => Promise<unknown>
+  /** Product Create 草稿恢复 key */
+  draftKey?: string
   /** 模板候选 ID（用于 Product Detail 回流） */
   templateCandidateId: string
   /** 模板来源（用于 Product Detail 回流） */
@@ -161,6 +168,19 @@ export function useProductCreateTemplateHandoff(
     }
   }, [isFromTemplate, resolutionStatus, prefillQuery.prefill])
 
+  const capabilityGapHints = useMemo(
+    () => prefillQuery.prefill?.capabilityGapHints ?? [],
+    [prefillQuery.prefill],
+  )
+
+  const draftKey = useMemo(() => {
+    if (!isFromTemplate) {
+      return undefined
+    }
+
+    return ['template-create', templateCandidateId, templateSource].join(':')
+  }, [isFromTemplate, templateCandidateId, templateSource])
+
   const templateSourceLabel = useMemo(
     () => TEMPLATE_SOURCE_LABELS[templateSource] ?? templateSource,
     [templateSource],
@@ -207,11 +227,14 @@ export function useProductCreateTemplateHandoff(
   return {
     templateSummary,
     prefillInitialValues,
+    capabilityGapHints,
     resolutionStatus,
     isFromTemplate,
     templateSourceLabel,
     handleReturn,
     buildSuccessSearch,
+    retryPrefill: prefillQuery.retry,
+    draftKey,
     templateCandidateId,
     templateSource,
   }

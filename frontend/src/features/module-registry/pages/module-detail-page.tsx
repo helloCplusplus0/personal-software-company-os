@@ -41,18 +41,42 @@ export function ModuleDetailPage() {
   const lastSearch = useModuleListSearchStore((s) => s.lastSearch)
   // phase06-15 §"detail 页来源优先级"：fromOnboarding 优先级高于其他来源
   const fromOnboarding = shouldReturnToOnboarding(detailSearch)
-  const returnLabel = fromOnboarding ? '返回首轮录入' : '返回列表'
+  // phase09-10 模板复用提示返回链：returnTo 优先级高于 fromList
+  const fromTemplateReturn = (detailSearch as any).returnTo === 'weekly-review' || (detailSearch as any).returnTo === 'product-create'
+  const returnLabel = fromOnboarding
+    ? '返回首轮录入'
+    : fromTemplateReturn
+      ? ((detailSearch as any).returnTo === 'weekly-review' ? '返回 Weekly Review' : '返回创建产品')
+      : '返回列表'
   const returnSearch = fromOnboarding
     ? (buildOnboardingReturnSearch(detailSearch) as Record<string, unknown>)
-    : (mergeCurrentDashboardSource(
-        detailSearch.fromList
-          ? {
-              queryText: detailSearch.queryText,
-              statusFilter: detailSearch.statusFilter ?? 'all',
-            }
-          : lastSearch,
-        detailSearch,
-      ) as unknown as Record<string, unknown>)
+    : fromTemplateReturn
+      ? ((): Record<string, unknown> => {
+          const s: Record<string, unknown> = {}
+          if ((detailSearch as any).returnCandidateId) {
+            s.returnCandidateId = (detailSearch as any).returnCandidateId
+          }
+          if ((detailSearch as any).fromTemplateReuse) {
+            s.fromTemplateReuse = true
+            s.templateCandidateId = (detailSearch as any).templateCandidateId
+            s.templateSource = (detailSearch as any).templateSource
+          }
+          if ((detailSearch as any).fromDashboard) {
+            s.fromDashboard = true
+            s.dashboardSection = (detailSearch as any).dashboardSection
+            s.dashboardReturnTo = (detailSearch as any).dashboardReturnTo
+          }
+          return s
+        })()
+      : (mergeCurrentDashboardSource(
+          detailSearch.fromList
+            ? {
+                queryText: detailSearch.queryText,
+                statusFilter: detailSearch.statusFilter ?? 'all',
+              }
+            : lastSearch,
+          detailSearch,
+        ) as unknown as Record<string, unknown>)
 
   const { data, isLoading, isError, error } = useModuleDetailRead(moduleId)
 
@@ -74,10 +98,25 @@ export function ModuleDetailPage() {
         : 'ready'
 
   // phase06-15：返回按钮统一通过 handleReturn 承接，支持 fromOnboarding 优先级
+  // phase09-10：模板复用提示返回链（returnTo=weekly-review/product-create）优先级高于 fromList
   const handleReturn = () => {
     if (fromOnboarding) {
       navigate({ to: '/onboarding', search: buildOnboardingReturnSearch(detailSearch) })
       return
+    }
+    if (fromTemplateReturn) {
+      const rs = (detailSearch as any).returnTo as string
+      if (rs === 'weekly-review') {
+        navigate({ to: '/reviews/weekly', search: returnSearch })
+        return
+      }
+      if (rs === 'product-create') {
+        navigate({
+          to: '/products/new',
+          search: returnSearch,
+        })
+        return
+      }
     }
     navigate({ to: '/modules', search: returnSearch })
   }

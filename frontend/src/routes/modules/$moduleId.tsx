@@ -18,6 +18,12 @@ const moduleDetailSearchSchema = z.object({
   ...dashboardSourceSearchSchema,
   // phase06-15 Onboarding 来源参数
   ...onboardingSourceSearchSchema,
+  // phase09-10 模板复用提示返回链参数
+  returnTo: z.enum(['weekly-review', 'product-create']).optional(),
+  returnCandidateId: z.string().optional(),
+  fromTemplateReuse: z.boolean().optional(),
+  templateCandidateId: z.string().optional(),
+  templateSource: z.string().optional(),
 })
 
 export const Route = createFileRoute('/modules/$moduleId')({

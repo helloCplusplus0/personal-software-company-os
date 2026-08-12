@@ -6,9 +6,12 @@ import { useProductCreateTemplateHandoff } from '../application/use-product-crea
 import type { CreateProductInput } from '../types'
 import { ProductCreateForm } from '../components/product-create-form'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, AlertTriangle, RefreshCw } from 'lucide-react'
+import { ArrowLeft, AlertTriangle, RefreshCw, AlertCircle, ExternalLink } from 'lucide-react'
 import { BackToDashboardButton } from '@/features/dashboard/components/back-to-dashboard-button'
 import { useDashboardBackButton } from '@/features/dashboard/lib/dashboard-source'
+import { useDerivedHintHandoff } from '@/features/template-reuse/application/use-derived-hint-handoff'
+import { DerivedInsightHintType } from '@/gen/proto/psco/template_reuse/v1/template_reuse_pb'
+import type { DerivedInsightHint } from '@/gen/proto/psco/template_reuse/v1/template_reuse_pb'
 
 /**
  * ProductCreatePage — Product Create
@@ -48,8 +51,23 @@ export function ProductCreatePage() {
     dashboardReturnTo: (search as any).dashboardReturnTo,
   })
 
+  // phase09-10：单一提示 handoff owner
+  const hintHandoff = useDerivedHintHandoff({
+    sourceSurface: 'product-create',
+    activeCandidateId: templateHandoff.templateCandidateId,
+    fromTemplateReuse: templateHandoff.isFromTemplate,
+    templateCandidateId: templateHandoff.templateCandidateId,
+    templateSource: templateHandoff.templateSource,
+    fromDashboard: (search as any).fromDashboard as boolean | undefined,
+    dashboardSection: (search as any).dashboardSection as string | undefined,
+    dashboardReturnTo: (search as any).dashboardReturnTo as string | undefined,
+  })
+
   // phase09-09：正式 form state owner，接受模板预填初始值
-  const formState = useProductCreateFormState(templateHandoff.prefillInitialValues)
+  const formState = useProductCreateFormState({
+    initialValues: templateHandoff.prefillInitialValues,
+    draftKey: templateHandoff.draftKey,
+  })
 
   // phase04-06 来源上下文单值判定
   const fromList = search.fromList === true
@@ -62,6 +80,7 @@ export function ProductCreatePage() {
 
   // phase09-09 取消返回路径 — 模板来源优先
   const handleReturn = () => {
+    formState.clearDraft()
     if (templateHandoff.isFromTemplate) {
       templateHandoff.handleReturn()
       return
@@ -102,6 +121,7 @@ export function ProductCreatePage() {
     mutation.mutate(submitInput, {
       onSuccess: (response) => {
         toast.success('产品创建成功')
+        formState.clearDraft()
 
         const detailSearch: Record<string, unknown> = {}
 
@@ -185,6 +205,14 @@ export function ProductCreatePage() {
         </div>
       )}
 
+      {/* phase09-10 capability_gap_hint 解释性延续 — 仅展示与当前 templateCandidateId 绑定的能力缺口 */}
+      {templateHandoff.isFromTemplate && templateHandoff.resolutionStatus !== 'error' && (
+        <CapabilityGapHintsSection
+          hints={templateHandoff.capabilityGapHints}
+          handoff={hintHandoff}
+        />
+      )}
+
       {/* phase09-09 模板 unavailable 成功态 */}
       {templateHandoff.isFromTemplate && templateHandoff.resolutionStatus === 'unavailable' && (
         <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm">
@@ -211,7 +239,9 @@ export function ProductCreatePage() {
               variant="outline"
               size="sm"
               className="mt-2 h-7 px-2 text-xs"
-              onClick={() => window.location.reload()}
+              onClick={() => {
+                void templateHandoff.retryPrefill()
+              }}
             >
               <RefreshCw className="mr-1 h-3 w-3" />
               重试
@@ -241,6 +271,76 @@ export function ProductCreatePage() {
         submitError={mutation.isError ? (mutation.error as Error).message : undefined}
         isDirty={formState.isDirty}
       />
+    </div>
+  )
+}
+
+// ============================================================================
+// CapabilityGapHintsSection — phase09-10 Product Create 能力缺口提示区
+// ============================================================================
+
+function CapabilityGapHintsSection({
+  hints,
+  handoff,
+}: {
+  hints: DerivedInsightHint[]
+  handoff: ReturnType<typeof useDerivedHintHandoff>
+}) {
+  const navigate = useNavigate()
+
+  // 只展示 capability_gap_hint，不展示 reuse_opportunity_hint
+  const gapHints = hints.filter(
+    (h) =>
+      h.hintType === DerivedInsightHintType.CAPABILITY_GAP &&
+      handoff.isValidHint(h),
+  )
+
+  // 无有效缺口提示时退回成功空态
+  if (gapHints.length === 0) {
+    return null
+  }
+
+  const handleHintCTA = (hint: DerivedInsightHint) => {
+    const result = handoff.computeHandoff(hint)
+    if (!result) {
+      toast.error('无法处理该提示动作')
+      return
+    }
+    navigate({
+      to: result.to as any,
+      params: result.params as any,
+      search: result.search as any,
+    })
+  }
+
+  return (
+    <div className="space-y-2">
+      <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+        能力缺口
+      </h3>
+      {gapHints.map((hint) => (
+        <div
+          key={`gap-${hint.templateCandidateId}-${hint.capabilityKey ?? ''}`}
+          className="rounded-lg border border-amber-200 bg-amber-50/50 p-3"
+        >
+          <div className="flex items-start gap-2">
+            <AlertCircle className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium text-amber-800">{hint.title}</p>
+              <p className="text-xs text-amber-700 mt-0.5">{hint.explanationText}</p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-2 h-7 px-2 text-xs border-amber-300 text-amber-700 hover:bg-amber-100"
+                onClick={() => handleHintCTA(hint)}
+              >
+                {hint.moduleId ? '查看模块详情' : '前往 Module Registry'}
+                <ExternalLink className="ml-1 h-3 w-3" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   )
 }

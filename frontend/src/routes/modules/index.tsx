@@ -23,6 +23,12 @@ const moduleListSearchSchema = z.object({
   statusFilter: z.enum(['all', 'active', 'archived']).catch('all').default('all'),
   // phase05-13 Dashboard 来源参数
   ...dashboardSourceSearchSchema,
+  // phase09-10 模板复用提示返回链参数
+  returnTo: z.enum(['weekly-review', 'product-create']).optional(),
+  returnCandidateId: z.string().optional(),
+  fromTemplateReuse: z.boolean().optional(),
+  templateCandidateId: z.string().optional(),
+  templateSource: z.string().optional(),
 })
 
 export const Route = createFileRoute('/modules/')({
