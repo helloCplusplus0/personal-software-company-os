@@ -62,6 +62,9 @@ import (
 	reviewconnect "github.com/psco/backend/internal/review/connect"
 	reviewrepo "github.com/psco/backend/internal/review/repository"
 	reviewservice "github.com/psco/backend/internal/review/service"
+	templatereusecandidate "github.com/psco/backend/internal/templatereuse/candidate"
+	templatereuseconnect "github.com/psco/backend/internal/templatereuse/connect"
+	templatereuseservice "github.com/psco/backend/internal/templatereuse/service"
 
 	// generated Connect handler constructors
 	backupv1connect "github.com/psco/backend/internal/gen/connect/psco/backup/v1/backupv1connect"
@@ -74,6 +77,7 @@ import (
 	repositorybindingv1connect "github.com/psco/backend/internal/gen/connect/psco/repository_binding/v1/repository_bindingv1connect"
 	reusesummaryv1connect "github.com/psco/backend/internal/gen/connect/psco/reuse_summary/v1/reuse_summaryv1connect"
 	reviewv1connect "github.com/psco/backend/internal/gen/connect/psco/review/v1/reviewv1connect"
+	templatereusev1connect "github.com/psco/backend/internal/gen/connect/psco/template_reuse/v1/template_reusev1connect"
 )
 
 // ============================================================================
@@ -265,6 +269,17 @@ func mountReviewConnect(r chi.Router, querySvc *reviewservice.QueryService, comm
 	r.Handle(path+"*", http.StripPrefix("/api", handler))
 }
 
+// mountTemplateReuseConnect 把 Template Reuse 的 canonical Connect handler 挂到 /api 下。
+//
+// phase09-08 新增：
+//   - 模板候选读取、模板预填、派生提示与模板来源复读四类只读能力通过本 handler 承接
+//   - TemplateReuseService 是模板读能力的唯一 canonical transport owner
+func mountTemplateReuseConnect(r chi.Router, querySvc *templatereuseservice.QueryService) {
+	connectSvc := templatereuseconnect.NewServer(querySvc)
+	path, handler := templatereusev1connect.NewTemplateReuseServiceHandler(connectSvc)
+	r.Handle(path+"*", http.StripPrefix("/api", handler))
+}
+
 // ============================================================================
 // phase06 模块构造器
 // ============================================================================
@@ -325,6 +340,16 @@ func buildReview(pool *pgxpool.Pool, dashboardQuerySvc *dashboardservice.QuerySe
 	querySvc := reviewservice.NewQueryService(dashboardQuerySvc, decisionCenterQuerySvc, reuseSummaryQuerySvc)
 	commandSvc := reviewservice.NewCommandService(reviewRecordStore)
 	return querySvc, commandSvc
+}
+
+// buildTemplateReuse 构造 Template Reuse 的 QueryService 并返回。
+//
+// phase09-08 新增：
+//   - 模板候选、模板预填、派生提示与模板来源复读四类只读能力
+//   - 数据从 product_modules 已持久化事实读时派生，不新增快照表
+func buildTemplateReuse(pool *pgxpool.Pool, reuseSummaryQuerySvc *reusesummaryservice.QueryService) *templatereuseservice.QueryService {
+	candidateReaders := templatereusecandidate.NewTemplateCandidateReaders(pool)
+	return templatereuseservice.NewQueryService(candidateReaders, reuseSummaryQuerySvc)
 }
 
 // ============================================================================

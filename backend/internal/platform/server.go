@@ -26,11 +26,11 @@ type Server struct {
 // NewServer 装配并返回 Server。
 //
 // phase07-11 装配顺序（Connect handler 主线，compat 已退场）：
-	//  1. 应用基础中间件（RequestID / Logger / Recoverer / CORS）
-	//  2. 注册健康检查端点
-	//  3. 构造 Product Registry / Repository Binding 的 service 层
-	//  4. 通过 mount*Connect 把各业务模块的 canonical Connect handler 挂到 /api 下
-	//  5. 构造 http.Server
+//  1. 应用基础中间件（RequestID / Logger / Recoverer / CORS）
+//  2. 注册健康检查端点
+//  3. 构造 Product Registry / Repository Binding 的 service 层
+//  4. 通过 mount*Connect 把各业务模块的 canonical Connect handler 挂到 /api 下
+//  5. 构造 http.Server
 func NewServer(cfg Config, pool *pgxpool.Pool) *Server {
 	r := chi.NewRouter()
 
@@ -82,6 +82,10 @@ func NewServer(cfg Config, pool *pgxpool.Pool) *Server {
 		dcQuerySvc, _ := buildDecisionCenter(pool)
 		reviewQuerySvc, reviewCommandSvc := buildReview(pool, dashboardQuerySvc, dcQuerySvc, reuseSummaryQuerySvc)
 		mountReviewConnect(r, reviewQuerySvc, reviewCommandSvc)
+
+		// phase09 template reuse 模块：模板候选读取、模板预填、派生提示与模板来源复读
+		templateReuseQuerySvc := buildTemplateReuse(pool, reuseSummaryQuerySvc)
+		mountTemplateReuseConnect(r, templateReuseQuerySvc)
 	})
 
 	return &Server{

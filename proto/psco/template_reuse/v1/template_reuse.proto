@@ -1,0 +1,250 @@
+// PSCO Template Reuse 最小 Protocol Buffers 合同源
+//
+// 文档定位：本文件是 Template Reuse 当前阶段唯一合同定义入口（phase09-08 落地）。
+// 上游规格：
+//   - phase09-04 冻结本阶段合同、读模型、owner 与候选数据源边界 Spec
+//   - phase09-07 产出后端服务、合同与最小数据承接设计 Spec
+//   - phase09-08 落实支撑能力相关合同、后端承接与前端 read owner Spec
+//
+// 落点要求：
+//   - 本文件落地到现有 proto/ 工作区，复用同一 buf workspace
+//   - 不新增第二套 buf.yaml / buf.gen.yaml / Makefile 或并列 proto 根目录
+//   - 与 Review / Dashboard / Decision Center / Reuse Summary / Module Registry /
+//     Product Registry / Repository Binding 在同一个 buf workspace 内共同通过校验
+//
+// 合同边界（对齐 phase09-04 / phase09-07）：
+//   - TemplateReuseService 只承接模板候选读取、模板预填、派生提示与模板来源复读
+//   - 当前阶段不得新增 CreateProductFromTemplate、ApplyTemplateToProduct 或等价模板写 RPC
+//   - 模板候选数据源只从 product_modules 已持久化事实读时派生
+//   - 不得新增模板快照表、候选缓存表或预填持久化记录
+//
+// 字段编号规则：
+//   - 每个字段拥有稳定编号，不得复用已删除字段编号或字段语义
+//   - 新增字段必须使用新的递增编号，不得插入到已有编号之间
+//
+// 生成入口：
+//   在 proto/ 目录执行 make gen，或直接执行 buf generate。
+//   生成产物：
+//     - Go:    backend/internal/gen/proto/psco/template_reuse/v1/
+//     - Go Connect: backend/internal/gen/connect/psco/template_reuse/v1/
+//     - TS:    frontend/src/gen/proto/psco/template_reuse/v1/
+
+syntax = "proto3";
+
+package psco.template_reuse.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// Go 包路径（生成代码落点）
+option go_package = "github.com/psco/backend/internal/gen/proto/psco/template_reuse/v1;templatereusev1";
+
+// ============================================================================
+// 枚举
+// ============================================================================
+
+// TemplateResolutionStatus — 模板解析状态，对齐 phase09-07 冻结的 RESOLVED / UNAVAILABLE 双态。
+// UNSPECIFIED 表示未指定，不得作为合法业务值。
+// RESOLVED 表示模板候选可被成功解析。
+// UNAVAILABLE 表示 templateCandidateId 因底层事实变化无法再被当前系统重新解析。
+enum TemplateResolutionStatus {
+  TEMPLATE_RESOLUTION_STATUS_UNSPECIFIED = 0;
+  TEMPLATE_RESOLUTION_STATUS_RESOLVED = 1;
+  TEMPLATE_RESOLUTION_STATUS_UNAVAILABLE = 2;
+}
+
+// DerivedInsightHintType — 派生提示类型，对齐 phase09-03 冻结的两类正式提示。
+// UNSPECIFIED 表示未指定，不得作为合法业务值。
+enum DerivedInsightHintType {
+  DERIVED_INSIGHT_HINT_TYPE_UNSPECIFIED = 0;
+  DERIVED_INSIGHT_HINT_TYPE_REUSE_OPPORTUNITY = 1;
+  DERIVED_INSIGHT_HINT_TYPE_CAPABILITY_GAP = 2;
+}
+
+// TemplateSource — 模板来源枚举，对齐 phase09-02 冻结的模板来源参数。
+// UNSPECIFIED 表示未指定，不得作为合法业务值。
+enum TemplateSource {
+  TEMPLATE_SOURCE_UNSPECIFIED = 0;
+  TEMPLATE_SOURCE_WEEKLY_REVIEW = 1;
+  TEMPLATE_SOURCE_DASHBOARD = 2;
+  TEMPLATE_SOURCE_PRODUCT_DETAIL = 3;
+}
+
+// TemplateConsumerSurface — 模板消费面枚举，对齐 phase09-07 冻结的 consumer_surface 语义。
+// UNSPECIFIED 表示未指定，不得作为合法业务值。
+enum TemplateConsumerSurface {
+  TEMPLATE_CONSUMER_SURFACE_UNSPECIFIED = 0;
+  TEMPLATE_CONSUMER_SURFACE_WEEKLY_REVIEW = 1;
+  TEMPLATE_CONSUMER_SURFACE_PRODUCT_CREATE = 2;
+  TEMPLATE_CONSUMER_SURFACE_PRODUCT_DETAIL = 3;
+}
+
+// CTAKind — 派生提示的 CTA 动作类型，对齐 phase09-03 冻结的 CTA 语义。
+// 只表达既有 canonical 动作，不返回任意页面 URL。
+// UNSPECIFIED 表示未指定，不得作为合法业务值。
+enum CTAKind {
+  CTA_KIND_UNSPECIFIED = 0;
+  CTA_KIND_CREATE_PRODUCT_FROM_TEMPLATE = 1;
+  CTA_KIND_GO_TO_MODULE_DETAIL = 2;
+  CTA_KIND_GO_TO_PRODUCT_DETAIL = 3;
+}
+
+// ============================================================================
+// 模板候选列表消息
+// ============================================================================
+
+// ListTemplateCandidatesRequest — 模板候选列表读取请求，对齐 phase09-07 已冻结的 request 合同。
+// consumer_surface 当前阶段只允许正式取值 WEEKLY_REVIEW。
+message ListTemplateCandidatesRequest {
+  TemplateConsumerSurface consumer_surface = 1;
+}
+
+// TemplateModuleRef — 模板候选内的模块组合摘要，对齐 phase09-04 已冻结的最小字段。
+message TemplateModuleRef {
+  string module_id = 1;
+  string module_name = 2;
+  string capability_key = 3;
+  string capability_label = 4;
+}
+
+// TemplateCandidateSummary — 模板候选摘要，对齐 phase09-04 已冻结的最小字段。
+message TemplateCandidateSummary {
+  string template_candidate_id = 1;
+  string template_title = 2;
+  string template_description = 3;
+  repeated TemplateModuleRef modules = 4;
+  int32 source_product_count = 5;
+  int32 total_reuse_product_count = 6;
+  google.protobuf.Timestamp latest_source_product_updated_at = 7;
+}
+
+// ListTemplateCandidatesResponse — 模板候选列表读取响应，对齐 phase09-07 已冻结的 response 合同。
+message ListTemplateCandidatesResponse {
+  repeated TemplateCandidateSummary candidates = 1;
+  string default_active_candidate_id = 2;
+}
+
+// ============================================================================
+// 模板预填详情消息
+// ============================================================================
+
+// GetTemplateCandidatePrefillRequest — 模板预填详情读取请求，对齐 phase09-07 已冻结的 request 合同。
+// consumer_surface 当前阶段只允许正式取值 PRODUCT_CREATE。
+message GetTemplateCandidatePrefillRequest {
+  string template_candidate_id = 1;
+  TemplateConsumerSurface consumer_surface = 2;
+}
+
+// TemplateCandidatePrefill — 模板预填详情，对齐 phase09-04 已冻结的最小字段。
+// 包含 Product Create 表单的预填建议与当前候选下的 capability_gap_hints。
+message TemplateCandidatePrefill {
+  string template_candidate_id = 1;
+  TemplateResolutionStatus resolution_status = 2;
+  string unavailable_reason_text = 3;
+  string template_title = 4;
+  string template_description = 5;
+  string suggested_product_name = 6;
+  string suggested_product_description = 7;
+  repeated TemplateModuleRef modules = 8;
+  repeated DerivedInsightHint capability_gap_hints = 9;
+}
+
+// GetTemplateCandidatePrefillResponse — 模板预填详情读取响应。
+message GetTemplateCandidatePrefillResponse {
+  TemplateCandidatePrefill prefill = 1;
+}
+
+// ============================================================================
+// 派生提示消息
+// ============================================================================
+
+// GetDerivedInsightHintsRequest — 派生提示读取请求，对齐 phase09-07 已冻结的 request 合同。
+// review_scope_key 在 consumer_surface = WEEKLY_REVIEW 时必须为必填。
+// review_scope_key 在 consumer_surface = PRODUCT_CREATE 时必须为空字符串。
+message GetDerivedInsightHintsRequest {
+  string template_candidate_id = 1;
+  TemplateConsumerSurface consumer_surface = 2;
+  string review_scope_key = 3;
+}
+
+// DerivedInsightHint — 派生提示，对齐 phase09-04 已冻结的最小字段。
+// hint_type 只允许 REUSE_OPPORTUNITY / CAPABILITY_GAP。
+// cta_kind 只允许表达既有 canonical 动作，不得返回任意页面 URL。
+message DerivedInsightHint {
+  DerivedInsightHintType hint_type = 1;
+  string title = 2;
+  string explanation_text = 3;
+  CTAKind cta_kind = 4;
+  string template_candidate_id = 5;
+  optional string capability_key = 6;
+  optional string module_id = 7;
+}
+
+// GetDerivedInsightHintsResponse — 派生提示读取响应，对齐 phase09-07 已冻结的 response 合同。
+message GetDerivedInsightHintsResponse {
+  TemplateResolutionStatus resolution_status = 1;
+  string unavailable_reason_text = 2;
+  repeated DerivedInsightHint hints = 3;
+}
+
+// ============================================================================
+// 模板来源复读消息
+// ============================================================================
+
+// GetTemplateSourceSummaryRequest — 模板来源复读请求，对齐 phase09-07 已冻结的 request 合同。
+// consumer_surface 当前阶段只允许正式取值 PRODUCT_DETAIL。
+message GetTemplateSourceSummaryRequest {
+  string template_candidate_id = 1;
+  TemplateSource template_source = 2;
+  TemplateConsumerSurface consumer_surface = 3;
+}
+
+// TemplateSourceSummary — 模板来源摘要，对齐 phase09-04 已冻结的最小字段。
+// 用于 Product Detail 页面的模板来源复读展示。
+message TemplateSourceSummary {
+  string template_candidate_id = 1;
+  TemplateResolutionStatus resolution_status = 2;
+  string unavailable_reason_text = 3;
+  string template_title = 4;
+  string template_description = 5;
+  repeated TemplateModuleRef modules = 6;
+  TemplateSource template_source = 7;
+}
+
+// GetTemplateSourceSummaryResponse — 模板来源复读响应。
+message GetTemplateSourceSummaryResponse {
+  TemplateSourceSummary source_summary = 1;
+}
+
+// ============================================================================
+// 服务接口
+// ============================================================================
+
+// TemplateReuseService — Template Reuse 当前阶段完整动作矩阵的 RPC 合同。
+//
+// 接口分组（对齐 phase09-07）：
+//   - 读组：ListTemplateCandidates / GetTemplateCandidatePrefill /
+//           GetDerivedInsightHints / GetTemplateSourceSummary
+//
+// 当前阶段不得新增 CreateProductFromTemplate、ApplyTemplateToProduct 或等价模板写 RPC。
+//
+// 错误语义：
+//   合同只承接成功路径下的合同结构，不并列发明第二套错误业务字段。
+//   对于 templateCandidateId 漂移一类可恢复场景，必须返回成功 envelope 中的 UNAVAILABLE，
+//   而不是 transport error。
+//   空结果（空 candidates[]、空 hints[]）必须表现为正常空列表响应，不得设计为空错误。
+//   Connect 错误码映射继续由 connecterrors.MapToConnectError 负责。
+service TemplateReuseService {
+  // --- 读组 ---
+
+  // ListTemplateCandidates — 模板候选列表读取
+  rpc ListTemplateCandidates(ListTemplateCandidatesRequest) returns (ListTemplateCandidatesResponse);
+
+  // GetTemplateCandidatePrefill — 模板预填详情读取
+  rpc GetTemplateCandidatePrefill(GetTemplateCandidatePrefillRequest) returns (GetTemplateCandidatePrefillResponse);
+
+  // GetDerivedInsightHints — 派生提示读取
+  rpc GetDerivedInsightHints(GetDerivedInsightHintsRequest) returns (GetDerivedInsightHintsResponse);
+
+  // GetTemplateSourceSummary — 模板来源复读
+  rpc GetTemplateSourceSummary(GetTemplateSourceSummaryRequest) returns (GetTemplateSourceSummaryResponse);
+}

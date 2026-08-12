@@ -1,0 +1,21 @@
+- [x] `proto/psco/template_reuse/v1/template_reuse.proto` 已真实存在，并与 `phase09-07` 已冻结的四个读取 RPC 合同一致
+- [x] Go proto、Go Connect 与前端 TypeScript 生成产物已通过现有 `buf` 主线生成
+- [x] `backend/internal/templatereuse/service/query_service.go` 已真实存在
+- [x] `backend/internal/templatereuse/candidate/template_candidate_readers.go` 已真实存在
+- [x] `backend/internal/templatereuse/connect/server.go` 已真实存在
+- [x] `backend/internal/platform/router.go` 已完成 `TemplateReuseService` 的正式挂载
+- [x] 后端已按规格落实 `RESOLVED / UNAVAILABLE` 成功态，未引入模板写 RPC 或快照持久化
+- [x] `frontend/src/features/template-reuse/data/connect-client.ts` 已真实存在
+- [x] `frontend/src/features/template-reuse/data/template-reuse-query-options.ts` 已真实存在
+- [x] 四个 template reuse read owner 已真实存在，并与四个 RPC 形成一对一映射
+- [x] 前端 template reuse read owner 只承接 queryKey、只读请求、响应解包与 `empty / unavailable / error` 派生
+- [x] `Weekly Review / Product Create / Product Detail` 没有直接接 generated client 或底层 template reuse query
+- [x] `review/data` 与 `product-registry/data` 没有成为 template reuse 的过渡 read 宿主
+- [x] 本阶段没有提前实现模板 handoff、提示展示主链、create 回流或 `Product Detail` 来源摘要展示
+- [x] `(cd proto && make build && make gen && make lint)` 已通过
+- [x] `(cd proto && make breaking)` 已执行或已记录无基准分支的原因
+- [x] `(cd backend && go build ./...)` 已通过
+- [x] `(cd frontend && npm run build)` 已通过
+- [x] 四个 `TemplateReuseService` RPC 的最小 API smoke 已通过
+- [x] API smoke 已覆盖至少一种 `UNAVAILABLE` 成功态
+- [x] 已确认前后端具备进入模板候选与提示消费的正式承接位，且本阶段不以页面级临时拼装作为长期稳态

@@ -28,6 +28,7 @@ import (
 	"github.com/psco/backend/internal/productregistry"
 	"github.com/psco/backend/internal/repositorybinding"
 	"github.com/psco/backend/internal/reusesummary"
+	"github.com/psco/backend/internal/templatereuse"
 )
 
 // MapToConnectError 将 domain error 映射为 Connect error。
@@ -81,6 +82,7 @@ func MapToConnectError(err error) *connect.Error {
 		repositorybinding.ErrInvalidInput,
 		repositorybinding.ErrInvalidStatus,
 		reusesummary.ErrInvalidScope,
+		templatereuse.ErrInvalidInput,
 	) {
 		return connect.NewError(connect.CodeInvalidArgument, err)
 	}
