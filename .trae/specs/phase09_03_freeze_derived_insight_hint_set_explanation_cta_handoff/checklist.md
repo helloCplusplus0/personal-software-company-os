@@ -1,0 +1,12 @@
+- [x] 已明确当前阶段正式提示只允许包含 `reuse_opportunity_hint` 与 `capability_gap_hint`
+- [x] 已明确 `reuse_opportunity_hint` 的事实来源、触发条件、解释文案、CTA 与 target owner
+- [x] 已明确 `reuse_opportunity_hint` 在无可用模板机会时返回成功空态
+- [x] 已明确 `capability_gap_hint` 的事实来源、触发条件、解释文案、CTA 与 target owner
+- [x] 已明确 `capability_gap_hint` 依赖 active template candidate，且无 active candidate 时返回成功空态
+- [x] 已明确 `Product Create` 中 `capability_gap_hint` 的模板上下文来自 `templateCandidateId` 对应的 selected template candidate
+- [x] 已明确所有正式提示都必须满足 `trigger -> explanation -> CTA -> target owner` 四元组
+- [x] 已明确没有稳定 canonical CTA 的提示不得进入 `phase09` 正式范围
+- [x] 已明确 `Weekly Review` 是提示的主要诊断入口，`Product Create` 只消费与已选模板相关的解释性提示
+- [x] 已明确 `Product Create` 当前阶段只允许承接 `capability_gap_hint`
+- [x] 已明确提示只能对接既有 `Product Create`、`Module Registry / Module Detail` 等 canonical 动作链
+- [x] 已确认本规格未越权冻结 `phase09-04` 的合同字段、caller 清单或 owner inventory
