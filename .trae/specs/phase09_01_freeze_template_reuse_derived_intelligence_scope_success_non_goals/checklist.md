@@ -1,0 +1,10 @@
+- [x] 已明确 `phase09` 的单一主交付能力为 `Next-Creation Acceleration Support`
+- [x] 已明确 `Template Reuse` 的正式职责只包含 `Module` 组合快照、预填辅助与继续编辑创建
+- [x] 已明确 `Derived Intelligence Deepening` 的正式职责只包含 `reuse opportunity / capability gap` 最小提示与动作文案
+- [x] 已明确 `phase09` 的最小成功会话不是"展示增强"，而是 `Weekly Review -> Product Create 预填 -> Product Detail` 的最小支撑闭环
+- [x] 已明确"候选卡片出现 / 提示出现 / 仅跳转到创建页"均不能单独构成阶段成功
+- [x] 已明确 `Real-Project Dry-Run`、`Venture / Decision Intelligence / AI Context Enhancement`、完整模板平台、独立智能工作台、自动扫描 / 知识图谱与新长期核心实体为当前阶段非目标
+- [x] 已明确 `phase09` 不得反向重做 `phase08` 的 `Operating Review Loop` 主线
+- [x] 已明确 `Decision` 中心地位、`.proto + ConnectRPC` 主线与 `Product Create` canonical 路径不可回退
+- [x] 已明确后续 `phase09-02+` `/spec` 必须以本规格作为强制边界上游
+- [x] 已确认本规格未越权冻结页面、接口命名、合同字段名、或应留给 `phase09-02 ~ 04` 的细化语义

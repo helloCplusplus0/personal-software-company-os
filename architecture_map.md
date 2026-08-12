@@ -93,6 +93,10 @@ docs/
   - `phase07_transport_contract_mainline_migration_architecture_plan.md`
   - `phase07_transport_contract_mainline_migration_dev_plan.md`
   - `phase07_transport_contract_mainline_migration_shared_baseline.md`
+- 当前已创建：
+  - `phase09_template_reuse_derived_intelligence_foundation_architecture_plan.md`
+  - `phase09_template_reuse_derived_intelligence_foundation_dev_plan.md`
+  - `phase09_template_reuse_derived_intelligence_foundation_shared_baseline.md`
 - 当前已完成：
   - `.trae/specs/phase01_06_formal_mvp_spec/mvp_spec_v0.1.md`（`v0.1` 执行层唯一规格入口）
   - `.trae/specs/phase02_09_module_registry_formal_spec/module_registry_spec_v0.1.md`（`Module Registry` 当前阶段唯一规格入口）
@@ -134,7 +138,9 @@ docs/
 - `phase08` 已直接承接 `PSCO-mvp03-summarize-feedback.md`、`phase07-07` 正式规格与 `phase07-11` 验收结论，并已完成 `Operating Review Loop` 的正式交付、统一验收与根级收口
 - `phase08` 三件套在收口后只承担最近完成正式业务 phase 的规划与冻结记录角色；正式验收与收口入口收敛到 `phase08-11` acceptance_report
 - `phase08` 只承接 `Operating Review Loop`，不把 `Template Reuse / Derived Intelligence / dry-run` 混写为当前并列主交付
-- 后续支撑能力 phase 与 dry-run phase 只允许在直接承接 `phase08-11` 验收结论、`phase08` 根级收口结论与当前根级真相源后建立正式入口；根级文档只写进入条件，不得提前猜测任何未建立阶段名称
+- `phase09` 已直接承接 `PSCO-mvp03-summarize-feedback.md`、`phase08-11` 验收结论、`phase08` 三件套规划记录与 `phase06` 复用摘要主线，并已建立正式 `/plan` 入口
+- `phase09` 三件套承担当前支撑能力 phase 的规划与冻结记录角色；当前只承接 `Template Reuse + Derived Intelligence Deepening` 的最小支撑能力
+- 后续 `dry-run` 只允许在直接承接 `phase09` 验收结论、`phase08` 根级收口结论与当前根级真相源后建立正式入口；根级文档只写进入条件，不得提前猜测任何未建立阶段名称
 
 ### 4.2 fix
 

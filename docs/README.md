@@ -26,8 +26,12 @@
 - [阶段路线图](file:///home/dell/Projects/personal-software-company-os/plan.md)
 - [项目规则](file:///home/dell/Projects/personal-software-company-os/project_rules.md)
 - [目录与迁移落点](file:///home/dell/Projects/personal-software-company-os/architecture_map.md)
-- 当前根级阶段状态：`phase08_operating_review_loop_foundation` 已完成正式交付、验收与收口，当前保留为最近完成的正式业务 phase
-- 后续正式入口条件：仅当后续支撑能力 phase 或 dry-run phase 直接承接 `phase08-11` 正式验收结论、`phase08` 根级收口结论与当前根级真相源后，才允许建立新的正式 phase 入口
+- 当前根级阶段状态：`phase09_template_reuse_derived_intelligence_foundation` 已进入 `/plan`；`phase08_operating_review_loop_foundation` 继续保留为最近完成的正式业务 phase
+- 当前 `/plan` 目标：冻结 `Template Reuse + Derived Intelligence Deepening` 的范围、DoD、非目标、直接上游与后续 `dry-run` 进入条件
+- 后续正式入口条件：`phase09` 三件套复核通过后才允许进入 `/spec`；`dry-run` 仍必须在 `phase09` 收口后以独立正式入口建立
+- [phase09 规划记录：architecture_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase09_template_reuse_derived_intelligence_foundation_architecture_plan.md)
+- [phase09 规划记录：dev_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase09_template_reuse_derived_intelligence_foundation_dev_plan.md)
+- [phase09 规划记录：shared_baseline](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase09_template_reuse_derived_intelligence_foundation_shared_baseline.md)
 - [phase08 规划记录：architecture_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase08_operating_review_loop_foundation_architecture_plan.md)
 - [phase08 规划记录：dev_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase08_operating_review_loop_foundation_dev_plan.md)
 - [phase08 规划记录：shared_baseline](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase08_operating_review_loop_foundation_shared_baseline.md)
@@ -77,7 +81,9 @@
 - `phase06_onboarding_sovereignty_reuse_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - `phase07_transport_contract_mainline_migration` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - `phase08_operating_review_loop_foundation` 已完成 `/plan -> 实现 -> 验收 -> 收口`，并冻结 `Operating Review Loop` 为当前最近完成的正式业务交付
+- `phase09_template_reuse_derived_intelligence_foundation` 已进入 `/plan`，当前冻结 `Template Reuse + Derived Intelligence Deepening` 的最小支撑能力边界
+- `phase09` 三件套当前作为正式 `/plan` 入口；后续通过复核后再进入 `/spec`
 - `phase08` 三件套保留为最近完成正式业务 phase 的规划与冻结记录；正式验收与收口入口收敛到 [phase08-11 acceptance_report](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase08_11_validate_review_loop_integration_browser_regression_acceptance/acceptance_report.md)
 - `phase07` 三件套继续保留为最近完成前置基础阶段的规划与冻结记录；正式证据入口继续收敛到 [phase07-07 正式规格](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase07_07_formal_transport_mainline_cutover_spec/transport_mainline_cutover_spec_v0.1.md) 与 [phase07-11 验收结论](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase07_11_validate_phase01_phase06_regression_retirement_acceptance/acceptance_report.md)，但不再覆盖当前业务状态
-- 后续支撑能力 phase / dry-run phase 只允许在直接承接 `phase08-11` 验收结论、`phase08` 根级收口结论与当前根级真相源后建立正式入口，不预设任何未建立的新阶段名称
+- 后续 `dry-run` 只允许在 `phase09` 收口并直接承接 `phase09` 验收结论、`phase08` 根级收口结论与当前根级真相源后建立正式入口，不预设任何未建立的新阶段名称
 - `phase05` 三件套保留为上一已完成阶段的规划与冻结记录，不再覆盖根级当前阶段状态
