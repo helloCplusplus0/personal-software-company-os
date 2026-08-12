@@ -1,0 +1,27 @@
+- [x] `useWeeklyReviewRead` 已在其内部组合 `use-template-candidates-read` 与 `use-derived-insight-hints-read`
+- [x] `useWeeklyReviewRead` 已导出 `templateCandidates`, `activeCandidateId`, `setActiveCandidateId`, `templateSectionStatus`, `hints`, `hintsSectionStatus`
+- [x] `WeeklyReviewPage` 已新增模板候选选择区，位于 Overview 与 Recent Activity 之间
+- [x] 模板候选区支持 ready / empty / error 三态，失败不把整页回退为 page error
+- [x] 模板候选默认选中第一个，点击切换新候选后旧候选退回非选中态
+- [x] 模板候选切换后标题、描述、模块列表、CTA 同步刷新
+- [x] 模板候选区提供"以该模板创建产品"CTA，携带 `fromTemplateReuse / templateCandidateId / templateSource`
+- [x] `use-product-create-template-handoff.ts` 已真实存在，承接搜索参数解析、模板预填只读组合、view model 拼装与返回/回流参数
+- [x] `use-product-create-template-handoff` 未内联 `useMutation` 或 `createProduct` 调用
+- [x] `use-product-create-form-state.ts` 已真实存在，承接 `name / description / status` 单值状态与 `initialValues` 接受
+- [x] `ProductCreateForm` 已改为接收 `name / description / status / onChange*` props，不再使用组件本地 `useState`
+- [x] `ProductCreatePage` 只消费 `useCreateDraftProduct` + `use-product-create-template-handoff` + `use-product-create-form-state`
+- [x] `ProductCreatePage` 在 `fromTemplateReuse=true` 时展示模板来源摘要区（紧凑 `border-t pt-2`）
+- [x] 模板预填字段已展示可见标记（如 `"（来自模板）"`）
+- [x] 模板 unavailable 成功态展示可恢复提示，表单退化为空白但仍可编辑
+- [x] 模板预填请求失败态展示局部失败提示+重试，表单仍可编辑
+- [x] 取消返回按 `templateSource` 决定目的地（weekly-review → Weekly Review 等）
+- [x] 创建成功回流携带 `fromTemplateReuse / templateCandidateId / templateSource` 参数
+- [x] `ProductDetailPage` 在 `fromTemplateReuse=true` 时通过 `use-template-source-read` 读取模板来源摘要
+- [x] 模板来源摘要区位于 `ProductSummaryCard` 与 `ReuseSummaryInline` 之间
+- [x] 模板来源摘要区提供 canonical binding CTA
+- [x] 模板来源摘要 unavailable 展示可恢复空态，binding CTA 仍可见
+- [x] `/products/new` 路由新增 `fromTemplateReuse / templateCandidateId / templateSource` 可选搜索参数
+- [x] `/products/$productId` 路由新增 `fromTemplateReuse / templateCandidateId / templateSource` 可选搜索参数
+- [x] 非法参数组合（`fromTemplateReuse=true` 但 `templateCandidateId` 为空）回退为 direct-entry
+- [x] `(cd frontend && npm run build)` 已通过
+- [x] `(cd backend && go build ./...)` 已通过

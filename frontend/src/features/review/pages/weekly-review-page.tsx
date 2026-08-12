@@ -28,13 +28,16 @@ import { useNavigateBackToDashboard } from '@/features/dashboard/lib/dashboard-s
 import { FeedbackSignalCard } from '@/features/dashboard/components/feedback-signal-card'
 import { RecentActivityItemCard } from '@/features/dashboard/components/recent-activity-item-card'
 import { ReuseSnapshotSection } from '@/features/dashboard/components/reuse-snapshot-section'
+import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Layers, ArrowRight, LayoutTemplate } from 'lucide-react'
 import type { FeedbackSignal, RecentActivityItem, DashboardOverview } from '@/features/dashboard/types'
 import type {
   ModuleReuseSummaryEntry,
   CapabilitySummaryEntry,
 } from '@/features/reuse-summary/types'
 import type { ReviewActionInput } from '../application/review-action-types'
+import type { TemplateCandidateSummary } from '@/gen/proto/psco/template_reuse/v1/template_reuse_pb'
 import { toast } from 'sonner'
 
 const WEEKLY_REVIEW_ACTION_SECTIONS = {
@@ -53,6 +56,17 @@ export function WeeklyReviewPage() {
 
   const handleBackToDashboard = () => {
     navigateBack('overview')
+  }
+
+  const handleNavigateToCreateFromTemplate = (candidateId: string) => {
+    navigate({
+      to: '/products/new',
+      search: {
+        fromTemplateReuse: true as any,
+        templateCandidateId: candidateId,
+        templateSource: 'weekly-review',
+      },
+    })
   }
 
   const handleSubmitAction = (input: ReviewActionInput) => {
@@ -117,6 +131,18 @@ export function WeeklyReviewPage() {
       <section className="space-y-2" aria-label="Overview">
         <h2 className="text-base font-semibold">系统概览</h2>
         <OverviewStatBar overview={overview ?? null} status={review.pageState.overviewSectionStatus} />
+      </section>
+
+      {/* phase09-09 模板候选选择区 — 位于 Overview 与 Recent Activity 之间 */}
+      <section className="space-y-2" aria-label="Template Candidates">
+        <h2 className="text-base font-semibold">模板候选</h2>
+        <TemplateCandidateSection
+          candidates={review.templateCandidates}
+          activeCandidateId={review.activeCandidateId}
+          onSelectCandidate={review.setActiveCandidateId}
+          status={review.pageState.templateSectionStatus}
+          onCreateProduct={handleNavigateToCreateFromTemplate}
+        />
       </section>
 
       {/* Recent Activity 区块 — 复用 RecentActivityItemCard
@@ -322,6 +348,114 @@ function RepresentativeSignalsList({
           section="asset-feedback"
         />
       ))}
+    </div>
+  )
+}
+
+// ============================================================================
+// Template Candidate 选择区 — phase09-09 新增
+// ============================================================================
+
+function TemplateCandidateSection({
+  candidates,
+  activeCandidateId,
+  onSelectCandidate,
+  status,
+  onCreateProduct,
+}: {
+  candidates: TemplateCandidateSummary[]
+  activeCandidateId: string
+  onSelectCandidate: (id: string) => void
+  status: 'ready' | 'empty' | 'error'
+  onCreateProduct: (candidateId: string) => void
+}) {
+  if (status === 'error') {
+    return (
+      <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3">
+        <p className="text-xs text-destructive">模板候选加载失败，不影响其他数据</p>
+      </div>
+    )
+  }
+
+  if (status === 'empty' || candidates.length === 0) {
+    return (
+      <div className="rounded-lg border border-dashed p-4 text-center">
+        <LayoutTemplate className="mx-auto h-6 w-6 text-muted-foreground/50 mb-2" />
+        <p className="text-xs text-muted-foreground">当前没有可复用模板候选</p>
+        <p className="text-[10px] text-muted-foreground/70 mt-1">
+          当有多个产品共享相同模块组合时，将自动生成模板候选
+        </p>
+      </div>
+    )
+  }
+
+  const activeCandidate = candidates.find((c) => c.templateCandidateId === activeCandidateId)
+
+  return (
+    <div className="space-y-2">
+      {/* 候选卡片列表 */}
+      <div className="space-y-1">
+        {candidates.map((candidate) => {
+          const isActive = candidate.templateCandidateId === activeCandidateId
+          return (
+            <button
+              key={candidate.templateCandidateId}
+              type="button"
+              onClick={() => onSelectCandidate(candidate.templateCandidateId)}
+              className={`w-full rounded-lg border p-3 text-left transition-colors ${
+                isActive
+                  ? 'ring-2 ring-primary border-primary bg-primary/5'
+                  : 'border-border bg-card hover:bg-muted/50'
+              }`}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium truncate">{candidate.templateTitle}</p>
+                  <p className="text-xs text-muted-foreground truncate mt-0.5">
+                    {candidate.templateDescription}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground">
+                    <Layers className="h-3 w-3" />
+                    {candidate.modules.length} 模块
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground">
+                    {candidate.sourceProductCount} 产品
+                  </span>
+                </div>
+              </div>
+              {/* 模块列表 — 仅在 active 时展示 */}
+              {isActive && candidate.modules.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {candidate.modules.map((m) => (
+                    <span
+                      key={m.moduleId}
+                      className="inline-flex items-center rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium"
+                    >
+                      {m.moduleName}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </button>
+          )
+        })}
+      </div>
+
+      {/* Active candidate CTA */}
+      {activeCandidate && (
+        <div className="border-t pt-2">
+          <Button
+            onClick={() => onCreateProduct(activeCandidate.templateCandidateId)}
+            className="w-full"
+            size="sm"
+          >
+            以该模板创建产品
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      )}
     </div>
   )
 }

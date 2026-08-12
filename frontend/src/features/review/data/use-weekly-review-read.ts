@@ -20,7 +20,11 @@ import { weeklyReviewQueryOptions, WEEKLY_REVIEW_QUERY_KEY } from './review-quer
 import type { WeeklyReviewContext } from '@/gen/proto/psco/review/v1/review_pb'
 import type { Timestamp } from '@bufbuild/protobuf/wkt'
 import type { DashboardOverview, FeedbackSignal, RecentActivityItem } from '@/features/dashboard/types'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
+import { useTemplateCandidatesRead } from '@/features/template-reuse/data/use-template-candidates-read'
+import { useDerivedInsightHintsRead } from '@/features/template-reuse/data/use-derived-insight-hints-read'
+import { TemplateConsumerSurface } from '@/gen/proto/psco/template_reuse/v1/template_reuse_pb'
+import type { TemplateCandidateSummary, DerivedInsightHint } from '@/gen/proto/psco/template_reuse/v1/template_reuse_pb'
 
 // ============================================================================
 // 页面级状态模型
@@ -36,6 +40,8 @@ export interface WeeklyReviewPageState {
   recentActivitySectionStatus: SectionStatus
   representativeSignalsSectionStatus: SectionStatus
   reuseSnapshotSectionStatus: SectionStatus
+  templateSectionStatus: SectionStatus
+  hintsSectionStatus: SectionStatus
 }
 
 // ============================================================================
@@ -200,6 +206,16 @@ export interface UseWeeklyReviewReadResult {
   error: Error | null
   pageState: WeeklyReviewPageState
   retry: () => void
+  /** phase09-09 模板候选列表 */
+  templateCandidates: TemplateCandidateSummary[]
+  /** phase09-09 默认激活候选 ID */
+  defaultActiveCandidateId: string
+  /** phase09-09 当前激活候选 ID */
+  activeCandidateId: string
+  /** phase09-09 设置激活候选 */
+  setActiveCandidateId: (id: string) => void
+  /** phase09-09 派生提示列表 */
+  hints: DerivedInsightHint[]
 }
 
 export function useWeeklyReviewRead(): UseWeeklyReviewReadResult {
@@ -207,6 +223,30 @@ export function useWeeklyReviewRead(): UseWeeklyReviewReadResult {
     ...weeklyReviewQueryOptions(),
     queryKey: WEEKLY_REVIEW_QUERY_KEY,
   })
+
+  // phase09-09：模板候选只读
+  const templateCandidatesQuery = useTemplateCandidatesRead(
+    TemplateConsumerSurface.WEEKLY_REVIEW,
+  )
+
+  // phase09-09：模板候选默认选中第一个
+  const candidates = templateCandidatesQuery.data?.candidates ?? []
+  const defaultActiveId = templateCandidatesQuery.data?.defaultActiveCandidateId ?? ''
+  const [activeCandidateId, setActiveCandidateId] = useState<string>(defaultActiveId)
+
+  // 当候选列表更新时，如果 activeCandidateId 不在新列表中，重置为默认
+  useMemo(() => {
+    if (candidates.length > 0 && !candidates.find((c) => c.templateCandidateId === activeCandidateId)) {
+      setActiveCandidateId(defaultActiveId)
+    }
+  }, [candidates, defaultActiveId, activeCandidateId])
+
+  // phase09-09：派生提示只读
+  const hintsQuery = useDerivedInsightHintsRead(
+    activeCandidateId,
+    TemplateConsumerSurface.WEEKLY_REVIEW,
+    'weekly-review-scope',
+  )
 
   const retry = useCallback(() => {
     void query.refetch()
@@ -220,6 +260,8 @@ export function useWeeklyReviewRead(): UseWeeklyReviewReadResult {
         recentActivitySectionStatus: 'ready',
         representativeSignalsSectionStatus: 'ready',
         reuseSnapshotSectionStatus: 'ready',
+        templateSectionStatus: 'ready',
+        hintsSectionStatus: 'ready',
       }
     }
     if (query.isError) {
@@ -229,6 +271,8 @@ export function useWeeklyReviewRead(): UseWeeklyReviewReadResult {
         recentActivitySectionStatus: 'error',
         representativeSignalsSectionStatus: 'error',
         reuseSnapshotSectionStatus: 'error',
+        templateSectionStatus: 'error',
+        hintsSectionStatus: 'error',
       }
     }
     const data = query.data
@@ -239,6 +283,8 @@ export function useWeeklyReviewRead(): UseWeeklyReviewReadResult {
         recentActivitySectionStatus: 'empty',
         representativeSignalsSectionStatus: 'empty',
         reuseSnapshotSectionStatus: 'empty',
+        templateSectionStatus: candidates.length > 0 ? 'ready' : 'empty',
+        hintsSectionStatus: 'empty',
       }
     }
     return {
@@ -247,8 +293,10 @@ export function useWeeklyReviewRead(): UseWeeklyReviewReadResult {
       recentActivitySectionStatus: data.recentActivities.length > 0 ? 'ready' : 'empty',
       representativeSignalsSectionStatus: data.representativeSignals.length > 0 ? 'ready' : 'empty',
       reuseSnapshotSectionStatus: (data.moduleReuseSummary.length > 0 || data.capabilitySummary.length > 0) ? 'ready' : 'empty',
+      templateSectionStatus: candidates.length > 0 ? 'ready' : 'empty',
+      hintsSectionStatus: 'ready',
     }
-  }, [query.isLoading, query.isError, query.data])
+  }, [query.isLoading, query.isError, query.data, candidates.length])
 
   const data = useMemo((): WeeklyReviewReadModel | undefined => {
     const ctx = query.data
@@ -269,5 +317,10 @@ export function useWeeklyReviewRead(): UseWeeklyReviewReadResult {
     error: query.error as Error | null,
     pageState,
     retry,
+    templateCandidates: candidates,
+    defaultActiveCandidateId: defaultActiveId,
+    activeCandidateId,
+    setActiveCandidateId,
+    hints: hintsQuery.data?.hints ?? [],
   }
 }

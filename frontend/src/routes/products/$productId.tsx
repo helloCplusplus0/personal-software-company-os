@@ -32,6 +32,10 @@ const productDetailSearchSchema = z.object({
   fromModuleDetail: z.boolean().optional(),
   moduleId: z.string().optional(),
   moduleName: z.string().optional(),
+  // phase09-09 模板来源标记
+  fromTemplateReuse: z.boolean().optional(),
+  templateCandidateId: z.string().optional(),
+  templateSource: z.enum(['weekly-review', 'dashboard', 'product-detail']).optional(),
   // phase05-13 Dashboard 来源参数
   ...dashboardSourceSearchSchema,
   // phase06-15 Onboarding 来源参数

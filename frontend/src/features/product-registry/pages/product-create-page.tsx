@@ -1,10 +1,12 @@
 import { useSearch, useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { useCreateDraftProduct } from '../application/use-create-draft-product'
+import { useProductCreateFormState } from '../application/use-product-create-form-state'
+import { useProductCreateTemplateHandoff } from '../application/use-product-create-template-handoff'
 import type { CreateProductInput } from '../types'
 import { ProductCreateForm } from '../components/product-create-form'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, AlertTriangle, RefreshCw } from 'lucide-react'
 import { BackToDashboardButton } from '@/features/dashboard/components/back-to-dashboard-button'
 import { useDashboardBackButton } from '@/features/dashboard/lib/dashboard-source'
 
@@ -22,16 +24,10 @@ import { useDashboardBackButton } from '@/features/dashboard/lib/dashboard-sourc
  * - fromModuleDetail 存在 → 来自 Module Detail，承接 moduleId / moduleName
  * - 无来源参数 → direct-entry
  *
- * phase04-06 提交成功回流：
- * - 回流时必须继续携带创建页已有的来源标记与必要上下文参数
- * - fromList → 继续携带 fromList + queryText / statusFilter
- * - fromModuleDetail → 继续携带 fromModuleDetail + moduleId / moduleName
- * - direct-entry → 不携带来源标记
- *
- * phase04-06 主动取消返回：
- * - fromList → 回 Product List + 原 queryText / statusFilter
- * - fromModuleDetail → 回原 ModuleDetailPage
- * - direct-entry → 回 Product List 默认筛选参数
+ * phase09-09 新增第四种来源上下文：
+ * - fromTemplateReuse 存在 → 来自模板候选，承接 templateCandidateId / templateSource
+ * - fromTemplateReuse 优先级高于 fromList / fromModuleDetail
+ * - 取消返回按 templateSource 决定目的地
  *
  * 布局降级（phase04-05）：
  * - PC / 移动：单列垂直布局，主动作按钮无需横向滚动即可见
@@ -40,6 +36,19 @@ export function ProductCreatePage() {
   const search = useSearch({ from: '/products/new' })
   const navigate = useNavigate()
   const { showBackButton: isFromDashboard } = useDashboardBackButton()
+
+  // phase09-09：模板 handoff 编排
+  const templateHandoff = useProductCreateTemplateHandoff({
+    fromTemplateReuse: (search as any).fromTemplateReuse,
+    templateCandidateId: (search as any).templateCandidateId,
+    templateSource: (search as any).templateSource,
+    fromDashboard: (search as any).fromDashboard,
+    dashboardSection: (search as any).dashboardSection,
+    dashboardReturnTo: (search as any).dashboardReturnTo,
+  })
+
+  // phase09-09：正式 form state owner，接受模板预填初始值
+  const formState = useProductCreateFormState(templateHandoff.prefillInitialValues)
 
   // phase04-06 来源上下文单值判定
   const fromList = search.fromList === true
@@ -50,13 +59,13 @@ export function ProductCreatePage() {
   // 正式 create 主线已回收到 application owner，页面只保留表单编排、toast 与导航消费
   const mutation = useCreateDraftProduct()
 
-  // phase05-13 §"Create 页面取消返回 Dashboard"：
-  // fromDashboard=true 时取消返回 /dashboard，而不是回列表
-  // 此分支由 BackToDashboardButton 承接，handleReturn 仅处理非 Dashboard 来源
-  // phase04-06 主动取消返回路径 — 按真实来源决定（非 Dashboard 来源）
+  // phase09-09 取消返回路径 — 模板来源优先
   const handleReturn = () => {
+    if (templateHandoff.isFromTemplate) {
+      templateHandoff.handleReturn()
+      return
+    }
     if (fromList) {
-      // fromList → 回 Product List + 原 queryText / statusFilter
       navigate({
         to: '/products',
         search: {
@@ -65,13 +74,11 @@ export function ProductCreatePage() {
         },
       })
     } else if (fromModuleDetail && search.moduleId) {
-      // fromModuleDetail → 回原 ModuleDetailPage
       navigate({
         to: '/modules/$moduleId',
         params: { moduleId: search.moduleId },
       })
     } else {
-      // direct-entry → 回 Product List 默认筛选参数
       navigate({
         to: '/products',
         search: { statusFilter: 'all' },
@@ -79,16 +86,31 @@ export function ProductCreatePage() {
     }
   }
 
-  // phase06-15：提交成功 / 失败的 toast 与导航由页面在 call-site 承接，
-  // application owner 内部只承接默认补值、错误归一化与 query 失效
-  const handleSubmit = (input: CreateProductInput) => {
-    mutation.mutate(input, {
+  // phase06-15：提交成功 / 失败的 toast 与导航由页面在 call-site 承接
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    const input = formState.buildSubmitInput()
+    if (!input.name) return
+
+    const submitInput: CreateProductInput = {
+      name: input.name,
+      description: input.description || undefined,
+      status: input.status,
+    }
+
+    mutation.mutate(submitInput, {
       onSuccess: (response) => {
-        // phase04-06 提交成功默认回流到 ProductDetailPage
         toast.success('产品创建成功')
 
-        // phase04-06 回流时必须继续携带创建页已有的来源标记与必要上下文参数
         const detailSearch: Record<string, unknown> = {}
+
+        // phase09-09 模板来源回流优先
+        if (templateHandoff.isFromTemplate) {
+          const templateParams = templateHandoff.buildSuccessSearch()
+          Object.assign(detailSearch, templateParams)
+        }
+
+        // phase04-06 回流时必须继续携带创建页已有的来源标记与必要上下文参数
         if (fromList) {
           detailSearch.fromList = true
           detailSearch.queryText = search.queryText
@@ -99,13 +121,11 @@ export function ProductCreatePage() {
           detailSearch.moduleName = search.moduleName
         }
         // phase05-13 提交成功后进入 Detail 页时必须继续保留 fromDashboard 等参数
-        // 不得因为 fromDashboard=true 就在提交成功后自动跳回 Dashboard
         if (isFromDashboard) {
           detailSearch.fromDashboard = true
-          detailSearch.dashboardSection = search.dashboardSection
-          detailSearch.dashboardReturnTo = search.dashboardReturnTo
+          detailSearch.dashboardSection = (search as any).dashboardSection
+          detailSearch.dashboardReturnTo = (search as any).dashboardReturnTo
         }
-        // direct-entry → 不携带来源标记
 
         navigate({
           to: '/products/$productId',
@@ -114,7 +134,6 @@ export function ProductCreatePage() {
         })
       },
       onError: (error: Error) => {
-        // phase04-06 提交失败时停留当前页，错误显示在表单上下文
         toast.error('创建失败：' + error.message)
       },
     })
@@ -123,20 +142,85 @@ export function ProductCreatePage() {
   return (
     <div className="max-w-2xl space-y-4">
       <div className="flex items-center gap-3">
-        {/* phase05-13：fromDashboard=true 时取消返回 /dashboard，否则保留原返回按钮 */}
         {isFromDashboard ? (
           <BackToDashboardButton />
         ) : (
           <Button variant="ghost" size="sm" onClick={handleReturn}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            {fromModuleDetail ? '返回模块详情' : '返回列表'}
+            {templateHandoff.isFromTemplate
+              ? `返回${templateHandoff.templateSourceLabel}`
+              : fromModuleDetail
+                ? '返回模块详情'
+                : '返回列表'}
           </Button>
         )}
-        <h1 className="text-2xl font-bold">新建产品</h1>
+        <h1 className="text-2xl font-bold">
+          {templateHandoff.isFromTemplate ? '基于模板创建产品' : '新建产品'}
+        </h1>
       </div>
 
+      {/* phase09-09 模板来源摘要区 */}
+      {templateHandoff.isFromTemplate && templateHandoff.templateSummary && (
+        <div className="border-t pt-2">
+          <div className="text-xs text-muted-foreground mb-1">
+            来源：{templateHandoff.templateSummary.sourceLabel}
+          </div>
+          <h3 className="text-sm font-medium">{templateHandoff.templateSummary.templateTitle}</h3>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {templateHandoff.templateSummary.templateDescription}
+          </p>
+          {templateHandoff.templateSummary.moduleNames.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-1">
+              {templateHandoff.templateSummary.moduleNames.map((name) => (
+                <span
+                  key={name}
+                  className="inline-flex items-center rounded-md bg-muted px-2 py-0.5 text-xs font-medium"
+                >
+                  {name}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* phase09-09 模板 unavailable 成功态 */}
+      {templateHandoff.isFromTemplate && templateHandoff.resolutionStatus === 'unavailable' && (
+        <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm">
+          <AlertTriangle className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
+          <div>
+            <p className="font-medium text-amber-800">模板来源已失效</p>
+            <p className="text-amber-700 mt-0.5">
+              模板来源已不可复读，但仍可继续手动创建产品。
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* phase09-09 模板预填请求失败态 */}
+      {templateHandoff.isFromTemplate && templateHandoff.resolutionStatus === 'error' && (
+        <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm">
+          <AlertTriangle className="h-4 w-4 text-red-600 mt-0.5 shrink-0" />
+          <div>
+            <p className="font-medium text-red-800">模板预填加载失败</p>
+            <p className="text-red-700 mt-0.5">
+              无法加载模板预填数据，您仍可手动创建产品。
+            </p>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-2 h-7 px-2 text-xs"
+              onClick={() => window.location.reload()}
+            >
+              <RefreshCw className="mr-1 h-3 w-3" />
+              重试
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* phase04-06 来源上下文展示 — 从 Module Detail 带上下文进入时 */}
-      {hasSourceModule && (
+      {hasSourceModule && !templateHandoff.isFromTemplate && (
         <div className="rounded-lg border bg-muted/50 p-3 text-sm">
           <span className="text-muted-foreground">来源模块：</span>
           <span className="font-medium">{search.moduleName}</span>
@@ -144,9 +228,17 @@ export function ProductCreatePage() {
       )}
 
       <ProductCreateForm
+        name={formState.name}
+        description={formState.description}
+        status={formState.status}
+        onChangeName={formState.setName}
+        onChangeDescription={formState.setDescription}
+        onChangeStatus={formState.setStatus}
+        isFromTemplate={templateHandoff.isFromTemplate}
         submitting={mutation.isPending}
         onSubmit={handleSubmit}
         submitError={mutation.isError ? (mutation.error as Error).message : undefined}
+        isDirty={formState.isDirty}
       />
     </div>
   )

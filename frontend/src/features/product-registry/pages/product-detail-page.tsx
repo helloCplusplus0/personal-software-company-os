@@ -15,6 +15,9 @@ import {
 } from '@/features/onboarding/lib/onboarding-return'
 import { useReuseSummaryRead } from '@/features/reuse-summary/data/use-reuse-summary-read'
 import { ReuseSummaryInline } from '@/features/reuse-summary/components/reuse-summary-inline'
+import { useTemplateSourceRead } from '@/features/template-reuse/data/use-template-source-read'
+import { TemplateSource, TemplateConsumerSurface } from '@/gen/proto/psco/template_reuse/v1/template_reuse_pb'
+import { ArrowDown } from 'lucide-react'
 
 /**
  * ProductDetailPage — Product Detail
@@ -74,6 +77,17 @@ export function ProductDetailPage() {
           (reuseSummaryQuery.data?.capability_summary?.length ?? 0) === 0
         ? 'empty'
         : 'ready'
+
+  // phase09-09：模板来源复读
+  const fromTemplateReuse = search.fromTemplateReuse === true
+  const templateCandidateId = (search as any).templateCandidateId ?? ''
+  const templateSourceStr = (search as any).templateSource ?? ''
+
+  const templateSourceQuery = useTemplateSourceRead(
+    fromTemplateReuse && templateCandidateId !== '' ? templateCandidateId : '',
+    templateSourceToEnum(templateSourceStr),
+    TemplateConsumerSurface.PRODUCT_DETAIL,
+  )
 
   // phase04-06 BindModuleToProduct 成功后重新读取详情结果（reread）
   const invalidateDetail = () => {
@@ -189,6 +203,13 @@ export function ProductDetailPage() {
         {/* 摘要主区 — 占 1 列（PC）/ 全宽（移动） */}
         <div className="space-y-4 lg:col-span-1">
           <ProductSummaryCard product={data.product} />
+          {/* phase09-09：模板来源摘要 — 位于 ProductSummaryCard 与 ReuseSummaryInline 之间 */}
+          {fromTemplateReuse && (
+            <TemplateSourceSummarySection
+              sourceSummary={templateSourceQuery.sourceSummary}
+              pageStatus={templateSourceQuery.pageStatus}
+            />
+          )}
           {/*
             phase06-15 §"Module Detail 与 Product Detail 挂接位"：
             在已绑定模块相关区域附近挂接复用摘要内联组件
@@ -231,6 +252,122 @@ export function ProductDetailPage() {
             }}
           />
         </div>
+      </div>
+    </div>
+  )
+}
+
+// ============================================================================
+// 辅助函数
+// ============================================================================
+
+/** 字符串 → TemplateSource 枚举 */
+function templateSourceToEnum(s: string): TemplateSource {
+  switch (s) {
+    case 'weekly-review': return TemplateSource.WEEKLY_REVIEW
+    case 'dashboard': return TemplateSource.DASHBOARD
+    case 'product-detail': return TemplateSource.PRODUCT_DETAIL
+    default: return TemplateSource.UNSPECIFIED
+  }
+}
+
+// ============================================================================
+// 模板来源摘要组件 — phase09-09 新增
+// ============================================================================
+
+function TemplateSourceSummarySection({
+  sourceSummary,
+  pageStatus,
+}: {
+  sourceSummary: {
+    templateTitle: string
+    templateDescription: string
+    modules: { moduleId: string; moduleName: string }[]
+    templateSource: number
+    resolutionStatus: number
+    unavailableReasonText: string
+  } | undefined
+  pageStatus: 'initial-loading' | 'resolved' | 'unavailable' | 'error'
+}) {
+  if (pageStatus === 'initial-loading') {
+    return (
+      <div className="border-t pt-2">
+        <Skeleton className="h-4 w-24 mb-1" />
+        <Skeleton className="h-5 w-40" />
+        <div className="flex gap-1 mt-1">
+          <Skeleton className="h-4 w-16" />
+          <Skeleton className="h-4 w-20" />
+        </div>
+      </div>
+    )
+  }
+
+  if (pageStatus === 'error') {
+    return (
+      <div className="border-t pt-2">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-2 text-xs">
+          <p className="text-red-700">模板来源加载失败</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (pageStatus === 'unavailable' || !sourceSummary) {
+    return (
+      <div className="border-t pt-2">
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-2 text-xs">
+          <p className="text-amber-700">模板来源已不可复读</p>
+        </div>
+        {/* canonical binding CTA — unavailable 状态下仍必须可见 */}
+        <div className="mt-2">
+          <a
+            href="#product-module-binding"
+            className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+          >
+            为模板模块绑定仓库
+            <ArrowDown className="h-3 w-3" />
+          </a>
+        </div>
+      </div>
+    )
+  }
+
+  const sourceLabel = sourceSummary.templateSource === 1
+    ? 'Weekly Review'
+    : sourceSummary.templateSource === 2
+      ? 'Dashboard'
+      : 'Product Detail'
+
+  return (
+    <div className="border-t pt-2">
+      <div className="text-xs text-muted-foreground mb-1">
+        来源：{sourceLabel}
+      </div>
+      <h4 className="text-sm font-medium">{sourceSummary.templateTitle}</h4>
+      <p className="text-xs text-muted-foreground mt-0.5">
+        {sourceSummary.templateDescription}
+      </p>
+      {sourceSummary.modules.length > 0 && (
+        <div className="flex flex-wrap gap-1 mt-1">
+          {sourceSummary.modules.map((m) => (
+            <span
+              key={m.moduleId}
+              className="inline-flex items-center rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium"
+            >
+              {m.moduleName}
+            </span>
+          ))}
+        </div>
+      )}
+      {/* canonical binding CTA */}
+      <div className="mt-2">
+        <a
+          href="#product-module-binding"
+          className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+        >
+          为模板模块绑定仓库
+          <ArrowDown className="h-3 w-3" />
+        </a>
       </div>
     </div>
   )
