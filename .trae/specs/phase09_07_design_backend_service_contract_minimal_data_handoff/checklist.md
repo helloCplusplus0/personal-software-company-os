@@ -1,0 +1,19 @@
+- [x] 已明确 `template_reuse.proto` 是模板候选、模板预填、派生提示与模板来源复读的唯一合同源
+- [x] 已明确 `TemplateReuseService` 是模板读能力的唯一 canonical transport owner
+- [x] 已明确 `ListTemplateCandidates / GetTemplateCandidatePrefill / GetDerivedInsightHints` 是三类核心读取接口
+- [x] 已明确 `GetTemplateSourceSummary` 是创建成功后模板来源复读的唯一正式读取接口
+- [x] 已明确模板候选、active candidate、模板预填、派生提示与来源复读的最小字段与枚举边界
+- [x] 已明确四个读取 RPC 的最小 request 合同，尤其冻结了 `GetDerivedInsightHintsRequest` 的 `consumer_surface + review_scope_key` 作用域输入
+- [x] 已明确 `templatereuse.QueryService` 是模板读能力的唯一后端 query owner
+- [x] 已明确 `Review` 不是模板候选 canonical 事实源，只提供消费作用域与返回链元数据
+- [x] 已明确 `ReuseSummary / Product / Decision` 保持既有 canonical 主线，不复制既有事实源或写路径
+- [x] 已明确当前阶段不得新增 `TemplateReuseCommandService` 或第二套模板写 RPC
+- [x] 已明确模板候选继续只从 `product_modules` 读时派生
+- [x] 已明确当前阶段“无需新增轻量快照记录”，并写出纯读时派生足够的证据链
+- [x] 已明确 `templateCandidateId` 漂移时的 unavailable 成功态必须由正式读取接口承接
+- [x] 已明确 `GetDerivedInsightHints` 能区分“无提示成功空态”和“候选漂移 unavailable 成功态”
+- [x] 已明确 Connect handler 物理落点、`/api` 挂载方式与错误映射口径
+- [x] 已明确 `buf / go build / frontend type-check / browser acceptance` 的正式验收口径
+- [x] 已明确 `TemplateReuseService` 四个关键 RPC 的 API smoke 清单
+- [x] 已明确 `Weekly Review -> Product Create -> Product Detail` 的最小浏览器验收闭环
+- [x] 已确认合同、服务与数据承接位单值化，三类核心读取接口的职责边界足以直接驱动 API smoke 与前端 owner 实现
