@@ -148,6 +148,18 @@ func (s *Server) LinkDecisionToTarget(ctx context.Context, req *pb.LinkDecisionT
 	return &pb.LinkDecisionToTargetResponse{}, nil
 }
 
+// UpdateDecisionStatus 承接 DecisionStatusUpdate。
+func (s *Server) UpdateDecisionStatus(ctx context.Context, req *pb.UpdateDecisionStatusRequest) (*pb.UpdateDecisionStatusResponse, error) {
+	err := s.commandSvc.UpdateDecisionStatus(ctx, req.GetDecisionId(), decisioncenter.UpdateDecisionStatusRequest{
+		Status: protoDecisionStatusToDomain(req.GetStatus()),
+	})
+	if err != nil {
+		return nil, connecterrors.MapToConnectError(err)
+	}
+
+	return &pb.UpdateDecisionStatusResponse{}, nil
+}
+
 // --- 类型转换函数 ---
 
 func protoDecisionStatusToDomain(s pb.DecisionStatus) decisioncenter.DecisionStatus {

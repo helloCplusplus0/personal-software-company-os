@@ -6,9 +6,9 @@
 ## 1. 项目定位
 
 - 项目名称：`Personal Software Company OS`
-- 当前阶段：`phase09_template_reuse_derived_intelligence_foundation`（已完成正式收口，当前作为最近完成正式支撑能力 phase 保留）
-- 当前主目标：以 `phase09-11` 正式验收结论与当前根级收口结论作为直接上游，只保留后续 `dry-run` 的进入条件与独立验收闸定位
-- 当前下一阶段入口：后续 `dry-run` 只允许在 `phase09-11` 通过验收、`phase09` 根级收口完成且正式入口建立后切换；`phase08` 继续作为最近完成正式业务 phase 保留，不提前扩大为 `mvp0.4+` 或新的既成事实
+- 当前阶段：`phase10_asset_action_closure_foundation`（已建立正式 `/plan` 入口）
+- 当前主目标：以 `PSCO-mvp04-summarize-feedback.md`、`fix_001_003` 收口记录、`phase06 / phase08 / phase09` 正式交付结论为直接上游，推进 `Asset-Action Closure` 主线
+- 当前下一阶段入口：`phase10` 必须先完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，之后才允许正式进入 `Agent Consumption Layer`；`phase09` 继续作为最近完成正式支撑能力 phase 保留，`phase08` 继续作为最近完成正式业务 phase 保留
 - 当前定位：PSCO 是个人软件公司的经营与资产系统，不是代码管理工具，不是 AI Chat 产品，也不是自动扫描系统
 
 ## 2. 当前唯一上游
@@ -31,6 +31,7 @@
 - 当前项目 Go 业务接口已明确收敛为 `.proto + ConnectRPC` 正式传输主线；`chi` 保留为路由 / 中间件装配层与 `healthz / metrics / debug` 等非业务端点承载层
 - `v0.1` 前端正式交付物为单一 `React Web`，同时考虑 `PC` 与移动浏览器 UI；当前不引入独立 `React Native` 客户端，`PWA` 仅作可兼容增强方向
 - `docs/` 当前只服务 `phase / fix / audit / review / archive` workflow
+- `mvp0.4` 的当前正式排序已冻结为：先 `Asset-Action Closure`，后 `Agent Consumption Layer`
 
 ## 4. 当前状态
 
@@ -79,7 +80,8 @@
 - `phase07-08 / 09 / 10` 规格目录保留为生成链、后端与前端迁移实现结论记录，不提升为新的根级长期入口
 - `.trae/specs/phase09_11_validate_template_reuse_derived_hint_integration_browser_regression_acceptance/acceptance_report.md` 已给出 `phase09` 统一联调、浏览器验收、反回归验证与正式收口结论入口
 - `phase09` 已完成模板候选、`Product Create` 预填回流、派生提示展示与 handoff 的正式交付，并通过统一联调、浏览器验收与反回归验证收口，当前作为最近完成正式支撑能力 phase 保留
-- 后续 `dry-run` 只允许直接承接 `phase09-11` 验收结论与当前根级收口结论，在独立正式入口建立后切换；根级文档不得提前把 `dry-run` 或 `mvp0.4+` 写成当前版本既成事实
+- `fix_001 ~ fix_003` 已完成修复、独立复核、聚焦 rerun 与 `mvp0.3` 收口，当前已具备进入 `phase10_asset_action_closure_foundation` 的正式前提
+- `phase10_asset_action_closure_foundation` 三件套已建立，当前作为 `mvp0.4` 的首个正式业务 phase 进入 `/plan`
 
 ## 5. 推荐阅读顺序
 

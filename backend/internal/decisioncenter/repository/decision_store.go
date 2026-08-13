@@ -179,3 +179,28 @@ func (s *DecisionStore) Exists(ctx context.Context, decisionID string) (bool, er
 	}
 	return exists, nil
 }
+
+// UpdateStatus 更新决策状态并返回更新后的完整对象。
+//
+// 只做持久化，不做业务校验（状态迁移合法性由 service 层承接）。
+// 未找到决策时返回 decisioncenter.ErrDecisionNotFound。
+func (s *DecisionStore) UpdateStatus(ctx context.Context, decisionID string, status decisioncenter.DecisionStatus) (*decisioncenter.Decision, error) {
+	d := &decisioncenter.Decision{}
+	err := s.pool.QueryRow(ctx, `
+	UPDATE decisions
+	SET status = $1
+	WHERE id = $2
+	RETURNING id, title, context, problem, alternatives, choice, reason, impact, status, created_at`,
+		string(status), decisionID,
+	).Scan(
+		&d.ID, &d.Title, &d.Context, &d.Problem, &d.Alternatives,
+		&d.Choice, &d.Reason, &d.Impact, &d.Status, &d.CreatedAt,
+	)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, decisioncenter.ErrDecisionNotFound
+	}
+	if err != nil {
+		return nil, fmt.Errorf("update decision status: %w", err)
+	}
+	return d, nil
+}

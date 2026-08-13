@@ -242,6 +242,23 @@ message LinkDecisionToTargetRequest {
 // 避免形成脱离 DecisionDetailRead 的第二套回流读取路径。
 message LinkDecisionToTargetResponse {}
 
+// UpdateDecisionStatusRequest — 状态推进写入最小字段。
+// decision_id 在 RPC 请求中显式承接；status 为目标状态。
+// 状态推进只允许在既有四态内迁移，不引入新枚举。
+// 迁移矩阵（fix_002_003）：
+//   proposed -> active / superseded / archived
+//   active   -> superseded / archived
+//   superseded / archived 为终态，不可继续推进
+message UpdateDecisionStatusRequest {
+  string decision_id = 1;
+  DecisionStatus status = 2;
+}
+
+// UpdateDecisionStatusResponse — 状态推进写入响应，必须为空响应（无字段）。
+// 对齐既有 CreateDecision / LinkDecisionToTarget 写接口响应模式，
+// 不返回完整 Decision 对象，前端通过 reread 获取最新状态。
+message UpdateDecisionStatusResponse {}
+
 // ============================================================================
 // 服务接口
 // ============================================================================
@@ -288,4 +305,7 @@ service DecisionCenterService {
 
   // DecisionLinkWrite — LinkDecisionToTarget
   rpc LinkDecisionToTarget(LinkDecisionToTargetRequest) returns (LinkDecisionToTargetResponse);
+
+  // DecisionStatusUpdate — UpdateDecisionStatus
+  rpc UpdateDecisionStatus(UpdateDecisionStatusRequest) returns (UpdateDecisionStatusResponse);
 }

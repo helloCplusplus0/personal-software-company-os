@@ -22,6 +22,7 @@
  */
 import { useParams, useNavigate, useSearch } from '@tanstack/react-router'
 import { useDecisionDetailRead } from '../data/use-decision-detail-read'
+import { useUpdateDecisionStatus } from '../application/use-update-decision-status'
 import { DecisionDetailSummaryCard } from '../components/decision-detail-summary-card'
 import { DecisionLinkedTargetsSection } from '../components/decision-linked-targets-section'
 import { DecisionPendingLinkTargetCard } from '../components/decision-pending-link-target-card'
@@ -36,6 +37,7 @@ import {
   shouldReturnToOnboarding,
   buildOnboardingReturnSearch,
 } from '@/features/onboarding/lib/onboarding-return'
+import type { DecisionStatus } from '../types'
 
 export function DecisionDetailPage() {
   const { decisionId } = useParams({ from: '/decisions/$decisionId' })
@@ -68,6 +70,12 @@ export function DecisionDetailPage() {
   ) as unknown as Record<string, unknown>
 
   const { data, isLoading, isError, error } = useDecisionDetailRead(decisionId)
+  const updateStatusMutation = useUpdateDecisionStatus()
+
+  // fix_002_003：状态推进 handler，单值化承接 canonical 状态变更
+  const handleStatusChange = (status: DecisionStatus) => {
+    updateStatusMutation.mutate({ decisionId, status })
+  }
 
   // phase06-15：返回按钮统一通过 handleReturn 承接，支持 fromOnboarding 优先级
   const handleReturn = () => {
@@ -141,6 +149,8 @@ export function DecisionDetailPage() {
           <DecisionDetailSummaryCard
             decision={data.decision}
             sourceContext={data.source_context}
+            onStatusChange={handleStatusChange}
+            isUpdating={updateStatusMutation.isPending}
           />
         </div>
 

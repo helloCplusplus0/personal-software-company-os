@@ -3,6 +3,7 @@
  *
  * §5.8 详情读取承接核心对象字段、结构化模板字段与最小来源上下文展示。
  * phase03-05 组件树冻结：只承接决策核心字段、结构化模板字段与 source_context 展示。
+ * fix_002_003：新增状态推进 CTA，承接 canonical 状态推进动作。
  *
  * 布局降级（phase03-05）：
  * - PC：字段分区展示
@@ -10,11 +11,16 @@
  */
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import type { Decision, DecisionStatus, SourceContext } from '../types'
 
 interface DecisionDetailSummaryCardProps {
   decision: Decision
   sourceContext: SourceContext
+  /** 状态推进 CTA 回调，终态时不展示 */
+  onStatusChange?: (status: DecisionStatus) => void
+  /** 状态推进是否正在执行 */
+  isUpdating?: boolean
 }
 
 const STATUS_LABEL: Record<DecisionStatus, string> = {
@@ -31,7 +37,30 @@ const STATUS_VARIANT: Record<DecisionStatus, 'default' | 'secondary' | 'outline'
   archived: 'outline',
 }
 
-export function DecisionDetailSummaryCard({ decision, sourceContext }: DecisionDetailSummaryCardProps) {
+// fix_002_003 冻结最小状态推进矩阵
+const STATUS_TRANSITIONS: Record<DecisionStatus, { label: string; target: DecisionStatus }[]> = {
+  proposed: [
+    { label: 'Mark Active', target: 'active' },
+    { label: 'Mark Superseded', target: 'superseded' },
+    { label: 'Archive', target: 'archived' },
+  ],
+  active: [
+    { label: 'Mark Superseded', target: 'superseded' },
+    { label: 'Archive', target: 'archived' },
+  ],
+  superseded: [],
+  archived: [],
+}
+
+export function DecisionDetailSummaryCard({
+  decision,
+  sourceContext,
+  onStatusChange,
+  isUpdating,
+}: DecisionDetailSummaryCardProps) {
+  const transitions = STATUS_TRANSITIONS[decision.status]
+  const hasTransitions = transitions.length > 0
+
   return (
     <Card>
       <CardHeader>
@@ -87,6 +116,26 @@ export function DecisionDetailSummaryCard({ decision, sourceContext }: DecisionD
             <p className="text-sm">
               从 <span className="font-medium">{sourceContext.source_module_name}</span> 发起
             </p>
+          </div>
+        )}
+
+        {/* fix_002_003：状态推进 CTA，仅在非终态时展示 */}
+        {hasTransitions && onStatusChange && (
+          <div className="border-t pt-3">
+            <h4 className="text-sm font-medium text-muted-foreground mb-2">Status</h4>
+            <div className="flex flex-wrap gap-2">
+              {transitions.map((t) => (
+                <Button
+                  key={t.target}
+                  variant="outline"
+                  size="sm"
+                  disabled={isUpdating}
+                  onClick={() => onStatusChange(t.target)}
+                >
+                  {t.label}
+                </Button>
+              ))}
+            </div>
           </div>
         )}
 

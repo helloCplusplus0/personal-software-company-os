@@ -37,4 +37,8 @@ var (
 	// ErrInvalidAlternatives alternatives 条目空白（校验失败，400）。
 	// 归属接口：DecisionWrite。
 	ErrInvalidAlternatives = errors.New("invalid alternatives: items must not be blank")
+
+	// ErrInvalidStatusTransition 非法状态迁移（校验失败，400）。
+	// 归属接口：UpdateDecisionStatus（fix_002_003）。
+	ErrInvalidStatusTransition = errors.New("invalid status transition")
 )

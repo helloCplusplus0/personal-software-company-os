@@ -1,0 +1,9 @@
+- [x] `Decision.status` 状态推进已具备单一 `.proto -> Connect -> CommandService -> DecisionStore` 正式写链
+- [x] `Decision Detail` 已提供正式状态推进 CTA，而不是只有静态状态 badge
+- [x] 当前 fix 仍只使用 `proposed / active / superseded / archived` 四态，未引入第五态
+- [x] `Dashboard / Current Focus / Daily Review` 的 pending 判定仍锚定 canonical `Decision.status`
+- [x] `decision_links` 与 `review_records` 没有被升级为 pending 退出的代理事实源
+- [x] 状态推进成功后会统一触发 `decision-detail / decision-list / review / dashboard` reread
+- [x] `SubmitReviewResult` 仍只记录 review result，不代理 `Decision.status` 写入
+- [x] `LinkDecisionToTarget` 仍只承接目标关联，不代理状态完成语义
+- [x] 从 `Daily Review / Dashboard` 进入 `Decision Detail` 后，可以正式推进状态并回流消除 pending 误报

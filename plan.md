@@ -4,10 +4,10 @@
 
 ## 1. 当前状态
 
-- 当前阶段：`phase09_template_reuse_derived_intelligence_foundation`
-- 当前状态：`phase08` 已退回最近完成正式业务 phase；`phase09` 已完成正式收口，当前作为最近完成正式支撑能力 phase 保留
-- 当前目标：以 `phase09-11` 正式验收结论与当前根级收口结论作为直接上游，只保留后续 `dry-run` 的进入条件与独立验收闸定位
-- 当前下一阶段入口：后续 `dry-run` 只允许在 `phase09-11` 通过验收、`phase09` 根级收口完成且正式入口建立后切换；不提前扩大为 `mvp0.4+`、新的阶段名称或并列主交付
+- 当前阶段：`phase10_asset_action_closure_foundation`
+- 当前状态：`phase08` 继续作为最近完成正式业务 phase；`phase09` 已完成正式收口并继续作为最近完成正式支撑能力 phase；`phase10` 已建立正式 `/plan` 入口
+- 当前目标：以 `PSCO-mvp04-summarize-feedback.md`、`fix_001_003` 收口记录、`phase06 / phase08 / phase09` 的正式交付结论作为直接上游，推进 `Asset-Action Closure` 主线
+- 当前下一阶段入口：`phase10` 必须先完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，之后才允许正式进入 `Agent Consumption Layer`
 
 ## 2. 当前进度概览
 
@@ -61,6 +61,8 @@
 - `.trae/specs/phase09_11_validate_template_reuse_derived_hint_integration_browser_regression_acceptance/acceptance_report.md` 已形成 `phase09` 统一联调、浏览器验收、反回归验证与正式收口结论入口
 - `phase09` 已完成模板候选、`Product Create` 预填回流、派生提示展示与 handoff 的正式交付，并通过统一联调、浏览器验收与反回归验证收口
 - `phase09` 当前只承接 `Template Reuse + Derived Intelligence Deepening` 的最小支撑能力，不把 `Real-Project Dry-Run`、`Venture` 或 `AI Context Enhancement` 偷渡为并列主交付
+- `fix_001 ~ fix_003` 已完成修复、独立复核、聚焦 rerun 与 `mvp0.3` 收口，`docs/fix/fix_001_003_mvp03_dry_run_rerun_closure.md` 已形成进入 `mvp0.4` 首个正式 phase 的直接结论入口
+- `phase10_asset_action_closure_foundation` 三件套已建立，当前作为 `mvp0.4` 的首个正式业务 phase 进入 `/plan`
 
 ## 3. Phase 路线预览
 
@@ -141,19 +143,15 @@
 - 状态：`completed`
 - 当前收口结果：已完成模板候选、`Product Create` 预填回流、派生提示展示与 handoff 的正式交付；`phase09-11` 为统一联调、浏览器验收、反回归验证与正式收口结论入口，三件套保留为规划与冻结记录；当前作为最近完成正式支撑能力 phase 保留
 
-## 4. 后续 `dry-run` 进入条件
+### phase10：`phase10_asset_action_closure_foundation`
 
-当以下条件同时满足时，后续 `dry-run` 才允许建立正式入口并从当前收口状态切换：
-
-1. `phase09-11` 正式验收结论继续作为直接验收上游输入
-2. `AGENTS.md` 与 `plan.md` 已完成 `phase09` 根级收口同步，并保持“`phase09` 为最近完成正式支撑能力 phase、`phase08` 为最近完成正式业务 phase”的单值口径
-3. 后续 `dry-run` 已建立独立正式入口，并明确范围、DoD、非目标与独立验收闸
-4. `dry-run` 的直接上游已清楚承接 `phase09-11`、当前根级真相源与既有业务主线结论，且不引入第二套根级状态口径
-5. 根级文档仍只保留进入条件表达，不把 `dry-run` 之后的 `mvp0.4+` 写成当前既成事实
-
-当前结论：`phase09` 已完成正式收口，当前作为最近完成正式支撑能力 phase 保留；`phase08` 继续作为最近完成正式业务 phase 保留。后续 `dry-run` 只保留进入条件表达，待正式入口建立后切换，不预设新的正式阶段名称、编号或 `mvp0.4+` 既成事实。
-
-## 5. 说明
+- 目标：交付 `Asset-Action Closure` 主线
+- 进入条件：直接承接 `PSCO-mvp04-summarize-feedback.md`、`docs/fix/fix_001_003_mvp03_dry_run_rerun_closure.md`、`fix_001 ~ fix_003` 三份 analysis、以及 `phase06 / phase08 / phase09` 已冻结的正式规格与验收结果
+- 范围约束：不得提前混入 `Agent Consumption Layer`、`Cross-Project Convention Asset`、新实体主线、第五态 `DecisionStatus`、AI 工作台或真实连接重型集成
+- 交付要求：作为交付型 phase 推进，必须完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
+- 状态：`planning`
+- 当前规划结论：以 `Onboarding` 首轮建链引导、`Decision` 最小真实生命周期、Dashboard / Review / Detail pages 下一步动作承接矩阵、`Current Focus / pending signals` 真实经营语义回归为单一主交付能力
+## 4. 说明
 
 - 本文档只承载全局开发预览、phase 计划与进度
 - 不展示 task 级拆分

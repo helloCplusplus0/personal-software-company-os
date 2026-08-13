@@ -16,8 +16,14 @@
   - `fix_001_onboarding_cold_start_state_issue.md`
   - `fix_001_onboarding_cold_start_state_analysis.md`
   - `fix_002_decision_pending_signal_semantics_issue.md`
+  - `fix_002_decision_pending_signal_semantics_analysis.md`
   - `fix_003_decision_detail_status_advance_issue.md`
+  - `fix_003_decision_detail_status_advance_analysis.md`
+  - `fix_001_003_mvp03_dry_run_rerun_closure.md`
+- 当前结论：
+  - `fix_001` 已完成 analysis、`/spec`、实现与独立复核
+  - `fix_002` 已完成 analysis，并与 `fix_003` 完成联动 `/spec`、实现、浏览器级验收与独立复核
+  - `fix_003` 已完成 analysis，并与 `fix_002` 完成联动 `/spec`、实现、浏览器级验收与独立复核
+  - `fix_001 ~ fix_003` 已完成本轮 `mvp0.3 dry-run` 阻断项聚焦 rerun 与收口
 - 下一步：
-  - `fix_001` 已进入 analysis 阶段
-  - `fix_002 / fix_003` 继续基于 issue 文档进入对应 `analysis`
-  - 后续统一进入 `/spec`、实现与验收
+  - 以 `PSCO-mvp04-summarize-feedback.md` 为上游基线，进入“候选阶段二：Asset-Action Closure 主线”的正式入口建立

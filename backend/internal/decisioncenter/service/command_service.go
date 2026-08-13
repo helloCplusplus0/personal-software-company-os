@@ -164,3 +164,68 @@ func isValidDecisionStatus(s decisioncenter.DecisionStatus) bool {
 	}
 	return false
 }
+
+// validStatusTransitions 冻结最小状态推进矩阵（fix_002_003）。
+// proposed -> active / superseded / archived
+// active   -> superseded / archived
+// superseded / archived 为终态，不再允许推进。
+var validStatusTransitions = map[decisioncenter.DecisionStatus][]decisioncenter.DecisionStatus{
+	decisioncenter.DecisionStatusProposed: {
+		decisioncenter.DecisionStatusActive,
+		decisioncenter.DecisionStatusSuperseded,
+		decisioncenter.DecisionStatusArchived,
+	},
+	decisioncenter.DecisionStatusActive: {
+		decisioncenter.DecisionStatusSuperseded,
+		decisioncenter.DecisionStatusArchived,
+	},
+	// superseded / archived 为终态，不在 map 中 = 无可前进方向
+}
+
+// UpdateDecisionStatus 承接 DecisionStatusUpdate。
+//
+// 校验顺序（fix_002_003）：
+//  1. decision_id 格式校验 → Decision 存在性校验
+//  2. 目标 status 取值合法性校验
+//  3. 读取当前状态，校验状态迁移是否在 allowed transitions 矩阵内
+//  4. 写入新状态
+//
+// 成功返回空响应，前端通过 reread 获取最新状态。
+func (s *CommandService) UpdateDecisionStatus(ctx context.Context, decisionID string, req decisioncenter.UpdateDecisionStatusRequest) error {
+	// 1. decision_id 格式校验
+	if err := decisioncenter.ValidateDecisionID(decisionID); err != nil {
+		return err
+	}
+
+	// 2. 目标 status 取值合法性校验
+	if !isValidDecisionStatus(req.Status) {
+		return decisioncenter.ErrInvalidStatus
+	}
+
+	// 3. 读取当前状态
+	current, err := s.decisions.GetByID(ctx, decisionID)
+	if err != nil {
+		return err
+	}
+
+	// 4. 校验状态迁移合法性
+	allowed := validStatusTransitions[current.Decision.Status]
+	if allowed == nil {
+		// 终态，不可继续推进
+		return decisioncenter.ErrInvalidStatusTransition
+	}
+	allowedTarget := false
+	for _, a := range allowed {
+		if a == req.Status {
+			allowedTarget = true
+			break
+		}
+	}
+	if !allowedTarget {
+		return decisioncenter.ErrInvalidStatusTransition
+	}
+
+	// 5. 写入
+	_, err = s.decisions.UpdateStatus(ctx, decisionID, req.Status)
+	return err
+}

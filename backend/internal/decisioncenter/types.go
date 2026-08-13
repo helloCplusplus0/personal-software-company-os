@@ -146,3 +146,11 @@ type ListQuery struct {
 	QueryText    string
 	StatusFilter DecisionStatus
 }
+
+// UpdateDecisionStatusRequest 状态推进写入最小字段
+// （对齐 .proto UpdateDecisionStatusRequest，fix_002_003）。
+// decision_id 在 handler 层由 URL 路径参数承接，不在本结构体中。
+// 状态推进只允许在既有四态内迁移，不引入新枚举。
+type UpdateDecisionStatusRequest struct {
+	Status DecisionStatus `json:"status"`
+}

@@ -95,6 +95,10 @@ docs/
   - `phase07_transport_contract_mainline_migration_dev_plan.md`
   - `phase07_transport_contract_mainline_migration_shared_baseline.md`
 - 当前已创建：
+  - `phase10_asset_action_closure_foundation_architecture_plan.md`
+  - `phase10_asset_action_closure_foundation_dev_plan.md`
+  - `phase10_asset_action_closure_foundation_shared_baseline.md`
+- 当前已创建：
   - `phase09_template_reuse_derived_intelligence_foundation_architecture_plan.md`
   - `phase09_template_reuse_derived_intelligence_foundation_dev_plan.md`
   - `phase09_template_reuse_derived_intelligence_foundation_shared_baseline.md`
@@ -146,7 +150,8 @@ docs/
 - `phase09` 已直接承接 `PSCO-mvp03-summarize-feedback.md`、`phase08-11` 验收结论、`phase08` 三件套规划记录与 `phase06` 复用摘要主线，并已完成 `Template Reuse + Derived Intelligence Deepening` 的正式交付、统一验收与收口
 - `phase09` 三件套在收口后只承担最近完成正式支撑能力 phase 的规划与冻结记录角色；正式验收与收口入口收敛到 `phase09-11` acceptance_report
 - `phase09-08 / 09 / 10` 只保留为合同落地、模板预填回流与派生提示实现结论记录，不提升为根级长期主入口
-- 后续 `dry-run` 只允许在直接承接 `phase09-11` 验收结论、`phase09` 根级收口结论、`phase08` 根级收口结论与当前根级真相源后建立正式入口；根级文档只写进入条件，不得提前扩大 `mvp0.4+`、猜测任何未建立阶段名称或拆分范围
+- `phase10` 已直接承接 `PSCO-mvp04-summarize-feedback.md`、`fix_001_003` 收口记录、`fix_001 ~ fix_003` analysis 与 `phase06 / phase08 / phase09` 正式交付结论，并已建立 `Asset-Action Closure` 的正式 `/plan` 入口
+- `phase10` 三件套当前承担 `mvp0.4` 首个正式业务 phase 的规划与冻结记录角色；后续执行层必须先完成 `/spec`、实现、验收与根级收口
 
 ### 4.2 fix
 
@@ -154,8 +159,12 @@ docs/
   - `docs/fix/fix_001_onboarding_cold_start_state_issue.md`
   - `docs/fix/fix_001_onboarding_cold_start_state_analysis.md`
   - `docs/fix/fix_002_decision_pending_signal_semantics_issue.md`
+  - `docs/fix/fix_002_decision_pending_signal_semantics_analysis.md`
   - `docs/fix/fix_003_decision_detail_status_advance_issue.md`
+  - `docs/fix/fix_003_decision_detail_status_advance_analysis.md`
+  - `docs/fix/fix_001_003_mvp03_dry_run_rerun_closure.md`
 - 当前 fix 主线含义：用于承接 `Real-Project Dry-Run` 暴露的第一轮阻断项，先完成 issue 与 analysis，再进入 `/spec`、实现、聚焦 rerun 与 `mvp0.3` 收口
+- 当前 fix 状态：`fix_001 ~ fix_003` 已完成修复、独立复核、聚焦 rerun 与 `mvp0.3` 收口；后续正式工作应转向 `PSCO-mvp04-summarize-feedback.md` 所定义的“候选阶段二：Asset-Action Closure 主线”
 
 ### 4.3 audit
 
