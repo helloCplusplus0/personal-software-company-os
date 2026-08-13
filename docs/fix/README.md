@@ -14,6 +14,10 @@
 
 - 当前已创建：
   - `fix_001_onboarding_cold_start_state_issue.md`
+  - `fix_001_onboarding_cold_start_state_analysis.md`
   - `fix_002_decision_pending_signal_semantics_issue.md`
   - `fix_003_decision_detail_status_advance_issue.md`
-- 下一步：基于上述 issue 文档继续进入对应 `analysis`、`/spec`、实现与验收
+- 下一步：
+  - `fix_001` 已进入 analysis 阶段
+  - `fix_002 / fix_003` 继续基于 issue 文档进入对应 `analysis`
+  - 后续统一进入 `/spec`、实现与验收

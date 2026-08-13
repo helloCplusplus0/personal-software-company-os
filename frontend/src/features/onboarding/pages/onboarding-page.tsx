@@ -76,11 +76,13 @@ export function OnboardingPage() {
   const serverStep = firstRunState?.current_step
   const status = firstRunState?.status
 
-  // 当前步骤：
-  // - detail 页返回时，优先恢复一次 focusedStep
-  // - 其余情况下继续以服务端 first_run_state.current_step 为事实源
+  // 当前步骤优先级（fix_001 修正）：
+  // 1. detail 页返回的一次性 focusedStep
+  // 2. welcome 首次点击后的一次性 startStep（本地起步兜底）
+  // 3. 服务端 first_run_state.current_step（长期事实源）
+  // 4. 最终兜底 welcome
   const currentStep: OnboardingStep =
-    focusedStep ?? serverStep ?? startStep ?? 'welcome'
+    focusedStep ?? startStep ?? serverStep ?? 'welcome'
 
   useEffect(() => {
     if (!returnSearch.onboardingStep) {
@@ -118,6 +120,14 @@ export function OnboardingPage() {
     returnSearch.decisionDraftId,
     returnSearch.decisionDraftLabel,
   ])
+
+  // fix_001 收敛规则：当服务端步骤已追平或超过本地起步步骤时，清空 startStep，
+  // 让页面重新回到服务端 first_run_state.current_step 驱动。
+  useEffect(() => {
+    if (startStep && serverStep && serverStep !== 'welcome') {
+      setStartStep(null)
+    }
+  }, [serverStep, startStep])
 
   // status = completed 时默认进入 complete 步骤；
   // 若当前存在从 detail 页回流的一次性 focusedStep，则保留该步骤优先级。

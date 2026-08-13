@@ -1,0 +1,6 @@
+- [x] welcome 首次点击后立即进入 `product` 步骤
+- [x] `startStep` 只作为 welcome 点击后的本地一次性兜底，不会长期覆盖服务端步骤
+- [x] `product` 创建成功并重新读取 `onboarding-state` 后，页面可继续按服务端步骤推进
+- [x] canonical detail 页返回 `/onboarding` 时，`focusedStep / onboardingStep` 的恢复语义保持不变
+- [x] `/onboarding` 路由 `validateSearch` 合同未被扩义
+- [x] 后端 `GetFirstRunState` 合同与根级 `/` 默认进入路径合同未被修改

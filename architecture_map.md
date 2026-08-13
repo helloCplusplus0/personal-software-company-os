@@ -152,6 +152,7 @@ docs/
 
 - 当前已创建：
   - `docs/fix/fix_001_onboarding_cold_start_state_issue.md`
+  - `docs/fix/fix_001_onboarding_cold_start_state_analysis.md`
   - `docs/fix/fix_002_decision_pending_signal_semantics_issue.md`
   - `docs/fix/fix_003_decision_detail_status_advance_issue.md`
 - 当前 fix 主线含义：用于承接 `Real-Project Dry-Run` 暴露的第一轮阻断项，先完成 issue 与 analysis，再进入 `/spec`、实现、聚焦 rerun 与 `mvp0.3` 收口
