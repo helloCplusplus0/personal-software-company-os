@@ -53,6 +53,7 @@
 - [下一步推进方向评审（GPT54）](file:///home/dell/Projects/personal-software-company-os/docs/review/PSCO-mvp03-GPT54.md)
 - [mvp0.3 专家意见交叉汇总（GPT54）](file:///home/dell/Projects/personal-software-company-os/docs/review/PSCO-mvp03-summarize-feedback-GPT54.md)
 - [mvp0.3 最终仲裁与规划基线](file:///home/dell/Projects/personal-software-company-os/PSCO-mvp03-summarize-feedback.md)
+- [Real-Project Dry-Run 使用手册（GPT54）](file:///home/dell/Projects/personal-software-company-os/docs/review/PSCO-real-project-dry-run-user-manual-GPT54.md)
 - [下一阶段方向评审（GPT54）](file:///home/dell/Projects/personal-software-company-os/docs/review/PSCO-next-phase-mvp02-GPT54.md)
 - [mvp0.2 专家意见交叉汇总（GPT54）](file:///home/dell/Projects/personal-software-company-os/docs/review/PSCO-mvp02-summarize-feedback-GPT54.md)
 - [mvp0.2 最终仲裁与规划基线](file:///home/dell/Projects/personal-software-company-os/PSCO-mvp02-summarize-feedback.md)
@@ -87,4 +88,5 @@
 - `phase08` 三件套保留为最近完成正式业务 phase 的规划与冻结记录；正式验收与收口入口收敛到 [phase08-11 acceptance_report](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase08_11_validate_review_loop_integration_browser_regression_acceptance/acceptance_report.md)
 - `phase07` 三件套继续保留为最近完成前置基础阶段的规划与冻结记录；正式证据入口继续收敛到 [phase07-07 正式规格](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase07_07_formal_transport_mainline_cutover_spec/transport_mainline_cutover_spec_v0.1.md) 与 [phase07-11 验收结论](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase07_11_validate_phase01_phase06_regression_retirement_acceptance/acceptance_report.md)，但不再覆盖当前业务状态
 - 后续 `dry-run` 只允许在直接承接 `phase09-11` 验收结论、`phase09` 根级收口结论、`phase08` 根级收口结论与当前根级真相源后建立正式入口；在正式入口建立前，只保留进入条件，不预设 `mvp0.4+`、任何未建立的新阶段名称或范围拆分
+- `Real-Project Dry-Run` 的真实验证必须由真实使用者亲自执行；当前已补充 [使用手册](file:///home/dell/Projects/personal-software-company-os/docs/review/PSCO-real-project-dry-run-user-manual-GPT54.md)，用于指导标准操作路径、观察重点与反馈回收
 - `phase05` 三件套保留为上一已完成阶段的规划与冻结记录，不再覆盖根级当前阶段状态

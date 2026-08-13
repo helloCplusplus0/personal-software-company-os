@@ -48,6 +48,7 @@
 - `PSCO-mvp01-summarize-feedback.md`：`mvp0.1` 阶段最终共识与执行基线参考
 - `PSCO-mvp02-summarize-feedback.md`：基于两轮 `mvp0.2` 评审与交叉汇总形成的下一阶段最终仲裁与 `/plan` 上游基线
 - `PSCO-mvp03-summarize-feedback.md`：基于两轮 `mvp0.3` 评审与交叉汇总形成的最终仲裁、范围基线与推进顺序约束，作为 `phase07` 与后续 `mvp0.3` 业务阶段正式 `/plan` 的上游判断基线
+- `docs/review/PSCO-real-project-dry-run-user-manual-GPT54.md`：`phase08` 与 `phase09` 收口后，为后续 `Real-Project Dry-Run` 准备的标准使用手册与真实使用前参考输入；不承担正式 `phase` 规则冻结职责
 
 ## 3. docs 目录结构
 
@@ -149,7 +150,11 @@ docs/
 
 ### 4.2 fix
 
-- 当前尚未创建 `fix*` 文档
+- 当前已创建：
+  - `docs/fix/fix_001_onboarding_cold_start_state_issue.md`
+  - `docs/fix/fix_002_decision_pending_signal_semantics_issue.md`
+  - `docs/fix/fix_003_decision_detail_status_advance_issue.md`
+- 当前 fix 主线含义：用于承接 `Real-Project Dry-Run` 暴露的第一轮阻断项，先完成 issue 与 analysis，再进入 `/spec`、实现、聚焦 rerun 与 `mvp0.3` 收口
 
 ### 4.3 audit
 
@@ -197,6 +202,10 @@ docs/
 - `PSCO-mvp03-qwen37pro.md`
 - `PSCO-mvp03-summarize-feedback-DPv4flash.md`
 - `PSCO-mvp03-summarize-feedback-GLM52.md`
+- `PSCO-real-project-dry-run-user-manual-GPT54.md`
+- `PSCO-real-project-dry-run-user-manual-GPT54 feedback.md`
+- `PSCO-mvp04-DPv4pro.md`
+- `PSCO-mvp04-summarize-feedback-DPv4pro.md`
 
 另保留迁移跳转文件：
 

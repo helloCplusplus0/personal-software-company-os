@@ -46,6 +46,10 @@
 
 - [Personal Software Company OS v2.0.md](file:///home/dell/Projects/personal-software-company-os/docs/review/Personal%20Software%20Company%20OS%20v2.0.md) -> `TECH_STACK_BASELINE.md`
 
+### 2.5 使用参考
+
+- [PSCO-real-project-dry-run-user-manual-GPT54.md](file:///home/dell/Projects/personal-software-company-os/docs/review/PSCO-real-project-dry-run-user-manual-GPT54.md) — 在 `phase08` 与 `phase09` 已完成正式交付和统一验收后，为后续 `Real-Project Dry-Run` 准备的标准使用手册；说明 Dashboard、Daily / Weekly Review、Decision、Product / Module / Repository、Template Reuse 与 Derived Hints 的推荐使用方式、主线操作顺序、观察重点与反馈回收格式。该文档只作为真实使用前的参考输入，不承担正式 `phase` 规则冻结职责。
+
 ## 3. 规则
 
 - 评审与交叉汇总文档归入 `docs/review/`，不进入 `docs/audit/`
