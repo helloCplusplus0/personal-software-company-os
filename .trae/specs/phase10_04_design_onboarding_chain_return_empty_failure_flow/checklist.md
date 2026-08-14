@@ -1,0 +1,12 @@
+- [x] `Onboarding` 六段式页面版执行清单已冻结为单一路由宿主，且每一步都明确了 canonical owner、最小动作与成功后默认下一步
+- [x] `repository / module / decision` 在"同页闭合"与"canonical handoff"两类场景下的正式落点已写清，未留下页面层临场判断
+- [x] canonical detail handoff 的来源参数已冻结为参数级合同：`fromOnboarding`、`onboardingProductId`、`onboardingStep`
+- [x] detail handoff 返回时的优先级与失效回退规则已写清，且不会默认跳回列表页或 `Dashboard`
+- [x] “进入 canonical handoff 但未完成承接就返回/退出”已具备正式回退规则，且不会错误推进到下一步
+- [x] 完全冷启动、部分已存在、多实体并存与"实体已存在但关系未解释"四类场景已具备单值页面解释
+- [x] `welcome / product / repository / module / decision / complete` 六段式都已具备页面级空态、失败态与 reread 落点，而不是仅有全局泛化描述
+- [x] step 内写失败、恢复读模型失败、handoff 承接失败与返回参数失效四类失败态都已具备停留位置、重试路径与禁止自动前进约束
+- [x] 中途中断、从 `Dashboard` 继续、浏览器刷新重载三类恢复路径都已统一锚定 `current_product_id` 与最近未完成 step
+- [x] 移动浏览器最小降级策略已冻结为"只降级布局，不改变主线语义与返回合同"
+- [x] `phase10-04` 已明确修改 `phase06-06` 的旧 draft-first 解释，且未与 `phase10-01 / phase10-02` 的冻结结论冲突
+- [x] 三件套内容已足以支撑后续实现与浏览器验收，不需要执行者再自行猜测每一步的最小建链动作
