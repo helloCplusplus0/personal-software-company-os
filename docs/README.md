@@ -26,9 +26,8 @@
 - [阶段路线图](file:///home/dell/Projects/personal-software-company-os/plan.md)
 - [项目规则](file:///home/dell/Projects/personal-software-company-os/project_rules.md)
 - [目录与迁移落点](file:///home/dell/Projects/personal-software-company-os/architecture_map.md)
-- 当前根级阶段状态：`phase09_template_reuse_derived_intelligence_foundation` 已完成正式交付、统一验收与收口，当前保留为最近完成的正式支撑能力 phase；`phase08_operating_review_loop_foundation` 继续保留为最近完成的正式业务 phase
-- 当前根级阶段状态：`phase10_asset_action_closure_foundation` 已建立正式 `/plan` 入口；`phase09_template_reuse_derived_intelligence_foundation` 继续保留为最近完成正式支撑能力 phase；`phase08_operating_review_loop_foundation` 继续保留为最近完成正式业务 phase
-- 当前 docs 入口重点：稳定指向 `phase10` 三件套规划记录，并继续保留 `phase09-11` 与 `phase08-11` 作为最近完成阶段的正式验收入口
+- 当前根级阶段状态：`phase10_asset_action_closure_foundation` 已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`，当前保留为最近完成正式业务 phase；`phase09_template_reuse_derived_intelligence_foundation` 继续保留为最近完成正式支撑能力 phase
+- 当前 docs 入口重点：稳定指向 `phase10` 三件套规划记录、`phase10-11` 正式验收入口，并继续保留 `phase09-11` 作为最近完成正式支撑能力 phase 的正式验收入口
 - [phase09 规划与冻结记录：architecture_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase09_template_reuse_derived_intelligence_foundation_architecture_plan.md)
 - [phase09 规划与冻结记录：dev_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase09_template_reuse_derived_intelligence_foundation_dev_plan.md)
 - [phase09 规划与冻结记录：shared_baseline](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase09_template_reuse_derived_intelligence_foundation_shared_baseline.md)
@@ -36,6 +35,7 @@
 - [phase10 规划与冻结记录：architecture_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase10_asset_action_closure_foundation_architecture_plan.md)
 - [phase10 规划与冻结记录：dev_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase10_asset_action_closure_foundation_dev_plan.md)
 - [phase10 规划与冻结记录：shared_baseline](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase10_asset_action_closure_foundation_shared_baseline.md)
+- [phase10 正式验收与收口入口：phase10-11 spec](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase10_11_complete_asset_action_closure_integration_browser_regression_validation/spec.md)
 - [phase08 规划记录：architecture_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase08_operating_review_loop_foundation_architecture_plan.md)
 - [phase08 规划记录：dev_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase08_operating_review_loop_foundation_dev_plan.md)
 - [phase08 规划记录：shared_baseline](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase08_operating_review_loop_foundation_shared_baseline.md)
@@ -86,14 +86,14 @@
 - `Dashboard + Feedback` 最小主线已形成可运行交付物，并已冻结正式规格、`.proto` 合同与联调验收入口
 - `phase06_onboarding_sovereignty_reuse_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - `phase07_transport_contract_mainline_migration` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
-- `phase08_operating_review_loop_foundation` 已完成 `/plan -> 实现 -> 验收 -> 收口`，并继续冻结 `Operating Review Loop` 为最近完成的正式业务交付
+- `phase08_operating_review_loop_foundation` 已完成 `/plan -> 实现 -> 验收 -> 收口`，并继续保留为已完成正式业务交付
 - `phase09_template_reuse_derived_intelligence_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，并冻结 `Template Reuse + Derived Intelligence Deepening` 为最近完成的正式支撑能力交付
-- `phase10_asset_action_closure_foundation` 已建立正式 `/plan` 入口，当前作为 `mvp0.4` 的首个正式业务 phase，负责推进 `Asset-Action Closure` 主线
+- `phase10_asset_action_closure_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，并冻结 `Asset-Action Closure` 为最近完成的正式业务交付
 - `phase09` 三件套当前只保留为最近完成正式支撑能力 phase 的规划与冻结记录；正式验收与收口入口收敛到 [phase09-11 acceptance_report](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase09_11_validate_template_reuse_derived_hint_integration_browser_regression_acceptance/acceptance_report.md)
-- `phase08` 三件套保留为最近完成正式业务 phase 的规划与冻结记录；正式验收与收口入口收敛到 [phase08-11 acceptance_report](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase08_11_validate_review_loop_integration_browser_regression_acceptance/acceptance_report.md)
+- `phase10` 三件套保留为最近完成正式业务 phase 的规划与冻结记录；正式验收与收口入口收敛到 [phase10-11 spec](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase10_11_complete_asset_action_closure_integration_browser_regression_validation/spec.md)，同目录 `tasks.md / checklist.md` 共同构成正式验收与收口证据
+- `phase08` 三件套保留为已完成正式业务 phase 的历史规划与冻结记录；正式验收与收口入口继续收敛到 [phase08-11 acceptance_report](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase08_11_validate_review_loop_integration_browser_regression_acceptance/acceptance_report.md)
 - `phase07` 三件套继续保留为最近完成前置基础阶段的规划与冻结记录；正式证据入口继续收敛到 [phase07-07 正式规格](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase07_07_formal_transport_mainline_cutover_spec/transport_mainline_cutover_spec_v0.1.md) 与 [phase07-11 验收结论](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase07_11_validate_phase01_phase06_regression_retirement_acceptance/acceptance_report.md)，但不再覆盖当前业务状态
-- 后续 `dry-run` 只允许在直接承接 `phase09-11` 验收结论、`phase09` 根级收口结论、`phase08` 根级收口结论与当前根级真相源后建立正式入口；在正式入口建立前，只保留进入条件，不预设 `mvp0.4+`、任何未建立的新阶段名称或范围拆分
 - `Real-Project Dry-Run` 的真实验证必须由真实使用者亲自执行；当前已补充 [使用手册](file:///home/dell/Projects/personal-software-company-os/docs/review/PSCO-real-project-dry-run-user-manual-GPT54.md)，用于指导标准操作路径、观察重点与反馈回收
-- `mvp0.3` `Real-Project Dry-Run` 第一轮暴露的 `fix_001 ~ fix_003` 阻断项已完成修复、聚焦 rerun 与收口；当前可以以 [收口记录](file:///home/dell/Projects/personal-software-company-os/docs/fix/fix_001_003_mvp03_dry_run_rerun_closure.md) 作为进入下一阶段前的直接结论入口
-- `phase10` 当前直接承接 `PSCO-mvp04-summarize-feedback.md` 与 `fix_001_003` 收口记录；后续 `/spec`、实现与验收必须围绕 `Asset-Action Closure`，不得提前混入 `Agent Consumption Layer`
+- `mvp0.3` `Real-Project Dry-Run` 第一轮暴露的 `fix_001 ~ fix_003` 阻断项已完成修复、聚焦 rerun 与收口；相关结论继续保留在 [收口记录](file:///home/dell/Projects/personal-software-company-os/docs/fix/fix_001_003_mvp03_dry_run_rerun_closure.md)，作为已被 `phase10` 正式承接的历史修复证据
+- `phase10` 已完成对 `PSCO-mvp04-summarize-feedback.md` 与 `fix_001_003` 收口记录的正式承接；后续只允许在 `phase10-11` 正式验收结论、`phase10` 根级收口结论与当前根级真相源保持单值一致后，再进入 `Agent Consumption Layer`
 - `phase05` 三件套保留为上一已完成阶段的规划与冻结记录，不再覆盖根级当前阶段状态

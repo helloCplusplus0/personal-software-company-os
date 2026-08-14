@@ -1,0 +1,12 @@
+- [x] 已明确 `phase10-12` 首先要审核 `phase10` 是否完成正式实现、联调、浏览器验收与反回归，而不是直接假定已收口。
+- [x] 已明确 `phase10-11` 的验收结论需要进入根级同步范围，作为 `phase10` 正式验收与收口证据入口。
+- [x] 已明确根级同步的目标文档是 `AGENTS.md`、`plan.md`、`docs/README.md`、`architecture_map.md`、`docs/phase/README.md`。
+- [x] 已明确根级回写只更新状态、入口、冻结结论与进入条件，不复制实现细节、浏览器日志与调试正文。
+- [x] 已明确根级入口必须反映 `phase10` 作为最近完成正式业务 phase 的收口定位，而不是继续保留“仅建立 `/plan` 入口”的旧口径。
+- [x] 已明确 `phase09` 继续保留为最近完成正式支撑能力 phase，不因 `phase10` 收口而丢失根级角色。
+- [x] 已明确后续 `Agent Consumption Layer` 必须直接承接 `phase10-11` 与 `phase10` 根级收口结论。
+- [x] 已明确只允许表达 `Agent Consumption Layer` 进入条件，不得提前写成已启动事实、当前阶段或并行主线。
+- [x] 已明确 `plan.md` 与 `AGENTS.md` 的状态、当前目标与后续目标必须更新为与 `phase10` 收口结论一致的表达。
+- [x] 已明确 `docs/README.md`、`architecture_map.md`、`docs/phase/README.md` 需要提供 `phase10` 三件套与 `phase10-11` 的稳定入口，避免活动文档形成孤岛。
+- [x] 已明确 `phase10` 三件套在收口后只承担最近完成正式业务 phase 的规划与冻结记录角色，不再覆盖根级当前阶段状态。
+- [x] 已明确本次收口不得引入第二套根级入口、第二套阶段状态或下一阶段既成事实口径。

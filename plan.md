@@ -5,9 +5,9 @@
 ## 1. 当前状态
 
 - 当前阶段：`phase10_asset_action_closure_foundation`
-- 当前状态：`phase08` 继续作为最近完成正式业务 phase；`phase09` 已完成正式收口并继续作为最近完成正式支撑能力 phase；`phase10` 已建立正式 `/plan` 入口
-- 当前目标：以 `PSCO-mvp04-summarize-feedback.md`、`fix_001_003` 收口记录、`phase06 / phase08 / phase09` 的正式交付结论作为直接上游，推进 `Asset-Action Closure` 主线
-- 当前下一阶段入口：`phase10` 必须先完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，之后才允许正式进入 `Agent Consumption Layer`
+- 当前状态：`phase10` 已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口` 并作为最近完成正式业务 phase 保留；`phase09` 已完成正式收口并继续作为最近完成正式支撑能力 phase
+- 当前目标：以 `phase10-11` 正式验收结论、`phase10` 根级收口结论与 `PSCO-mvp04-summarize-feedback.md` 作为直接上游，保持 `Asset-Action Closure` 收口结果与根级入口的单值一致
+- 当前下一阶段入口：仅允许在 `phase10-11` 正式验收入口、`phase10` 根级收口结论与当前根级真相源保持单值一致后，再进入 `Agent Consumption Layer`
 
 ## 2. 当前进度概览
 
@@ -52,7 +52,8 @@
 - `docs/audit/audit_001_transport_contract_mainline_issue.md` 与 `docs/audit/audit_001_transport_contract_mainline_analysis.md` 已冻结为当前传输主线收敛议题的正式审计入口
 - `phase07_transport_contract_mainline_migration` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，当前退回最近完成前置基础阶段的规划与冻结记录角色
 - `phase07` 的正式执行层入口已收敛到 `phase07-07` 正式规格与 `phase07-11` 验收报告；三件套只保留为规划与冻结记录，不再覆盖当前业务状态
-- `phase08_operating_review_loop_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，当前作为最近完成正式业务 phase 保留
+- `phase08_operating_review_loop_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，当前作为已完成正式业务 phase 保留
+- `phase08_operating_review_loop_foundation` 三件套继续保留为已完成正式业务 phase 的规划与冻结记录，不再承接最近完成正式业务 phase 的根级角色
 - `.trae/specs/phase08_11_validate_review_loop_integration_browser_regression_acceptance/acceptance_report.md` 已形成 `phase08` 统一联调、浏览器验收、反回归验证与正式收口结论入口
 - `phase08` 已完成 `Dashboard` review 入口、Daily / Weekly Review 双路径会话承接，以及 `Feedback -> Decision -> Update` 最小经营回路，并通过统一联调与浏览器验收收口
 - `phase08` 当前只承接 `Operating Review Loop`，不把 `Template Reuse / Derived Intelligence / Real-Project Dry-Run` 混写为并列主交付
@@ -62,7 +63,9 @@
 - `phase09` 已完成模板候选、`Product Create` 预填回流、派生提示展示与 handoff 的正式交付，并通过统一联调、浏览器验收与反回归验证收口
 - `phase09` 当前只承接 `Template Reuse + Derived Intelligence Deepening` 的最小支撑能力，不把 `Real-Project Dry-Run`、`Venture` 或 `AI Context Enhancement` 偷渡为并列主交付
 - `fix_001 ~ fix_003` 已完成修复、独立复核、聚焦 rerun 与 `mvp0.3` 收口，`docs/fix/fix_001_003_mvp03_dry_run_rerun_closure.md` 已形成进入 `mvp0.4` 首个正式 phase 的直接结论入口
-- `phase10_asset_action_closure_foundation` 三件套已建立，当前作为 `mvp0.4` 的首个正式业务 phase 进入 `/plan`
+- `phase10_asset_action_closure_foundation` 三件套已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，当前作为最近完成正式业务 phase 的规划与冻结记录保留
+- `.trae/specs/phase10_11_complete_asset_action_closure_integration_browser_regression_validation/spec.md` 已冻结为 `phase10-11` 的正式验收入口；同目录 `tasks.md / checklist.md` 共同构成 `phase10` 的正式验收与收口证据
+- `phase10` 已完成 `Onboarding` 首轮建链、`Decision` 生命周期闭环、关键 detail pages 动作承接矩阵，以及 `Current Focus / pending signals` 反回归验证；后续只允许在根级收口完成后再进入 `Agent Consumption Layer`
 
 ## 3. Phase 路线预览
 
@@ -149,8 +152,8 @@
 - 进入条件：直接承接 `PSCO-mvp04-summarize-feedback.md`、`docs/fix/fix_001_003_mvp03_dry_run_rerun_closure.md`、`fix_001 ~ fix_003` 三份 analysis、以及 `phase06 / phase08 / phase09` 已冻结的正式规格与验收结果
 - 范围约束：不得提前混入 `Agent Consumption Layer`、`Cross-Project Convention Asset`、新实体主线、第五态 `DecisionStatus`、AI 工作台或真实连接重型集成
 - 交付要求：作为交付型 phase 推进，必须完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
-- 状态：`planning`
-- 当前规划结论：以 `Onboarding` 首轮建链引导、`Decision` 最小真实生命周期、Dashboard / Review / Detail pages 下一步动作承接矩阵、`Current Focus / pending signals` 真实经营语义回归为单一主交付能力
+- 状态：`completed`
+- 当前收口结果：已完成 `Onboarding` 首轮建链引导、`Decision` 最小真实生命周期、Dashboard / Review / Detail pages 下一步动作承接矩阵，以及 `Current Focus / pending signals` 真实经营语义回归；`.trae/specs/phase10_11_complete_asset_action_closure_integration_browser_regression_validation/spec.md` 为正式验收入口，三件套保留为最近完成正式业务 phase 的规划与冻结记录；后续仅允许在 `phase10` 根级收口后再进入 `Agent Consumption Layer`
 ## 4. 说明
 
 - 本文档只承载全局开发预览、phase 计划与进度

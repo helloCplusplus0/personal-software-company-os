@@ -120,14 +120,18 @@ docs/
   - `.trae/specs/phase06_16_integration_validation_acceptance/acceptance_report.md`（`phase06` 联调验收与收口结论入口）
   - `.trae/specs/phase07_07_formal_transport_mainline_cutover_spec/transport_mainline_cutover_spec_v0.1.md`（`phase07` 正式规格收口入口）
   - `.trae/specs/phase07_11_validate_phase01_phase06_regression_retirement_acceptance/acceptance_report.md`（`phase07` 联调、退场验收与收口结论入口）
-  - `docs/phase/phase08_operating_review_loop_foundation_architecture_plan.md`（最近完成正式业务 phase 的架构规划与冻结记录）
-  - `docs/phase/phase08_operating_review_loop_foundation_dev_plan.md`（最近完成正式业务 phase 的任务与 DoD 冻结记录）
-  - `docs/phase/phase08_operating_review_loop_foundation_shared_baseline.md`（最近完成正式业务 phase 的共享基线冻结记录）
+  - `docs/phase/phase08_operating_review_loop_foundation_architecture_plan.md`（已完成正式业务 phase 的架构规划与冻结记录）
+  - `docs/phase/phase08_operating_review_loop_foundation_dev_plan.md`（已完成正式业务 phase 的任务与 DoD 冻结记录）
+  - `docs/phase/phase08_operating_review_loop_foundation_shared_baseline.md`（已完成正式业务 phase 的共享基线冻结记录）
   - `.trae/specs/phase08_11_validate_review_loop_integration_browser_regression_acceptance/acceptance_report.md`（`phase08` 正式验收与收口结论入口）
   - `docs/phase/phase09_template_reuse_derived_intelligence_foundation_architecture_plan.md`（最近完成正式支撑能力 phase 的架构规划与冻结记录）
   - `docs/phase/phase09_template_reuse_derived_intelligence_foundation_dev_plan.md`（最近完成正式支撑能力 phase 的任务与 DoD 冻结记录）
   - `docs/phase/phase09_template_reuse_derived_intelligence_foundation_shared_baseline.md`（最近完成正式支撑能力 phase 的共享基线冻结记录）
   - `.trae/specs/phase09_11_validate_template_reuse_derived_hint_integration_browser_regression_acceptance/acceptance_report.md`（`phase09` 正式验收与收口结论入口）
+  - `docs/phase/phase10_asset_action_closure_foundation_architecture_plan.md`（最近完成正式业务 phase 的架构规划与冻结记录）
+  - `docs/phase/phase10_asset_action_closure_foundation_dev_plan.md`（最近完成正式业务 phase 的任务与 DoD 冻结记录）
+  - `docs/phase/phase10_asset_action_closure_foundation_shared_baseline.md`（最近完成正式业务 phase 的共享基线冻结记录）
+  - `.trae/specs/phase10_11_complete_asset_action_closure_integration_browser_regression_validation/spec.md`（`phase10-11` 正式验收入口；同目录 `tasks.md / checklist.md` 共同构成 `phase10` 正式验收与收口证据）
 - 当前项目技术路线已冻结为 `Durable System Track`
 - `phase02_module_registry_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - `phase03_decision_center_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
@@ -145,13 +149,14 @@ docs/
 - `phase07` 三件套在收口后只承担最近完成前置基础阶段的规划与冻结记录角色；执行层正式入口只收敛到 `phase07-07` 正式规格与 `phase07-11` 验收结论，不再覆盖当前业务状态
 - `phase07-08 / 09 / 10` 只保留为生成链、后端与前端迁移实现结论记录，不提升为根级长期主入口
 - `phase08` 已直接承接 `PSCO-mvp03-summarize-feedback.md`、`phase07-07` 正式规格与 `phase07-11` 验收结论，并已完成 `Operating Review Loop` 的正式交付、统一验收与根级收口
-- `phase08` 三件套在收口后只承担最近完成正式业务 phase 的规划与冻结记录角色；正式验收与收口入口收敛到 `phase08-11` acceptance_report
+- `phase08` 三件套在收口后只承担已完成正式业务 phase 的规划与冻结记录角色；正式验收与收口入口继续收敛到 `phase08-11` acceptance_report
 - `phase08` 只承接 `Operating Review Loop`，不把 `Template Reuse / Derived Intelligence / dry-run` 混写为当前并列主交付
 - `phase09` 已直接承接 `PSCO-mvp03-summarize-feedback.md`、`phase08-11` 验收结论、`phase08` 三件套规划记录与 `phase06` 复用摘要主线，并已完成 `Template Reuse + Derived Intelligence Deepening` 的正式交付、统一验收与收口
 - `phase09` 三件套在收口后只承担最近完成正式支撑能力 phase 的规划与冻结记录角色；正式验收与收口入口收敛到 `phase09-11` acceptance_report
 - `phase09-08 / 09 / 10` 只保留为合同落地、模板预填回流与派生提示实现结论记录，不提升为根级长期主入口
-- `phase10` 已直接承接 `PSCO-mvp04-summarize-feedback.md`、`fix_001_003` 收口记录、`fix_001 ~ fix_003` analysis 与 `phase06 / phase08 / phase09` 正式交付结论，并已建立 `Asset-Action Closure` 的正式 `/plan` 入口
-- `phase10` 三件套当前承担 `mvp0.4` 首个正式业务 phase 的规划与冻结记录角色；后续执行层必须先完成 `/spec`、实现、验收与根级收口
+- `phase10` 已直接承接 `PSCO-mvp04-summarize-feedback.md`、`fix_001_003` 收口记录、`fix_001 ~ fix_003` analysis 与 `phase06 / phase08 / phase09` 正式交付结论，并已完成 `Asset-Action Closure` 的正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`
+- `phase10` 三件套在收口后只承担最近完成正式业务 phase 的规划与冻结记录角色；正式验收与收口入口收敛到 `phase10-11` 规格目录
+- 后续只允许在 `phase10-11` 正式验收入口、`phase10` 根级收口结论与当前根级真相源保持单值一致后，再进入 `Agent Consumption Layer`
 
 ### 4.2 fix
 
