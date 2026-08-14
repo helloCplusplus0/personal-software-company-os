@@ -18,6 +18,11 @@ import {
   shouldReturnToOnboarding,
   buildOnboardingReturnSearch,
 } from '@/features/onboarding/lib/onboarding-return'
+import { RepositoryNextActionBar } from '../components/repository-next-action-bar'
+import { RepositoryDecisionEntryPanel } from '../components/repository-decision-entry-panel'
+import { DAILY_REVIEW_QUERY_KEY, WEEKLY_REVIEW_QUERY_KEY } from '@/features/review/data/review-query-options'
+import { buildReviewReturnSearch, shouldReturnToReview } from '@/features/review/lib/review-source'
+import { useModuleDecisionLinksByModuleIds } from '@/features/module-registry/data/use-module-decision-links-by-module-ids'
 
 /**
  * panelMode — phase04-06 互斥展开状态
@@ -71,15 +76,25 @@ export function RepositoryBindingDetailPage() {
   const fromModuleDetail = search.fromModuleDetail === true
   // phase06-15 §"detail 页来源优先级"：fromOnboarding 优先级高于其他来源
   const fromOnboarding = shouldReturnToOnboarding(search)
+  const fromReview = shouldReturnToReview(search)
 
   const { data, isLoading, isError, error } = useRepositoryDetailRead(repositoryId)
+  const mappedModules = Array.isArray(data?.mapped_modules) ? data.mapped_modules : []
+  const relatedDecisionLinksQuery = useModuleDecisionLinksByModuleIds(
+    mappedModules.map((module) => module.module_id),
+  )
 
   // phase04-06 绑定成功后重新读取详情结果（reread）
+  // phase10-10：补齐 Dashboard / Review query 失效，确保返回后 reread 正确
   const invalidateDetail = () => {
     queryClient.invalidateQueries({ queryKey: ['repository-detail', repositoryId] })
     queryClient.invalidateQueries({ queryKey: ['repository-list'] })
     queryClient.invalidateQueries({ queryKey: ['repository-product-candidates', repositoryId] })
     queryClient.invalidateQueries({ queryKey: ['repository-module-candidates', repositoryId] })
+    queryClient.invalidateQueries({ queryKey: ['dashboard-feedback-signals'] })
+    queryClient.invalidateQueries({ queryKey: ['dashboard-overview'] })
+    queryClient.invalidateQueries({ queryKey: DAILY_REVIEW_QUERY_KEY })
+    queryClient.invalidateQueries({ queryKey: WEEKLY_REVIEW_QUERY_KEY })
   }
 
   // phase04-06 互斥展开：打开一个面板时关闭另一个
@@ -97,6 +112,13 @@ export function RepositoryBindingDetailPage() {
       navigate({
         to: '/onboarding',
         search: buildOnboardingReturnSearch(search),
+      })
+      return
+    }
+    if (fromReview) {
+      navigate({
+        to: search.reviewReturnTo ?? '/reviews/daily',
+        search: buildReviewReturnSearch(search) as Record<string, unknown>,
       })
       return
     }
@@ -140,11 +162,20 @@ export function RepositoryBindingDetailPage() {
   // phase06-15：fromOnboarding 优先展示"返回首轮录入"
   const returnLabel = fromOnboarding
     ? '返回首轮录入'
+    : fromReview
+      ? `返回 ${search.reviewKind === 'weekly' ? 'Weekly Review' : 'Daily Review'}`
     : fromProductDetail
       ? '返回产品详情'
       : fromModuleDetail
         ? '返回模块详情'
         : '返回列表'
+  const decisionDetailSearch = fromOnboarding
+    ? (buildOnboardingReturnSearch(search) as Record<string, unknown>)
+    : fromReview
+      ? (buildReviewReturnSearch(search) as Record<string, unknown>)
+      : search.fromDashboard === true
+        ? (mergeCurrentDashboardSource({}, search) as Record<string, unknown>)
+        : undefined
 
   if (isError) {
     return (
@@ -211,6 +242,18 @@ export function RepositoryBindingDetailPage() {
         </div>
       )}
 
+      {/* phase10-10：页面级下一步动作区 */}
+      <RepositoryNextActionBar
+        hasProductBinding={(data.bound_products?.length ?? 0) > 0}
+        hasModuleMapping={mappedModules.length > 0}
+        repositoryId={repositoryId}
+        repositoryName={data.repository.name}
+        decisionLinks={relatedDecisionLinksQuery.decisionLinks}
+        decisionDetailSearch={decisionDetailSearch}
+        onOpenProductBinding={() => setPanelMode('product')}
+        onOpenModuleMapping={() => setPanelMode('module')}
+      />
+
       {/* PC：分区式布局；移动端：垂直顺序重排 — phase04-05 */}
       <div className="grid gap-4 lg:grid-cols-3">
         {/* 摘要主区 — 占 1 列（PC）/ 全宽（移动） */}
@@ -221,21 +264,32 @@ export function RepositoryBindingDetailPage() {
         {/* 绑定工作台区 — 占 2 列（PC）/ 全宽（移动） */}
         <div className="space-y-4 lg:col-span-2">
           {/* phase04-06 互斥展开：product 面板与 module 面板同一时刻只允许一个打开 */}
-          <RepositoryProductBindingPanel
-            repositoryId={repositoryId}
-            boundProducts={data.bound_products}
-            open={panelMode === 'product'}
-            onOpenChange={handleProductPanelOpenChange}
-            prefillProductId={fromProductDetail ? search.productId : undefined}
-            onBindingSuccess={invalidateDetail}
-          />
-          <RepositoryModuleMappingPanel
-            repositoryId={repositoryId}
-            mappedModules={data.mapped_modules}
-            open={panelMode === 'module'}
-            onOpenChange={handleModulePanelOpenChange}
-            prefillModuleId={fromModuleDetail ? search.moduleId : undefined}
-            onBindingSuccess={invalidateDetail}
+          <div id="repository-product-binding">
+            <RepositoryProductBindingPanel
+              repositoryId={repositoryId}
+              boundProducts={data.bound_products}
+              open={panelMode === 'product'}
+              onOpenChange={handleProductPanelOpenChange}
+              prefillProductId={fromProductDetail ? search.productId : undefined}
+              onBindingSuccess={invalidateDetail}
+            />
+          </div>
+          <div id="repository-module-mapping">
+            <RepositoryModuleMappingPanel
+              repositoryId={repositoryId}
+              mappedModules={mappedModules}
+              open={panelMode === 'module'}
+              onOpenChange={handleModulePanelOpenChange}
+              prefillModuleId={fromModuleDetail ? search.moduleId : undefined}
+              onBindingSuccess={invalidateDetail}
+            />
+          </div>
+          {/* phase10-10：Repository Detail Decision 入口面板 */}
+          <RepositoryDecisionEntryPanel
+            decisionLinks={relatedDecisionLinksQuery.decisionLinks}
+            decisionDetailSearch={decisionDetailSearch}
+            isLoading={relatedDecisionLinksQuery.isLoading}
+            isError={relatedDecisionLinksQuery.isError}
           />
         </div>
       </div>

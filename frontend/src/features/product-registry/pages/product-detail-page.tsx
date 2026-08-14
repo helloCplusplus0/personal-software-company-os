@@ -18,6 +18,11 @@ import { ReuseSummaryInline } from '@/features/reuse-summary/components/reuse-su
 import { useTemplateSourceRead } from '@/features/template-reuse/data/use-template-source-read'
 import { TemplateSource, TemplateConsumerSurface } from '@/gen/proto/psco/template_reuse/v1/template_reuse_pb'
 import { ArrowDown } from 'lucide-react'
+import { ProductNextActionBar } from '../components/product-next-action-bar'
+import { ProductDecisionEntryPanel } from '../components/product-decision-entry-panel'
+import { DAILY_REVIEW_QUERY_KEY, WEEKLY_REVIEW_QUERY_KEY } from '@/features/review/data/review-query-options'
+import { buildReviewReturnSearch, shouldReturnToReview } from '@/features/review/lib/review-source'
+import { useModuleDecisionLinksByModuleIds } from '@/features/module-registry/data/use-module-decision-links-by-module-ids'
 
 /**
  * ProductDetailPage — Product Detail
@@ -58,8 +63,12 @@ export function ProductDetailPage() {
   const fromModuleDetail = search.fromModuleDetail === true
   // phase06-15 §"detail 页来源优先级"：fromOnboarding 优先级高于其他来源
   const fromOnboarding = shouldReturnToOnboarding(search)
+  const fromReview = shouldReturnToReview(search)
 
   const { data, isLoading, isError, error } = useProductDetailRead(productId)
+  const relatedDecisionLinksQuery = useModuleDecisionLinksByModuleIds(
+    data?.bound_modules?.map((module) => module.module_id) ?? [],
+  )
 
   // phase06-15 §"Module Detail 与 Product Detail 挂接位"：
   // Product Detail 只新增一个页面级 ReuseSummaryRead query（scope=product_detail）
@@ -90,10 +99,15 @@ export function ProductDetailPage() {
   )
 
   // phase04-06 BindModuleToProduct 成功后重新读取详情结果（reread）
+  // phase10-10：补齐 Dashboard / Review query 失效，确保返回后 reread 正确
   const invalidateDetail = () => {
     queryClient.invalidateQueries({ queryKey: ['product-detail', productId] })
     queryClient.invalidateQueries({ queryKey: ['product-list'] })
     queryClient.invalidateQueries({ queryKey: ['product-module-candidates', productId] })
+    queryClient.invalidateQueries({ queryKey: ['dashboard-feedback-signals'] })
+    queryClient.invalidateQueries({ queryKey: ['dashboard-overview'] })
+    queryClient.invalidateQueries({ queryKey: DAILY_REVIEW_QUERY_KEY })
+    queryClient.invalidateQueries({ queryKey: WEEKLY_REVIEW_QUERY_KEY })
   }
 
   // phase04-06 主动返回路径 — 按真实来源决定，刷新后恢复来源标记
@@ -103,6 +117,13 @@ export function ProductDetailPage() {
       navigate({
         to: '/onboarding',
         search: buildOnboardingReturnSearch(search),
+      })
+      return
+    }
+    if (fromReview) {
+      navigate({
+        to: search.reviewReturnTo ?? '/reviews/daily',
+        search: buildReviewReturnSearch(search) as Record<string, unknown>,
       })
       return
     }
@@ -135,9 +156,18 @@ export function ProductDetailPage() {
   // 返回按钮文案：fromOnboarding 优先展示"返回首轮录入"
   const returnLabel = fromOnboarding
     ? '返回首轮录入'
+    : fromReview
+      ? `返回 ${search.reviewKind === 'weekly' ? 'Weekly Review' : 'Daily Review'}`
     : fromModuleDetail
       ? '返回模块详情'
       : '返回列表'
+  const decisionDetailSearch = fromOnboarding
+    ? (buildOnboardingReturnSearch(search) as Record<string, unknown>)
+    : fromReview
+      ? (buildReviewReturnSearch(search) as Record<string, unknown>)
+      : search.fromDashboard === true
+        ? (mergeCurrentDashboardSource({}, search) as Record<string, unknown>)
+        : undefined
 
   if (isError) {
     return (
@@ -198,6 +228,16 @@ export function ProductDetailPage() {
         </div>
       )}
 
+      {/* phase10-10：页面级下一步动作区 */}
+      <ProductNextActionBar
+        hasRepository={(data.bound_repositories?.length ?? 0) > 0}
+        hasModule={(data.bound_modules?.length ?? 0) > 0}
+        productId={productId}
+        productName={data.product.name}
+        decisionLinks={relatedDecisionLinksQuery.decisionLinks}
+        decisionDetailSearch={decisionDetailSearch}
+      />
+
       {/* PC：分区式详情布局；移动端：垂直顺序重排 — phase04-05 */}
       <div className="grid gap-4 lg:grid-cols-3">
         {/* 摘要主区 — 占 1 列（PC）/ 全宽（移动） */}
@@ -232,12 +272,14 @@ export function ProductDetailPage() {
 
         {/* 绑定区 — 占 2 列（PC）/ 全宽（移动） */}
         <div className="space-y-4 lg:col-span-2">
+          <div id="product-module-binding">
           <ProductModuleBindingPanel
             productId={productId}
             boundModules={data.bound_modules}
             prefillModuleId={fromModuleDetail ? search.moduleId : undefined}
             onBindingSuccess={invalidateDetail}
           />
+          </div>
           <ProductBoundRepositoryListSection
             product={data.product}
             boundRepositories={data.bound_repositories}
@@ -250,6 +292,13 @@ export function ProductDetailPage() {
               moduleId: search.moduleId,
               moduleName: search.moduleName,
             }}
+          />
+          {/* phase10-10：Product Detail Decision 入口面板 */}
+          <ProductDecisionEntryPanel
+            decisionLinks={relatedDecisionLinksQuery.decisionLinks}
+            decisionDetailSearch={decisionDetailSearch}
+            isLoading={relatedDecisionLinksQuery.isLoading}
+            isError={relatedDecisionLinksQuery.isError}
           />
         </div>
       </div>

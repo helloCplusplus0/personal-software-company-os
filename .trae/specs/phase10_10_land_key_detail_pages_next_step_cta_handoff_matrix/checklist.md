@@ -1,0 +1,10 @@
+- [x] `Product Detail` 新增了 Decision 入口面板，提供"记录决策"与"查看全部"两类正式入口
+- [x] `Product Detail` 新增了页面级下一步动作区，按 Repository 缺口 > Module 缺口 > Decision > 返回 的优先级展示主 CTA
+- [x] `Module Detail` 的绑定面板 CTA 已升级为指向 canonical Product Detail / Repository Detail 的导航 handoff
+- [x] `Module Detail` 新增了页面级下一步动作区，按 Product 绑定 > Repository 映射 > Decision > 返回 的优先级展示主 CTA
+- [x] `Repository Detail` 新增了 Decision 入口面板，提供"记录决策"与"查看全部"两类正式入口
+- [x] `Repository Detail` 新增了页面级下一步动作区，按 Product 绑定 > Module 映射 > Decision > 返回 的优先级展示主 CTA
+- [x] 三个 detail page 的 binding success 回调已失效 Dashboard / Review 相关 query，确保返回后 reread 正确
+- [x] 从 detail page 返回 Dashboard 后，Current Focus 与 pending signals 基于 canonical reread 正确收口
+- [x] 浏览器级验收已覆盖三个 detail page 的 CTA 矩阵与返回 Dashboard 的 reread 闭环
+- [x] 本子任务没有改写 Decision pending 主线或 Dashboard / Daily Review 的 canonical 解释

@@ -23,7 +23,7 @@ import { ReviewPageShell } from '../components/review-page-shell'
 import { ReviewActionFooter } from '../components/review-action-footer'
 import { useDailyReviewRead } from '../data/use-daily-review-read'
 import { useReviewAction } from '../application/use-review-action'
-import { buildDashboardSourceParams, useNavigateBackToDashboard } from '@/features/dashboard/lib/dashboard-source'
+import { useNavigateBackToDashboard } from '@/features/dashboard/lib/dashboard-source'
 import { buildReviewSourceParams } from '../lib/review-source'
 import { FeedbackSignalCard } from '@/features/dashboard/components/feedback-signal-card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -171,11 +171,7 @@ function CurrentFocusList({
           key={`${signal.signal_code}-${signal.target_id}-${index}`}
           signal={signal}
           section="current-focus"
-          getSearch={(currentSignal) => (
-            currentSignal.target_type === 'decision_detail'
-              ? buildReviewSourceParams('daily') as unknown as Record<string, unknown>
-              : buildDashboardSourceParams('current-focus') as unknown as Record<string, unknown>
-          )}
+          getSearch={() => buildReviewSourceParams('daily') as unknown as Record<string, unknown>}
         />
       ))}
     </div>
@@ -321,6 +317,7 @@ function RepresentativeSignalsList({
           key={`${signal.signal_code}-${signal.target_id}-${index}`}
           signal={signal}
           section="asset-feedback"
+          getSearch={() => buildReviewSourceParams('daily') as unknown as Record<string, unknown>}
         />
       ))}
     </div>

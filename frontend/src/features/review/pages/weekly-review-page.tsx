@@ -25,6 +25,7 @@ import { ReviewActionFooter } from '../components/review-action-footer'
 import { useWeeklyReviewRead } from '../data/use-weekly-review-read'
 import { useReviewAction } from '../application/use-review-action'
 import { useNavigateBackToDashboard } from '@/features/dashboard/lib/dashboard-source'
+import { buildReviewSourceParams } from '../lib/review-source'
 import { FeedbackSignalCard } from '@/features/dashboard/components/feedback-signal-card'
 import { RecentActivityItemCard } from '@/features/dashboard/components/recent-activity-item-card'
 import { ReuseSnapshotSection } from '@/features/dashboard/components/reuse-snapshot-section'
@@ -306,6 +307,7 @@ function RecentActivityList({
           key={`${activity.activity_type}-${activity.target_id}-${index}`}
           activity={activity}
           section="recent-activity"
+          getSearch={() => buildReviewSourceParams('weekly') as unknown as Record<string, unknown>}
         />
       ))}
     </div>
@@ -358,6 +360,7 @@ function RepresentativeSignalsList({
           key={`${signal.signal_code}-${signal.target_id}-${index}`}
           signal={signal}
           section="asset-feedback"
+          getSearch={() => buildReviewSourceParams('weekly') as unknown as Record<string, unknown>}
         />
       ))}
     </div>

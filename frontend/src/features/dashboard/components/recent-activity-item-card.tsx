@@ -35,6 +35,7 @@ interface RecentActivityItemCardProps {
    * - Weekly Review 复用时也传入 'recent-activity'，保持返回 dashboard 后定位一致
    */
   section?: DashboardSection
+  getSearch?: (activity: RecentActivityItem) => Record<string, unknown>
 }
 
 /**
@@ -77,12 +78,16 @@ function formatActivityAtShort(isoString: string): string {
  *
  * 整行可点击跳转，按 target_type 决定跳转目标。
  */
-export function RecentActivityItemCard({ activity, section = 'recent-activity' }: RecentActivityItemCardProps) {
+export function RecentActivityItemCard({
+  activity,
+  section = 'recent-activity',
+  getSearch,
+}: RecentActivityItemCardProps) {
   const navigate = useNavigate()
 
   const handleClick = () => {
     // 活动项跳转统一携带传入的 section 作为 dashboardSection（默认 'recent-activity'）
-    const sourceParams = buildDashboardSourceParams(section)
+    const sourceParams = getSearch?.(activity) ?? buildDashboardSourceParams(section)
 
     switch (activity.target_type) {
       case 'module_detail':

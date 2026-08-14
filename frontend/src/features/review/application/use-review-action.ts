@@ -18,7 +18,7 @@
 import { useMutation, useQueryClient, type UseMutationResult } from '@tanstack/react-query'
 import { reviewClient } from '../data/connect-client'
 import { ReviewKind, ReviewResultKind } from '@/gen/proto/psco/review/v1/review_pb'
-import { buildDashboardSourceParams } from '@/features/dashboard/lib/dashboard-source'
+import { buildReviewSourceParams } from '../lib/review-source'
 import { DAILY_REVIEW_QUERY_KEY, WEEKLY_REVIEW_QUERY_KEY } from '../data/review-query-options'
 import type {
   ReviewActionInput,
@@ -36,7 +36,7 @@ function normalizeError(err: unknown): Error {
 function buildSuccessEnvelope(
   input: ReviewActionInput,
 ): ReviewActionSuccess {
-  const sourceParams = buildDashboardSourceParams(input.dashboardSection)
+  const sourceParams = buildReviewSourceParams(input.reviewKind ?? 'daily')
 
   switch (input.actionType) {
     case 'create_decision':

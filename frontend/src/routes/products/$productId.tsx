@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { ProductDetailPage } from '@/features/product-registry/pages/product-detail-page'
 import { dashboardSourceSearchSchema } from '@/features/dashboard/lib/dashboard-source-schema'
 import { onboardingSourceSearchSchema } from '@/features/onboarding/lib/onboarding-source-schema'
+import { reviewSourceSearchSchema } from '@/features/review/lib/review-source-schema'
 
 /**
  * ProductDetailRoute — /products/:productId
@@ -38,6 +39,8 @@ const productDetailSearchSchema = z.object({
   templateSource: z.enum(['weekly-review', 'dashboard', 'product-detail']).optional(),
   // phase05-13 Dashboard 来源参数
   ...dashboardSourceSearchSchema,
+  // phase10-10 Review 来源参数
+  ...reviewSourceSearchSchema,
   // phase06-15 Onboarding 来源参数
   ...onboardingSourceSearchSchema,
 })

@@ -16,6 +16,8 @@ import {
 } from '@/features/onboarding/lib/onboarding-return'
 import { useReuseSummaryRead } from '@/features/reuse-summary/data/use-reuse-summary-read'
 import { ReuseSummaryInline } from '@/features/reuse-summary/components/reuse-summary-inline'
+import { ModuleNextActionBar } from '../components/module-next-action-bar'
+import { buildReviewReturnSearch, shouldReturnToReview } from '@/features/review/lib/review-source'
 
 /**
  * ModuleDetailPage — Module Detail
@@ -41,15 +43,20 @@ export function ModuleDetailPage() {
   const lastSearch = useModuleListSearchStore((s) => s.lastSearch)
   // phase06-15 §"detail 页来源优先级"：fromOnboarding 优先级高于其他来源
   const fromOnboarding = shouldReturnToOnboarding(detailSearch)
+  const fromReview = shouldReturnToReview(detailSearch)
   // phase09-10 模板复用提示返回链：returnTo 优先级高于 fromList
   const fromTemplateReturn = (detailSearch as any).returnTo === 'weekly-review' || (detailSearch as any).returnTo === 'product-create'
   const returnLabel = fromOnboarding
     ? '返回首轮录入'
+    : fromReview
+      ? `返回 ${detailSearch.reviewKind === 'weekly' ? 'Weekly Review' : 'Daily Review'}`
     : fromTemplateReturn
       ? ((detailSearch as any).returnTo === 'weekly-review' ? '返回 Weekly Review' : '返回创建产品')
       : '返回列表'
   const returnSearch = fromOnboarding
     ? (buildOnboardingReturnSearch(detailSearch) as Record<string, unknown>)
+    : fromReview
+      ? (buildReviewReturnSearch(detailSearch) as Record<string, unknown>)
     : fromTemplateReturn
       ? ((): Record<string, unknown> => {
           const s: Record<string, unknown> = {}
@@ -77,6 +84,13 @@ export function ModuleDetailPage() {
             : lastSearch,
           detailSearch,
         ) as unknown as Record<string, unknown>)
+  const decisionDetailSearch = fromOnboarding
+    ? (buildOnboardingReturnSearch(detailSearch) as Record<string, unknown>)
+    : fromReview
+      ? (buildReviewReturnSearch(detailSearch) as Record<string, unknown>)
+      : detailSearch.fromDashboard === true
+        ? (mergeCurrentDashboardSource({}, detailSearch) as Record<string, unknown>)
+        : undefined
 
   const { data, isLoading, isError, error } = useModuleDetailRead(moduleId)
 
@@ -102,6 +116,13 @@ export function ModuleDetailPage() {
   const handleReturn = () => {
     if (fromOnboarding) {
       navigate({ to: '/onboarding', search: buildOnboardingReturnSearch(detailSearch) })
+      return
+    }
+    if (fromReview) {
+      navigate({
+        to: detailSearch.reviewReturnTo ?? '/reviews/daily',
+        search: buildReviewReturnSearch(detailSearch) as Record<string, unknown>,
+      })
       return
     }
     if (fromTemplateReturn) {
@@ -169,6 +190,16 @@ export function ModuleDetailPage() {
         </Button>
       </div>
 
+      {/* phase10-10：页面级下一步动作区 */}
+      <ModuleNextActionBar
+        hasProductBinding={(data.product_bindings?.length ?? 0) > 0}
+        hasRepositoryMapping={(data.repository_mappings?.length ?? 0) > 0}
+        moduleId={moduleId}
+        moduleName={data.module.name}
+        decisionLinks={data.decision_links}
+        decisionDetailSearch={decisionDetailSearch}
+      />
+
       {/* PC：分区式布局；移动端：垂直顺序重排 */}
       <div className="grid gap-4 lg:grid-cols-3">
         {/* 摘要主区 — 占 1 列（PC）/ 全宽（移动） */}
@@ -211,6 +242,7 @@ export function ModuleDetailPage() {
             moduleId={data.module.id}
             moduleName={data.module.name}
             decisionLinks={data.decision_links}
+            decisionDetailSearch={decisionDetailSearch}
           />
         </div>
       </div>

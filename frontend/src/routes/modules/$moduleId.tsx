@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { ModuleDetailPage } from '@/features/module-registry/pages/module-detail-page'
 import { dashboardSourceSearchSchema } from '@/features/dashboard/lib/dashboard-source-schema'
 import { onboardingSourceSearchSchema } from '@/features/onboarding/lib/onboarding-source-schema'
+import { reviewSourceSearchSchema } from '@/features/review/lib/review-source-schema'
 
 /**
  * ModuleDetailRoute — /modules/:moduleId
@@ -16,6 +17,7 @@ const moduleDetailSearchSchema = z.object({
   queryText: z.string().optional(),
   statusFilter: z.enum(['all', 'active', 'archived']).optional(),
   ...dashboardSourceSearchSchema,
+  ...reviewSourceSearchSchema,
   // phase06-15 Onboarding 来源参数
   ...onboardingSourceSearchSchema,
   // phase09-10 模板复用提示返回链参数

@@ -13,6 +13,7 @@
  *   - 可选的 successMessage
  */
 import type { DashboardSection } from '@/features/dashboard/types'
+import type { ReviewSourceSearch } from '../lib/review-source'
 
 /**
  * ReviewResultKind — review 结果类型，对齐 .proto ReviewResultKind 枚举。
@@ -62,10 +63,6 @@ export interface ReviewActionSuccess {
   resultKind: ReviewResultKind
   navigateTo: string
   params?: Record<string, string>
-  search: {
-    fromDashboard?: boolean
-    dashboardSection?: DashboardSection
-    dashboardReturnTo?: string
-  }
+  search: ReviewSourceSearch
   successMessage?: string
 }
