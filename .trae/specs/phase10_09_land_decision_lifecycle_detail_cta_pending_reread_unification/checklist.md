@@ -1,0 +1,10 @@
+- [x] `Decision Detail` 已成为唯一正式 `Decision.status` 推进承接位，`Dashboard / Daily Review / Current Focus` 不再内联第二套状态推进写路径
+- [x] `Decision Detail` 在 `proposed` 状态下真实提供 `Mark Active / Mark Superseded / Archive` 三类正式状态推进 CTA
+- [x] `Decision Detail` 在 `active` 状态下不再展示 `Mark Active`，在 `superseded / archived` 终态下不再展示状态推进 CTA
+- [x] `Dashboard / Daily Review / Current Focus` 对 pending decision 的解释继续完全锚定 canonical `Decision.status`，没有引入 `decision_links / review_records / dismiss` 代理退出
+- [x] 从 `Decision Detail` 成功推进状态后，详情页会 reread 到最新状态，CTA 矩阵与来源返回入口同步更新
+- [x] 从 `Decision Detail` 返回 `Dashboard` 后，pending count、pending card 与 `Current Focus` 主动作都能基于 reread 正确收口
+- [x] 从 `Decision Detail` 返回 `Daily Review` 后，刚刚被正式推进的 pending decision 不再残留在待处理区块
+- [x] 状态推进失败、重复点击、终态重复触发与浏览器刷新后的行为都符合规格，不会制造"已处理"的假象
+- [x] 浏览器级验收已覆盖 `Dashboard / Current Focus -> Decision Detail -> return` 与 `Daily Review -> Decision Detail -> return` 两条主链
+- [x] 本子任务没有顺带改写 `Product / Module / Repository Detail` 的独立 CTA inventory，非目标边界保持成立

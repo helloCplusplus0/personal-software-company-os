@@ -26,6 +26,8 @@ interface FeedbackSignalCardProps {
   // 来源区块：current-focus 或 asset-feedback
   // 决定跳转时携带的 dashboardSection 值
   section: 'current-focus' | 'asset-feedback'
+  // 可选：由调用方覆盖 search 参数，用于非 Dashboard 宿主保留自己的返回链。
+  getSearch?: (signal: FeedbackSignal) => Record<string, unknown>
 }
 
 /**
@@ -66,12 +68,12 @@ function priorityBadge(priority: FeedbackSignalPriority): {
  *
  * 整行可点击跳转，按 target_type 决定跳转目标。
  */
-export function FeedbackSignalCard({ signal, section }: FeedbackSignalCardProps) {
+export function FeedbackSignalCard({ signal, section, getSearch }: FeedbackSignalCardProps) {
   const navigate = useNavigate()
   const badge = priorityBadge(signal.priority)
 
   const handleClick = () => {
-    const sourceParams = buildDashboardSourceParams(section)
+    const sourceParams = getSearch?.(signal) ?? buildDashboardSourceParams(section)
 
     // 按 target_type 决定跳转目标与 params
     switch (signal.target_type) {

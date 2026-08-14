@@ -21,8 +21,8 @@
  * - 移动浏览器：按概要、已关联目标、待关联目标、候选读取与目标关联的垂直顺序重排
  */
 import { useParams, useNavigate, useSearch } from '@tanstack/react-router'
-import { useDecisionDetailRead } from '../data/use-decision-detail-read'
-import { useUpdateDecisionStatus } from '../application/use-update-decision-status'
+import { useDecisionDetailPageRead } from '../data/use-decision-detail-page-read'
+import { useDecisionDetailActions } from '../application/use-decision-detail-actions'
 import { DecisionDetailSummaryCard } from '../components/decision-detail-summary-card'
 import { DecisionLinkedTargetsSection } from '../components/decision-linked-targets-section'
 import { DecisionPendingLinkTargetCard } from '../components/decision-pending-link-target-card'
@@ -33,10 +33,6 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useDecisionListSearchStore } from '../stores/decision-list-search-store'
 import { BackToDashboardButton } from '@/features/dashboard/components/back-to-dashboard-button'
 import { mergeCurrentDashboardSource } from '@/features/dashboard/lib/dashboard-source'
-import {
-  shouldReturnToOnboarding,
-  buildOnboardingReturnSearch,
-} from '@/features/onboarding/lib/onboarding-return'
 import type { DecisionStatus } from '../types'
 
 export function DecisionDetailPage() {
@@ -46,44 +42,36 @@ export function DecisionDetailPage() {
   const detailSearch = useSearch({ from: '/decisions/$decisionId' })
   // §9.1 从 store 读取最后一次列表搜索上下文
   const lastSearch = useDecisionListSearchStore((s) => s.lastSearch)
-  // phase06-15 §"detail 页来源优先级"：fromOnboarding 优先级高于其他来源
-  const fromOnboarding = shouldReturnToOnboarding(detailSearch)
-  const returnLabel = fromOnboarding ? '返回首轮录入' : '返回列表'
-  // §9.1 单值化返回参数：
-  // - fromOnboarding=true → 返回 /onboarding 并恢复 onboardingStep
-  // - fromList === true（从 DecisionListPage 进入）：返回列表恢复 lastSearch
-  // - fromList 不存在（从 Module Detail 入口或外部直达进入）：返回列表落默认参数，不恢复历史筛选
-  const returnSearch = fromOnboarding
-    ? (buildOnboardingReturnSearch(detailSearch) as Record<string, unknown>)
-    : (mergeCurrentDashboardSource(
-        detailSearch.fromList
-          ? {
-              queryText: detailSearch.queryText ?? lastSearch.queryText,
-              statusFilter: detailSearch.statusFilter ?? lastSearch.statusFilter,
-            }
-          : { statusFilter: 'all' as const },
-        detailSearch,
-      ) as unknown as Record<string, unknown>)
   const moduleDetailSearch = mergeCurrentDashboardSource(
     {},
     detailSearch,
   ) as unknown as Record<string, unknown>
 
-  const { data, isLoading, isError, error } = useDecisionDetailRead(decisionId)
-  const updateStatusMutation = useUpdateDecisionStatus()
+  const pageRead = useDecisionDetailPageRead(decisionId, detailSearch, lastSearch)
+  const detailActions = useDecisionDetailActions(decisionId)
+  const { data, isLoading, isError, error } = pageRead.decisionDetailQuery
 
   // fix_002_003：状态推进 handler，单值化承接 canonical 状态变更
-  const handleStatusChange = (status: DecisionStatus) => {
-    updateStatusMutation.mutate({ decisionId, status })
+  const handleStatusChange = async (status: DecisionStatus) => {
+    await detailActions.advanceDecisionStatus(status)
   }
 
-  // phase06-15：返回按钮统一通过 handleReturn 承接，支持 fromOnboarding 优先级
+  // 返回按钮统一通过 page read owner 产出的单值返回目标承接。
   const handleReturn = () => {
-    if (fromOnboarding) {
-      navigate({ to: '/onboarding', search: buildOnboardingReturnSearch(detailSearch) })
-      return
+    switch (pageRead.returnTo.kind) {
+      case 'onboarding':
+        navigate({ to: '/onboarding', search: pageRead.returnTo.search })
+        return
+      case 'review':
+        navigate({
+          to: pageRead.returnTo.to as '/reviews/daily' | '/reviews/weekly',
+          search: pageRead.returnTo.search,
+        })
+        return
+      case 'decision-list':
+        navigate({ to: '/decisions', search: pageRead.returnTo.search })
+        return
     }
-    navigate({ to: '/decisions', search: returnSearch })
   }
 
   if (isError) {
@@ -94,7 +82,7 @@ export function DecisionDetailPage() {
           <BackToDashboardButton />
           <Button variant="ghost" size="sm" onClick={handleReturn}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            {returnLabel}
+            {pageRead.returnLabel}
           </Button>
         </div>
         <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4">
@@ -111,7 +99,7 @@ export function DecisionDetailPage() {
           <BackToDashboardButton />
           <Button variant="ghost" size="sm" onClick={handleReturn}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            {returnLabel}
+            {pageRead.returnLabel}
           </Button>
         </div>
         <Skeleton className="h-48 w-full" />
@@ -138,7 +126,7 @@ export function DecisionDetailPage() {
         <BackToDashboardButton />
         <Button variant="ghost" size="sm" onClick={handleReturn}>
           <ArrowLeft className="mr-2 h-4 w-4" />
-          {returnLabel}
+          {pageRead.returnLabel}
         </Button>
       </div>
 
@@ -149,8 +137,9 @@ export function DecisionDetailPage() {
           <DecisionDetailSummaryCard
             decision={data.decision}
             sourceContext={data.source_context}
+            statusActions={pageRead.statusActions}
             onStatusChange={handleStatusChange}
-            isUpdating={updateStatusMutation.isPending}
+            isUpdating={detailActions.isSubmitting}
           />
         </div>
 

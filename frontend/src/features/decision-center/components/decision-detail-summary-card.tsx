@@ -13,10 +13,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import type { Decision, DecisionStatus, SourceContext } from '../types'
+import type { DecisionDetailStatusAction } from '../data/use-decision-detail-page-read'
 
 interface DecisionDetailSummaryCardProps {
   decision: Decision
   sourceContext: SourceContext
+  statusActions?: DecisionDetailStatusAction[]
   /** 状态推进 CTA 回调，终态时不展示 */
   onStatusChange?: (status: DecisionStatus) => void
   /** 状态推进是否正在执行 */
@@ -37,29 +39,14 @@ const STATUS_VARIANT: Record<DecisionStatus, 'default' | 'secondary' | 'outline'
   archived: 'outline',
 }
 
-// fix_002_003 冻结最小状态推进矩阵
-const STATUS_TRANSITIONS: Record<DecisionStatus, { label: string; target: DecisionStatus }[]> = {
-  proposed: [
-    { label: 'Mark Active', target: 'active' },
-    { label: 'Mark Superseded', target: 'superseded' },
-    { label: 'Archive', target: 'archived' },
-  ],
-  active: [
-    { label: 'Mark Superseded', target: 'superseded' },
-    { label: 'Archive', target: 'archived' },
-  ],
-  superseded: [],
-  archived: [],
-}
-
 export function DecisionDetailSummaryCard({
   decision,
   sourceContext,
+  statusActions = [],
   onStatusChange,
   isUpdating,
 }: DecisionDetailSummaryCardProps) {
-  const transitions = STATUS_TRANSITIONS[decision.status]
-  const hasTransitions = transitions.length > 0
+  const hasTransitions = statusActions.length > 0
 
   return (
     <Card>
@@ -124,7 +111,7 @@ export function DecisionDetailSummaryCard({
           <div className="border-t pt-3">
             <h4 className="text-sm font-medium text-muted-foreground mb-2">Status</h4>
             <div className="flex flex-wrap gap-2">
-              {transitions.map((t) => (
+              {statusActions.map((t) => (
                 <Button
                   key={t.target}
                   variant="outline"

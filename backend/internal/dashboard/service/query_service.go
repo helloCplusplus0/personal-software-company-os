@@ -25,8 +25,8 @@ import (
 // 当前版本各读组的展示上限（对齐 phase05-02 / phase05-04 冻结结论，
 // 上限由 service 层承接，不进入 .proto 合同本体）。
 const (
-	maxCurrentFocusSignals   = 5 // current_focus_signals 最多展示 5 条
-	maxRepresentativeSignals = 3 // representative_signals 最多展示 3 条代表性缺口项
+	maxCurrentFocusSignals   = 5  // current_focus_signals 最多展示 5 条
+	maxRepresentativeSignals = 3  // representative_signals 最多展示 3 条代表性缺口项
 	maxRecentActivities      = 10 // activities 最多返回 10 条
 )
 
@@ -145,11 +145,11 @@ func (s *QueryService) ReadFeedbackSignal(ctx context.Context) (*dashboard.Feedb
 	return &dashboard.FeedbackSignalReadResult{
 		CurrentFocusSignals: currentFocus,
 		AssetFeedbackSummary: dashboard.ProductAssetCoverageSummary{
-			FullyBoundProductCount:      coverage.FullyBoundCount,
-			MissingBothBindingsCount:    coverage.MissingBothCount,
+			FullyBoundProductCount:        coverage.FullyBoundCount,
+			MissingBothBindingsCount:      coverage.MissingBothCount,
 			MissingRepositoryBindingCount: coverage.MissingRepositoryCount,
-			MissingModuleBindingCount:   coverage.MissingModuleCount,
-			RepresentativeSignals:       representative,
+			MissingModuleBindingCount:     coverage.MissingModuleCount,
+			RepresentativeSignals:         representative,
 		},
 	}, nil
 }
@@ -162,50 +162,21 @@ func (s *QueryService) normalizeFeedbackSignals(
 	signals := make([]dashboard.FeedbackSignal, 0)
 
 	// —— pending decision 信号 ——
-	// 区分单项（已绑定 decision_link）与聚合（未绑定）。
-	var unlinkedPending []candidate.PendingDecisionData
+	// phase10-09 起统一 handoff 到唯一正式动作出口 Decision Detail。
+	// 不再因为是否存在 decision_link 而退回到 Decision List 聚合入口。
 	for _, d := range pendingDecisions {
-		if d.HasDecisionLink {
-			// 单项信号：跳转到具体 Decision Detail
-			signals = append(signals, dashboard.FeedbackSignal{
-				SignalFamily:  dashboard.FeedbackSignalFamilyPendingDecision,
-				SignalCode:    dashboard.FeedbackSignalCodePendingDecision,
-				Priority:      dashboard.FeedbackSignalPriorityP1PendingDecision,
-				PriorityLabel: dashboard.FeedbackSignalPriorityP1PendingDecision.PriorityString(),
-				Title:         fmt.Sprintf("待决策：%s", d.Title),
-				Summary:       "有一条待决策记录需要处理",
-				ActionLabel:   "查看决策",
-				TargetType:    dashboard.DashboardTargetTypeDecisionDetail,
-				TargetID:      d.DecisionID,
-				TargetLabel:   d.Title,
-				CreatedAt:     d.CreatedAt,
-			})
-		} else {
-			unlinkedPending = append(unlinkedPending, d)
-		}
-	}
-
-	// 聚合信号：未绑定 decision_link 的 pending decisions 合并为一条，跳转到 Decision List
-	if len(unlinkedPending) > 0 {
-		// 取最新 created_at 作为聚合信号的排序回退时间
-		latestCreatedAt := unlinkedPending[0].CreatedAt
-		for _, d := range unlinkedPending[1:] {
-			if d.CreatedAt.After(latestCreatedAt) {
-				latestCreatedAt = d.CreatedAt
-			}
-		}
 		signals = append(signals, dashboard.FeedbackSignal{
 			SignalFamily:  dashboard.FeedbackSignalFamilyPendingDecision,
 			SignalCode:    dashboard.FeedbackSignalCodePendingDecision,
 			Priority:      dashboard.FeedbackSignalPriorityP1PendingDecision,
 			PriorityLabel: dashboard.FeedbackSignalPriorityP1PendingDecision.PriorityString(),
-			Title:         fmt.Sprintf("有 %d 条待决策记录", len(unlinkedPending)),
-			Summary:       "存在多条未关联具体目标的待决策记录，建议前往决策中心集中处理",
-			ActionLabel:   "前往决策中心",
-			TargetType:    dashboard.DashboardTargetTypeDecisionList,
-			TargetID:      "",
-			TargetLabel:   "",
-			CreatedAt:     latestCreatedAt,
+			Title:         fmt.Sprintf("待决策：%s", d.Title),
+			Summary:       "有一条待决策记录需要处理",
+			ActionLabel:   "查看决策",
+			TargetType:    dashboard.DashboardTargetTypeDecisionDetail,
+			TargetID:      d.DecisionID,
+			TargetLabel:   d.Title,
+			CreatedAt:     d.CreatedAt,
 		})
 	}
 

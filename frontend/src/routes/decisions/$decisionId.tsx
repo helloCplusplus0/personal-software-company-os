@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { DecisionDetailPage } from '@/features/decision-center/pages/decision-detail-page'
 import { dashboardSourceSearchSchema } from '@/features/dashboard/lib/dashboard-source-schema'
 import { onboardingSourceSearchSchema } from '@/features/onboarding/lib/onboarding-source-schema'
+import { reviewSourceSearchSchema } from '@/features/review/lib/review-source-schema'
 
 /**
  * DecisionDetailRoute — /decisions/:decisionId
@@ -24,6 +25,8 @@ const decisionDetailSearchSchema = z.object({
   ...dashboardSourceSearchSchema,
   // phase06-15 Onboarding 来源参数
   ...onboardingSourceSearchSchema,
+  // phase10-09 Review 来源参数
+  ...reviewSourceSearchSchema,
 })
 
 export const Route = createFileRoute('/decisions/$decisionId')({

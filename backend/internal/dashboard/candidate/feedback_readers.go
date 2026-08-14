@@ -20,16 +20,12 @@ import (
 // PendingDecisionData 待决策信号的原始数据。
 // 由 PendingDecisionSignalReader 返回，由 service 层归一化为 FeedbackSignal。
 //
-// HasDecisionLink 标识该 pending decision 是否已绑定具体 decision_link：
-//   - true  → service 层生成单项信号（target_type = DECISION_DETAIL, target_id = decision_id）
-//   - false → service 层归入聚合信号（target_type = DECISION_LIST, target_id = ""）
-//
-// 该字段对齐 phase05-12 spec §"pending_decision_signals 信号生成"的归一化规则。
+// phase10-09 起，pending decision 统一 handoff 到 Decision Detail，
+// 因此不再区分“已建立 decision_link”和“未建立 decision_link”的两套跳转出口。
 type PendingDecisionData struct {
-	DecisionID     string
-	Title          string
-	CreatedAt      time.Time
-	HasDecisionLink bool
+	DecisionID string
+	Title      string
+	CreatedAt  time.Time
 }
 
 // FeedbackReaders 承接 FeedbackSignalRead 所需的跨模块 reader。
@@ -56,8 +52,7 @@ func (r *FeedbackReaders) ReadPendingDecisions(ctx context.Context) ([]PendingDe
 	rows, err := r.pool.Query(ctx, `
 SELECT d.id,
        d.title,
-       d.created_at,
-       EXISTS(SELECT 1 FROM decision_links dl WHERE dl.decision_id = d.id) AS has_link
+       d.created_at
 FROM decisions d
 WHERE d.status = 'proposed'
 ORDER BY d.created_at DESC`)
@@ -69,7 +64,7 @@ ORDER BY d.created_at DESC`)
 	items := make([]PendingDecisionData, 0)
 	for rows.Next() {
 		var d PendingDecisionData
-		if err := rows.Scan(&d.DecisionID, &d.Title, &d.CreatedAt, &d.HasDecisionLink); err != nil {
+		if err := rows.Scan(&d.DecisionID, &d.Title, &d.CreatedAt); err != nil {
 			return nil, fmt.Errorf("scan pending decision row: %w", err)
 		}
 		items = append(items, d)

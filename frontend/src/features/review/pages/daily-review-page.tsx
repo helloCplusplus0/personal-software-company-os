@@ -9,7 +9,7 @@
  * phase08-08 UI 对齐 Dashboard 基线（验收后调整）：
  *   - 移除 Card 重型卡片，改用 dashboard 的 section + divide-y 紧凑列表
  *   - current focus / representative signals 直接复用既有 FeedbackSignalCard
- *   - pending decisions 行可点击进入既有 Decision Detail，携带 dashboardSection=current-focus
+ *   - pending decisions 行可点击进入既有 Decision Detail，并保留 Review 返回链
  *   - 区块标题样式对齐 dashboard：text-base font-semibold
  *   - 空态/错误态/骨架样式对齐 dashboard
  *
@@ -23,7 +23,8 @@ import { ReviewPageShell } from '../components/review-page-shell'
 import { ReviewActionFooter } from '../components/review-action-footer'
 import { useDailyReviewRead } from '../data/use-daily-review-read'
 import { useReviewAction } from '../application/use-review-action'
-import { useNavigateBackToDashboard, buildDashboardSourceParams } from '@/features/dashboard/lib/dashboard-source'
+import { buildDashboardSourceParams, useNavigateBackToDashboard } from '@/features/dashboard/lib/dashboard-source'
+import { buildReviewSourceParams } from '../lib/review-source'
 import { FeedbackSignalCard } from '@/features/dashboard/components/feedback-signal-card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ArrowRight } from 'lucide-react'
@@ -170,6 +171,11 @@ function CurrentFocusList({
           key={`${signal.signal_code}-${signal.target_id}-${index}`}
           signal={signal}
           section="current-focus"
+          getSearch={(currentSignal) => (
+            currentSignal.target_type === 'decision_detail'
+              ? buildReviewSourceParams('daily') as unknown as Record<string, unknown>
+              : buildDashboardSourceParams('current-focus') as unknown as Record<string, unknown>
+          )}
         />
       ))}
     </div>
@@ -228,14 +234,14 @@ function PendingDecisionList({
  * PendingDecisionCard — 待处理决策单值紧凑行。
  *
  * 整行可点击跳转，进入既有 /decisions/$decisionId canonical 路径，
- * 携带 buildDashboardSourceParams('current-focus') 来源参数，
- * 确保跳转后 BackToDashboardButton 仍然可用。
+ * 携带 Review 来源参数，确保 Decision Detail 能正式返回 Daily Review，
+ * 而不是把来源伪装成 Dashboard。
  */
 function PendingDecisionCard({ decision }: { decision: PendingDecision }) {
   const navigate = useNavigate()
 
   const handleClick = () => {
-    const sourceParams = buildDashboardSourceParams('current-focus')
+    const sourceParams = buildReviewSourceParams('daily')
     navigate({
       to: '/decisions/$decisionId',
       params: { decisionId: decision.id },

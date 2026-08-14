@@ -31,14 +31,18 @@ export function useUpdateDecisionStatus(): UseMutationResult<
         status: DOMAIN_TO_PROTO[status],
       })
     },
-    onSuccess: (_data, variables) => {
-      // 状态推进成功后统一失效相关读取，确保 Dashboard / Review / Detail 语义一致
-      queryClient.invalidateQueries({ queryKey: ['decision-detail', variables.decisionId] })
-      queryClient.invalidateQueries({ queryKey: ['decision-list'] })
-      queryClient.invalidateQueries({ queryKey: DAILY_REVIEW_QUERY_KEY })
-      queryClient.invalidateQueries({ queryKey: WEEKLY_REVIEW_QUERY_KEY })
-      queryClient.invalidateQueries({ queryKey: ['dashboard-feedback-signals'] })
-      queryClient.invalidateQueries({ queryKey: ['dashboard-overview'] })
+    onSuccess: async (_data, variables) => {
+      // 让 mutation 在相关 reread 完成前保持 pending，
+      // 避免来源页先返回、再晚一步收口的状态抖动。
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['decision-detail', variables.decisionId] }),
+        queryClient.invalidateQueries({ queryKey: ['decision-list'] }),
+        queryClient.invalidateQueries({ queryKey: DAILY_REVIEW_QUERY_KEY }),
+        queryClient.invalidateQueries({ queryKey: WEEKLY_REVIEW_QUERY_KEY }),
+        queryClient.invalidateQueries({ queryKey: ['dashboard-feedback-signals'] }),
+        queryClient.invalidateQueries({ queryKey: ['dashboard-overview'] }),
+        queryClient.invalidateQueries({ queryKey: ['dashboard-recent-activities'] }),
+      ])
     },
   })
 }
