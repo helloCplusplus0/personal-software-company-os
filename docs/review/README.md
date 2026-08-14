@@ -42,11 +42,18 @@
 - [PSCO-mvp03-summarize-feedback-GLM52.md](file:///home/dell/Projects/personal-software-company-os/docs/review/PSCO-mvp03-summarize-feedback-GLM52.md) — 对五份 MVP0.3 方向评审（GPT54 / GLM-5.2 / Qwen3.7-Pro / DS-V4-Flash / DS-V4-Pro）的交叉汇总与立场归档；识别七项强共识与七大分歧，仲裁采纳四份评审的「MVP0.3 = 完成 MVP0.2 阶段二」版本语义与 GLM52 主从结构，后移 DPv4pro 的 Venture / Decision Intelligence / AI 三大方向到 MVP0.4+，作为后续正式 `/plan` 的参考仲裁入口
 - [PSCO-mvp03-summarize-feedback-GPT54.md](file:///home/dell/Projects/personal-software-company-os/docs/review/PSCO-mvp03-summarize-feedback-GPT54.md) — 对五份 `mvp0.3` 推进方向评审文档（DPv4flash / DPv4pro / GLM52 / GPT54 / qwen37pro）的交叉比较与立场归档；明确支持、部分支持与反对的观点，给出 GPT54 视角下的正式仲裁结论，供后续 `/plan` 直接参考
 
-### 2.4 迁移跳转
+### 2.4 mvp045 方向评审
+
+- [PSCO-mvp045-GPT54.md](file:///home/dell/Projects/personal-software-company-os/docs/review/PSCO-mvp045-GPT54.md) — 在 `mvp0.4` 候选阶段三 `Agent Consumption Layer` 进入前发起的"战略刹车"评审;主张先收敛四实体关系、PSCO 定位、agent 渠道优先级与 web/agent 分工四个重点问题,再进入实现设计
+- [PSCO-mvp045-DPv4pro.md](file:///home/dell/Projects/personal-software-company-os/docs/review/PSCO-mvp045-DPv4pro.md) — 对 GPT54 四主张的逐项评价;主张"语义叠加而非结构重定义",补充第五问(最小可验证交付物),建议"静态文件派生 + 聚合导出端点 + AGENTS 风格输出"作为第一优先级
+- [PSCO-mvp045-gemini31pro.md](file:///home/dell/Projects/personal-software-company-os/docs/review/PSCO-mvp045-gemini31pro.md) — 全盘接收 GPT54 四主张;补充"审批门禁"(MVP0.6+ Draft & Approval)与"跨项目上下文主动注入"两个战术视角
+- [PSCO-mvp045-GLM52.md](file:///home/dell/Projects/personal-software-company-os/docs/review/PSCO-mvp045-GLM52.md) — 基于对仓库实际源码的全面梳理与非 GPT-5.4 模型真实协作经验,对 GPT54 四主张给出独立判断;补充第六问(静态规则文件双源风险治理),主张 MVP0.5 第一阶段先完成静态文件去重与口径校准,第二阶段再以"项目上下文聚合端点 + AGENTS 风格导出"作为最小可验证交付物
+
+### 2.5 迁移跳转
 
 - [Personal Software Company OS v2.0.md](file:///home/dell/Projects/personal-software-company-os/docs/review/Personal%20Software%20Company%20OS%20v2.0.md) -> `TECH_STACK_BASELINE.md`
 
-### 2.5 使用参考
+### 2.6 使用参考
 
 - [PSCO-real-project-dry-run-user-manual-GPT54.md](file:///home/dell/Projects/personal-software-company-os/docs/review/PSCO-real-project-dry-run-user-manual-GPT54.md) — 在 `phase08` 与 `phase09` 已完成正式交付和统一验收后，为后续 `Real-Project Dry-Run` 准备的标准使用手册；说明 Dashboard、Daily / Weekly Review、Decision、Product / Module / Repository、Template Reuse 与 Derived Hints 的推荐使用方式、主线操作顺序、观察重点与反馈回收格式。该文档只作为真实使用前的参考输入，不承担正式 `phase` 规则冻结职责。
 

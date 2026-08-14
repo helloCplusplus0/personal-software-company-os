@@ -6,14 +6,14 @@
 ## 1. 项目定位
 
 - 项目名称：`Personal Software Company OS`
-- 当前阶段：`phase10_asset_action_closure_foundation`（已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`）
-- 当前主目标：以 `phase10-11` 正式验收结论、`phase10` 根级收口结论与 `PSCO-mvp04-summarize-feedback.md` 为直接上游，保持 `Asset-Action Closure` 收口结果的单值表达
-- 当前下一阶段入口：仅允许在 `phase10-11` 正式验收入口、`phase10` 根级收口结论与当前根级真相源保持单值一致后，再进入 `Agent Consumption Layer`；`phase09` 继续作为最近完成正式支撑能力 phase 保留，`phase10` 当前作为最近完成正式业务 phase 保留
+- 当前阶段：`phase11_project_context_foundation`（已完成正式 `/plan` 并建立三件套，待复核通过后进入 `/spec`）
+- 当前主目标：以 `PSCO-mvp05-summarize-feedback.md` 为直接上游，交付“根级上下文真相源治理 + 最小只读项目上下文导出”的单一主交付能力
+- 当前下一阶段入口：仅允许在 `phase11` 三件套复核通过后，再按 `phase11_project_context_foundation_dev_plan.md` 的子任务顺序进入 `/spec`、实现、验收与收口；`phase09` 继续作为最近完成正式支撑能力 phase 保留，`phase10` 继续作为最近完成正式业务 phase 保留
 - 当前定位：PSCO 是个人软件公司的经营与资产系统，不是代码管理工具，不是 AI Chat 产品，也不是自动扫描系统
 
 ## 2. 当前唯一上游
 
-- 最终共识只以 `PSCO-summarize-feedback.md` 为准
+- 最终共识只以 `PSCO-mvp05-summarize-feedback.md` 为准
 - 全局推进预览只以 `plan.md` 为准
 - 技术栈标准只以 `TECH_STACK_BASELINE.md` 为准
 - workflow、协作门禁只以 `project_rules.md` 为准
@@ -31,7 +31,7 @@
 - 当前项目 Go 业务接口已明确收敛为 `.proto + ConnectRPC` 正式传输主线；`chi` 保留为路由 / 中间件装配层与 `healthz / metrics / debug` 等非业务端点承载层
 - `v0.1` 前端正式交付物为单一 `React Web`，同时考虑 `PC` 与移动浏览器 UI；当前不引入独立 `React Native` 客户端，`PWA` 仅作可兼容增强方向
 - `docs/` 当前只服务 `phase / fix / audit / review / archive` workflow
-- `mvp0.4` 的当前正式排序已冻结为：先 `Asset-Action Closure`，后 `Agent Consumption Layer`
+- `mvp0.5` 的当前正式中心交付已冻结为：先完成根级上下文真相源治理，再交付最小只读项目上下文导出
 
 ## 4. 当前状态
 
@@ -84,6 +84,8 @@
 - `phase10_asset_action_closure_foundation` 三件套已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，当前作为最近完成正式业务 phase 的规划与冻结记录保留
 - `.trae/specs/phase10_11_complete_asset_action_closure_integration_browser_regression_validation/spec.md` 已冻结为 `phase10-11` 的正式验收入口；同目录 `tasks.md / checklist.md` 共同构成 `phase10` 的正式验收与收口证据
 - `phase10` 已完成 `Onboarding` 首轮建链引导、`Decision` 生命周期闭环、关键 detail pages 下一步动作承接矩阵，以及 `Current Focus / pending signals` 反回归验证，当前作为最近完成正式业务 phase 保留
+- `PSCO-mvp05-summarize-feedback.md` 已冻结为 `mvp0.5` 的最终仲裁与 `phase11_project_context_foundation` 的唯一共识上游
+- `phase11_project_context_foundation` 三件套已完成 `/plan` 建立，当前冻结的单一主交付能力为“根级上下文真相源治理 + 最小只读项目上下文导出”
 
 ## 5. 推荐阅读顺序
 
@@ -92,7 +94,7 @@
 3. `TECH_STACK_BASELINE.md`
 4. `project_rules.md`
 5. `architecture_map.md`
-6. `PSCO-summarize-feedback.md`
+6. `PSCO-mvp05-summarize-feedback.md`
 7. `docs/README.md`
 8. `.trae/specs/phase01_06_formal_mvp_spec/mvp_spec_v0.1.md`
 9. `.trae/specs/phase02_09_module_registry_formal_spec/module_registry_spec_v0.1.md`

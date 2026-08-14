@@ -11,7 +11,7 @@
 - `plan.md`：全局开发预览文档，只展示 phase 计划、目标与进度
 - `TECH_STACK_BASELINE.md`：项目统一技术栈基线与长期技术约束
 - `architecture_map.md`：目录结构、文档分类、迁移落点
-- `PSCO-summarize-feedback.md`：当前最终共识文档
+- `PSCO-mvp05-summarize-feedback.md`：当前最终共识文档
 
 ### 1.2 Trae 内部 agent 上下文文档
 
@@ -39,7 +39,7 @@
 - `project_skills.md`
 - `global_skills.md`
 - `PSCO_0.md ~ PSCO_4.md`
-- `PSCO-summarize-feedback.md`
+- `PSCO-mvp05-summarize-feedback.md`
 
 当前保留在根目录的历史参考文档：
 
@@ -48,6 +48,7 @@
 - `PSCO-mvp01-summarize-feedback.md`：`mvp0.1` 阶段最终共识与执行基线参考
 - `PSCO-mvp02-summarize-feedback.md`：基于两轮 `mvp0.2` 评审与交叉汇总形成的下一阶段最终仲裁与 `/plan` 上游基线
 - `PSCO-mvp03-summarize-feedback.md`：基于两轮 `mvp0.3` 评审与交叉汇总形成的最终仲裁、范围基线与推进顺序约束，作为 `phase07` 与后续 `mvp0.3` 业务阶段正式 `/plan` 的上游判断基线
+- `PSCO-mvp04-summarize-feedback.md`：基于 `mvp0.4` 评审与交叉汇总形成的最终仲裁与 `phase10` 的直接规划基线
 - `docs/review/PSCO-real-project-dry-run-user-manual-GPT54.md`：`phase08` 与 `phase09` 收口后，为后续 `Real-Project Dry-Run` 准备的标准使用手册与真实使用前参考输入；不承担正式 `phase` 规则冻结职责
 
 ## 3. docs 目录结构
@@ -98,6 +99,10 @@ docs/
   - `phase10_asset_action_closure_foundation_architecture_plan.md`
   - `phase10_asset_action_closure_foundation_dev_plan.md`
   - `phase10_asset_action_closure_foundation_shared_baseline.md`
+- 当前已创建：
+  - `phase11_project_context_foundation_architecture_plan.md`
+  - `phase11_project_context_foundation_dev_plan.md`
+  - `phase11_project_context_foundation_shared_baseline.md`
 - 当前已创建：
   - `phase09_template_reuse_derived_intelligence_foundation_architecture_plan.md`
   - `phase09_template_reuse_derived_intelligence_foundation_dev_plan.md`
@@ -156,7 +161,8 @@ docs/
 - `phase09-08 / 09 / 10` 只保留为合同落地、模板预填回流与派生提示实现结论记录，不提升为根级长期主入口
 - `phase10` 已直接承接 `PSCO-mvp04-summarize-feedback.md`、`fix_001_003` 收口记录、`fix_001 ~ fix_003` analysis 与 `phase06 / phase08 / phase09` 正式交付结论，并已完成 `Asset-Action Closure` 的正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - `phase10` 三件套在收口后只承担最近完成正式业务 phase 的规划与冻结记录角色；正式验收与收口入口收敛到 `phase10-11` 规格目录
-- 后续只允许在 `phase10-11` 正式验收入口、`phase10` 根级收口结论与当前根级真相源保持单值一致后，再进入 `Agent Consumption Layer`
+- `phase11` 已直接承接 `PSCO-mvp05-summarize-feedback.md` 与 `phase10` 已完成的正式交付结论，当前只建立 `/plan` 三件套，冻结“根级上下文真相源治理 + 最小只读项目上下文导出”为单一主交付能力
+- `phase11` 三件套在当前阶段承担下一正式 phase 的规划与冻结记录角色；正式执行前必须先完成三件套复核，再进入 `/spec`
 
 ### 4.2 fix
 
@@ -221,6 +227,11 @@ docs/
 - `PSCO-real-project-dry-run-user-manual-GPT54 feedback.md`
 - `PSCO-mvp04-DPv4pro.md`
 - `PSCO-mvp04-summarize-feedback-DPv4pro.md`
+- `PSCO-mvp045-GPT54.md`
+- `PSCO-mvp045-DPv4pro.md`
+- `PSCO-mvp045-gemini31pro.md`
+- `PSCO-mvp045-GLM52.md`
+- `PSCO-mvp045-qwen38max.md`
 
 另保留迁移跳转文件：
 

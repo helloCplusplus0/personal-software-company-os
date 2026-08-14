@@ -4,10 +4,10 @@
 
 ## 1. 当前状态
 
-- 当前阶段：`phase10_asset_action_closure_foundation`
-- 当前状态：`phase10` 已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口` 并作为最近完成正式业务 phase 保留；`phase09` 已完成正式收口并继续作为最近完成正式支撑能力 phase
-- 当前目标：以 `phase10-11` 正式验收结论、`phase10` 根级收口结论与 `PSCO-mvp04-summarize-feedback.md` 作为直接上游，保持 `Asset-Action Closure` 收口结果与根级入口的单值一致
-- 当前下一阶段入口：仅允许在 `phase10-11` 正式验收入口、`phase10` 根级收口结论与当前根级真相源保持单值一致后，再进入 `Agent Consumption Layer`
+- 当前阶段：`phase11_project_context_foundation`
+- 当前状态：`phase11` 已完成正式 `/plan` 并建立三件套，待复核通过后进入 `/spec`；`phase10` 已完成正式收口并继续作为最近完成正式业务 phase，`phase09` 继续作为最近完成正式支撑能力 phase
+- 当前目标：以 `PSCO-mvp05-summarize-feedback.md` 作为直接上游，完成根级上下文真相源治理，并为 agent 建立最小只读项目上下文导出能力
+- 当前下一阶段入口：仅允许在 `phase11` 三件套复核通过后，再按 `phase11_project_context_foundation_dev_plan.md` 的子任务顺序进入 `/spec`、实现、验收与收口
 
 ## 2. 当前进度概览
 
@@ -66,6 +66,8 @@
 - `phase10_asset_action_closure_foundation` 三件套已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，当前作为最近完成正式业务 phase 的规划与冻结记录保留
 - `.trae/specs/phase10_11_complete_asset_action_closure_integration_browser_regression_validation/spec.md` 已冻结为 `phase10-11` 的正式验收入口；同目录 `tasks.md / checklist.md` 共同构成 `phase10` 的正式验收与收口证据
 - `phase10` 已完成 `Onboarding` 首轮建链、`Decision` 生命周期闭环、关键 detail pages 动作承接矩阵，以及 `Current Focus / pending signals` 反回归验证；后续只允许在根级收口完成后再进入 `Agent Consumption Layer`
+- `PSCO-mvp05-summarize-feedback.md` 已冻结为 `mvp0.5` 的最终仲裁与 `phase11_project_context_foundation` 的唯一共识上游
+- `phase11_project_context_foundation` 三件套已建立，当前阶段正式转入 `Project Context Foundation` 的 `/plan` 状态，后续只允许围绕“根级上下文真相源治理 + 最小只读项目上下文导出”推进
 
 ## 3. Phase 路线预览
 
@@ -154,6 +156,15 @@
 - 交付要求：作为交付型 phase 推进，必须完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - 状态：`completed`
 - 当前收口结果：已完成 `Onboarding` 首轮建链引导、`Decision` 最小真实生命周期、Dashboard / Review / Detail pages 下一步动作承接矩阵，以及 `Current Focus / pending signals` 真实经营语义回归；`.trae/specs/phase10_11_complete_asset_action_closure_integration_browser_regression_validation/spec.md` 为正式验收入口，三件套保留为最近完成正式业务 phase 的规划与冻结记录；后续仅允许在 `phase10` 根级收口后再进入 `Agent Consumption Layer`
+
+### phase11：`phase11_project_context_foundation`
+
+- 目标：交付 `Project Context Foundation`
+- 进入条件：直接承接 `PSCO-mvp05-summarize-feedback.md`、`phase10` 三件套、`phase10-11` 正式验收入口，以及当前根级真相源文档的已知漂移治理需求
+- 范围约束：不得提前混入 MCP / CLI / agent 写回 / 前端对话式入口 / 四实体结构重构 / 第二套 canonical API；只允许推进“根级上下文真相源治理 + 最小只读项目上下文导出”
+- 交付要求：作为交付型 phase 推进，必须先完成 `/plan` 三件套复核，再按 `dev_plan` 子任务顺序进入 `/spec`、实现、验收与收口
+- 状态：`planned`
+- 当前收口结果：三件套已建立，当前等待复核；正式收口前不允许把更重的 agent 消费通道或受控维护能力写成既成事实
 ## 4. 说明
 
 - 本文档只承载全局开发预览、phase 计划与进度

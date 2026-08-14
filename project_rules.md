@@ -4,7 +4,7 @@
 
 ## 1. 单一真相源规则
 
-- 最终共识只以 `PSCO-summarize-feedback.md` 为准
+- 最终共识只以 `PSCO-mvp05-summarize-feedback.md` 为准
 - 入口摘要只由 `AGENTS.md` 承担
 - 阶段路线只由 `plan.md` 承担
 - 目录结构、文档分类、迁移落点只由 `architecture_map.md` 承担

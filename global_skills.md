@@ -16,7 +16,7 @@ PSCO 当前默认优先回答三个问题：
 
 PSCO 当前单一真相源顺序固定为：
 
-1. `PSCO-summarize-feedback.md`
+1. `PSCO-mvp05-summarize-feedback.md`
 2. `AGENTS.md`
 3. `project_rules.md`
 4. `plan.md`
