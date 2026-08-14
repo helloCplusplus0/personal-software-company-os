@@ -1,0 +1,13 @@
+- [x] 已明确 `Decision` 在 `phase10` 中继续只使用 `proposed / active / superseded / archived` 四态
+- [x] 已明确 `Decision` 最小生命周期矩阵与终态解释
+- [x] 已明确 `Decision Detail` 是唯一正式状态推进承接位
+- [x] 已明确 `Decision Detail` 在 `proposed / active / terminal` 各状态下允许展示的 CTA
+- [x] 已明确 `Decision Detail` 非状态型 CTA 的完整 inventory 与边界
+- [x] 已明确 `Dashboard / Daily Review / Current Focus` 对 `Decision.status` 的解释必须完全一致
+- [x] 已明确 `proposed / active / superseded / archived` 四态在三类消费面上的完整消费语义
+- [x] 已明确 `pending decision` 的判定继续完全锚定 canonical `Decision.status`
+- [x] 已明确只有 `Decision.status` 正式离开 `proposed` 才能退出 pending
+- [x] 已明确 `decision_links / review_records` 不是退出 pending 的代理条件
+- [x] 已明确状态推进后的 reread 必须回答的核心问题
+- [x] 已明确禁止通过页面局部隐藏、前端临时过滤或 toast 假象掩盖未完成状态
+- [x] 已确认本规格未越权冻结后续接口名、实现细节或页面布局细节
