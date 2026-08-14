@@ -1,0 +1,13 @@
+- [x] 已明确 `Onboarding` 在 `phase10` 中继续保留六段式单一主线
+- [x] 已明确 `Onboarding` 的阶段语义从“首轮登记入口”升级为“首轮建链引导主线”
+- [x] 已明确 `Product` 是首轮建链的唯一主上下文锚点
+- [x] 已明确 `welcome / product / repository / module / decision / complete` 每一步的 canonical owner、最小动作与默认下一步
+- [x] 已明确 `module` 步骤若无法同页完成最小正式关系时，必须提供单值 canonical handoff
+- [x] 已明确 `repository / module / decision` 中无法即时完成的关系必须通过单值 canonical handoff 或 detail CTA 承接
+- [x] 已明确 `complete` 允许存在未即时完成但已被单值解释的 canonical handoff，不允许存在未解释的悬空关系
+- [x] 已明确 `Onboarding` 继续复用既有 canonical 写路径，不新增并列写路径
+- [x] 已明确中途中断恢复只能依赖 canonical facts 与单值恢复读模型，不允许长出第二套草稿系统
+- [x] 已明确 `current_repository_id / current_module_id / current_decision_id` 只作为 step 级辅助恢复线索
+- [x] 已明确显式 step 返回线索与恢复读模型冲突时的优先级
+- [x] 已明确多实体并存时不得按“全局最新实体”猜测当前 onboarding 主线
+- [x] 已确认本规格未越权冻结后续页面命名、接口名或实现细节
