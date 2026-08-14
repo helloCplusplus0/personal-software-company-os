@@ -45,6 +45,7 @@ import (
 	"github.com/psco/backend/internal/moduleregistry/service"
 	onboardingcandidate "github.com/psco/backend/internal/onboarding/candidate"
 	onboardingconnect "github.com/psco/backend/internal/onboarding/connect"
+	onboardingrepo "github.com/psco/backend/internal/onboarding/repository"
 	onboardingservice "github.com/psco/backend/internal/onboarding/service"
 	"github.com/psco/backend/internal/productregistry"
 	productcandidate "github.com/psco/backend/internal/productregistry/candidate"
@@ -304,9 +305,16 @@ func buildDashboard(pool *pgxpool.Pool) *dashboardservice.QueryService {
 }
 
 // buildOnboarding 构造 Onboarding 的 QueryService 并返回。
+//
+// phase10-08 新增 chainStateReaders 与 recoveryStore 注入。
 func buildOnboarding(pool *pgxpool.Pool) *onboardingservice.QueryService {
 	firstRunReaders := onboardingcandidate.NewFirstRunReaders(pool)
-	return onboardingservice.NewQueryService(firstRunReaders)
+	chainStateReaders := onboardingcandidate.NewChainStateReaders(pool)
+	recoveryStore := onboardingrepo.NewRecoveryStore(pool)
+	if err := recoveryStore.EnsureSchema(context.Background()); err != nil {
+		panic(err)
+	}
+	return onboardingservice.NewQueryService(firstRunReaders, chainStateReaders, recoveryStore)
 }
 
 // buildExport 构造 Export 的 QueryService / CommandService 并返回。

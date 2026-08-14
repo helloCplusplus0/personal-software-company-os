@@ -1,27 +1,22 @@
 /**
- * OnboardingPage — 首轮录入主线页面
+ * OnboardingPage — 首轮建链引导页面
  *
- * phase06-06 §"Onboarding 页面与步骤编排"
- * phase06-15 §"Onboarding 前端主线必须落地为唯一正式首轮入口"
+ * phase10-08 §"OnboardingPage 必须从页面级草稿协调改为链路状态驱动"
  *
  * 六段步骤语义：
  *   welcome → product → repository → module → decision → complete
  *
  * 关键约束：
- *   - 页面组件不得内联正式 mutation 主线
- *   - 步骤表单必须通过各自 feature slice 的 application owner 提交
- *   - 四类对象都完成最小持久化后，页面必须进入 complete 步骤
+ *   - 页面组件只保留页面壳、步骤 UI 与 owner 消费，不承担正式业务编排
+ *   - 读取通过 useOnboardingRead 统一承接
+ *   - 写动作通过 useOnboardingAction 统一承接
+ *   - 不再依赖 URL search 保存草稿摘要
+ *   - 不再直接持有四个 create owner
  *   - Product / Repository / Module / Decision 最小人工必填字段：
  *     Product: name
  *     Repository: name + url
  *     Module: name
  *     Decision: title + choice + reason
- *
- * 步骤推进策略：
- *   - 读取 first_run_state 确定当前步骤
- *   - 每个 create 步骤成功后失效 onboarding-state query，触发 refetch
- *   - refetch 后 first_run_state 更新，页面自动推进到下一个未完成步骤
- *   - status = completed 时进入 complete 步骤，提供"进入 Dashboard"入口
  */
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearch } from '@tanstack/react-router'
@@ -34,18 +29,9 @@ import { Textarea } from '@/components/ui/textarea'
 import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from 'sonner'
 import { useOnboardingRead, ONBOARDING_STATE_QUERY_KEY } from '../data/use-onboarding-read'
-import { useCreateDraftProduct } from '@/features/product-registry/application/use-create-draft-product'
-import { useCreateDraftRepository } from '@/features/repository-binding/application/use-create-draft-repository'
-import { useCreateDraftModule } from '@/features/module-registry/application/use-create-draft-module'
-import { useCreateDraftDecision } from '@/features/decision-center/application/use-create-draft-decision'
+import { useOnboardingAction } from '../application/use-onboarding-action'
+import type { OnboardingActionSuccess } from '../application/use-onboarding-action'
 import type { OnboardingStep } from '../types'
-import {
-  buildOnboardingDraftSearch,
-  parseOnboardingDraftSearch,
-  type OnboardingDraftKey,
-  type OnboardingDraftMap,
-  type OnboardingDraftSummary,
-} from '../lib/onboarding-source-schema'
 
 /** 步骤顺序与标签 */
 const STEP_LABELS: Record<OnboardingStep, string> = {
@@ -63,160 +49,93 @@ export function OnboardingPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const onboardingQuery = useOnboardingRead()
+  const action = useOnboardingAction()
 
-  // phase06-15 §"detail 页来源优先级"：
-  // 从 canonical detail 页返回时携带 onboardingStep，并把对应步骤恢复为一次性焦点。
+  // phase10-08：从 detail 页返回时携带 onboardingStep，作为一次性恢复焦点
   const returnSearch = useSearch({ from: '/onboarding' })
 
   const [startStep, setStartStep] = useState<OnboardingStep | null>(null)
-  const [focusedStep, setFocusedStep] = useState<OnboardingStep | null>(returnSearch.onboardingStep ?? null)
-  const [drafts, setDrafts] = useState<OnboardingDraftMap>(() => parseOnboardingDraftSearch(returnSearch))
+  const [focusedStep, setFocusedStep] = useState<OnboardingStep | null>(
+    returnSearch.onboardingStep ?? null,
+  )
 
+  const chainState = onboardingQuery.data?.chain_state
   const firstRunState = onboardingQuery.data?.first_run_state
-  const serverStep = firstRunState?.current_step
-  const status = firstRunState?.status
+  const serverStep = chainState?.current_step ?? firstRunState?.current_step
+  const currentProductId = chainState?.current_product_id ?? ''
 
-  // 当前步骤优先级（fix_001 修正）：
+  // 当前步骤优先级：
   // 1. detail 页返回的一次性 focusedStep
   // 2. welcome 首次点击后的一次性 startStep（本地起步兜底）
-  // 3. 服务端 first_run_state.current_step（长期事实源）
+  // 3. 服务端 chain_state.current_step（长期事实源）
   // 4. 最终兜底 welcome
   const currentStep: OnboardingStep =
     focusedStep ?? startStep ?? serverStep ?? 'welcome'
 
+  // 消费 detail 返回的一次性 onboardingStep，然后从 URL 移除
   useEffect(() => {
     if (!returnSearch.onboardingStep) {
       return
     }
-
-    // 仅在本次回流中消费一次 onboardingStep，然后从 URL 中移除。
-    // 这样既能恢复目标步骤，又不会把用户永久锁在旧步骤上。
     setFocusedStep(returnSearch.onboardingStep)
     navigate({
       to: '/onboarding',
-        search: buildOnboardingDraftSearch(
-          parseOnboardingDraftSearch({
-            productDraftId: returnSearch.productDraftId,
-            productDraftLabel: returnSearch.productDraftLabel,
-            repositoryDraftId: returnSearch.repositoryDraftId,
-            repositoryDraftLabel: returnSearch.repositoryDraftLabel,
-            moduleDraftId: returnSearch.moduleDraftId,
-            moduleDraftLabel: returnSearch.moduleDraftLabel,
-            decisionDraftId: returnSearch.decisionDraftId,
-            decisionDraftLabel: returnSearch.decisionDraftLabel,
-          }),
-        ),
+      search: {},
       replace: true,
     })
-  }, [
-    navigate,
-    returnSearch.onboardingStep,
-    returnSearch.productDraftId,
-    returnSearch.productDraftLabel,
-    returnSearch.repositoryDraftId,
-    returnSearch.repositoryDraftLabel,
-    returnSearch.moduleDraftId,
-    returnSearch.moduleDraftLabel,
-    returnSearch.decisionDraftId,
-    returnSearch.decisionDraftLabel,
-  ])
+  }, [navigate, returnSearch.onboardingStep])
 
-  // fix_001 收敛规则：当服务端步骤已追平或超过本地起步步骤时，清空 startStep，
-  // 让页面重新回到服务端 first_run_state.current_step 驱动。
+  // detail 返回带来的 focusedStep 只是一层一次性兜底；
+  // 一旦服务端 step 追平或前进，就必须让位给服务端链路状态。
   useEffect(() => {
-    if (startStep && serverStep && serverStep !== 'welcome') {
+    if (!focusedStep || !serverStep) {
+      return
+    }
+    if (focusedStep !== serverStep) {
+      setFocusedStep(null)
+    }
+  }, [focusedStep, serverStep])
+
+  // 当服务端步骤已追平或超过本地起步步骤时，清空 startStep
+  useEffect(() => {
+    if (startStep && serverStep && serverStep !== 'welcome' && serverStep !== 'complete') {
       setStartStep(null)
     }
   }, [serverStep, startStep])
 
-  // status = completed 时默认进入 complete 步骤；
-  // 若当前存在从 detail 页回流的一次性 focusedStep，则保留该步骤优先级。
+  // phase10-08：complete 只允许由链路状态驱动，不能再用全局 first_run_state.completed
+  // 覆盖当前锚点产品尚未补链完成的主线。
   useEffect(() => {
-    if (status === 'completed') {
+    if (chainState?.resume_status === 'completed') {
       setStartStep('complete')
     }
-  }, [status])
+  }, [chainState?.resume_status])
 
-  const persistDrafts = (nextDrafts: OnboardingDraftMap) => {
-    navigate({
-      to: '/onboarding',
-      search: buildOnboardingDraftSearch(nextDrafts),
-      replace: true,
-    })
-  }
+  // 写动作成功后的统一处理
+  // 注意：缓存失效由 useOnboardingAction 内部统一处理，页面层不再重复失效
+  const handleActionSuccess = (result: OnboardingActionSuccess) => {
+    if (result.successMessage) {
+      toast.success(result.successMessage)
+    }
 
-  // 写操作成功后同步持久化草稿摘要并失效 onboarding-state，触发 refetch 推进步骤
-  const handleStepSuccess = (step: OnboardingDraftKey, draft: OnboardingDraftSummary) => {
-    const nextDrafts = { ...drafts, [step]: draft }
-    setDrafts(nextDrafts)
+    if (result.resultKind === 'handoff' && result.navigateTo && result.params) {
+      // canonical handoff：跳转到 detail 页
+      navigate({
+        to: result.navigateTo as any,
+        params: result.params as any,
+        search: (result.search ?? {}) as any,
+      })
+      return
+    }
+
+    if (result.resultKind === 'complete') {
+      setStartStep('complete')
+      return
+    }
+
+    // advance：前进到下一步
     setFocusedStep(null)
-    persistDrafts(nextDrafts)
-    queryClient.invalidateQueries({ queryKey: ONBOARDING_STATE_QUERY_KEY })
-  }
-
-  const buildOnboardingSourceSearch = (step: OnboardingStep) => ({
-    fromOnboarding: true,
-    onboardingStep: step,
-    ...buildOnboardingDraftSearch(drafts),
-  })
-
-  const navigateToDetail = (step: OnboardingStep, draft?: OnboardingDraftSummary) => {
-    if (!draft) {
-      return
-    }
-
-    const search = buildOnboardingSourceSearch(step)
-    if (step === 'product') {
-      navigate({
-        to: '/products/$productId',
-        params: { productId: draft.id },
-        search,
-      })
-      return
-    }
-    if (step === 'repository') {
-      navigate({
-        to: '/repositories/$repositoryId',
-        params: { repositoryId: draft.id },
-        search,
-      })
-      return
-    }
-    if (step === 'module') {
-      navigate({
-        to: '/modules/$moduleId',
-        params: { moduleId: draft.id },
-        search,
-      })
-      return
-    }
-    if (step === 'decision') {
-      navigate({
-        to: '/decisions/$decisionId',
-        params: { decisionId: draft.id },
-        search,
-      })
-    }
-  }
-
-  const resumeServerProgress = () => {
-    setFocusedStep(null)
-    navigate({
-      to: '/onboarding',
-      search: buildOnboardingDraftSearch(drafts),
-      replace: true,
-    })
-  }
-
-  const buildResumeProps = (step: OnboardingDraftKey) => {
-    if (!focusedStep || focusedStep !== step || !serverStep || serverStep === step) {
-      return {}
-    }
-
-    return {
-      resumeLabel: serverStep === 'complete' ? '返回完成页' : `继续到${STEP_LABELS[serverStep]}`,
-      onResume: resumeServerProgress,
-    }
+    setStartStep(result.nextStep)
   }
 
   // ============================================================================
@@ -261,59 +180,45 @@ export function OnboardingPage() {
       {currentStep === 'welcome' && (
         <WelcomeStep
           onStart={() => {
-              setStartStep('product')
+            setStartStep('product')
           }}
         />
       )}
 
       {currentStep === 'product' && (
         <ProductStep
-          draft={drafts.product}
-          onEdit={() => navigateToDetail('product', drafts.product)}
-          onSuccess={(draft) => {
-              handleStepSuccess('product', draft)
-          }}
-            {...buildResumeProps('product')}
+          action={action}
+          onSuccess={handleActionSuccess}
+          chainState={chainState}
         />
       )}
 
       {currentStep === 'repository' && (
         <RepositoryStep
-          draft={drafts.repository}
-          onEdit={() => navigateToDetail('repository', drafts.repository)}
-          onSuccess={(draft) => {
-              handleStepSuccess('repository', draft)
-          }}
-            {...buildResumeProps('repository')}
+          action={action}
+          onSuccess={handleActionSuccess}
+          currentProductId={currentProductId}
         />
       )}
 
       {currentStep === 'module' && (
         <ModuleStep
-          draft={drafts.module}
-          onEdit={() => navigateToDetail('module', drafts.module)}
-          onSuccess={(draft) => {
-              handleStepSuccess('module', draft)
-          }}
-            {...buildResumeProps('module')}
+          action={action}
+          onSuccess={handleActionSuccess}
+          currentProductId={currentProductId}
         />
       )}
 
       {currentStep === 'decision' && (
         <DecisionStep
-          draft={drafts.decision}
-          onEdit={() => navigateToDetail('decision', drafts.decision)}
-          onSuccess={(draft) => {
-              handleStepSuccess('decision', draft)
-          }}
-            {...buildResumeProps('decision')}
+          action={action}
+          onSuccess={handleActionSuccess}
         />
       )}
 
       {currentStep === 'complete' && (
         <CompleteStep
-          drafts={drafts}
-          onEdit={navigateToDetail}
+          chainState={chainState}
           onGoToDashboard={() => navigate({ to: '/dashboard' })}
         />
       )}
@@ -322,7 +227,7 @@ export function OnboardingPage() {
 }
 
 // ============================================================================
-// 步骤进度条
+// 步骤进度条（保持不变）
 // ============================================================================
 
 function StepProgress({ currentStep }: { currentStep: OnboardingStep }) {
@@ -392,57 +297,50 @@ function WelcomeStep({ onStart }: { onStart: () => void }) {
 }
 
 // ============================================================================
-// Product 步骤
+// Product 步骤（phase10-08：通过 useOnboardingAction 写入）
 // ============================================================================
 
 function ProductStep({
-  draft,
-  onEdit,
+  action,
   onSuccess,
-  onResume,
-  resumeLabel,
+  chainState,
 }: {
-  draft?: OnboardingDraftSummary
-  onEdit: () => void
-  onSuccess: (draft: OnboardingDraftSummary) => void
-  onResume?: () => void
-  resumeLabel?: string
+  action: ReturnType<typeof useOnboardingAction>
+  onSuccess: (result: OnboardingActionSuccess) => void
+  chainState: import('../types').OnboardingChainState | undefined
 }) {
-  const mutation = useCreateDraftProduct()
   const [name, setName] = useState('')
+  const mutation = action.productMutation
 
-  if (draft) {
+  // 如果已有产品（chainState 显示 product 步骤已完成），展示摘要卡片
+  const isCompleted = chainState && chainState.current_step !== 'product' && chainState.current_step !== 'welcome'
+  if (isCompleted && chainState.current_product_id) {
     return (
       <DraftSummaryCard
         title="产品已创建"
-        description={`已创建产品：${draft.label}`}
+        description={`当前产品 ID: ${chainState.current_product_id}`}
         editLabel="继续编辑产品"
-        onEdit={onEdit}
-          onResume={onResume}
-          resumeLabel={resumeLabel}
+        onEdit={() => {
+          // 跳转到产品详情
+          window.location.href = `/products/${chainState.current_product_id}`
+        }}
       />
     )
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!name.trim()) {
       toast.error('请输入产品名称')
       return
     }
-    mutation.mutate(
-      { name: name.trim() },
-      {
-        onSuccess: (response) => {
-          toast.success('产品创建成功')
-          onSuccess({ id: response.product_id, label: name.trim() })
-          setName('')
-        },
-        onError: (err: Error) => {
-          toast.error('创建失败：' + err.message)
-        },
-      },
-    )
+    try {
+      const result = await action.submitProduct({ name: name.trim() })
+      setName('')
+      onSuccess(result)
+    } catch (err) {
+      toast.error('创建失败：' + (err as Error).message)
+    }
   }
 
   return (
@@ -478,36 +376,19 @@ function ProductStep({
 // ============================================================================
 
 function RepositoryStep({
-  draft,
-  onEdit,
+  action,
   onSuccess,
-  onResume,
-  resumeLabel,
+  currentProductId,
 }: {
-  draft?: OnboardingDraftSummary
-  onEdit: () => void
-  onSuccess: (draft: OnboardingDraftSummary) => void
-  onResume?: () => void
-  resumeLabel?: string
+  action: ReturnType<typeof useOnboardingAction>
+  onSuccess: (result: OnboardingActionSuccess) => void
+  currentProductId: string
 }) {
-  const mutation = useCreateDraftRepository()
   const [name, setName] = useState('')
   const [url, setUrl] = useState('')
+  const mutation = action.repositoryMutation
 
-  if (draft) {
-    return (
-      <DraftSummaryCard
-        title="仓库已创建"
-        description={`已创建仓库：${draft.label}`}
-        editLabel="继续编辑仓库"
-        onEdit={onEdit}
-          onResume={onResume}
-          resumeLabel={resumeLabel}
-      />
-    )
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!name.trim()) {
       toast.error('请输入仓库名称')
@@ -517,20 +398,17 @@ function RepositoryStep({
       toast.error('请输入仓库 URL')
       return
     }
-    mutation.mutate(
-      { name: name.trim(), url: url.trim() },
-      {
-        onSuccess: (response) => {
-          toast.success('仓库创建成功')
-          onSuccess({ id: response.repository_id, label: name.trim() })
-          setName('')
-          setUrl('')
-        },
-        onError: (err: Error) => {
-          toast.error('创建失败：' + err.message)
-        },
-      },
-    )
+    try {
+      const result = await action.submitRepository(
+        { name: name.trim(), url: url.trim() },
+        currentProductId,
+      )
+      setName('')
+      setUrl('')
+      onSuccess(result)
+    } catch (err) {
+      toast.error('创建失败：' + (err as Error).message)
+    }
   }
 
   return (
@@ -576,53 +454,33 @@ function RepositoryStep({
 // ============================================================================
 
 function ModuleStep({
-  draft,
-  onEdit,
+  action,
   onSuccess,
-  onResume,
-  resumeLabel,
+  currentProductId,
 }: {
-  draft?: OnboardingDraftSummary
-  onEdit: () => void
-  onSuccess: (draft: OnboardingDraftSummary) => void
-  onResume?: () => void
-  resumeLabel?: string
+  action: ReturnType<typeof useOnboardingAction>
+  onSuccess: (result: OnboardingActionSuccess) => void
+  currentProductId: string
 }) {
-  const mutation = useCreateDraftModule()
   const [name, setName] = useState('')
+  const mutation = action.moduleMutation
 
-  if (draft) {
-    return (
-      <DraftSummaryCard
-        title="模块已创建"
-        description={`已创建模块：${draft.label}`}
-        editLabel="继续编辑模块"
-        onEdit={onEdit}
-          onResume={onResume}
-          resumeLabel={resumeLabel}
-      />
-    )
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!name.trim()) {
       toast.error('请输入模块名称')
       return
     }
-    mutation.mutate(
-      { name: name.trim() },
-      {
-        onSuccess: (module) => {
-          toast.success('模块创建成功')
-          onSuccess({ id: module.id, label: name.trim() })
-          setName('')
-        },
-        onError: (err: Error) => {
-          toast.error('创建失败：' + err.message)
-        },
-      },
-    )
+    try {
+      const result = await action.submitModule(
+        { name: name.trim() },
+        currentProductId,
+      )
+      setName('')
+      onSuccess(result)
+    } catch (err) {
+      toast.error('创建失败：' + (err as Error).message)
+    }
   }
 
   return (
@@ -658,37 +516,18 @@ function ModuleStep({
 // ============================================================================
 
 function DecisionStep({
-  draft,
-  onEdit,
+  action,
   onSuccess,
-  onResume,
-  resumeLabel,
 }: {
-  draft?: OnboardingDraftSummary
-  onEdit: () => void
-  onSuccess: (draft: OnboardingDraftSummary) => void
-  onResume?: () => void
-  resumeLabel?: string
+  action: ReturnType<typeof useOnboardingAction>
+  onSuccess: (result: OnboardingActionSuccess) => void
 }) {
-  const mutation = useCreateDraftDecision()
   const [title, setTitle] = useState('')
   const [choice, setChoice] = useState('')
   const [reason, setReason] = useState('')
+  const mutation = action.decisionMutation
 
-  if (draft) {
-    return (
-      <DraftSummaryCard
-        title="决策已记录"
-        description={`已创建决策：${draft.label}`}
-        editLabel="继续编辑决策"
-        onEdit={onEdit}
-          onResume={onResume}
-          resumeLabel={resumeLabel}
-      />
-    )
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!title.trim()) {
       toast.error('请输入决策标题')
@@ -702,21 +541,19 @@ function DecisionStep({
       toast.error('请输入决策理由')
       return
     }
-    mutation.mutate(
-      { title: title.trim(), choice: choice.trim(), reason: reason.trim() },
-      {
-        onSuccess: (response) => {
-          toast.success('决策记录成功')
-          onSuccess({ id: response.decision_id, label: title.trim() })
-          setTitle('')
-          setChoice('')
-          setReason('')
-        },
-        onError: (err: Error) => {
-          toast.error('创建失败：' + err.message)
-        },
-      },
-    )
+    try {
+      const result = await action.submitDecision({
+        title: title.trim(),
+        choice: choice.trim(),
+        reason: reason.trim(),
+      })
+      setTitle('')
+      setChoice('')
+      setReason('')
+      onSuccess(result)
+    } catch (err) {
+      toast.error('创建失败：' + (err as Error).message)
+    }
   }
 
   return (
@@ -776,12 +613,10 @@ function DecisionStep({
 // ============================================================================
 
 function CompleteStep({
-  drafts,
-  onEdit,
+  chainState,
   onGoToDashboard,
 }: {
-    drafts: OnboardingDraftMap
-    onEdit: (step: OnboardingStep, draft?: OnboardingDraftSummary) => void
+  chainState: import('../types').OnboardingChainState | undefined
   onGoToDashboard: () => void
 }) {
   return (
@@ -793,18 +628,21 @@ function CompleteStep({
       <p className="text-muted-foreground">
         你已完成产品、仓库、模块和决策的最小登记。现在可以进入 Dashboard 查看系统概览与复用反馈。
       </p>
-      <div className="grid gap-3 text-left md:grid-cols-2">
-        <CompleteDraftCard title="产品" draft={drafts.product} onEdit={() => onEdit('product', drafts.product)} />
-        <CompleteDraftCard title="仓库" draft={drafts.repository} onEdit={() => onEdit('repository', drafts.repository)} />
-        <CompleteDraftCard title="模块" draft={drafts.module} onEdit={() => onEdit('module', drafts.module)} />
-        <CompleteDraftCard title="决策" draft={drafts.decision} onEdit={() => onEdit('decision', drafts.decision)} />
-      </div>
+      {chainState?.current_product_id && (
+        <p className="text-sm text-muted-foreground">
+          当前产品 ID: {chainState.current_product_id}
+        </p>
+      )}
       <Button onClick={onGoToDashboard} size="lg">
         进入 Dashboard
       </Button>
     </div>
   )
 }
+
+// ============================================================================
+// 共享组件
+// ============================================================================
 
 function DraftSummaryCard({
   title,
@@ -838,34 +676,6 @@ function DraftSummaryCard({
             </Button>
           )}
         </div>
-      </CardContent>
-    </Card>
-  )
-}
-
-function CompleteDraftCard({
-  title,
-  draft,
-  onEdit,
-}: {
-  title: string
-  draft?: OnboardingDraftSummary
-  onEdit: () => void
-}) {
-  return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-base">{title}</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-2">
-        <p className="text-sm text-muted-foreground">
-          {draft?.label ?? '当前会话未保留摘要，仍可通过对应列表或详情继续补全。'}
-        </p>
-        {draft && (
-          <Button variant="outline" size="sm" onClick={onEdit}>
-            继续编辑
-          </Button>
-        )}
       </CardContent>
     </Card>
   )

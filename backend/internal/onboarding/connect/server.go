@@ -10,10 +10,10 @@ package connect
 import (
 	"context"
 
-	pb "github.com/psco/backend/internal/gen/proto/psco/onboarding/v1"
-	pbc "github.com/psco/backend/internal/gen/connect/psco/onboarding/v1/onboardingv1connect"
-	"github.com/psco/backend/internal/onboarding/service"
 	"github.com/psco/backend/internal/connecterrors"
+	pbc "github.com/psco/backend/internal/gen/connect/psco/onboarding/v1/onboardingv1connect"
+	pb "github.com/psco/backend/internal/gen/proto/psco/onboarding/v1"
+	"github.com/psco/backend/internal/onboarding/service"
 )
 
 // Server 实现 OnboardingServiceHandler 接口。
@@ -44,6 +44,36 @@ func (s *Server) GetFirstRunState(ctx context.Context, req *pb.GetFirstRunStateR
 			CompletionProgress: int32(state.CompletionProgress),
 		},
 	}, nil
+}
+
+// GetOnboardingChainState 承接 OnboardingChainStateRead（phase10-08 新增）。
+func (s *Server) GetOnboardingChainState(ctx context.Context, req *pb.GetOnboardingChainStateRequest) (*pb.GetOnboardingChainStateResponse, error) {
+	state, err := s.querySvc.ReadOnboardingChainState(ctx)
+	if err != nil {
+		return nil, connecterrors.MapToConnectError(err)
+	}
+
+	resp := &pb.GetOnboardingChainStateResponse{
+		CurrentProductId: state.CurrentProductID,
+		CurrentStep:      domainOnboardingStepToProto(string(state.CurrentStep)),
+		ResumeStatus:     string(state.ResumeStatus),
+		NextStepKind:     string(state.NextStepKind),
+	}
+	if state.CanonicalHandoffTarget != "" {
+		resp.CanonicalHandoffTarget = &state.CanonicalHandoffTarget
+	}
+	if state.ReturnHint != "" {
+		resp.ReturnHint = &state.ReturnHint
+	}
+	return resp, nil
+}
+
+// FreezeProductAnchor 承接 Product 锚点冻结（phase10-08 修复）。
+func (s *Server) FreezeProductAnchor(ctx context.Context, req *pb.FreezeProductAnchorRequest) (*pb.FreezeProductAnchorResponse, error) {
+	if err := s.querySvc.FreezeProductAnchor(ctx, req.ProductId); err != nil {
+		return nil, connecterrors.MapToConnectError(err)
+	}
+	return &pb.FreezeProductAnchorResponse{}, nil
 }
 
 // domainFirstRunStatusToProto 将 domain FirstRunStatus 映射为 proto 枚举。

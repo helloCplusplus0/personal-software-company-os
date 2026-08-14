@@ -39,3 +39,29 @@ export interface FirstRunState {
 export interface OnboardingReadResult {
   first_run_state: FirstRunState
 }
+
+// ============================================================================
+// 建链状态类型（phase10-08 新增）
+// ============================================================================
+
+/** 建链恢复状态（对齐 proto resume_status） */
+export type ChainStateResumeStatus = 'cold_start' | 'resuming' | 'completed'
+
+/** 下一步类型（对齐 proto next_step_kind） */
+export type ChainStateNextStepKind = 'create' | 'bind' | 'handoff' | 'complete'
+
+/** 建链状态读模型（对齐 proto GetOnboardingChainStateResponse） */
+export interface OnboardingChainState {
+  current_product_id: string
+  current_step: OnboardingStep
+  resume_status: ChainStateResumeStatus
+  next_step_kind: ChainStateNextStepKind
+  canonical_handoff_target?: string
+  return_hint?: string
+}
+
+/** 组合后的 Onboarding 读模型（phase10-08 组合 GetFirstRunState + GetOnboardingChainState） */
+export interface OnboardingFullReadResult {
+  first_run_state: FirstRunState
+  chain_state: OnboardingChainState
+}

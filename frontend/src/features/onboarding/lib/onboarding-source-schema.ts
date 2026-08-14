@@ -2,12 +2,14 @@
  * Onboarding 来源参数 Zod schema 片段
  *
  * phase06-15 §"canonical detail 页返回优先级必须正式并入 fromOnboarding"
+ * phase10-08 §"canonical handoff 返回合同必须正式切换到 onboardingProductId"
  *
  * 为四类 canonical detail 路由提供统一的 Onboarding 来源参数 schema，
  * 供各路由通过 spread 操作符扩展到既有 validateSearch schema。
  *
- * 当前不仅需要恢复 onboardingStep，还需要把当前会话中的草稿摘要一并带回
- * /onboarding，避免用户从 canonical detail 返回后丢失已创建草稿身份。
+ * phase10-08 新合同：
+ *   - fromOnboarding + onboardingProductId + onboardingStep 是正式来源合同
+ *   - 草稿摘要字段（productDraftId 等）保留为兼容但不再作为正式恢复主线
  *
  * 返回优先级约束（phase06-15 spec）：
  *   - fromOnboarding 的返回优先级高于 fromList / fromDashboard / fromProductDetail / fromModuleDetail
@@ -41,13 +43,24 @@ export const onboardingSourceSearchSchema = {
   onboardingStep: z
     .enum(['welcome', 'product', 'repository', 'module', 'decision', 'complete'])
     .optional(),
+  // phase10-08 新增：正式恢复锚点
+  onboardingProductId: z.string().optional(),
+  // phase06-15 草稿摘要字段（phase10-08 起已降级为兼容字段，不再作为正式恢复主线）
+  /** @deprecated phase10-08 起不再作为正式恢复主线 */
   productDraftId: z.string().optional(),
+  /** @deprecated phase10-08 起不再作为正式恢复主线 */
   productDraftLabel: z.string().optional(),
+  /** @deprecated phase10-08 起不再作为正式恢复主线 */
   repositoryDraftId: z.string().optional(),
+  /** @deprecated phase10-08 起不再作为正式恢复主线 */
   repositoryDraftLabel: z.string().optional(),
+  /** @deprecated phase10-08 起不再作为正式恢复主线 */
   moduleDraftId: z.string().optional(),
+  /** @deprecated phase10-08 起不再作为正式恢复主线 */
   moduleDraftLabel: z.string().optional(),
+  /** @deprecated phase10-08 起不再作为正式恢复主线 */
   decisionDraftId: z.string().optional(),
+  /** @deprecated phase10-08 起不再作为正式恢复主线 */
   decisionDraftLabel: z.string().optional(),
 } as const
 
@@ -57,13 +70,23 @@ export const onboardingSourceSearchSchema = {
 export type OnboardingSourceSearchParsed = {
   fromOnboarding?: boolean
   onboardingStep?: 'welcome' | 'product' | 'repository' | 'module' | 'decision' | 'complete'
+  /** phase10-08 新增：正式恢复锚点 */
+  onboardingProductId?: string
+  /** @deprecated phase10-08 起不再作为正式恢复主线 */
   productDraftId?: string
+  /** @deprecated phase10-08 起不再作为正式恢复主线 */
   productDraftLabel?: string
+  /** @deprecated phase10-08 起不再作为正式恢复主线 */
   repositoryDraftId?: string
+  /** @deprecated phase10-08 起不再作为正式恢复主线 */
   repositoryDraftLabel?: string
+  /** @deprecated phase10-08 起不再作为正式恢复主线 */
   moduleDraftId?: string
+  /** @deprecated phase10-08 起不再作为正式恢复主线 */
   moduleDraftLabel?: string
+  /** @deprecated phase10-08 起不再作为正式恢复主线 */
   decisionDraftId?: string
+  /** @deprecated phase10-08 起不再作为正式恢复主线 */
   decisionDraftLabel?: string
 }
 

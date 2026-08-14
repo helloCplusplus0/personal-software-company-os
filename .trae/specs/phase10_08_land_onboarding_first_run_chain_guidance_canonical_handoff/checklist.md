@@ -1,0 +1,10 @@
+- [x] `/onboarding` 已从 `phase06` 的 draft-first 过渡页升级为 `phase10` 六段式首轮建链引导页，而不是继续依赖页面局部草稿状态
+- [x] `GetOnboardingChainState`、最小 `current_product_id` 恢复锚点与对应 QueryService / Connect 接线已经落地
+- [x] `useOnboardingRead` 已能单值产出当前 step、主 CTA、handoff 目标与返回链只读上下文，而不是继续由页面层自行拼装
+- [x] `useOnboardingAction` 已成为 `/onboarding` 唯一正式写动作承接位，页面不再直接持有四个 create owner 或页面级 `invalidateQueries()`
+- [x] `product / repository / module / decision` 四步的成功后默认下一步或 canonical handoff 已由 owner 单值决定，页面层不再自行判断
+- [x] canonical handoff 的正式来源合同已经切换为 `fromOnboarding / onboardingProductId / onboardingStep`，detail 页不再正式依赖草稿摘要 search
+- [x] `Product / Repository / Module / Decision Detail` 完成来自 `Onboarding` 的 handoff 后，能够优先返回 `/onboarding` 并落到正确 step
+- [x] 刷新浏览器、关闭后再进入、从 detail 返回时，都不会丢失 `current_product_id` 或回退到错误 step
+- [x] 冷启动用户能够顺畅完成首轮建链，建链结果回到 canonical owner，而不是停留在页面局部状态
+- [x] 本子任务没有改写 `Dashboard / Review` 的 pending 组装逻辑，非目标边界保持成立

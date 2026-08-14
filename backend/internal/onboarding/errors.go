@@ -11,4 +11,11 @@ var (
 	// ErrFirstRunStateReadFailed GetFirstRunState 读取失败。
 	// 当任一 canonical 计数 reader 失败时返回。
 	ErrFirstRunStateReadFailed = errors.New("onboarding first run state read failed")
+
+	// ErrChainStateReadFailed GetOnboardingChainState 读取失败。
+	// 当建链状态 reader 失败时返回。
+	ErrChainStateReadFailed = errors.New("onboarding chain state read failed")
+
+	// ErrRecoveryStoreOpFailed recovery store 操作失败。
+	ErrRecoveryStoreOpFailed = errors.New("onboarding recovery store operation failed")
 )

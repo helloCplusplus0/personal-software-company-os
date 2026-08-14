@@ -79,3 +79,39 @@ type FirstRunState struct {
 type FirstRunStateReadResult struct {
 	FirstRunState *FirstRunState `json:"first_run_state"`
 }
+
+// ============================================================================
+// 建链状态 DTO（phase10-08 新增）
+// ============================================================================
+
+// ChainStateResumeStatus 建链恢复状态。
+type ChainStateResumeStatus string
+
+const (
+	ChainStateResumeStatusColdStart ChainStateResumeStatus = "cold_start"
+	ChainStateResumeStatusResuming  ChainStateResumeStatus = "resuming"
+	ChainStateResumeStatusCompleted ChainStateResumeStatus = "completed"
+)
+
+// ChainStateNextStepKind 下一步类型。
+type ChainStateNextStepKind string
+
+const (
+	ChainStateNextStepKindCreate   ChainStateNextStepKind = "create"
+	ChainStateNextStepKindBind     ChainStateNextStepKind = "bind"
+	ChainStateNextStepKindHandoff  ChainStateNextStepKind = "handoff"
+	ChainStateNextStepKindComplete ChainStateNextStepKind = "complete"
+)
+
+// OnboardingChainState 建链状态读模型。
+//
+// phase10-08 新增：对齐 proto GetOnboardingChainStateResponse。
+// 提供六段式建链引导的最小恢复读模型。
+type OnboardingChainState struct {
+	CurrentProductID       string                  `json:"current_product_id"`
+	CurrentStep            OnboardingStep          `json:"current_step"`
+	ResumeStatus           ChainStateResumeStatus  `json:"resume_status"`
+	NextStepKind           ChainStateNextStepKind  `json:"next_step_kind"`
+	CanonicalHandoffTarget string                  `json:"canonical_handoff_target,omitempty"`
+	ReturnHint             string                  `json:"return_hint,omitempty"`
+}

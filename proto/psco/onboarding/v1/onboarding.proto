@@ -136,6 +136,41 @@ message GetFirstRunStateResponse {
   FirstRunState first_run_state = 1;
 }
 
+// GetOnboardingChainStateRequest — 建链状态读取请求（当前版本无字段）。
+// 保持无筛选、无分页、无排序切换的最小请求边界。
+message GetOnboardingChainStateRequest {}
+
+// FreezeProductAnchorRequest — 显式冻结当前建链 Product 锚点。
+//
+// phase10-08 修复：Product 创建成功后，前端必须在同一成功路径上
+// 将新建 Product 冻结为 current_product_id，避免 ReadOnboardingChainState
+// 用“全局首个/最新 Product”做不透明猜测。
+message FreezeProductAnchorRequest {
+  string product_id = 1;
+}
+
+// GetOnboardingChainStateResponse — 建链状态读取响应。
+//
+// phase10-08 新增：提供六段式建链引导的最小恢复读模型。
+// 响应字段对齐 phase10-08 spec §"GetOnboardingChainState 的最小响应边界"：
+//   - current_product_id：当前建链锚点产品 ID（空字符串表示尚未锚定）
+//   - current_step：当前建链步骤
+//   - resume_status：恢复状态（cold_start / resuming / completed）
+//   - next_step_kind：下一步类型（create / bind / handoff / complete）
+//   - canonical_handoff_target：可选，需要 canonical handoff 时的目标实体类型
+//   - return_hint：可选，返回提示文本
+message GetOnboardingChainStateResponse {
+  string current_product_id = 1;
+  OnboardingStep current_step = 2;
+  string resume_status = 3;
+  string next_step_kind = 4;
+  optional string canonical_handoff_target = 5;
+  optional string return_hint = 6;
+}
+
+// FreezeProductAnchorResponse — 冻结 Product 锚点的最小响应。
+message FreezeProductAnchorResponse {}
+
 // ============================================================================
 // 服务接口
 // ============================================================================
@@ -167,4 +202,15 @@ service OnboardingService {
 
   // FirstRunStateRead — 首轮 onboarding 状态读取
   rpc GetFirstRunState(GetFirstRunStateRequest) returns (GetFirstRunStateResponse);
+
+  // OnboardingChainStateRead — 建链状态读取（phase10-08 新增）
+  //
+  // 提供六段式建链引导的最小恢复读模型，包括：
+  //   - current_product_id 恢复锚点
+  //   - 当前 step / resume_status / next_step_kind
+  //   - 可选的 canonical_handoff_target 与 return_hint
+  rpc GetOnboardingChainState(GetOnboardingChainStateRequest) returns (GetOnboardingChainStateResponse);
+
+  // FreezeProductAnchor — 显式冻结当前建链 Product 锚点（phase10-08 修复）。
+  rpc FreezeProductAnchor(FreezeProductAnchorRequest) returns (FreezeProductAnchorResponse);
 }
