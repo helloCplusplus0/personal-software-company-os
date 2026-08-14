@@ -1,0 +1,11 @@
+- [x] `Onboarding` 四类创建动作、关系闭合动作与 `Decision` 生命周期推进都已明确继续复用既有 canonical RPC，而不是新增 phase10-local 写合同
+- [x] `GetFirstRunState` 的职责边界已写清，且不会被误扩写为 phase10 的全量恢复总读模型
+- [x] 若现有 `Onboarding` 合同不足，允许新增的也只是在 `psco.onboarding.v1` 内的单一恢复辅助 read RPC，而不是第二套 proto 包或第二套草稿真相源
+- [x] `current_product_id` 的正式事实源层级与“何时可仅靠 canonical facts 唯一恢复”的候选数规则已写清，只有候选数不为 `1` 时才允许新增最小恢复锚点 store
+- [x] 新增的最小恢复锚点 store 一旦存在，就会成为 `current_product_id` 的正式优先事实源，且不会复制草稿 payload、pending 状态或 CTA 结果
+- [x] `Decision` pending reread 的后端事实来源已继续冻结为 `Decision.status = proposed`，不会新增第二套 pending 字段、影子表或专用 pending 服务
+- [x] `DecisionCenterService.GetDecisionDetail / ListDecisions / UpdateDecisionStatus` 已被明确为承接 phase10 决策主线的正式合同，状态推进后的 reread 也不需要新增专用 RPC
+- [x] `Dashboard.QueryService` 与 `Review.QueryService` 的 owner 边界已写清，`Current Focus / pending signals / next-step CTA` 不会落到新的 phase10-local 读服务
+- [x] `FeedbackSignal` 何时足够直接复用、何时必须进入最小字段演进，已经被写成可逐项检查的门槛清单，不复制第二套 next-step message
+- [x] 允许新增的 `.proto / Connect / service / store` 物理落点已单值冻结，且不会新增 `backend/internal/phase10/` 或第二套 decision lifecycle 服务
+- [x] “新增 vs 复用”的判定规则已能机械回答：什么时候必须复用既有合同，什么时候才允许新增最小承接位
