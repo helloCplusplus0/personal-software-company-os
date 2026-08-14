@@ -15,7 +15,9 @@
 package connecterrors
 
 import (
+	"context"
 	"errors"
+	"strings"
 
 	"connectrpc.com/connect"
 
@@ -39,6 +41,14 @@ import (
 // 映射优先级：NotFound > AlreadyExists > InvalidArgument > FailedPrecondition > Internal。
 // 每一层使用 errors.Is 进行哨兵匹配，支持 wrapped error。
 func MapToConnectError(err error) *connect.Error {
+	if isCancellationError(err) {
+		return connect.NewError(connect.CodeCanceled, err)
+	}
+
+	if isDeadlineExceededError(err) {
+		return connect.NewError(connect.CodeDeadlineExceeded, err)
+	}
+
 	// --- CodeNotFound ---
 	if isAny(err,
 		moduleregistry.ErrModuleNotFound,
@@ -74,10 +84,10 @@ func MapToConnectError(err error) *connect.Error {
 		moduleregistry.ErrInvalidStatus,
 		moduleregistry.ErrInvalidReleaseStatus,
 		decisioncenter.ErrInvalidInput,
-			decisioncenter.ErrInvalidStatus,
-			decisioncenter.ErrInvalidTargetType,
-			decisioncenter.ErrInvalidAlternatives,
-			decisioncenter.ErrInvalidStatusTransition,
+		decisioncenter.ErrInvalidStatus,
+		decisioncenter.ErrInvalidTargetType,
+		decisioncenter.ErrInvalidAlternatives,
+		decisioncenter.ErrInvalidStatusTransition,
 		productregistry.ErrInvalidInput,
 		productregistry.ErrInvalidStatus,
 		repositorybinding.ErrInvalidInput,
@@ -128,4 +138,25 @@ func isAny(err error, sentinels ...error) bool {
 		}
 	}
 	return false
+}
+
+func isCancellationError(err error) bool {
+	if errors.Is(err, context.Canceled) {
+		return true
+	}
+
+	message := strings.ToLower(err.Error())
+	return strings.Contains(message, "context canceled") ||
+		strings.Contains(message, "operation was canceled") ||
+		strings.Contains(message, "request canceled")
+}
+
+func isDeadlineExceededError(err error) bool {
+	if errors.Is(err, context.DeadlineExceeded) {
+		return true
+	}
+
+	message := strings.ToLower(err.Error())
+	return strings.Contains(message, "context deadline exceeded") ||
+		strings.Contains(message, "deadline exceeded")
 }

@@ -1,0 +1,15 @@
+- [x] `phase10-11` 已冻结单值验收前置数据，明确“空态或近空态”样本的最小 `Product / Repository / Module / Decision` 数量，以及允许保留的历史数据范围
+- [x] `phase10-11` 已冻结 `Product / Module / Repository Detail` 的最小 canonical 结构缺口样本，并为每条浏览器验收链指定唯一正式实体
+- [x] `phase10-11` 已冻结唯一 `Decision pending` 样本，明确该样本的 canonical 入口来源，以及其在 `Dashboard / Daily Review / Current Focus` 中应出现的位置
+- [x] 工具链验收已冻结为单值顺序，明确 `buf -> go test -> frontend build` 的正式执行链、通过标准与失败归类口径
+- [x] `Onboarding` 浏览器验收已冻结 `Dashboard -> Onboarding` 的唯一正式入口，且不与直接访问 `/onboarding` 混写
+- [x] `Onboarding` 浏览器验收已逐步冻结 `welcome -> product -> repository -> module -> decision -> complete` 的机械动作、预期结果与回看点
+- [x] `Onboarding` 每一步的默认下一步动作、canonical handoff、完成态解释与返回原入口后的 reread 验收点都已冻结为单值
+- [x] `Decision` 生命周期浏览器验收已冻结从 `Dashboard / Daily Review / Current Focus` 进入 pending 样本的入口顺序
+- [x] `Decision Detail` 从 `proposed` 推进后的 CTA 切换、来源返回，以及 `Dashboard / Daily Review / Current Focus` 的 reread 回看点均已冻结
+- [x] `Product Detail` 的浏览器验收链已冻结页面级主 CTA、canonical path 与返回来源后的 reread 验收点
+- [x] `Module Detail` 的浏览器验收链已冻结页面级主 CTA、canonical handoff 与返回来源后的 reread 验收点
+- [x] `Repository Detail` 的浏览器验收链已冻结页面级主 CTA、进入动作承接位，以及到 `Decision Detail` 的连续 handoff 验收点
+- [x] `Current Focus / pending signals` 的反回归矩阵已冻结，明确关键动作完成后必须回看的区块、文案、跳转目标与未通过判定条件
+- [x] `phase10-11` 已正式留档当前阶段明确不做 `Agent Consumption Layer / 新实体回归 / 第五态状态机` 的边界证据，并说明其不属于本轮机械验收范围
+- [x] 规格自检已完成：`spec.md / tasks.md / checklist.md` 已共同提供单值样本、单值入口、单值动作、单值预期结果，且足以让独立验收者无需补造主测试路径

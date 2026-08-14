@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -132,7 +133,21 @@ func corsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		requestedHeaders := r.Header.Get("Access-Control-Request-Headers")
+		if strings.TrimSpace(requestedHeaders) != "" {
+			// 预检时优先回显浏览器实际请求的 header 列表，确保 Connect-Web
+			// 等跨域调用不会因为额外协议头被浏览器拦截。
+			w.Header().Set("Access-Control-Allow-Headers", requestedHeaders)
+		} else {
+			w.Header().Set(
+				"Access-Control-Allow-Headers",
+				"Content-Type, Authorization, Connect-Protocol-Version, Connect-Timeout-Ms, X-User-Agent, X-Grpc-Web, Grpc-Timeout",
+			)
+		}
+		w.Header().Set(
+			"Access-Control-Expose-Headers",
+			"Grpc-Status, Grpc-Message, Grpc-Status-Details-Bin, Connect-Content-Encoding, Connect-Accept-Encoding",
+		)
 		// 缓存 preflight 结果 10 分钟，避免 preflight 过期后 POST 被中止重发
 		w.Header().Set("Access-Control-Max-Age", "600")
 		if r.Method == http.MethodOptions {

@@ -70,22 +70,22 @@ func NewQueryService(
 func (s *QueryService) ReadOverview(ctx context.Context) (*dashboard.DashboardOverview, error) {
 	moduleCount, err := s.overviewReaders.CountModules(ctx)
 	if err != nil {
-		return nil, dashboard.ErrOverviewReadFailed
+		return nil, fmt.Errorf("%w: %w", dashboard.ErrOverviewReadFailed, err)
 	}
 
 	productCount, productWithModule, productWithRepository, err := s.overviewReaders.CountProducts(ctx)
 	if err != nil {
-		return nil, dashboard.ErrOverviewReadFailed
+		return nil, fmt.Errorf("%w: %w", dashboard.ErrOverviewReadFailed, err)
 	}
 
 	repositoryCount, err := s.overviewReaders.CountRepositories(ctx)
 	if err != nil {
-		return nil, dashboard.ErrOverviewReadFailed
+		return nil, fmt.Errorf("%w: %w", dashboard.ErrOverviewReadFailed, err)
 	}
 
 	decisionCount, err := s.overviewReaders.CountDecisions(ctx)
 	if err != nil {
-		return nil, dashboard.ErrOverviewReadFailed
+		return nil, fmt.Errorf("%w: %w", dashboard.ErrOverviewReadFailed, err)
 	}
 
 	return &dashboard.DashboardOverview{
@@ -122,12 +122,12 @@ func (s *QueryService) ReadOverview(ctx context.Context) (*dashboard.DashboardOv
 func (s *QueryService) ReadFeedbackSignal(ctx context.Context) (*dashboard.FeedbackSignalReadResult, error) {
 	pendingDecisions, err := s.feedbackReaders.ReadPendingDecisions(ctx)
 	if err != nil {
-		return nil, dashboard.ErrFeedbackSignalReadFailed
+		return nil, fmt.Errorf("%w: %w", dashboard.ErrFeedbackSignalReadFailed, err)
 	}
 
 	coverage, err := s.feedbackReaders.ReadProductAssetCoverage(ctx)
 	if err != nil {
-		return nil, dashboard.ErrFeedbackSignalReadFailed
+		return nil, fmt.Errorf("%w: %w", dashboard.ErrFeedbackSignalReadFailed, err)
 	}
 
 	// 归一化为统一 FeedbackSignal 列表
@@ -278,22 +278,22 @@ func truncateSignals(signals []dashboard.FeedbackSignal, n int) []dashboard.Feed
 func (s *QueryService) ReadRecentActivity(ctx context.Context) ([]dashboard.RecentActivityItem, error) {
 	moduleItems, err := s.activityReaders.ReadModuleActivities(ctx)
 	if err != nil {
-		return nil, dashboard.ErrRecentActivityReadFailed
+		return nil, fmt.Errorf("%w: %w", dashboard.ErrRecentActivityReadFailed, err)
 	}
 
 	productItems, err := s.activityReaders.ReadProductActivities(ctx)
 	if err != nil {
-		return nil, dashboard.ErrRecentActivityReadFailed
+		return nil, fmt.Errorf("%w: %w", dashboard.ErrRecentActivityReadFailed, err)
 	}
 
 	repositoryItems, err := s.activityReaders.ReadRepositoryActivities(ctx)
 	if err != nil {
-		return nil, dashboard.ErrRecentActivityReadFailed
+		return nil, fmt.Errorf("%w: %w", dashboard.ErrRecentActivityReadFailed, err)
 	}
 
 	decisionItems, err := s.activityReaders.ReadDecisionActivities(ctx)
 	if err != nil {
-		return nil, dashboard.ErrRecentActivityReadFailed
+		return nil, fmt.Errorf("%w: %w", dashboard.ErrRecentActivityReadFailed, err)
 	}
 
 	// 合并所有原始活动项
