@@ -1,0 +1,11 @@
+- [x] `Onboarding / Dashboard / Review / Product Detail / Module Detail / Repository Detail / Decision Detail` 七类 route caller 都已具备单值 page read owner + page action owner 映射
+- [x] route caller 的职责边界已写清，且不会直接承接第二套 query、mutation、invalidation 或返回链协议编排
+- [x] `useOnboardingRead / useOnboardingAction` 的分工已冻结，`OnboardingPage` 不再被允许继续直接持有四个 create owner 与 page-level step 编排
+- [x] `useDashboardHomeRead / useDashboardPrimaryAction` 的分工已冻结，且 `primaryCta / secondaryCtas / actionDescriptor` 已明确由 read owner 单值产出，`DashboardHomePage` 不再承担 CTA 判定
+- [x] `useDailyReviewRead / useReviewAction` 在 `phase10` 中的复用边界已写清，`Dashboard` 不会复制 `Review` 的动作 owner
+- [x] `useProductDetailPageRead / useProductDetailActions / useModuleDetailPageRead / useModuleDetailActions / useRepositoryDetailPageRead / useRepositoryDetailActions / useDecisionDetailPageRead / useDecisionDetailActions` 的职责、输入输出与回收点都已冻结，且不会错误吞掉既有 canonical panel owner
+- [x] canonical owner 与 page action owner 的失效分工已写清，页面层不会继续手写正式 invalidation 主线
+- [x] success envelope 的最小字段、消费方式与返回链 search 组装承接位已写清，并已区分“普通返回”与“动作成功回流”的不同 owner 承接位
+- [x] 错误归一化已冻结为 application owner 职责，而不是 page-local `error.message` 拼装
+- [x] `OnboardingPage / DashboardHomePage / ProductDetailPage / ModuleDetailPage / RepositoryBindingDetailPage / DecisionDetailPage` 当前必须回收的散装 mutation / CTA 编排点都已明确列出
+- [x] `query` 层与 `application` 层边界清晰，且不会让 `data/` 层混入写动作或让页面层继续内联第二套动作编排
