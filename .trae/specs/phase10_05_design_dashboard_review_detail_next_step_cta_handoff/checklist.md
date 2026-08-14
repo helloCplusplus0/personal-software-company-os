@@ -1,0 +1,12 @@
+- [x] `Dashboard Home / Daily Review / Product Detail / Module Detail / Repository Detail / Decision Detail` 六类关键页面都已具备单值“下一步动作”语义
+- [x] `Dashboard` 在空态、pending decision、结构缺口三类场景下的主 CTA / 次 CTA 已冻结，且不会退化为“返回列表页”式兜底
+- [x] `Dashboard` 在“结构缺口 + pending decision”并存时的主 CTA 优先级已收敛为单值规则，不再与跨页面统一优先级冲突
+- [x] `Daily Review` 与 `Current Focus` 已明确命中 `Decision` 或结构缺口时的单值 canonical handoff 目标，而不是保留并列默认目标
+- [x] `Product Detail / Module Detail / Repository Detail` 三类 detail 页面都已冻结 CTA inventory、触发条件、默认跳转目标与成功后 reread 落点
+- [x] 三类 Detail 页在多个结构缺口并存时都已具备内部固定排序，不需要执行者再自行判断哪个结构 CTA 是主动作
+- [x] `Decision Detail` 在四态下的页面级主 CTA / 次 CTA 规则已与 `phase10-03` 生命周期矩阵保持一致
+- [x] `Current Focus` 已从提示信号升级为正式 handoff 入口，而不是停留在提示层
+- [x] 多个 CTA 同时成立时的统一优先级已冻结为单值规则，后续执行者不需要再自行判断谁是主动作
+- [x] 次 CTA 的并列边界已写清，且不会与主 CTA 的目标 owner 冲突或拼装第二套业务主线
+- [x] CTA 成功回流后的 reread 规则已能指导 `Dashboard / Daily Review / Detail pages` 共同回答“原主动作是否已完成、是否切换为新主动作”
+- [x] `phase10-05` 已正确修改 shared baseline 中“页面至少有一个 CTA”这种形式满足式解释，并提升为可机械验收的矩阵
