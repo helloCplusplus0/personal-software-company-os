@@ -112,6 +112,8 @@
 - 继续保留既有六段式最小主线：`welcome / product / repository / module / decision / complete`
 - 但正式职责从“逐段登记”升级为“首轮建链引导”
 - 目标不是强制用户走固定工作流引擎，而是在创建过程中主动降低“登记后再去多个详情页补链”的使用摩擦
+- `Product` 在首轮建链中继续作为唯一主上下文锚点；`Repository / Module / Decision` 只作为 step 级结果与辅助恢复线索，不替代主上下文
+- 中途中断后再进入时，只允许依据 canonical facts 与单值 onboarding 恢复读模型回到最近未完成 step，不允许按全局最新实体猜测当前主线
 
 本阶段明确不做：
 
@@ -168,6 +170,13 @@
 - 把 `Onboarding`、`Decision Detail` 与各实体 detail 页中的动作承接位收敛到固定 owner
 - 把 `Dashboard / Review` 中“下一步动作”的组装规则收敛到单值读模型与单值 application owner
 - 不在页面组件中散落复制“判断下一步 / 失效刷新 / 成功回流”逻辑
+- 当多个 detail CTA 同时成立时，页面必须存在单值主 CTA；主 CTA 优先用于闭当前 canonical 结构缺口，其次才是 `Decision` 推进与 reread 返回
+
+补充冻结：
+
+- `Onboarding` 主线由 `phase10-08` 承接，不允许在 `phase10-09 / 10` 中回头改写其业务编排
+- `Decision pending` 主线由 `phase10-09` 承接，不允许在 `phase10-10` 中再定义第二套 detail page pending 解释
+- `Product / Module / Repository Detail` 的 CTA inventory 由 `phase10-10` 承接，但必须复用 `phase10-09` 已冻结的 `Decision` canonical 解释
 
 ### 4.7 当前阶段后端、合同与数据承接策略
 
@@ -184,6 +193,13 @@
 - 在既有四态内补齐 `Decision` 生命周期推进所需的最小合同、服务与 reread 路径
 - 为 `Current Focus / pending signals` 与 detail CTA 的统一语义补齐最小读模型与承接矩阵
 - 优先复用既有 `Product / Module / Repository / Decision / Review` canonical facts，不新增影子状态表
+- 若 `Onboarding` 恢复语义需要额外读取，只允许新增单值恢复辅助读模型，不允许引入第二套草稿真相源
+
+补充冻结：
+
+- 能由既有 canonical facts 组合表达的动作语义，优先复用既有 `.proto / Connect / service / store`
+- 只有当页面层会重复编排、且现有合同无法稳定表达“下一步动作”时，才允许新增最小读模型或最小合同
+- 任何新增承接位都必须显式回答“它回收了哪段页面层重复逻辑”，否则不得进入实现
 
 ### 4.8 当前阶段业务边界原则
 

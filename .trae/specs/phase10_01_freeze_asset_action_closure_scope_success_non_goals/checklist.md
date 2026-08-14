@@ -1,0 +1,12 @@
+- [x] 已明确 `phase10` 的唯一中心主线为 `Asset-Action Closure`
+- [x] 已明确 `phase10` 的正式消费面不包含将 `Weekly Review` 提升为新的复杂动作编排主入口
+- [x] 已明确 `Onboarding / Decision / Dashboard / Review / Detail / reread` 共同构成当前阶段最小闭环
+- [x] 已明确 `Browser Validation -> Root Sync` 属于阶段成功标准与收口口径的一部分
+- [x] 已明确阶段成功不能停留在单页局部优化、单个 CTA 可点击或局部提示增强
+- [x] 已明确 `Agent Consumption Layer / Cross-Project Convention Asset / 新实体主线 / 第五态状态机` 为当前阶段非目标
+- [x] 已明确 `Onboarding` 不得演化为工作流引擎，`Dashboard / Review` 不得演化为任务管理器
+- [x] 已明确 AI 工作台、对话式主入口、agent 写入主线与重型 GitHub 集成不属于当前阶段实现承诺
+- [x] 已明确 `phase10` 后续 `/spec` 必须直接承接 `phase03 / 04 / 05 / 06 / 08 / 09` 已交付能力与 `phase07` 传输主线
+- [x] 已明确 `phase10-02+` 后续 `/spec` 还必须继续直接消费 `phase10` 三件套中已冻结的页面矩阵、动作矩阵、CTA inventory、数据矩阵与验收前提
+- [x] 已明确 `phase10-02+` 后续 `/spec` 必须以本规格作为强制边界上游
+- [x] 已确认本规格未越权冻结后续阶段的页面、合同命名、接口名或实现细节
