@@ -1,0 +1,30 @@
+- [x] spec 已冻结 `phase12` 只读消费深化继续复用 `phase11` 正式只读主线
+- [x] spec 已明确当前阶段只允许深化共享只读语义摘要、规则入口、文档入口与最小解释结果
+- [x] spec 已明确当前阶段不承接写回、审批流、MCP / CLI 或第二套业务协议出口
+- [x] spec 已冻结 `GetProjectContext` 为结构化 canonical owner
+- [x] spec 已冻结 `ExportProjectContext` 为 agent-facing Markdown owner
+- [x] spec 已冻结 `frontend/src/features/project-context/` 为唯一允许的新 Web 跨切片共享只读 owner
+- [x] spec 已明确 `project-context/` 的启用条件为 `3+` 页面/切片稳定复用，且该条件已进入可验证任务与清单
+- [x] spec 已明确 `project-context/` 不得承接写路径
+- [x] spec 已明确 `project-context/` 不得承接页面私有状态
+- [x] spec 已明确 `project-context/` 不得承接并列 canonical 字段语义
+- [x] spec 已明确切片内 `pages/`、`components/` 与 `data/` 只承接展示映射，不得并列定义第二套共享事实
+- [x] spec 已冻结 `repositories/$repositoryId` 为直接 `repository-scoped` 页面
+- [x] spec 已冻结 `products/$productId`、`modules/$moduleId`、`decisions/$decisionId` 为间接 `repository-scoped` 页面
+- [x] spec 已冻结 `dashboard`、`onboarding`、`reviews/daily`、`reviews/weekly` 为衍生消费页
+- [x] spec 已明确 `repository_id` 是唯一正式结构化输入锚点
+- [x] spec 已明确 `product_id / module_id / decision_id` 只能从同一 `repository_id` 驱动的结构化只读结果或其受控派生视图解析
+- [x] spec 已明确禁止通过页面内搜索、额外脚本、手工数据库查询或工作区扫描补齐锚点
+- [x] spec 已冻结“优先复用 `GetProjectContext`，必要时才允许新增 `ProjectContextService` 下受控派生读取”的判定边界
+- [x] spec 已明确任何新增承接位都必须保留定位关系并写清回收的重复解释逻辑
+- [x] spec 已冻结更重消费通道与受控维护能力的进入条件
+- [x] spec 已明确更重通道进入条件必须完整继承 phase-wide 验收门槛（固定 `6` 问闭环、固定 `repository_id` 锚点闭环、样本解析协议闭环），三者缺一不可
+- [x] spec 已明确 `MCP / CLI / agent 写回 / Draft / 审批流 / 前端对话式入口 / 第二套 canonical API / 影子状态表` 不属于当前阶段正式范围
+- [x] `tasks.md` 已把只读边界、owner 分层、三类页面承接矩阵、复用判定与进入条件拆成可验证任务
+- [x] 本 spec 包已显式对齐 `dev_plan`、`architecture_plan` 与 `shared_baseline` 的上游口径
+- [x] 本 spec 包已足以让后续执行者机械回答"这里该新建前端共享读模型，还是直接拼页面解释"
+- [x] `architecture_plan` §4.4A 已冻结共享只读 owner 分层（`GetProjectContext` / `ExportProjectContext` / `project-context/` / 切片内展示 owner），且与 `shared_baseline` §3.4 一致
+- [x] `architecture_plan` §4.6A 已冻结三类页面承接矩阵（直接 / 间接 / 衍生），且与 `shared_baseline` §3.4 一致
+- [x] `shared_baseline` §3.4 已冻结 `repository_id` 为唯一结构化输入锚点，且与 `architecture_plan` §4.6A 一致
+- [x] `dev_plan` phase12-03 已冻结更重通道进入条件，且与 `architecture_plan` / `shared_baseline` 一致
+- [x] 三件套对"先消费、后维护"与"只读消费深化 ≠ 完整 agent 平台"的表述单值一致
