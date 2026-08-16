@@ -1,0 +1,13 @@
+- [x] `spec.md` 已冻结 PSCO 在 `phase11` 的正式定位为"上下文系统"
+- [x] `spec.md` 已明确 PSCO 不是开发流程控制器、开发编排器或前端对话式 agent 工作台
+- [x] `spec.md` 已冻结 web 与 agent 的职责分工边界
+- [x] `spec.md` 已冻结 web 与 agent 共享同一套 Go backend canonical core 的约束
+- [x] `spec.md` 已冻结当前阶段 agent 只做现场上下文消费，不承接写回、审批或主动注入
+- [x] `spec.md` 已明确当前阶段不允许长出第二套语义、第二套流程或第二套事实源
+- [x] `spec.md` 已冻结 `phase11-02` 的成功标准、DoD 与收口口径
+- [x] `phase11_project_context_foundation_dev_plan.md` 已完成 `phase11-02` 对应系统定位、分工边界与 DoD 的正式冻结
+- [x] `phase11_project_context_foundation_architecture_plan.md` 已完成 `phase11-02` 对应定位、共享后端约束与当前明确不做事项的正式冻结
+- [x] `phase11_project_context_foundation_shared_baseline.md` 已完成 `phase11-02` 对应单值定位、Web / Agent 分工矩阵与共享后端口径的正式冻结
+- [x] 本 spec 包的验收对象已覆盖目标源文档实际回写结果，而不是只检查 spec 包自身
+- [x] `tasks.md` 已将本次 `/spec` 工作拆成可验证、可顺序执行的小任务
+- [x] `tasks.md` 已显式体现系统定位冻结、职责分工冻结、共享后端约束冻结与三件套一致性校验
