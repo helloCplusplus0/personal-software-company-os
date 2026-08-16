@@ -45,6 +45,21 @@ func (s *Server) GetProjectContext(ctx context.Context, req *pb.GetProjectContex
 		Decisions:  domainDecisionSummariesToProto(result.Decisions),
 		Rules:      domainRuleEntriesToProto(result.Rules),
 		Phases:     domainPhaseEntriesToProto(result.Phases),
+                Boundaries: domainBoundaryEntriesToProto(result.Boundaries),
+	}, nil
+}
+
+// ExportProjectContext 承接 AGENTS 风格 Markdown 项目上下文导出。
+//
+// 单向派生自 GetProjectContext 结构化结果，不绕过结构化读取主线。
+func (s *Server) ExportProjectContext(ctx context.Context, req *pb.ExportProjectContextRequest) (*pb.ExportProjectContextResponse, error) {
+	markdown, err := s.querySvc.ExportProjectContext(ctx, req.GetRepositoryId())
+	if err != nil {
+		return nil, connecterrors.MapToConnectError(err)
+	}
+
+	return &pb.ExportProjectContextResponse{
+		Markdown: markdown,
 	}, nil
 }
 
@@ -130,6 +145,18 @@ func domainPhaseEntriesToProto(items []projectcontext.PhaseEntry) []*pb.PhaseEnt
 		})
 	}
 	return result
+}
+
+func domainBoundaryEntriesToProto(items []projectcontext.BoundaryEntry) []*pb.BoundaryEntry {
+        result := make([]*pb.BoundaryEntry, 0, len(items))
+        for _, item := range items {
+                result = append(result, &pb.BoundaryEntry{
+                        Key:     item.Key,
+                        Label:   item.Label,
+                        Summary: item.Summary,
+                })
+        }
+        return result
 }
 
 // parseTimestamp 将数据库返回的 timestamp 文本解析为 protobuf Timestamp。

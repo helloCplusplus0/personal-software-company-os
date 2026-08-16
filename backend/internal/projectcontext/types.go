@@ -74,6 +74,14 @@ type PhaseEntry struct {
 	EntryKind     string `json:"entry_kind"`
 }
 
+// BoundaryEntry 当前阶段明确不做或不承接的边界摘要。
+// 对齐 proto BoundaryEntry。
+type BoundaryEntry struct {
+        Key     string `json:"key"`
+        Label   string `json:"label"`
+        Summary string `json:"summary"`
+}
+
 // ============================================================================
 // 响应 DTO
 // ============================================================================
@@ -87,4 +95,5 @@ type ProjectContextReadResult struct {
 	Decisions  []DecisionSummary  `json:"decisions"`
 	Rules      []RuleEntry        `json:"rules"`
 	Phases     []PhaseEntry       `json:"phases"`
+        Boundaries []BoundaryEntry    `json:"boundaries"`
 }

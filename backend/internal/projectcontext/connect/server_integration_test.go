@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+        "strings"
 	"testing"
 	"time"
 
@@ -83,6 +84,9 @@ func TestProjectContextAcceptanceScenarios(t *testing.T) {
 		if len(resp.GetPhases()) == 0 {
 			t.Fatal("expected phase entries")
 		}
+                if len(resp.GetBoundaries()) == 0 {
+                        t.Fatal("expected boundary entries")
+                }
 
 		decision := resp.GetDecisions()[0]
 		if decision.GetTitle() != "phase06 completed-bound 验收决策" {
@@ -103,6 +107,34 @@ func TestProjectContextAcceptanceScenarios(t *testing.T) {
 			}
 		}
 	})
+
+        t.Run("export project context returns markdown derived from structured result", func(t *testing.T) {
+                h.resetFixture(t, "completed-bound")
+
+                repositoryID := h.mustRepositoryIDByName(t, "main-repo")
+                resp, err := h.client.ExportProjectContext(t.Context(), &pb.ExportProjectContextRequest{
+                        RepositoryId: repositoryID,
+                })
+                if err != nil {
+                        t.Fatalf("expected success, got %v", err)
+                }
+
+                markdown := resp.GetMarkdown()
+                requiredContent := []string{
+                        "# Project Context",
+                        "## Rules & Constraints",
+                        "project_rules.md",
+                        "## Current Phase",
+                        "docs/phase/phase11_project_context_foundation_dev_plan.md",
+                        "## Boundaries (What This Project Does NOT Do)",
+                        "不形成第二套事实源",
+                }
+                for _, item := range requiredContent {
+                        if !strings.Contains(markdown, item) {
+                                t.Fatalf("expected markdown to contain %q, got:\n%s", item, markdown)
+                        }
+                }
+        })
 }
 
 type projectContextIntegrationHarness struct {

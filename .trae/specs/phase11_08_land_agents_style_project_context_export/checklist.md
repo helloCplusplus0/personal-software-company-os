@@ -1,0 +1,10 @@
+- [x] `spec.md` 已明确 `phase11-08` 的身份是 AGENTS 风格或等价 Markdown 风格的正式只读导出，而不是第二套读取主线
+- [x] `spec.md` 已明确 Markdown 导出必须从 `phase11-07` 结构化只读结果单向派生
+- [x] `spec.md` 已明确导出最小内容边界、入口字段来源与受控引用约束
+- [x] `spec.md` 已明确 `PSCO` 仓库自身 dogfooding 只是第一验收场景，不是未来所有项目的固定模板
+- [x] `spec.md` 已明确不主动写入外部仓库、不主动注入 agent、不形成第二套事实源
+- [x] `tasks.md` 已覆盖导出 owner、单向派生、dogfooding、合同生成、后端实现与回归验证
+- [x] `tasks.md` 已将实现步骤拆成可验证的最小任务，并明确依赖顺序
+- [x] `tasks.md` 已覆盖 `proto/`、`backend/internal/projectcontext/` 与 `backend/internal/platform/` 的正式落地任务
+- [x] `tasks.md` 已覆盖成功路径集成验证与 PSCO 自身 dogfooding 验收所需的验证任务
+- [x] 本 spec 包已明确 `phase11-08` 与 `phase11-07` 的层级关系：先结构化读取，后 Markdown 导出

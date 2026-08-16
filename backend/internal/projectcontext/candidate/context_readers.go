@@ -265,3 +265,35 @@ func (r *ContextReaders) ReadPhases(ctx context.Context) []projectcontext.PhaseE
 		},
 	}
 }
+
+// ReadBoundaries 读取当前阶段明确不做或不承接的边界摘要。
+// 当前阶段返回 phase11 已冻结的最小边界集合，供结构化读取与 Markdown 导出共用。
+func (r *ContextReaders) ReadBoundaries(ctx context.Context) []projectcontext.BoundaryEntry {
+        return []projectcontext.BoundaryEntry{
+                {
+                        Key:     "no_mcp_or_cli",
+                        Label:   "不做 MCP / CLI / agent 自动写回",
+                        Summary: "当前阶段不引入 MCP 协议层、CLI 工具、agent 自动写回、Draft 接口或审批流。",
+                },
+                {
+                        Key:     "not_process_controller",
+                        Label:   "不把 PSCO 做成开发流程控制器",
+                        Summary: "PSCO 当前定位是上下文系统，而不是 IDE 现场流程编排器或开发过程控制台。",
+                },
+                {
+                        Key:     "web_not_chat_workspace",
+                        Label:   "不把 web 退化为对话式 agent 工作台",
+                        Summary: "web 继续承接全局查看、关系校对、回顾、人工修正与最终确认。",
+                },
+                {
+                        Key:     "no_consumer_layout_contract",
+                        Label:   "不要求消费侧项目复制 PSCO 目录结构",
+                        Summary: "当前阶段不把消费侧项目目录结构或固定文件名上升为必要输入合同。",
+                },
+                {
+                        Key:     "no_second_fact_source",
+                        Label:   "不形成第二套事实源",
+                        Summary: "Markdown 导出只能从结构化只读结果单向派生，不形成独立于 canonical 数据的第二套事实判断。",
+                },
+        }
+}

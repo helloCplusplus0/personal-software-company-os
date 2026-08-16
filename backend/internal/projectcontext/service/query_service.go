@@ -14,6 +14,7 @@ import (
 
 	"github.com/psco/backend/internal/projectcontext"
 	"github.com/psco/backend/internal/projectcontext/candidate"
+	"github.com/psco/backend/internal/projectcontext/renderer"
 )
 
 // QueryService 承接 projectcontext 只读聚合编排。
@@ -41,6 +42,7 @@ func NewQueryService(contextReaders *candidate.ContextReaders) *QueryService {
 //  5. 读取关联 Decision 摘要（两类 module-link 派生命中 + 去重 + archived 过滤）
 //  6. 读取规则入口
 //  7. 读取 phase 入口
+//  8. 读取当前阶段边界摘要
 //
 // 失败语义：
 //   - Repository 不存在 → 返回 ErrRepositoryNotFound
@@ -89,6 +91,9 @@ func (s *QueryService) GetProjectContext(ctx context.Context, repositoryID strin
 	// 7. Phase 入口
 	phases := s.contextReaders.ReadPhases(ctx)
 
+        // 8. 当前阶段边界摘要
+        boundaries := s.contextReaders.ReadBoundaries(ctx)
+
 	return &projectcontext.ProjectContextReadResult{
 		Repository: repo,
 		Product:    product,
@@ -96,5 +101,20 @@ func (s *QueryService) GetProjectContext(ctx context.Context, repositoryID strin
 		Decisions:  decisions,
 		Rules:      rules,
 		Phases:     phases,
+                Boundaries: boundaries,
 	}, nil
+}
+
+// ExportProjectContext 先调用 GetProjectContext 获取结构化只读结果，再单向渲染为 Markdown。
+//
+// 导出语义：
+//   - 严格从 GetProjectContext 结构化结果单向派生
+//   - 不绕过结构化读取主线直接扫描目录或拼接内容
+//   - 失败语义与 GetProjectContext 一致
+func (s *QueryService) ExportProjectContext(ctx context.Context, repositoryID string) (string, error) {
+	result, err := s.GetProjectContext(ctx, repositoryID)
+	if err != nil {
+		return "", err
+	}
+	return renderer.RenderMarkdown(result), nil
 }
