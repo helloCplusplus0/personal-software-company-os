@@ -90,9 +90,12 @@ DoD：
    - 若为 `no-change`，必须记录“不改仍满足当前阶段冻结口径”的理由
 3. **承接位矩阵**
    - 显式说明该结论最终落在哪个 owner：切片页面、切片组件、切片 data、`frontend/src/features/project-context/`、现有 `ProjectContextService` 或其受控派生读取
-4. **Before / After 表达样例**
+4. **共享语义来源 vs 切片内渲染矩阵**
+   - 显式区分哪些高频语义短语或共享解释应收敛到唯一共享语义来源
+   - 显式区分哪些页面布局、组件结构、空态插入位或导语插入位继续保留在切片内渲染
+5. **Before / After 表达样例**
    - 对涉及文案、摘要、解释性语言、共享摘要字段或导出结果的对象，至少给出一组 before / after 样例
-5. **明确不做清单**
+6. **明确不做清单**
    - 显式写出本子任务没有扩入的结构重构、写回通道、协议扩张或页面重组事项
 
 补充冻结：
@@ -129,8 +132,17 @@ DoD：
   - `frontend/src/features/module-registry/components/module-summary-card.tsx`
   - `frontend/src/features/decision-center/components/decision-detail-summary-card.tsx`
   - `frontend/src/features/dashboard/components/current-focus-section.tsx`
+    - `frontend/src/features/dashboard/components/asset-feedback-section.tsx`
   - `frontend/src/features/dashboard/components/recent-activity-section.tsx`
   - `frontend/src/features/review/components/review-page-shell.tsx`
+    - `frontend/src/features/module-registry/components/module-next-action-bar.tsx`
+    - `frontend/src/features/dashboard/components/dashboard-primary-action-panel.tsx`
+    - `frontend/src/features/dashboard/components/onboarding-cta-button.tsx`
+    - `frontend/src/features/review/components/review-action-footer.tsx`
+    - `frontend/src/features/product-registry/pages/product-list-page.tsx`
+    - `frontend/src/features/repository-binding/pages/repository-binding-list-page.tsx`
+    - `frontend/src/features/module-registry/pages/module-list-page.tsx`
+    - `frontend/src/features/decision-center/pages/decision-list-page.tsx`
 
 DoD：
 

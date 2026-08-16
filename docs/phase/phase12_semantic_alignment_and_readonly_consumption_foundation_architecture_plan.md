@@ -228,8 +228,18 @@
   - `frontend/src/features/module-registry/components/module-summary-card.tsx`
   - `frontend/src/features/decision-center/components/decision-detail-summary-card.tsx`
   - `frontend/src/features/dashboard/components/current-focus-section.tsx`
+    - `frontend/src/features/dashboard/components/asset-feedback-section.tsx`
   - `frontend/src/features/dashboard/components/recent-activity-section.tsx`
   - `frontend/src/features/review/components/review-page-shell.tsx`
+    - `frontend/src/features/module-registry/components/module-next-action-bar.tsx`
+    - `frontend/src/features/dashboard/components/dashboard-primary-action-panel.tsx`
+    - `frontend/src/features/dashboard/components/onboarding-cta-button.tsx`
+    - `frontend/src/features/review/components/review-action-footer.tsx`
+  - 默认非 primary owner 但进入 surface 审计面的文件：
+    - `frontend/src/features/product-registry/pages/product-list-page.tsx`
+    - `frontend/src/features/repository-binding/pages/repository-binding-list-page.tsx`
+    - `frontend/src/features/module-registry/pages/module-list-page.tsx`
+    - `frontend/src/features/decision-center/pages/decision-list-page.tsx`
 - 读路径 owner：
   - `frontend/src/features/*/data/use-*-read.ts`
   - 若产生跨切片共享只读语义，则唯一 owner 为 `frontend/src/features/project-context/`

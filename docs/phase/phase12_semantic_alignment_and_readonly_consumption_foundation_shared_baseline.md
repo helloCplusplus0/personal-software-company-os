@@ -200,8 +200,18 @@
   - `frontend/src/features/decision-center/components/decision-detail-summary-card.tsx`
 - 跟随摘要 / 容器组件：
   - `frontend/src/features/dashboard/components/current-focus-section.tsx`
+    - `frontend/src/features/dashboard/components/asset-feedback-section.tsx`
   - `frontend/src/features/dashboard/components/recent-activity-section.tsx`
   - `frontend/src/features/review/components/review-page-shell.tsx`
+    - `frontend/src/features/module-registry/components/module-next-action-bar.tsx`
+    - `frontend/src/features/dashboard/components/dashboard-primary-action-panel.tsx`
+    - `frontend/src/features/dashboard/components/onboarding-cta-button.tsx`
+    - `frontend/src/features/review/components/review-action-footer.tsx`
+  - 默认非 primary owner 但进入 `phase12-04` surface 审计面的文件：
+    - `frontend/src/features/product-registry/pages/product-list-page.tsx`
+    - `frontend/src/features/repository-binding/pages/repository-binding-list-page.tsx`
+    - `frontend/src/features/module-registry/pages/module-list-page.tsx`
+    - `frontend/src/features/decision-center/pages/decision-list-page.tsx`
 
 ### 3.5A 设计产物最小模板
 
@@ -217,9 +227,12 @@
    - 若不改，为什么仍满足当前阶段冻结口径
 3. 承接位矩阵：
    - 最终落到切片页面、切片组件、切片 data、`frontend/src/features/project-context/`、现有 `ProjectContextService` 或受控派生读取中的哪一处
-4. Before / After 样例：
+4. 共享语义来源 vs 切片内渲染矩阵：
+   - 显式区分哪些高频语义短语或共享解释应收敛到唯一共享语义来源
+   - 显式区分哪些页面布局、组件结构、空态插入位或导语插入位继续保留在切片内渲染
+5. Before / After 样例：
    - 至少覆盖一组文案、摘要字段或解释性结果的 before / after
-5. 明确不做清单：
+6. 明确不做清单：
    - 本子任务没有扩入的结构重构、写回通道、协议扩张或页面重组事项
 
 补充冻结：

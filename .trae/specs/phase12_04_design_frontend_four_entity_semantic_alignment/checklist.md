@@ -1,0 +1,26 @@
+- [x] `spec.md` 已冻结 `phase12-04` 的最小设计产物模板，至少包括影响对象清单、结论矩阵、承接矩阵、共享语义来源 vs 切片内渲染矩阵、before/after 样例与明确不做清单
+- [x] `spec.md` 已覆盖 `dev_plan` 点名的全部 route 对象
+- [x] `spec.md` 已覆盖 `dev_plan` 点名的全部 page 对象
+- [x] `spec.md` 已覆盖 `dev_plan` 点名的全部 component 对象
+- [x] `spec.md` 已明确 route 不作为语义事实源，但必须显式记录承接职责与分类结果
+- [x] `spec.md` 已要求 page 与 component 不得被默认跳过，必须逐项分类
+- [x] `spec.md` 已把摘要卡片、空态、说明文案与下一步动作说明纳入同等级逐项审计面
+- [x] `spec.md` 已把 `asset-feedback-section.tsx`、`module-next-action-bar.tsx`、`dashboard-primary-action-panel.tsx`、`onboarding-cta-button.tsx`、`review-action-footer.tsx` 与四个 list page 等 surface owner files 纳入入口级范围
+- [x] `spec.md` 已要求每类 surface 都回答当前承接语义、目标语义、共享语义来源或切片内渲染、以及最终分类
+- [x] `spec.md` 已明确 `Module` 与 `Decision` 的高风险语义漂移不得回落到旧解释
+- [x] `spec.md` 已冻结共享语义来源与切片内渲染的设计边界
+- [x] `spec.md` 已明确 `phase12-04` 不得越权改写 `phase12-03` 的共享只读 owner、读路径 owner 或更重通道边界
+- [x] `spec.md` 已冻结 `must-change / follow-regression / no-change` 的逐项记录规则
+- [x] `spec.md` 已明确所有进入影响面的对象若未被分类，则不得视为 `phase12-04` 完成
+- [x] `tasks.md` 已把影响对象清单、surface 承接矩阵、共享语义来源判断、before/after 样例与明确不做清单拆成可验证任务
+- [x] `tasks.md` 已要求对四个 list page 文件、四个 list toolbar 与两个搜索 store 逐项记录分类，并明确 N1-N4 为“文件级 `must-change` 但 owner 仍非 primary owner”
+- [x] `design.md` 已产出影响对象全量清单与分类矩阵，38 个对象全部逐项分类（`design.md §1`）
+- [x] `design.md` 已产出 surface 承接矩阵，覆盖 phase12-02 已冻结的全部具体 surface：四实体 List 页空态、Dashboard 三个区块空态、Daily Review 三类空态、Weekly Review 三类空态、Onboarding 六个 step 空态、WelcomeStep 顶部引导说明与实体介绍、四个 primary owner Detail 页页面级语义导语、Dashboard 三个区块标题与三个区块说明文案、Daily 与 Weekly Review 页面头部说明、四个 Detail 页标题与四个 Detail 页既有引导文案、ModuleNextActionBar 四类下一步动作、Decision CTA、DashboardPrimaryActionPanel、OnboardingCtaButton、ReviewActionFooter（`design.md §2`）
+- [x] `design.md` 已产出共享语义来源 vs 切片内渲染设计（`design.md §3`）
+- [x] `design.md` 已把共享语义来源的未来唯一承接位冻结为 `frontend/src/features/project-context/`，同时把具体页面/组件渲染明确保留在切片内，没有把共享 owner 重新打开成多选项（`design.md §3.1-§3.2`）
+- [x] `design.md` 已产出 before/after 样例，至少包含 Module 与 Decision 的高风险语义漂移样例（`design.md §4`）
+- [x] `design.md` 已产出明确不做清单（`design.md §5`）
+- [x] `design.md` 已产出分类汇总（`design.md §6`）
+- [x] `design.md` 已把每个空态、说明文案与下一步动作说明逐项写出最终承接位，而不是只在高层章节里概括共享语义来源或切片内渲染（`design.md §2.2-§2.4`）
+- [x] `design.md` 已为四个 primary owner detail page 明确页面级语义承接位，不再把页面降级为“只有 summary-card 在改”的被动容器（`design.md §2.1A` / `§2.3`）
+- [x] 本 spec 包已足以让后续执行者进入后续实现链条（先承接 `phase12-05 / 07 / 06`，再进入 `phase12-08`），而不需要临场再猜哪些页面必须改文案、改摘要或改说明
