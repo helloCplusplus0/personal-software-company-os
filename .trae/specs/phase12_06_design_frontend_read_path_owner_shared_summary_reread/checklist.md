@@ -1,0 +1,31 @@
+- [x] `spec.md` 已冻结 `phase12-06` 的职责是"产出前端读路径 owner、共享摘要与回流设计"，而不是反向改写 `phase12-05 / 07`
+- [x] `spec.md` 已显式覆盖 8 个现有 `use-*-read.ts` 与潜在 `frontend/src/features/project-context/data/*` 的审计清单
+- [x] `spec.md` 已要求对每个 read owner 标记 `must-change / follow-regression / no-change`
+- [x] `spec.md` 已明确若当前 `frontend/src/features/project-context/` 不存在，`phase12-06` 仍必须回答是否需要新增 `data/*` 与其最小边界
+- [x] `spec.md` 已明确 `query` 层、L3 共享只读 owner 与页面 / 组件渲染层的正式分工
+- [x] `spec.md` 已明确 `phase12-07` 判定为 L3 单向映射的字段只能在前端继续作为 adapter / view model 处理
+- [x] `spec.md` 已明确 detail 页页面专属字段继续保留在切片 read owner，不误提升为共享只读合同
+- [x] `spec.md` 已明确页面读取、缓存、成功回流与 reread 的关系设计必须逐类冻结
+- [x] `spec.md` 已明确 mutation 成功后的失效与 reread 仍由正式 owner 承接，而不是页面层各自随意刷新
+- [x] `spec.md` 已明确要产出散装页面解释逻辑的回收清单
+- [x] `spec.md` 已明确只有稳定跨页面复用、且不改变 canonical facts 的解释逻辑才允许进入 `frontend/src/features/project-context/data/*`
+- [x] `spec.md` 已明确 `phase12-06` 的设计结果继续满足统一最小模板，并补充前端读路径审计面
+- [x] `tasks.md` 已把上游输入、read owner 分类、共享只读边界、reread 关系、回收清单与一致性校验拆成可验证任务
+- [x] `tasks.md` 已把 detail 页、dashboard、onboarding、daily review、weekly review 全部纳入任务范围
+- [x] `tasks.md` 已把"不会把跨切片共享只读逻辑继续散落在各自数据层"转化为可验证任务，而不是一句口号
+- [x] `design.md` 已产出前端 read owner 审计清单：8 个既有 hook 全部 no-change，3 个新增 project-context/data/* 全部 must-change（`design.md §1`）
+- [x] `design.md` 已确认 `project-context/` 目录不存在，并给出 3 个新增文件的最小边界与 owner 身份（`design.md §5`）
+- [x] `design.md` 已产出 query 层、L3 共享只读 owner 与页面层的三层职责边界图（`design.md §2.1`）
+- [x] `design.md` 已产出各层承接项表：4 项共享常量/query/view model 归 L3，8 项页面专属字段与读取归切片（`design.md §2.2-2.3`）
+- [x] `design.md` 已产出三类页面（直接/间接/衍生）各自的读取、缓存、reread 关系设计（`design.md §3.1-3.3`）
+- [x] `design.md` 已产出 mutation 成功后 reread 策略表，并按“是否拿到唯一 repositoryId”冻结 `project-context` 的精确失效规则（`design.md §3.4`）
+- [x] `design.md` 已产出初次加载/局部重试/整页重试/成功回流的四种场景区分（`design.md §3.5`）
+- [x] `design.md` 已产出散装解释逻辑回收清单：四实体语义标签 5 处回收 + 入口定位 adapter 的唯一落点 + 5 处明确不回收（`design.md §4`）
+- [x] `design.md` 已产出回收清单与 phase12-04 的一致性校验（`design.md §4.4`）
+- [x] `design.md` 已产出 shared-semantic-constants.ts 的 4 个语义标签 + 映射 + 3 个入口常量（`design.md §5.2`）
+- [x] `design.md` 已产出 Before/After 样例：Onboarding WelcomeStep + SummaryCard 两处（`design.md §6`）
+- [x] `design.md` 已产出明确不做清单：10 项（`design.md §7`）
+- [x] `design.md` 已产出与上游文档的一致性声明（`design.md §8`）
+- [x] 本 spec 包已足以让后续执行者机械回答"哪些逻辑继续留在切片 read owner，哪些应进入 `project-context/data/*`"
+- [x] 本 spec 包已足以让后续执行者机械回答"哪些 query 需要 reread，哪些只需页面局部回流"
+- [x] 本 spec 包已足以作为 `phase12-06` 后续设计与实现的正式输入前提
