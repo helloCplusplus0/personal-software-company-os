@@ -29,8 +29,6 @@ interface DashboardHomePageShellProps {
   primaryActionPanel: ReactNode
   // phase06-15：数据主权面板（Export / Backup 入口），独立全宽区块
   sovereigntyPanel?: ReactNode
-  // phase12-10：共享语义摘要 / 固定入口说明
-  semanticSummaryPanel?: ReactNode
   // 资产概览 + 缺口计数合并条带
   statBar: ReactNode
   // 左栏：待办与代表性缺口
@@ -64,7 +62,6 @@ interface DashboardHomePageShellProps {
 export function DashboardHomePageShell({
   primaryActionPanel,
   sovereigntyPanel,
-  semanticSummaryPanel,
   statBar,
   currentFocusSection,
   assetFeedbackSection,
@@ -85,9 +82,6 @@ export function DashboardHomePageShell({
         Export / Backup 入口稳定可见，不得做成隐藏路由或仅测试按钮。
       */}
       {sovereigntyPanel}
-
-
-      {semanticSummaryPanel}
       {/*
         主体网格：扁平化放置 statBar + 四区块，用 CSS grid 显式定位同时满足
         - PC 桌面（md+）：statBar 全宽置顶，左列 CurrentFocus + AssetFeedback，右列 RecentActivity 跨两行

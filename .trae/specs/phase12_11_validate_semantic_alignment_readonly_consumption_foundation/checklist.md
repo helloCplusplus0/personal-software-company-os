@@ -1,0 +1,12 @@
+- [x] `spec.md` 已明确 `phase12-11` 只承接 `Semantic Alignment & Read-Only Consumption Foundation` 的联调、dogfooding 与反回归验证，而不是新增实现主线
+- [x] `spec.md` 已冻结固定样本：`Repository / repository_id / Product / Module / Decision`，且与 `dev_plan#L272-L334` 一致
+- [x] `spec.md` 已冻结 agent 侧固定入口、Web 侧 primary owner 页面与 Web 侧跟随回归页面清单
+- [x] `spec.md` 已冻结固定 `6` 问，并明确 `Module / Decision` 的误读风险必须显式复核
+- [x] `spec.md` 已冻结同一 `repository_id` 锚点驱动的样本解析协议，并明确禁止数据库手工查询、浏览器临场搜索、额外脚本与新增第 `7` 个入口补救
+- [x] `spec.md` 已冻结 `buf / go test / frontend build` 的单值工具链顺序与失败归类口径
+- [x] `spec.md` 已冻结 Web / agent 必须回到同一组规则、约束与文档入口的 dogfooding 判定
+- [x] `spec.md` 已冻结本阶段明确不做 schema 重写、MCP / CLI / agent 写回 / 对话入口的边界证据要求
+- [x] `tasks.md` 已把工具链、样本解析、浏览器矩阵、Web / agent dogfooding、边界证据与失败判定拆成可验证任务
+- [x] `tasks.md` 已把“不允许通过额外第 `7` 个临时入口补齐回答”写成显式任务
+- [x] `tasks.md` 已把“同一份验收记录足以让不同执行者按相同问题、相同样本与相同入口 rerun”写成显式自检目标
+- [x] 本 spec 包已足以让后续执行者机械回答“哪些入口是正式入口、哪些问题是固定问题、什么情况下必须直接判定失败”

@@ -41,7 +41,6 @@ import { SovereigntyPanel } from '../components/sovereignty-panel'
 import { OnboardingCtaButton } from '../components/onboarding-cta-button'
 import { useDashboardReturnSection } from '../lib/dashboard-source'
 import { useReuseSummaryRead } from '@/features/reuse-summary/data/use-reuse-summary-read'
-import { ProjectSemanticSummaryPanel } from '@/features/project-context'
 import type { DashboardSection } from '../types'
 
 const DASHBOARD_SECTION_LABELS: Record<DashboardSection, string> = {
@@ -278,12 +277,6 @@ export function DashboardHomePage() {
           </div>
         }
         sovereigntyPanel={<SovereigntyPanel />}
-        semanticSummaryPanel={
-          <ProjectSemanticSummaryPanel
-            title="当前项目四实体角色"
-            description="通过共享语义与固定入口回看 Product、Repository、Module 与 Decision 的当前角色。"
-          />
-        }
         statBar={
           overviewQuery.data && (
             <div

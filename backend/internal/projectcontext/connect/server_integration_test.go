@@ -8,7 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-        "strings"
+	"strings"
 	"testing"
 	"time"
 
@@ -84,9 +84,9 @@ func TestProjectContextAcceptanceScenarios(t *testing.T) {
 		if len(resp.GetPhases()) == 0 {
 			t.Fatal("expected phase entries")
 		}
-                if len(resp.GetBoundaries()) == 0 {
-                        t.Fatal("expected boundary entries")
-                }
+		if len(resp.GetBoundaries()) == 0 {
+			t.Fatal("expected boundary entries")
+		}
 
 		decision := resp.GetDecisions()[0]
 		if decision.GetTitle() != "phase06 completed-bound 验收决策" {
@@ -101,40 +101,64 @@ func TestProjectContextAcceptanceScenarios(t *testing.T) {
 				t.Fatalf("expected populated rule entry locator, got %+v", rule)
 			}
 		}
+		requiredRuleSummaries := []string{
+			"Product = 经营目标与交付容器",
+			"Repository = 代码仓库身份对象与项目锚点",
+		}
+		for _, summary := range requiredRuleSummaries {
+			if !ruleSummariesContain(resp.GetRules(), summary) {
+				t.Fatalf("expected rules to contain summary %q, got %+v", summary, resp.GetRules())
+			}
+		}
+		requiredRuleRefs := []string{"plan.md", "architecture_map.md", "docs/README.md"}
+		for _, entryRef := range requiredRuleRefs {
+			if !ruleRefsContain(resp.GetRules(), entryRef) {
+				t.Fatalf("expected rules to contain entry ref %q, got %+v", entryRef, resp.GetRules())
+			}
+		}
 		for _, phase := range resp.GetPhases() {
 			if phase.GetEntryRef() == "" || phase.GetEntryKind() == "" {
 				t.Fatalf("expected populated phase entry locator, got %+v", phase)
 			}
 		}
+		if !phaseEntriesContain(resp.GetPhases(), "phase12", "docs/phase/phase12_semantic_alignment_and_readonly_consumption_foundation_dev_plan.md") {
+			t.Fatalf("expected phases to contain phase12 entry, got %+v", resp.GetPhases())
+		}
 	})
 
-        t.Run("export project context returns markdown derived from structured result", func(t *testing.T) {
-                h.resetFixture(t, "completed-bound")
+	t.Run("export project context returns markdown derived from structured result", func(t *testing.T) {
+		h.resetFixture(t, "completed-bound")
 
-                repositoryID := h.mustRepositoryIDByName(t, "main-repo")
-                resp, err := h.client.ExportProjectContext(t.Context(), &pb.ExportProjectContextRequest{
-                        RepositoryId: repositoryID,
-                })
-                if err != nil {
-                        t.Fatalf("expected success, got %v", err)
-                }
+		repositoryID := h.mustRepositoryIDByName(t, "main-repo")
+		resp, err := h.client.ExportProjectContext(t.Context(), &pb.ExportProjectContextRequest{
+			RepositoryId: repositoryID,
+		})
+		if err != nil {
+			t.Fatalf("expected success, got %v", err)
+		}
 
-                markdown := resp.GetMarkdown()
-                requiredContent := []string{
-                        "# Project Context",
-                        "## Rules & Constraints",
-                        "project_rules.md",
-                        "## Current Phase",
-                        "docs/phase/phase11_project_context_foundation_dev_plan.md",
-                        "## Boundaries (What This Project Does NOT Do)",
-                        "不形成第二套事实源",
-                }
-                for _, item := range requiredContent {
-                        if !strings.Contains(markdown, item) {
-                                t.Fatalf("expected markdown to contain %q, got:\n%s", item, markdown)
-                        }
-                }
-        })
+		markdown := resp.GetMarkdown()
+		requiredContent := []string{
+			"# Project Context",
+			"Product = 经营目标与交付容器",
+			"Repository = 代码仓库身份对象与项目锚点",
+			"## Rules & Constraints",
+			"plan.md",
+			"architecture_map.md",
+			"docs/README.md",
+			"project_rules.md",
+			"## Current Phase",
+			"docs/phase/phase12_semantic_alignment_and_readonly_consumption_foundation_dev_plan.md",
+			"docs/phase/phase11_project_context_foundation_dev_plan.md",
+			"## Boundaries (What This Project Does NOT Do)",
+			"不形成第二套事实源",
+		}
+		for _, item := range requiredContent {
+			if !strings.Contains(markdown, item) {
+				t.Fatalf("expected markdown to contain %q, got:\n%s", item, markdown)
+			}
+		}
+	})
 }
 
 type projectContextIntegrationHarness struct {
@@ -304,4 +328,31 @@ func containsAll(items []string, wants ...string) bool {
 		}
 	}
 	return true
+}
+
+func ruleSummariesContain(items []*pb.RuleEntry, summary string) bool {
+	for _, item := range items {
+		if item.GetSummary() == summary {
+			return true
+		}
+	}
+	return false
+}
+
+func ruleRefsContain(items []*pb.RuleEntry, entryRef string) bool {
+	for _, item := range items {
+		if item.GetEntryRef() == entryRef {
+			return true
+		}
+	}
+	return false
+}
+
+func phaseEntriesContain(items []*pb.PhaseEntry, phase, entryRef string) bool {
+	for _, item := range items {
+		if item.GetPhase() == phase && item.GetEntryRef() == entryRef {
+			return true
+		}
+	}
+	return false
 }

@@ -25,10 +25,7 @@ import { buildReviewReturnSearch, shouldReturnToReview } from '@/features/review
 import { useModuleDecisionLinksByModuleIds } from '@/features/module-registry/data/use-module-decision-links-by-module-ids'
 import {
   PRODUCT_SEMANTIC_LABEL,
-  REPOSITORY_SEMANTIC_LABEL,
   resolveUniqueRepositoryCandidate,
-  useProjectContextRead,
-  ProjectContextSection,
 } from '@/features/project-context'
 
 /**
@@ -78,7 +75,6 @@ export function ProductDetailPage() {
   )
   const resolvedRepositoryCandidate = resolveUniqueRepositoryCandidate(data?.bound_repositories ?? [])
   const resolvedRepositoryId = resolvedRepositoryCandidate?.repository_id ?? ''
-  const projectContextQuery = useProjectContextRead(resolvedRepositoryId)
 
   // phase06-15 §"Module Detail 与 Product Detail 挂接位"：
   // Product Detail 只新增一个页面级 ReuseSummaryRead query（scope=product_detail）
@@ -320,22 +316,6 @@ export function ProductDetailPage() {
           />
         </div>
       </div>
-
-      {resolvedRepositoryId ? (
-        <ProjectContextSection
-          query={projectContextQuery}
-          title="共享项目上下文"
-          description={`当前 Product 已唯一回到 ${REPOSITORY_SEMANTIC_LABEL}“${resolvedRepositoryCandidate?.repository_name ?? ''}”。`}
-        />
-      ) : (
-        <div className="rounded-lg border bg-muted/30 p-4">
-          <p className="text-sm text-muted-foreground">
-            {data.bound_repositories.length === 0
-              ? `当前 Product 尚未唯一回到${REPOSITORY_SEMANTIC_LABEL}，请先通过下方“已绑定仓库”建立稳定入口后再查看共享项目上下文。`
-              : `当前 Product 关联了多个${REPOSITORY_SEMANTIC_LABEL}，请通过下方“已绑定仓库”进入具体仓库详情查看对应共享项目上下文。`}
-          </p>
-        </div>
-      )}
     </div>
   )
 }

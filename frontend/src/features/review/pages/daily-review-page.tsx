@@ -32,7 +32,6 @@ import type { FeedbackSignal } from '@/features/dashboard/types'
 import type { ReviewActionInput } from '../application/review-action-types'
 import type { PendingDecision } from '../data/use-daily-review-read'
 import { toast } from 'sonner'
-import { ProjectSemanticSummaryPanel } from '@/features/project-context'
 
 const DAILY_REVIEW_ACTION_SECTIONS = {
   decision: 'current-focus',
@@ -74,12 +73,6 @@ export function DailyReviewPage() {
         pageStatus={review.pageState.pageStatus}
         onBackToDashboard={handleBackToDashboard}
         onRetry={review.retry}
-        semanticSummaryPanel={
-          <ProjectSemanticSummaryPanel
-            title="Daily Review 中的四实体角色"
-            description="Daily Review 只消费共享语义与固定入口，不额外生长新的结构化锚点。"
-          />
-        }
         actionFooter={
         <ReviewActionFooter
           isPending={action.isPending}

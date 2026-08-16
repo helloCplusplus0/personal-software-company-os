@@ -229,10 +229,45 @@ func (r *ContextReaders) ReadRules(ctx context.Context) []projectcontext.RuleEnt
 	// 当前阶段返回固定规则入口摘要，不依赖数据库
 	return []projectcontext.RuleEntry{
 		{
+			Key:       "product_semantic_positioning",
+			Label:     "Product 语义定位",
+			Summary:   "Product = 经营目标与交付容器",
+			EntryRef:  "docs/phase/phase12_semantic_alignment_and_readonly_consumption_foundation_shared_baseline.md",
+			EntryKind: "repo_relative_path",
+		},
+		{
+			Key:       "repository_semantic_positioning",
+			Label:     "Repository 语义定位",
+			Summary:   "Repository = 代码仓库身份对象与项目锚点",
+			EntryRef:  "docs/phase/phase12_semantic_alignment_and_readonly_consumption_foundation_shared_baseline.md",
+			EntryKind: "repo_relative_path",
+		},
+		{
 			Key:       "project_rules",
 			Label:     "项目协作规则",
 			Summary:   "PSCO 项目的工作流规范、单一真相源约束、技术栈选择规则与协作门禁",
 			EntryRef:  "project_rules.md",
+			EntryKind: "repo_relative_path",
+		},
+		{
+			Key:       "plan_entry",
+			Label:     "阶段路线入口",
+			Summary:   "plan.md 是当前阶段状态与推进路线的唯一正式承接位。",
+			EntryRef:  "plan.md",
+			EntryKind: "repo_relative_path",
+		},
+		{
+			Key:       "architecture_map_entry",
+			Label:     "目录与迁移落点入口",
+			Summary:   "architecture_map.md 负责目录结构、文档分类与迁移落点。",
+			EntryRef:  "architecture_map.md",
+			EntryKind: "repo_relative_path",
+		},
+		{
+			Key:       "docs_readme_entry",
+			Label:     "docs 工作流入口",
+			Summary:   "docs/README.md 负责文档总览与 workflow 入口。",
+			EntryRef:  "docs/README.md",
 			EntryKind: "repo_relative_path",
 		},
 		{
@@ -249,6 +284,13 @@ func (r *ContextReaders) ReadRules(ctx context.Context) []projectcontext.RuleEnt
 // 当前阶段返回固定 phase 入口摘要与可定位入口。
 func (r *ContextReaders) ReadPhases(ctx context.Context) []projectcontext.PhaseEntry {
 	return []projectcontext.PhaseEntry{
+		{
+			Phase:         "phase12",
+			Label:         "Semantic Alignment & Read-Only Consumption Foundation",
+			StatusSummary: "当前已建立正式 /plan 入口，冻结“前端四实体语义一致性收口 + Web / agent 共享只读消费深化”为单一主交付能力。",
+			EntryRef:      "docs/phase/phase12_semantic_alignment_and_readonly_consumption_foundation_dev_plan.md",
+			EntryKind:     "repo_relative_path",
+		},
 		{
 			Phase:         "phase11",
 			Label:         "Project Context Foundation",
@@ -269,31 +311,31 @@ func (r *ContextReaders) ReadPhases(ctx context.Context) []projectcontext.PhaseE
 // ReadBoundaries 读取当前阶段明确不做或不承接的边界摘要。
 // 当前阶段返回 phase11 已冻结的最小边界集合，供结构化读取与 Markdown 导出共用。
 func (r *ContextReaders) ReadBoundaries(ctx context.Context) []projectcontext.BoundaryEntry {
-        return []projectcontext.BoundaryEntry{
-                {
-                        Key:     "no_mcp_or_cli",
-                        Label:   "不做 MCP / CLI / agent 自动写回",
-                        Summary: "当前阶段不引入 MCP 协议层、CLI 工具、agent 自动写回、Draft 接口或审批流。",
-                },
-                {
-                        Key:     "not_process_controller",
-                        Label:   "不把 PSCO 做成开发流程控制器",
-                        Summary: "PSCO 当前定位是上下文系统，而不是 IDE 现场流程编排器或开发过程控制台。",
-                },
-                {
-                        Key:     "web_not_chat_workspace",
-                        Label:   "不把 web 退化为对话式 agent 工作台",
-                        Summary: "web 继续承接全局查看、关系校对、回顾、人工修正与最终确认。",
-                },
-                {
-                        Key:     "no_consumer_layout_contract",
-                        Label:   "不要求消费侧项目复制 PSCO 目录结构",
-                        Summary: "当前阶段不把消费侧项目目录结构或固定文件名上升为必要输入合同。",
-                },
-                {
-                        Key:     "no_second_fact_source",
-                        Label:   "不形成第二套事实源",
-                        Summary: "Markdown 导出只能从结构化只读结果单向派生，不形成独立于 canonical 数据的第二套事实判断。",
-                },
-        }
+	return []projectcontext.BoundaryEntry{
+		{
+			Key:     "no_mcp_or_cli",
+			Label:   "不做 MCP / CLI / agent 自动写回",
+			Summary: "当前阶段不引入 MCP 协议层、CLI 工具、agent 自动写回、Draft 接口或审批流。",
+		},
+		{
+			Key:     "not_process_controller",
+			Label:   "不把 PSCO 做成开发流程控制器",
+			Summary: "PSCO 当前定位是上下文系统，而不是 IDE 现场流程编排器或开发过程控制台。",
+		},
+		{
+			Key:     "web_not_chat_workspace",
+			Label:   "不把 web 退化为对话式 agent 工作台",
+			Summary: "web 继续承接全局查看、关系校对、回顾、人工修正与最终确认。",
+		},
+		{
+			Key:     "no_consumer_layout_contract",
+			Label:   "不要求消费侧项目复制 PSCO 目录结构",
+			Summary: "当前阶段不把消费侧项目目录结构或固定文件名上升为必要输入合同。",
+		},
+		{
+			Key:     "no_second_fact_source",
+			Label:   "不形成第二套事实源",
+			Summary: "Markdown 导出只能从结构化只读结果单向派生，不形成独立于 canonical 数据的第二套事实判断。",
+		},
+	}
 }
