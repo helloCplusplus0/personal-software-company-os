@@ -1,0 +1,11 @@
+- [x] `spec.md` 已冻结 `phase12-09` 只负责共享只读入口与只读消费深化落地，而不是新一轮边界讨论
+- [x] `spec.md` 已明确 Web 侧跨切片共享只读承接位的唯一合法路径是 `frontend/src/features/project-context/`
+- [x] `spec.md` 已明确 Web 与 agent 必须继续共用 `ProjectContextService` 的同一事实源
+- [x] `spec.md` 已明确 `GetProjectContext / ExportProjectContext / frontend/src/features/project-context/` 的正式承接关系
+- [x] `spec.md` 已明确三类页面如何接入共享只读主线，以及何时只能局部降级
+- [x] `spec.md` 已明确不引入写回、Draft、审批流、第二服务或新协议层
+- [x] `tasks.md` 已把 Web 唯一共享只读入口、Web / agent 共用事实源、三类页面接入与散装解释回收拆成可验证任务
+- [x] `tasks.md` 已把后端 / 前端校验与最终验收证据纳入任务
+- [x] 本 spec 包已足以让后续执行者机械回答"哪些共享只读逻辑必须进入 `frontend/src/features/project-context/`"
+- [x] 本 spec 包已足以让后续执行者机械回答"哪些结果继续复用 `GetProjectContext / ExportProjectContext`，哪些只是 L3 / renderer 单向派生"
+- [x] 本 spec 包已足以让后续执行者机械回答"如何证明 Web 与 agent 已停止各自拼第二套解释性结果"

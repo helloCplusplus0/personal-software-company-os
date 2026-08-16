@@ -24,6 +24,9 @@ import { DAILY_REVIEW_QUERY_KEY, WEEKLY_REVIEW_QUERY_KEY } from '@/features/revi
 import { buildReviewReturnSearch, shouldReturnToReview } from '@/features/review/lib/review-source'
 import { useModuleDecisionLinksByModuleIds } from '@/features/module-registry/data/use-module-decision-links-by-module-ids'
 import { REPOSITORY_SEMANTIC_LABEL } from '@/features/project-context/data/shared-semantic-constants'
+import { useProjectContextRead } from '@/features/project-context/data/use-project-context-read'
+import { toEntryLocationViews } from '@/features/project-context/data/entry-location-view-model'
+import { RULE_ENTRY_LABEL, PHASE_ENTRY_LABEL, BOUNDARY_ENTRY_LABEL } from '@/features/project-context/data/shared-semantic-constants'
 
 /**
  * panelMode — phase04-06 互斥展开状态
@@ -70,6 +73,7 @@ export function RepositoryBindingDetailPage() {
 
   // phase04-06 互斥展开状态
   const [panelMode, setPanelMode] = useState<PanelMode>('closed')
+  const [copiedEntryRef, setCopiedEntryRef] = useState<string | null>(null)
 
   // phase04-06 来源上下文单值判定
   const fromList = search.fromList === true
@@ -85,10 +89,14 @@ export function RepositoryBindingDetailPage() {
     mappedModules.map((module) => module.module_id),
   )
 
+  // phase12-09：直接 repository-scoped 页面接入共享只读主线
+  const projectContextQuery = useProjectContextRead(repositoryId)
+
   // phase04-06 绑定成功后重新读取详情结果（reread）
   // phase10-10：补齐 Dashboard / Review query 失效，确保返回后 reread 正确
   const invalidateDetail = () => {
     queryClient.invalidateQueries({ queryKey: ['repository-detail', repositoryId] })
+    queryClient.invalidateQueries({ queryKey: ['project-context', repositoryId] })
     queryClient.invalidateQueries({ queryKey: ['repository-list'] })
     queryClient.invalidateQueries({ queryKey: ['repository-product-candidates', repositoryId] })
     queryClient.invalidateQueries({ queryKey: ['repository-module-candidates', repositoryId] })
@@ -97,6 +105,52 @@ export function RepositoryBindingDetailPage() {
     queryClient.invalidateQueries({ queryKey: DAILY_REVIEW_QUERY_KEY })
     queryClient.invalidateQueries({ queryKey: WEEKLY_REVIEW_QUERY_KEY })
   }
+
+  const handleCopyEntryRef = async (entryRef: string) => {
+    if (!entryRef || typeof navigator === 'undefined' || !navigator.clipboard) {
+      return
+    }
+    try {
+      await navigator.clipboard.writeText(entryRef)
+      setCopiedEntryRef(entryRef)
+    } catch {
+      setCopiedEntryRef(null)
+    }
+  }
+
+  const renderEntryLocationList = (entries: ReturnType<typeof toEntryLocationViews>) => (
+    <div className="space-y-2">
+      {entries.map((entry, index) => (
+        <div
+          key={`${entry.entryKind}-${entry.entryRef}-${index}`}
+          className="rounded-md border bg-muted/20 px-3 py-2"
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 space-y-1">
+              <div className="flex items-start gap-2 text-sm">
+                <span className="text-muted-foreground shrink-0">[{entry.entryKind}]</span>
+                <span className="font-medium break-words">{entry.title}</span>
+              </div>
+              <p className="text-sm text-muted-foreground break-words">{entry.summary}</p>
+              <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                <span>入口引用</span>
+                <code className="rounded bg-muted px-1.5 py-0.5 break-all">{entry.entryRef}</code>
+              </div>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="shrink-0"
+              onClick={() => void handleCopyEntryRef(entry.entryRef)}
+            >
+              {copiedEntryRef === entry.entryRef ? '已复制' : '复制入口'}
+            </Button>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
 
   // phase04-06 互斥展开：打开一个面板时关闭另一个
   const handleProductPanelOpenChange = (open: boolean) => {
@@ -298,6 +352,58 @@ export function RepositoryBindingDetailPage() {
             isError={relatedDecisionLinksQuery.isError}
           />
         </div>
+      </div>
+
+      {/* phase12-09：共享只读上下文 — 规则 / phase / 边界入口 */}
+      <div className="border-t pt-4 space-y-3">
+        <div className="flex items-center justify-between gap-2">
+          <div>
+            <h3 className="text-sm font-medium">项目上下文</h3>
+            <p className="text-xs text-muted-foreground">共享只读摘要、规则入口与阶段定位</p>
+          </div>
+          {projectContextQuery.isLoading && (
+            <span className="text-xs text-muted-foreground">读取中...</span>
+          )}
+        </div>
+
+        {projectContextQuery.isError ? (
+          <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4">
+            <p className="text-sm text-destructive">
+              项目上下文读取失败：{projectContextQuery.error?.message ?? '未知错误'}
+            </p>
+            <Button variant="outline" size="sm" className="mt-2" onClick={() => void projectContextQuery.refetch()}>
+              重试
+            </Button>
+          </div>
+        ) : projectContextQuery.data ? (
+          <>
+            {projectContextQuery.data.rules.length > 0 && (
+              <div>
+                <h4 className="mb-2 text-xs font-medium text-muted-foreground">{RULE_ENTRY_LABEL}</h4>
+                {renderEntryLocationList(toEntryLocationViews(projectContextQuery.data.rules))}
+              </div>
+            )}
+            {projectContextQuery.data.phases.length > 0 && (
+              <div>
+                <h4 className="mb-2 text-xs font-medium text-muted-foreground">{PHASE_ENTRY_LABEL}</h4>
+                {renderEntryLocationList(toEntryLocationViews(projectContextQuery.data.phases))}
+              </div>
+            )}
+            {projectContextQuery.data.boundaries.length > 0 && (
+              <div>
+                <h4 className="mb-2 text-xs font-medium text-muted-foreground">{BOUNDARY_ENTRY_LABEL}</h4>
+                <div className="space-y-1">
+                  {projectContextQuery.data.boundaries.map((entry, i) => (
+                    <div key={i} className="text-sm">
+                      <span className="font-medium">{entry.label}</span>
+                      <span className="text-muted-foreground"> — {entry.summary}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        ) : null}
       </div>
     </div>
   )
