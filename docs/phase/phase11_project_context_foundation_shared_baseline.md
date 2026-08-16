@@ -69,6 +69,11 @@
 - AGENTS 风格 Markdown 导出
 - PSCO 仓库自身 dogfooding 验证
 
+补充冻结：
+
+- `PSCO` 自身仓库治理与“面向未来不同项目的通用上下文能力”是同一 phase 内的两层交付，但不是同一层合同；
+- `PSCO` 当前仓库中存在的根级文件清单，只用于自身治理与第一轮 dogfooding，不外推为所有未来项目的固定目录模板。
+
 当前阶段不把以下内容解释为 `Project Context Foundation`：
 
 - MCP 协议层
@@ -127,7 +132,9 @@
 - `plan.md`：阶段状态与推进路线
 - `architecture_map.md`：目录结构、文档分类、迁移落点
 - `TECH_STACK_BASELINE.md`：技术栈正文
+- `README.md`：项目总览入口与受控跳转
 - `AGENTS.md`：入口摘要
+- `global_skills.md`：项目内通用方法映射说明
 - `docs/README.md`：workflow 总入口
 - `PSCO-mvp05-summarize-feedback.md`：当前最终共识
 
@@ -141,12 +148,31 @@
 
 当前阶段的最小项目上下文至少应覆盖：
 
+- 唯一结构化输入锚点：`repository_id`
 - 当前 `Repository` 身份
 - 关联 `Product` 摘要
 - 关联 `Module` 摘要与状态
 - 关联 `Decision` 摘要与状态
 - 与当前项目直接相关的规则与约束入口
 - 与当前 phase 直接相关的文档入口
+
+补充冻结：
+
+- 当前阶段不以本地路径、Git remote URL、`product_id` 或工作区扫描作为并列主锚点
+- 当前阶段只承接“已完成 Repository Binding”的仓库上下文读取
+- 未绑定仓库返回明确失败态，不允许执行者自行补猜
+- `Decision` 聚合口径冻结为：以当前 `Repository` 为根，只合并三类直接 canonical 关系命中的 `Decision`：
+  - 直接链接到当前 `Repository` 的 `Decision`
+  - 直接链接到“当前 `Repository` 已绑定 `Product`”的 `Decision`
+  - 直接链接到“当前 `Repository` 已映射 `Module`”的 `Decision`
+- 当前阶段不得继续沿 `Product -> Module -> 其他 Repository` 做递归扩张；超出上述三类命中范围的 `Decision` 不进入当前阶段导出
+- 同一 `Decision` 若同时命中多类关系，必须以 `decision_id` 去重，并保留命中来源摘要
+- 当前阶段结构化只读主列表只承接非 `archived` 的 `Decision`；`archived` 不进入主导出列表
+- 结构化只读读取继续落在 Go backend 的 `.proto + ConnectRPC` 正式主线
+- AGENTS 风格 Markdown 导出必须从同一结构化只读结果单向派生
+- 当前阶段不把消费侧项目目录中的 `README.md / AGENTS.md / rules` 等固定文件名作为必要输入合同
+- 当前阶段的通用能力以 `PSCO` 中已登记的 `Repository / Product / Module / Decision` 关系为准
+- 若未来存在最佳实践项目模板，其身份只能是候选 convention/profile，不是当前阶段前置依赖
 
 导出形式至少冻结为两层：
 
@@ -157,11 +183,29 @@
 
 当前阶段验收必须至少回答：
 
-1. 新接手 agent 是否能通过少量固定入口恢复当前项目核心上下文
-2. 根级入口文档是否已消除重复承载与悬空引用
-3. 最小只读导出是否完全只读
-4. 导出能力是否服务于 PSCO 仓库自身真实协作场景
-5. 当前阶段是否严格没有引入 agent 写入路径、第二套语义或第二套事实源
+1. 新接手 agent 是否能在同一 dogfooding 剧本下，通过不超过 `3` 个固定入口恢复当前项目核心上下文
+2. 同一 dogfooding 剧本中，是否能够准确回答预设的 `5` 个恢复问题：当前 phase、直接上游、单一主交付、明确不做、当前项目关联的 Repository / Product / Module / Decision 摘要入口
+3. 根级入口文档是否已消除重复承载与悬空引用
+4. 最小只读导出是否完全只读，且唯一结构化输入锚点是否保持为 `repository_id`
+5. 导出能力是否服务于 PSCO 仓库自身真实协作场景
+6. 当前阶段是否严格没有引入 agent 写入路径、第二套语义或第二套事实源
+7. 当前阶段是否已经明确：PSCO 当前仓库文件清单只用于自身治理与 dogfooding，而不是未来所有项目的强制模板
+
+补充冻结的 dogfooding 入口集合：
+
+- 旧路径基线入口集合固定为：
+  - `AGENTS.md`
+  - `plan.md`
+  - `project_rules.md`
+  - `architecture_map.md`
+  - `docs/README.md`
+  - `PSCO-mvp05-summarize-feedback.md`
+- 旧路径基线执行时，不允许额外读取 `phase11` 新增的结构化导出结果或 AGENTS 风格项目上下文导出
+- 新路径固定入口集合冻结为：
+  - `AGENTS.md`
+  - `PSCO-mvp05-summarize-feedback.md`
+  - 基于同一 `repository_id` 生成的 AGENTS 风格项目上下文导出
+- 新路径不允许临时增加第 `4` 个入口来补齐答案
 
 ## 5. 当前阶段完成条件
 
@@ -170,7 +214,9 @@
 1. `PSCO-mvp05-summarize-feedback.md` 已成为根级最终共识单值入口
 2. 根级入口文档之间不再重复承载 phase 状态、目录落点与技术栈正文
 3. 不存在文件 `PSCO-summarize-feedback.md` 的引用已清零
-4. 已存在最小只读项目上下文能力的正式承接结果
-5. 已存在 AGENTS 风格导出的正式承接结果
-6. 已完成 PSCO 仓库自身 dogfooding 验证
-7. 本阶段未把 MCP / CLI / agent 写回 / 对话入口偷渡为并列主交付
+4. `repository_id` 已成为当前阶段唯一正式结构化输入锚点，未绑定仓库失败态已冻结
+5. 已存在最小只读项目上下文能力的正式承接结果
+6. 已存在 AGENTS 风格导出的正式承接结果
+7. 已按固定 dogfooding 剧本完成 PSCO 仓库自身验证，并满足“固定入口 <= 3、预设 5 问全部可回答”的验收标准
+8. 已明确“最佳实践项目模板”当前仅属未来候选增强，不是 phase11 前置条件
+9. 本阶段未把 MCP / CLI / agent 写回 / 对话入口偷渡为并列主交付

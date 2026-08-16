@@ -1,0 +1,12 @@
+- [x] `Project Context Foundation` 已在 spec 中被冻结为 `phase11` 的唯一主交付能力
+- [x] spec 已明确 `phase11` 只承接根级治理与最小只读项目上下文导出，不承接更重协议层或写回能力
+- [x] spec 已冻结 `phase11` 的成功标准、DoD 与收口口径
+- [x] spec 已冻结 `phase11` 的明确不做清单，且与三件套现有口径一致
+- [x] spec 已明确 `PSCO` 当前仓库样本与未来项目通用能力之间的边界
+- [x] spec 已明确“主交付主体”和“必备承接结果”的层级关系，不再存在两部分定义与四项并列定义冲突
+- [x] `phase11_project_context_foundation_dev_plan.md` 已完成 `phase11-01` 对应边界、成功标准与非目标的正式冻结
+- [x] `phase11_project_context_foundation_architecture_plan.md` 已完成 `phase11-01` 对应主交付边界与完成条件的正式冻结
+- [x] `phase11_project_context_foundation_shared_baseline.md` 已完成 `phase11-01` 对应单值定义、非目标与验收前提的正式冻结
+- [x] 本 spec 包的验收对象已覆盖目标源文档实际回写结果，而不是只检查 spec 包自身
+- [x] `tasks.md` 已将本次 `/spec` 工作拆成可验证、可顺序执行的小任务
+- [x] `tasks.md` 已显式体现边界冻结、成功标准冻结、非目标冻结与三件套一致性校验
