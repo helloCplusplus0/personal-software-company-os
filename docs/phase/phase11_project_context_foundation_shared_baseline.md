@@ -189,6 +189,21 @@
 1. 结构化只读聚合读取
 2. AGENTS 风格或等价 Markdown 风格导出
 
+补充冻结的字段边界：
+
+- 结构化只读输出字段边界至少承接：
+  - `repository_id` 与未绑定失败语义；
+  - 当前 `Repository` 身份；
+  - 关联 `Product / Module / Decision` 的最小摘要与状态；
+  - `Decision` 命中来源摘要；
+  - 规则、约束与文档入口。
+- Markdown 导出字段边界至少承接：
+  - 当前项目/仓库摘要；
+  - 当前 phase 相关 spec / baseline / 根级入口摘要；
+  - `Product / Module / Decision` 的最小可读摘要；
+  - 规则、约束与文档入口的受控引用。
+- Markdown 导出只允许从同一结构化只读结果单向派生，不允许额外长出第二套字段语义或第二套事实源。
+
 ## 4. 当前阶段验收前提
 
 当前阶段验收必须至少回答：

@@ -186,6 +186,22 @@
 - 关键规则、约束与文档入口；
 - 与当前 phase 直接相关的 spec / baseline / 根级入口。
 
+当前阶段的字段边界进一步冻结为：
+
+- 结构化只读输出字段边界至少包括：
+  - 输入锚点与失败语义：`repository_id`、是否已完成 `Repository Binding`、未绑定失败态；
+  - `Repository` 身份字段；
+  - 关联 `Product` 摘要字段；
+  - 关联 `Module` 摘要与状态字段；
+  - 关联 `Decision` 摘要、状态与命中来源摘要字段；
+  - 规则、约束与文档入口字段。
+- Markdown 导出字段边界至少包括：
+  - 当前项目/仓库身份摘要；
+  - 当前 phase 相关 spec / baseline / 根级入口摘要；
+  - `Product / Module / Decision` 的最小可读摘要；
+  - 规则、约束与文档入口的受控引用。
+- Markdown 导出只能重组、排序与渲染上述结构化读取结果，不得反向扩张结构化字段语义，也不得额外拼装第二套事实字段。
+
 `Decision` 聚合边界进一步冻结为：
 
 - 以当前 `Repository` 为根，只合并三类直接 canonical 关系命中的 `Decision`：

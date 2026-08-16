@@ -1,0 +1,11 @@
+- [x] `spec.md` 已冻结 `repository_id` 作为当前阶段唯一正式结构化输入锚点与未绑定仓库失败语义
+- [x] `spec.md` 已冻结最小只读项目上下文的聚合内容范围、canonical 投影边界与 `Decision` 聚合口径
+- [x] `spec.md` 已冻结结构化只读输出与 AGENTS 风格 Markdown 导出的职责边界
+- [x] `spec.md` 已冻结"结构化读取 -> Markdown 导出"的单向派生关系与当前阶段明确不做的协议、写路径、目录依赖
+- [x] `spec.md` 已冻结 `phase11-05` 的成功标准、DoD 与收口口径
+- [x] `phase11_project_context_foundation_dev_plan.md` 已完成 `phase11-05` 对应输入锚点、聚合边界、正式产物与 DoD 的正式冻结
+- [x] `phase11_project_context_foundation_architecture_plan.md` 已完成 `phase11-05` 对应结构化输出边界、Markdown 导出职责与单向派生关系的正式冻结
+- [x] `phase11_project_context_foundation_shared_baseline.md` 已完成 `phase11-05` 对应导出矩阵、失败语义、Decision 聚合口径与非目标边界的正式冻结
+- [x] 本 spec 包的验收对象已覆盖目标源文档实际回写结果，而不是只检查 spec 包自身
+- [x] `tasks.md` 已将本次 `/spec` 工作拆成可验证、可顺序执行的小任务
+- [x] `tasks.md` 已显式体现输入锚点冻结、聚合边界冻结、导出职责边界冻结与三件套一致性校验
