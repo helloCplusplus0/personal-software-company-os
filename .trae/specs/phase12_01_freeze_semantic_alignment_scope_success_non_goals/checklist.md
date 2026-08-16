@@ -1,0 +1,16 @@
+- [x] `Semantic Alignment & Read-Only Consumption Foundation` 已在 spec 中被冻结为 `phase12` 的唯一主交付能力
+- [x] spec 已明确 `phase12` 只承接 `四实体语义一致性收口 + 只读消费深化`，不承接更重 agent 通道或结构重构
+- [x] spec 已冻结 `phase12` 的成功标准、DoD 与收口口径
+- [x] spec 已冻结 `phase12` 的明确不做清单，且与三件套目标口径一致
+- [x] spec 已明确 `GetProjectContext / ExportProjectContext / frontend/src/features/project-context/` 的 owner 层级关系
+- [x] spec 已明确 `repository_id` 是唯一结构化输入锚点
+- [x] spec 已明确 `product_id / module_id / decision_id` 只能从同一 `repository_id` 驱动的结构化只读结果或其受控派生视图解析
+- [x] spec 已明确样本解析失败、结果不唯一或无法回到同一 `repository_id` 时必须直接判定验收失败
+- [x] `tasks.md` 已将本次 `/spec` 工作拆成可验证、可顺序执行的小任务
+- [x] `tasks.md` 已显式体现边界冻结、成功标准冻结、非目标冻结、共享只读 owner 冻结与三件套一致性校验
+- [x] 本 spec 包的验收对象已覆盖目标源文档实际回写结果，而不是只检查 spec 包自身
+- [x] `shared_baseline` §4 已冻结固定样本（`Repository` / `repository_id` / `Product` / `Module` / `Decision`），且与 `dev_plan` phase12-11 一致
+- [x] `shared_baseline` §4 已冻结固定入口（Web 侧 10 个 + agent 侧 3 个），且与 `dev_plan` phase12-11 一致
+- [x] `shared_baseline` §4 已冻结固定 `6` 问验收提问，且与 `dev_plan` phase12-11 一致
+- [x] `architecture_plan` §4.6A 已冻结 repository-scoped 消费边界矩阵（直接/间接/衍生三类页面），且 `shared_baseline` §3.4 同口径
+- [x] `architecture_plan` §5 已冻结阶段完成条件（6 项），且 `shared_baseline` §5 同口径

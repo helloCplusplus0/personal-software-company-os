@@ -26,9 +26,12 @@
 - [阶段路线图](file:///home/dell/Projects/personal-software-company-os/plan.md)
 - [项目规则](file:///home/dell/Projects/personal-software-company-os/project_rules.md)
 - [目录与迁移落点](file:///home/dell/Projects/personal-software-company-os/architecture_map.md)
-- 当前根级阶段状态：`phase11_project_context_foundation` 已完成正式验收与收口；`phase10_asset_action_closure_foundation` 继续保留为最近完成正式业务 phase，`phase09_template_reuse_derived_intelligence_foundation` 继续保留为最近完成正式支撑能力 phase
-- 当前 docs 入口重点：稳定指向 [plan.md](file:///home/dell/Projects/personal-software-company-os/plan.md) 的 canonical 状态、[phase11 正式验收与收口入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase11_09_validate_project_context_foundation_dogfooding_regression/acceptance_report.md) 与 `PSCO-mvp05-summarize-feedback.md`，并继续保留 `phase10-11` 与 `phase09-11` 作为最近完成阶段的正式验收入口
+- 当前根级阶段状态：`phase12_semantic_alignment_and_readonly_consumption_foundation` 已建立正式 `/plan` 入口；`phase11_project_context_foundation` 已完成正式验收与收口；`phase10_asset_action_closure_foundation` 继续保留为最近完成正式业务 phase，`phase09_template_reuse_derived_intelligence_foundation` 继续保留为最近完成正式支撑能力 phase
+- 当前 docs 入口重点：稳定指向 [plan.md](file:///home/dell/Projects/personal-software-company-os/plan.md) 的 canonical 状态、`phase12` 三件套、[phase11 正式验收与收口入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase11_09_validate_project_context_foundation_dogfooding_regression/acceptance_report.md)、[audit_002 审计结论](file:///home/dell/Projects/personal-software-company-os/docs/audit/audit_002_phase11_post_closeout_direction_analysis.md) 与 `PSCO-mvp05-summarize-feedback.md`
 - [mvp0.5 最终仲裁与规划基线](file:///home/dell/Projects/personal-software-company-os/PSCO-mvp05-summarize-feedback.md)
+- [phase12 规划与冻结记录：architecture_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase12_semantic_alignment_and_readonly_consumption_foundation_architecture_plan.md)
+- [phase12 规划与冻结记录：dev_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase12_semantic_alignment_and_readonly_consumption_foundation_dev_plan.md)
+- [phase12 规划与冻结记录：shared_baseline](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase12_semantic_alignment_and_readonly_consumption_foundation_shared_baseline.md)
 - [phase11 正式验收与收口入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase11_09_validate_project_context_foundation_dogfooding_regression/acceptance_report.md)
 - [phase11 规划与冻结记录：architecture_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase11_project_context_foundation_architecture_plan.md)
 - [phase11 规划与冻结记录：dev_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase11_project_context_foundation_dev_plan.md)
@@ -51,6 +54,8 @@
 - [phase07 前置基础阶段规划记录：shared_baseline](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase07_transport_contract_mainline_migration_shared_baseline.md)
 - [phase07 正式规格正文](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase07_07_formal_transport_mainline_cutover_spec/transport_mainline_cutover_spec_v0.1.md)
 - [phase07 联调验收与收口入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase07_11_validate_phase01_phase06_regression_retirement_acceptance/acceptance_report.md)
+- [phase11 收口后的下一步方向审计问题](file:///home/dell/Projects/personal-software-company-os/docs/audit/audit_002_phase11_post_closeout_direction_issue.md)
+- [phase11 收口后的下一步方向审计结论](file:///home/dell/Projects/personal-software-company-os/docs/audit/audit_002_phase11_post_closeout_direction_analysis.md)
 - [phase06 正式规格正文](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase06_12_onboarding_sovereignty_reuse_formal_spec/spec.md)
 - [phase06 合同主线入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase06_13_land_minimal_proto_contract_mainline)
 - [phase06 联调验收与收口入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase06_16_integration_validation_acceptance/acceptance_report.md)
@@ -83,9 +88,10 @@
 
 当前阶段状态与推进路线以 [plan.md](file:///home/dell/Projects/personal-software-company-os/plan.md) 为唯一正式承接位。以下仅保留摘要式入口：
 
+- `phase12_semantic_alignment_and_readonly_consumption_foundation` 已建立正式 `/plan` 入口，当前只承接“前端四实体语义一致性收口 + Web / agent 共享只读消费深化”
 - `phase11_project_context_foundation` 已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`，当前正式验收与收口入口为 [phase11-09 acceptance_report.md](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase11_09_validate_project_context_foundation_dogfooding_regression/acceptance_report.md)
 - `phase10_asset_action_closure_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，保留为最近完成正式业务 phase
 - `phase09_template_reuse_derived_intelligence_foundation` 已完成收口，保留为最近完成正式支撑能力 phase
 - `phase02 ~ phase08` 已完成收口，规划记录保留在 `docs/phase/`
 - 当前最终共识以 [PSCO-mvp05-summarize-feedback.md](file:///home/dell/Projects/personal-software-company-os/PSCO-mvp05-summarize-feedback.md) 为唯一正式入口
-- 只允许在 `phase11` 正式收口后，才讨论或进入下一阶段的更重能力（`MCP / CLI / agent 写回 / 更重消费通道 / 受控维护能力`）；当前不得写成既成事实
+- 更重的 `MCP / CLI / agent 写回 / 更重消费通道 / 受控维护能力` 只允许在 `phase12` 正式收口后，再讨论或进入；当前不得写成既成事实

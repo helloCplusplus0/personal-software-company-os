@@ -104,6 +104,10 @@ docs/
   - `phase11_project_context_foundation_dev_plan.md`
   - `phase11_project_context_foundation_shared_baseline.md`
 - 当前已创建：
+  - `phase12_semantic_alignment_and_readonly_consumption_foundation_architecture_plan.md`
+  - `phase12_semantic_alignment_and_readonly_consumption_foundation_dev_plan.md`
+  - `phase12_semantic_alignment_and_readonly_consumption_foundation_shared_baseline.md`
+- 当前已创建：
   - `phase09_template_reuse_derived_intelligence_foundation_architecture_plan.md`
   - `phase09_template_reuse_derived_intelligence_foundation_dev_plan.md`
   - `phase09_template_reuse_derived_intelligence_foundation_shared_baseline.md`
@@ -161,8 +165,10 @@ docs/
 - `phase09-08 / 09 / 10` 只保留为合同落地、模板预填回流与派生提示实现结论记录，不提升为根级长期主入口
 - `phase10` 已直接承接 `PSCO-mvp04-summarize-feedback.md`、`fix_001_003` 收口记录、`fix_001 ~ fix_003` analysis 与 `phase06 / phase08 / phase09` 正式交付结论，并已完成 `Asset-Action Closure` 的正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - `phase10` 三件套在收口后只承担最近完成正式业务 phase 的规划与冻结记录角色；正式验收与收口入口收敛到 `phase10-11` 规格目录
-- `phase11` 已直接承接 `PSCO-mvp05-summarize-feedback.md` 与 `phase10` 已完成的正式交付结论，当前只建立 `/plan` 三件套，冻结“根级上下文真相源治理 + 最小只读项目上下文导出”为单一主交付能力
-- `phase11` 三件套在当前阶段承担下一正式 phase 的规划与冻结记录角色；正式执行前必须先完成三件套复核，再进入 `/spec`
+- `phase11` 已直接承接 `PSCO-mvp05-summarize-feedback.md` 与 `phase10` 已完成的正式交付结论，并已完成“根级上下文真相源治理 + 最小只读项目上下文导出”的正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`
+- `phase11` 三件套在收口后只承担最近完成阶段的规划与冻结记录角色；正式验收与收口入口收敛到 `phase11-09` acceptance_report
+- `phase12` 已直接承接 `PSCO-mvp05-summarize-feedback.md`、`audit_002` 审计结论与 `phase11` 已完成的正式交付结论，当前已建立 `/plan` 三件套，冻结“前端四实体语义一致性收口 + Web / agent 共享只读消费深化”为单一主交付能力
+- `phase12` 三件套在当前阶段承担下一正式 phase 的规划与冻结记录角色；正式执行前必须先完成三件套复核，再进入 `/spec`
 
 ### 4.2 fix
 
@@ -185,6 +191,8 @@ docs/
 - `audit_analysis_template.md`
 - `audit_001_transport_contract_mainline_issue.md`
 - `audit_001_transport_contract_mainline_analysis.md`
+- `audit_002_phase11_post_closeout_direction_issue.md`
+- `audit_002_phase11_post_closeout_direction_analysis.md`
 
 > 专家评审与交叉汇总文档不归入 `docs/audit/`，统一归入 `docs/review/`。
 

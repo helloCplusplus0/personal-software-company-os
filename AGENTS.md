@@ -6,10 +6,11 @@
 ## 1. 项目定位
 
 - 项目名称：`Personal Software Company OS`
-- 当前阶段：`phase11_project_context_foundation`（已完成正式验收与收口）
-- 当前主目标：`phase11` 已完成“根级上下文真相源治理 + 最小只读项目上下文导出”的正式交付；阶段状态仍只以 `plan.md` 为准
-- 当前下一阶段入口：只允许在 `phase11` 正式收口后，才讨论或进入下一阶段的更重能力（`MCP / CLI / agent 写回 / 更重消费通道 / 受控维护能力`）；`phase09` 继续作为最近完成正式支撑能力 phase 保留，`phase10` 继续作为最近完成正式业务 phase 保留
-- 当前正式验收入口：`.trae/specs/phase11_09_validate_project_context_foundation_dogfooding_regression/acceptance_report.md`
+- 当前阶段：`phase12_semantic_alignment_and_readonly_consumption_foundation`（已建立正式 `/plan` 入口）
+- 当前主目标：建立“前端四实体语义一致性收口 + Web / agent 共享只读消费深化”的正式 phase 规划；阶段状态仍只以 `plan.md` 为准
+- 当前直接上游：`PSCO-mvp05-summarize-feedback.md`、`audit_002` 审计结论、`phase11` 三件套与 `phase11-09` 正式验收入口
+- 当前下一阶段入口：更重的 `MCP / CLI / agent 写回 / 更重消费通道 / 受控维护能力` 只允许在 `phase12` 正式收口后，再作为下一阶段进入条件讨论或进入；`phase11` 当前保留为最近完成阶段，`phase10` 继续作为最近完成正式业务 phase 保留，`phase09` 继续作为最近完成正式支撑能力 phase 保留
+- 当前最近完成正式验收入口：`.trae/specs/phase11_09_validate_project_context_foundation_dogfooding_regression/acceptance_report.md`
 - 当前定位：PSCO 是个人软件公司的经营与资产系统，不是代码管理工具，不是 AI Chat 产品，也不是自动扫描系统
 
 ## 2. 当前唯一上游
@@ -85,9 +86,11 @@
 - `phase10_asset_action_closure_foundation` 三件套已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，当前作为最近完成正式业务 phase 的规划与冻结记录保留
 - `.trae/specs/phase10_11_complete_asset_action_closure_integration_browser_regression_validation/spec.md` 已冻结为 `phase10-11` 的正式验收入口；同目录 `tasks.md / checklist.md` 共同构成 `phase10` 的正式验收与收口证据
 - `phase10` 已完成 `Onboarding` 首轮建链引导、`Decision` 生命周期闭环、关键 detail pages 下一步动作承接矩阵，以及 `Current Focus / pending signals` 反回归验证，当前作为最近完成正式业务 phase 保留
-- `PSCO-mvp05-summarize-feedback.md` 已冻结为 `mvp0.5` 的最终仲裁与 `phase11_project_context_foundation` 的唯一共识上游
+- `PSCO-mvp05-summarize-feedback.md` 已冻结为 `mvp0.5` 的最终仲裁与 `phase11 / phase12` 的直接共识上游
 - `.trae/specs/phase11_09_validate_project_context_foundation_dogfooding_regression/acceptance_report.md` 已冻结为 `phase11` 的正式验收与收口入口
 - `phase11_project_context_foundation` 已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`，并完成“根级上下文真相源治理 + 最小只读项目上下文导出”交付；更重的 `MCP / CLI / agent 写回 / 更重消费通道 / 受控维护能力` 只允许在 `phase11` 正式收口后，作为下一阶段进入条件讨论或进入
+- `docs/audit/audit_002_phase11_post_closeout_direction_analysis.md` 已冻结为 `phase11` 收口后下一步方向的正式审计结论入口
+- `phase12_semantic_alignment_and_readonly_consumption_foundation` 已建立正式 `/plan` 入口，当前只承接“前端四实体语义一致性收口 + Web / agent 共享只读消费深化”，不提前混入 schema 重写、MCP / CLI 或 agent 写回
 
 ## 5. 推荐阅读顺序
 
