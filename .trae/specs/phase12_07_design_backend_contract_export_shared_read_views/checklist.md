@@ -1,0 +1,25 @@
+- [x] `spec.md` 已冻结 `phase12-07` 的职责是"产出后端合同、导出结果与共享只读视图设计"，而不是直接实现或反向改写 `phase12-05`
+- [x] `spec.md` 已明确 `GetProjectContext`、`ExportProjectContext` 与 `ProjectContextService` 下受控派生读取的正式关系
+- [x] `spec.md` 已明确任何新增只读承接位都只能属于 `ProjectContextService` 下的受控派生读取
+- [x] `spec.md` 已明确不允许新建第二服务、第二事实源或影子合同
+- [x] `spec.md` 已明确 `phase12-07` 必须逐项判断 `phase12-05` 传入候选是"真实已覆盖 / L3 单向派生 / 受控派生读取 / 当前不做"
+- [x] `spec.md` 已明确任何允许进入受控派生读取的候选都必须写清输入锚点、最小输出、回收逻辑与定位保留方式
+- [x] `spec.md` 已明确 Web 共享只读结果与 `ExportProjectContext` / renderer 的关系边界
+- [x] `spec.md` 已明确 `phase12-07` 继续遵守 `.proto` 是唯一长期合同源与 `05 -> 07 -> 06` 的内部顺序
+- [x] `tasks.md` 已将候选分组、判断矩阵、受控派生读取约束、导出边界与一致性校验拆成可验证任务
+- [x] `tasks.md` 已把"这里是不是应该新建第二服务"的判断转化为机械任务，而不是留给执行者临场决定
+- [x] `design.md` 已准确列出真实已有后端模块路径，没有再引用不存在的 `query_service.go / server.go / markdown_renderer.go / context_readers.go` 根路径（`design.md §1.2`）
+- [x] `design.md` 已显式列出当前不存在的后端合同能力，避免把抽象字段、计数字段或专用 resolver 写成“真实已覆盖”（`design.md §1.3`）
+- [x] `design.md` 已产出后端影响对象清单，并把需要修正文档口径的对象标为 `must-change`（`design.md §2`）
+- [x] `design.md` 已把共享摘要、入口定位与统一 view model 拆成“继续复用 L1 真实字段 / 仅停留在 L3-renderer 单向映射 / 当前不做”三类结果（`design.md §3.1`）
+- [x] `design.md` 没有再把 `entity_type / entity_name / entity_status / binding_status / decision_count` 等写成后端真实字段（`design.md §3.1`）
+- [x] `design.md` 已把 Product / Module / Decision 的 resolver 候选逐项拆开评估（`design.md §3.2`）
+- [x] `design.md` 已对 Decision resolver 完成正式评估，但没有再把它误写成“既有 detail read 已覆盖”（`design.md §3.2-§3.3`）
+- [x] `design.md` 已逐项记录哪些候选真正回收了前端 / agent 双侧重复解释逻辑，哪些当前不足以进入 `ProjectContextService` 受控派生读取（`design.md §3.3`）
+- [x] `design.md` 已产出分组汇总，并明确当前进入受控派生读取的候选数量为 0（`design.md §3.4`）
+- [x] `design.md` 已产出承接位矩阵与 Web / agent 共享边界，没有把 renderer 或 L3 adapter 升格为事实源（`design.md §4`）
+- [x] `design.md` 已产出 Before/After 对比，明确修正了“假覆盖”“Decision 候选误判”“错误文件路径”三类问题（`design.md §5`）
+- [x] `design.md` 已产出明确不做清单与上游一致性声明（`design.md §6-§7`）
+- [x] 本 spec 包已足以让后续执行者机械回答"这里是不是应该继续复用 `GetProjectContext`"
+- [x] 本 spec 包已足以让后续执行者机械回答"这里是不是应该新建第二服务"
+- [x] 本 spec 包已足以作为 `phase12-07` 后续设计与实现的正式输入前提
