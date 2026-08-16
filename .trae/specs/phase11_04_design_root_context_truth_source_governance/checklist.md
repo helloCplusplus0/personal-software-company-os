@@ -1,0 +1,11 @@
+- [x] `spec.md` 已冻结 `phase11-04` 仅针对 `PSCO` 自身仓库的根级治理对象与范围边界
+- [x] `spec.md` 已冻结根级入口治理矩阵、重复承载清单、悬空引用清理清单与单一写者规则表的正式设计要求
+- [x] `spec.md` 已冻结 `PSCO-mvp05-summarize-feedback.md` 作为根级最终共识入口的统一改写策略
+- [x] `spec.md` 已明确当前阶段只承接治理设计与一次性校准策略，不承接静态文件全量 backend 派生
+- [x] `spec.md` 已冻结 `phase11-04` 的成功标准、DoD 与收口口径
+- [x] `phase11_project_context_foundation_dev_plan.md` 已完成 `phase11-04` 对应范围、正式产物与 DoD 的正式冻结
+- [x] `phase11_project_context_foundation_architecture_plan.md` 已完成 `phase11-04` 对应治理矩阵、统一改写策略与治理路线边界的正式冻结
+- [x] `phase11_project_context_foundation_shared_baseline.md` 已完成 `phase11-04` 对应治理矩阵、清理清单口径、单一写者规则与非目标边界的正式冻结
+- [x] 本 spec 包的验收对象已覆盖目标源文档实际回写结果，而不是只检查 spec 包自身
+- [x] `tasks.md` 已将本次 `/spec` 工作拆成可验证、可顺序执行的小任务
+- [x] `tasks.md` 已显式体现治理矩阵冻结、统一改写策略冻结、治理路线边界冻结与三件套一致性校验

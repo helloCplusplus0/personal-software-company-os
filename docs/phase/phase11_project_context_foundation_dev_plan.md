@@ -83,24 +83,32 @@ DoD：
 
 范围：
 
-- 仅针对 `PSCO` 自身仓库，盘点 `README.md / plan.md / AGENTS.md / architecture_map.md / docs/README.md / docs/phase/README.md / project_rules.md / global_skills.md` 的重复承载与漂移点
-- 明确“谁是单一写者、谁只保留摘要式引用”
-- 明确 `PSCO-mvp05-summarize-feedback.md` 作为根级最终共识入口的统一改写策略
-- 明确不再允许出现的重复表达模式
-- 明确这一治理清单不外推为未来所有项目的固定目录模板
+- 冻结仅针对 `PSCO` 自身仓库的根级治理对象集合：`README.md / plan.md / AGENTS.md / architecture_map.md / docs/README.md / docs/phase/README.md / project_rules.md / global_skills.md`
+- 冻结根级入口单一写者规则：
+  - `plan.md`：阶段状态与推进路线的唯一正式承接位
+  - `architecture_map.md`：目录结构、文档分类、迁移落点的唯一正式承接位
+  - `TECH_STACK_BASELINE.md`：技术栈正文的唯一正式承接位
+  - `README.md`：项目总览入口与受控跳转，不重复承载当前 phase 正文或最终共识正文
+  - `AGENTS.md`：入口摘要，不重复承载完整 phase 状态正文
+  - `global_skills.md`：项目内通用方法映射说明，不承接当前 phase 状态、最终共识或目录落点正文
+  - `docs/README.md`：workflow 总入口，不重复承载完整目录落点正文
+  - 其他入口只保留摘要式引用或受控跳转
+- 冻结 `PSCO-mvp05-summarize-feedback.md` 作为根级最终共识入口的统一改写策略，相关根级入口统一指向该文档
+- 冻结不再允许出现的重复表达模式：同一主结论在多个根级文档中重复承载正文
+- 冻结治理清单不外推为未来所有项目的固定目录模板
 
 正式产物至少包括：
 
-- 根级入口治理矩阵
+- 根级入口治理矩阵（单一写者规则表）
 - 重复承载清单与目标落点清单
 - 悬空引用清理清单
 - 收口后的单一写者规则表
 
 DoD：
 
-- 根级治理策略单值化
-- 直接可指导根级同步实现
-- 不需要继续开放争论“是全量派生还是一次性校准”
+- 根级治理策略已在 `architecture_plan`、`dev_plan` 与 `shared_baseline` 中以单值口径冻结
+- 治理矩阵、清理清单与单一写者规则可直接指导根级同步实现
+- 当前阶段已明确冻结为"一次性校准"策略，不需要继续开放争论"是全量派生还是一次性校准"
 
 ### phase11-05 产出最小只读项目上下文聚合导出设计
 

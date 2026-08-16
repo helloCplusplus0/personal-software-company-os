@@ -136,15 +136,23 @@
 - `TECH_STACK_BASELINE.md`：技术栈正文
 - `README.md`：项目总览入口与受控跳转
 - `AGENTS.md`：入口摘要
+- `project_rules.md`：项目级协作规则与单一真相源约束
 - `global_skills.md`：项目内通用方法映射说明
 - `docs/README.md`：workflow 总入口
+- `docs/phase/README.md`：phase 文档入口索引
 - `PSCO-mvp05-summarize-feedback.md`：当前最终共识
 
 补充冻结：
 
+- 当前阶段根级治理的正式设计产物至少应包括：
+  - 根级入口治理矩阵
+  - 重复承载清单与目标落点清单
+  - 悬空引用清理清单
+  - 收口后的单一写者规则表
 - 其他根级入口文档不得重复承载以上主结论正文
 - 当前阶段必须清理指向不存在文件 `PSCO-summarize-feedback.md` 的引用
 - 当前阶段不做静态文件全量 backend 派生
+- 当前阶段的治理路线冻结为：一次性校准，而不是静态文件全量派生
 
 ### 3.6 项目上下文导出矩阵
 
