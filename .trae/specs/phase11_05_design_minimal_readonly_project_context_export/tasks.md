@@ -8,7 +8,7 @@
 - [x] Task 2: 冻结最小只读导出的输入锚点与失败语义
   - [x] SubTask 2.1: 固定 `repository_id` 为当前阶段唯一正式结构化输入锚点
   - [x] SubTask 2.2: 固定不以本地路径、Git remote URL、`product_id` 或工作区扫描作为并列主锚点
-  - [x] SubTask 2.3: 固定只承接"已完成 Repository Binding"的仓库上下文读取与未绑定仓库失败语义
+  - [x] SubTask 2.3: 固定只承接"已完成 Repository Binding"的仓库上下文读取，并明确仓库不存在/绑定不完整失败语义
 
 - [x] Task 3: 冻结聚合内容范围与 canonical 投影边界
   - [x] SubTask 3.1: 明确聚合哪些 `Repository / Product / Module / Decision / 规则信息`
@@ -16,7 +16,7 @@
   - [x] SubTask 3.3: 明确哪些边界依赖 `PSCO` canonical 关系、哪些不依赖消费侧项目目录结构
 
 - [x] Task 4: 冻结 `Decision` 聚合口径、去重与过滤规则
-  - [x] SubTask 4.1: 固定三类直接 canonical 命中的 `Decision` 聚合范围
+  - [x] SubTask 4.1: 固定两类基于 `Decision -> Module` canonical link 派生的 `Decision` 聚合范围
   - [x] SubTask 4.2: 固定不得沿 `Product -> Module -> 其他 Repository` 做递归扩张
   - [x] SubTask 4.3: 固定 `decision_id` 去重、命中来源摘要与 `archived` 过滤规则
 

@@ -1,0 +1,136 @@
+// PSCO Project Context 最小只读协议合同源
+//
+// 文档定位：本文件是 phase11-07 最小只读项目上下文聚合读取能力的唯一合同定义入口。
+// 上游规格：
+//   - phase11-05 最小只读项目上下文聚合导出设计 Spec
+//   - phase11-07 落实最小只读项目上下文聚合读取能力 Spec
+//
+// 落点要求：
+//   - 本文件落地到现有 proto/ 工作区，复用同一 buf workspace
+//   - 不新增第二套 buf.yaml / buf.gen.yaml / Makefile 或并列 proto 根目录
+//
+// 合同约束：
+//   - 该能力是聚合只读读取，不是新实体主线
+//   - 该能力复用既有 .proto + ConnectRPC 正式主线
+//   - 该能力不得偷渡 MCP、CLI、前端对话式入口或任何第二协议层
+//   - repository_id 是唯一正式结构化输入锚点
+//   - 只承接"已完成 Repository Binding"的仓库上下文读取
+//   - "已完成 Repository Binding" 当前阶段明确解释为：
+//       至少已有一条 product_repositories 绑定，且至少已有一条 module_repositories 映射
+//   - Decision 聚合口径遵守 phase11-05 已冻结的两类 module-link 派生命中范围
+//   - 不依赖消费侧项目目录结构或固定文件名
+//
+// 生成入口：
+//   在 proto/ 目录执行 make gen，或直接执行 buf generate。
+//   生成产物：
+//     - Go:    backend/internal/gen/proto/psco/project_context/v1/
+//     - Go Connect: backend/internal/gen/connect/psco/project_context/v1/
+
+syntax = "proto3";
+
+package psco.project_context.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// Go 包路径（生成代码落点）
+option go_package = "github.com/psco/backend/internal/gen/proto/psco/project_context/v1;projectcontextv1";
+
+// ============================================================================
+// 核心消息
+// ============================================================================
+
+// RepositorySummary — 当前仓库身份摘要。
+message RepositorySummary {
+  string id = 1;
+  string name = 2;
+  string provider = 3;
+  string url = 4;
+  string description = 5;
+}
+
+// ProductSummary — 关联产品摘要。
+message ProductSummary {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string status = 4;
+}
+
+// ModuleSummary — 关联模块摘要。
+message ModuleSummary {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string status = 4;
+}
+
+// DecisionSummary — 关联决策摘要。
+// 命中来源字段标识该 Decision 通过哪类 module-link 派生上下文关系被命中。
+// 当前阶段只允许：
+//   - repository_module_mapping
+//   - bound_product_module
+message DecisionSummary {
+  string id = 1;
+  string title = 2;
+  string status = 3;
+  string context = 4;
+  repeated string hit_sources = 5;
+  google.protobuf.Timestamp created_at = 6;
+}
+
+// RuleEntry — 规则与约束入口。
+// 当前阶段从 project_rules.md 与 TECH_STACK_BASELINE.md 的摘要投影。
+message RuleEntry {
+  string key = 1;
+  string label = 2;
+  string summary = 3;
+  string entry_ref = 4;
+  string entry_kind = 5;
+}
+
+// PhaseEntry — 当前 phase 相关的文档入口。
+message PhaseEntry {
+  string phase = 1;
+  string label = 2;
+  string status_summary = 3;
+  string entry_ref = 4;
+  string entry_kind = 5;
+}
+
+// ============================================================================
+// 读组请求与响应消息
+// ============================================================================
+
+// GetProjectContextRequest — 项目上下文读取请求。
+// repository_id 是唯一正式结构化输入锚点。
+message GetProjectContextRequest {
+  string repository_id = 1;
+}
+
+// GetProjectContextResponse — 项目上下文读取响应。
+// 以当前 Repository 为根，聚合关联 Product / Module / Decision 摘要及规则/文档入口。
+message GetProjectContextResponse {
+  RepositorySummary repository = 1;
+  ProductSummary product = 2;
+  repeated ModuleSummary modules = 3;
+  repeated DecisionSummary decisions = 4;
+  repeated RuleEntry rules = 5;
+  repeated PhaseEntry phases = 6;
+}
+
+// ============================================================================
+// 服务接口
+// ============================================================================
+
+// ProjectContextService — 最小只读项目上下文聚合读取。
+//
+// 当前阶段只承接 GetProjectContext 一个只读 RPC。
+// 不承接任何业务写入、agent 写回或第二套 canonical API。
+//
+// 错误语义：
+//   - 仓库不存在：返回 CodeNotFound
+//   - 仓库绑定不完整：返回 CodeFailedPrecondition，附带明确失败语义
+//   - 内部读取失败：返回 CodeInternal
+service ProjectContextService {
+  rpc GetProjectContext(GetProjectContextRequest) returns (GetProjectContextResponse);
+}

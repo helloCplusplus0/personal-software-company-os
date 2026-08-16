@@ -166,8 +166,8 @@
 
 - 结构化只读读取的唯一输入锚点为既有 `Repository` canonical 身份；
 - `repository_id` 是当前阶段唯一正式结构化输入，不引入 `product_id`、本地路径、Git remote URL 或工作区扫描作为并列主锚点；
-- 当前阶段只承接“已在 PSCO 中完成登记/绑定的仓库”上下文读取；
-- 若当前仓库尚未完成 `Repository Binding`，其身份属于当前阶段明确失败态，而不是由执行者临场猜测补锚；
+- 当前阶段只承接“已在 PSCO 中完成登记/绑定的仓库”上下文读取；当前阶段将“绑定完成”明确解释为：目标 `Repository` 至少已有一条 `product_repositories` 绑定，且至少已有一条 `module_repositories` 映射；
+- 若当前仓库不存在或尚未完成 `Repository Binding`，其身份都属于当前阶段明确失败态，而不是由执行者临场猜测补锚；
 - 最小结构化读取的正式承接位应落在 Go backend 只读业务接口，并继续遵守 `.proto + ConnectRPC` 主线；
 - AGENTS 风格 Markdown 导出必须从同一结构化只读结果单向派生，不得形成第二套事实源。
 
@@ -190,12 +190,12 @@
 当前阶段的字段边界进一步冻结为：
 
 - 结构化只读输出字段边界至少包括：
-  - 输入锚点与失败语义：`repository_id`、是否已完成 `Repository Binding`、未绑定失败态；
+  - 输入锚点与失败语义：`repository_id`、是否已完成 `Repository Binding`、仓库不存在/绑定不完整失败态；
   - `Repository` 身份字段；
   - 关联 `Product` 摘要字段；
   - 关联 `Module` 摘要与状态字段；
   - 关联 `Decision` 摘要、状态与命中来源摘要字段；
-  - 规则、约束与文档入口字段。
+  - 规则、约束与文档入口字段（至少包含入口定位值与定位类型）。
 - Markdown 导出字段边界至少包括：
   - 当前项目/仓库身份摘要；
   - 当前 phase 相关 spec / baseline / 根级入口摘要；
@@ -205,11 +205,10 @@
 
 `Decision` 聚合边界进一步冻结为：
 
-- 以当前 `Repository` 为根，只合并三类直接 canonical 关系命中的 `Decision`：
-  - 直接链接到当前 `Repository` 的 `Decision`
-  - 直接链接到“当前 `Repository` 已绑定 `Product`”的 `Decision`
-  - 直接链接到“当前 `Repository` 已映射 `Module`”的 `Decision`
-- 当前阶段不得继续沿 `Product -> Module -> 其他 Repository` 做递归扩张
+- 以当前 `Repository` 为根，只合并基于既有 `Decision -> Module` canonical link 可直接投影出的两类命中：
+  - 命中“当前 `Repository` 已映射 `Module`”的 `Decision`
+  - 命中“当前 `Repository` 已绑定 `Product` 所属 `Module`”的 `Decision`
+- 当前阶段不得把 `Repository` 或 `Product` 伪装成 `Decision` 的直接 link target，也不得继续沿 `Product -> Module -> 其他 Repository` 做递归扩张
 - 同一 `Decision` 若同时命中多类关系，必须以 `decision_id` 去重，并保留命中来源摘要
 - 当前阶段结构化只读主列表只承接非 `archived` 的 `Decision`
 

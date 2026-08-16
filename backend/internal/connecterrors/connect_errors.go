@@ -28,6 +28,7 @@ import (
 	"github.com/psco/backend/internal/moduleregistry"
 	"github.com/psco/backend/internal/onboarding"
 	"github.com/psco/backend/internal/productregistry"
+	"github.com/psco/backend/internal/projectcontext"
 	"github.com/psco/backend/internal/repositorybinding"
 	"github.com/psco/backend/internal/reusesummary"
 	"github.com/psco/backend/internal/templatereuse"
@@ -61,6 +62,7 @@ func MapToConnectError(err error) *connect.Error {
 		repositorybinding.ErrRepositoryNotFound,
 		repositorybinding.ErrProductNotFound,
 		repositorybinding.ErrModuleNotFound,
+		projectcontext.ErrRepositoryNotFound,
 	) {
 		return connect.NewError(connect.CodeNotFound, err)
 	}
@@ -103,6 +105,7 @@ func MapToConnectError(err error) *connect.Error {
 		productregistry.ErrModuleNotActive,
 		repositorybinding.ErrProductNotActive,
 		repositorybinding.ErrModuleNotActive,
+		projectcontext.ErrRepositoryBindingIncomplete,
 	) {
 		return connect.NewError(connect.CodeFailedPrecondition, err)
 	}
@@ -126,6 +129,7 @@ func MapToConnectError(err error) *connect.Error {
 	_ = backup.ErrBackupSnapshotReadFailed
 	_ = backup.ErrSchemaVersionReadFailed
 	_ = reusesummary.ErrReuseSummaryReadFailed
+	_ = projectcontext.ErrProjectContextReadFailed
 
 	return connect.NewError(connect.CodeInternal, err)
 }

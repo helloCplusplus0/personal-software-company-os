@@ -132,13 +132,12 @@ DoD：
 
 - `repository_id` 为当前阶段唯一正式结构化输入锚点
 - 当前阶段不以本地路径、Git remote URL、`product_id` 或工作区扫描作为并列主锚点
-- 当前阶段只承接“已完成 Repository Binding”的仓库上下文读取
-- 未绑定仓库的失败语义
-- `Decision` 聚合口径冻结为：以当前 `Repository` 为根，只合并三类直接 canonical 关系命中的 `Decision`：
-  - 直接链接到当前 `Repository` 的 `Decision`
-  - 直接链接到“当前 `Repository` 已绑定 `Product`”的 `Decision`
-  - 直接链接到“当前 `Repository` 已映射 `Module`”的 `Decision`
-- 当前阶段不得继续沿 `Product -> Module -> 其他 Repository` 做递归扩张；若超出上述三类命中范围，视为当前阶段不纳入
+- 当前阶段只承接“已完成 Repository Binding”的仓库上下文读取；当前阶段将“绑定完成”明确解释为：目标 `Repository` 至少已有一条 `product_repositories` 绑定，且至少已有一条 `module_repositories` 映射
+- 仓库不存在与仓库绑定不完整都必须返回正式失败语义，执行者不得临场补猜
+- `Decision` 聚合口径冻结为：以当前 `Repository` 为根，只合并基于既有 `Decision -> Module` canonical link 可直接投影出的两类命中：
+  - 命中“当前 `Repository` 已映射 `Module`”的 `Decision`
+  - 命中“当前 `Repository` 已绑定 `Product` 所属 `Module`”的 `Decision`
+- 当前阶段不得把 `Repository` 或 `Product` 伪装成 `Decision` 的直接 link target，也不得继续沿 `Product -> Module -> 其他 Repository` 做递归扩张；若超出上述两类命中范围，视为当前阶段不纳入
 - 同一 `Decision` 若同时命中多类关系，必须以 `decision_id` 去重，并保留命中来源摘要；执行者不得临场决定保留哪一条
 - 当前阶段结构化只读主列表只承接非 `archived` 的 `Decision`；`archived` 不进入主导出列表，不允许执行者自行决定是否混入
 - 结构化只读读取继续落在 Go backend 的 `.proto + ConnectRPC` 正式主线
@@ -198,25 +197,27 @@ DoD：
 
 范围：
 
-- 落实一个最小只读“项目上下文聚合导出”正式承接位
-- 保持其为聚合投影，不引入第二套业务事实源
-- 复用既有 `.proto + ConnectRPC` 主线，不偷渡新协议层
-- 以 `repository_id` 作为唯一正式结构化输入锚点
-- 明确未绑定仓库的失败态与返回语义
-- 不要求消费侧项目目录与 `PSCO` 当前仓库拥有相同结构
+- 落实一个最小只读"项目上下文聚合导出"正式承接位，该承接位必须落在 Go backend 的正式只读业务接口层
+- 保持其为聚合投影，不引入第二套业务事实源；该能力只读取已登记的 `Repository / Product / Module / Decision` canonical 关系
+- 复用既有 `.proto + ConnectRPC` 主线，不偷渡新协议层、MCP、CLI、前端对话式入口或任何第二协议层
+- 以 `repository_id` 作为唯一正式结构化输入锚点；不允许把本地路径、Git remote URL、`product_id` 或工作区扫描升格为并列主锚点
+- 明确仓库不存在与仓库绑定不完整两类失败态及其返回语义，失败语义必须属于正式合同的一部分
+- 不要求消费侧项目目录与 `PSCO` 当前仓库拥有相同结构；`README.md / AGENTS.md / rules` 等固定文件名不是必要输入合同
+- `Decision` 聚合口径必须继续遵守 `phase11-05` 已冻结的两类 module-link 派生命中范围、去重规则与 archived 过滤
+- 返回结果只承接结构化只读字段边界内的信息，不允许在读取侧额外拼装与 backend canonical contracts 并列的第二套字段语义
 
 正式产物至少包括：
 
-- 一个最小结构化只读读取承接位
+- 一个最小结构化只读读取承接位（落在 Go backend 的 `.proto + ConnectRPC` 正式主线）
 - 对应的输入合同、输出边界与失败语义
 - 与既有 canonical 数据的一致性说明
 
 DoD：
 
-- 已存在可供 agent 消费的最小只读上下文能力
-- 只读边界清晰
-- 不引入 agent 写回或第二套 canonical API
-- 执行者不需要再临场决定“current project”如何绑定
+- 已存在可供 agent 消费的最小只读上下文能力，该能力已有正式承接位、正式合同和正式失败语义
+- 只读边界清晰，不引入 agent 写回、Draft、审批流或 agent 专属一级业务对象
+- 不引入第二套 canonical API 或新协议层
+- 执行者不需要再临场决定"current project"如何绑定
 - 执行者不需要假设未来每个项目都遵守 `PSCO` 当前仓库的文件布局
 
 ### phase11-08 落实 AGENTS 风格上下文导出

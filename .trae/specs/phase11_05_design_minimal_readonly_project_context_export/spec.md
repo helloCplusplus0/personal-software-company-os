@@ -30,8 +30,8 @@
 
 - `repository_id` 是当前阶段唯一正式结构化输入锚点；
 - 当前阶段不以本地路径、Git remote URL、`product_id` 或工作区扫描作为并列主锚点；
-- 当前阶段只承接“已完成 Repository Binding”的仓库上下文读取；
-- 未绑定仓库必须返回明确失败态，不允许执行者自行补猜锚点或补猜绑定关系。
+- 当前阶段只承接“已完成 Repository Binding”的仓库上下文读取；当前阶段将“绑定完成”明确解释为：目标 `Repository` 至少已有一条 `product_repositories` 绑定，且至少已有一条 `module_repositories` 映射；
+- 仓库不存在或仓库绑定不完整都必须返回明确失败态，不允许执行者自行补猜锚点或补猜绑定关系。
 
 #### Scenario: 成功判断如何读取当前项目上下文
 - **WHEN** 后续执行者设计项目上下文聚合读取入口
@@ -66,11 +66,10 @@
 
 `Decision` 聚合口径固定为：
 
-- 以当前 `Repository` 为根，只合并三类直接 canonical 关系命中的 `Decision`：
-  - 直接链接到当前 `Repository` 的 `Decision`
-  - 直接链接到“当前 `Repository` 已绑定 `Product`”的 `Decision`
-  - 直接链接到“当前 `Repository` 已映射 `Module`”的 `Decision`
-- 当前阶段不得继续沿 `Product -> Module -> 其他 Repository` 做递归扩张；超出上述三类命中范围的 `Decision` 不进入当前阶段导出；
+- 以当前 `Repository` 为根，只合并基于既有 `Decision -> Module` canonical link 可直接投影出的两类命中：
+  - 命中“当前 `Repository` 已映射 `Module`”的 `Decision`
+  - 命中“当前 `Repository` 已绑定 `Product` 所属 `Module`”的 `Decision`
+- 当前阶段不得把 `Repository` 或 `Product` 伪装成 `Decision` 的直接 link target，也不得继续沿 `Product -> Module -> 其他 Repository` 做递归扩张；超出上述两类命中范围的 `Decision` 不进入当前阶段导出；
 - 同一 `Decision` 若同时命中多类关系，必须以 `decision_id` 去重，并保留命中来源摘要；
 - 当前阶段结构化只读主列表只承接非 `archived` 的 `Decision`；`archived` 不进入主导出列表。
 

@@ -87,6 +87,10 @@ func NewServer(cfg Config, pool *pgxpool.Pool) *Server {
 		// phase09 template reuse 模块：模板候选读取、模板预填、派生提示与模板来源复读
 		templateReuseQuerySvc := buildTemplateReuse(pool, reuseSummaryQuerySvc)
 		mountTemplateReuseConnect(r, templateReuseQuerySvc)
+
+		// phase11 project context 模块：最小只读项目上下文聚合读取
+		projectContextQuerySvc := buildProjectContext(pool)
+		mountProjectContextConnect(r, projectContextQuerySvc)
 	})
 
 	return &Server{

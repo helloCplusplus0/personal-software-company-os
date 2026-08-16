@@ -63,6 +63,9 @@ import (
 	reviewconnect "github.com/psco/backend/internal/review/connect"
 	reviewrepo "github.com/psco/backend/internal/review/repository"
 	reviewservice "github.com/psco/backend/internal/review/service"
+	projectcontextcandidate "github.com/psco/backend/internal/projectcontext/candidate"
+	projectcontextconnect "github.com/psco/backend/internal/projectcontext/connect"
+	projectcontextservice "github.com/psco/backend/internal/projectcontext/service"
 	templatereusecandidate "github.com/psco/backend/internal/templatereuse/candidate"
 	templatereuseconnect "github.com/psco/backend/internal/templatereuse/connect"
 	templatereuseservice "github.com/psco/backend/internal/templatereuse/service"
@@ -79,6 +82,7 @@ import (
 	reusesummaryv1connect "github.com/psco/backend/internal/gen/connect/psco/reuse_summary/v1/reuse_summaryv1connect"
 	reviewv1connect "github.com/psco/backend/internal/gen/connect/psco/review/v1/reviewv1connect"
 	templatereusev1connect "github.com/psco/backend/internal/gen/connect/psco/template_reuse/v1/template_reusev1connect"
+	projectcontextv1connect "github.com/psco/backend/internal/gen/connect/psco/project_context/v1/project_contextv1connect"
 )
 
 // ============================================================================
@@ -281,6 +285,18 @@ func mountTemplateReuseConnect(r chi.Router, querySvc *templatereuseservice.Quer
 	r.Handle(path+"*", http.StripPrefix("/api", handler))
 }
 
+// mountProjectContextConnect 把 Project Context 的 canonical Connect handler 挂到 /api 下。
+//
+// phase11-07 新增：
+//   - 最小只读项目上下文聚合读取能力
+//   - 以 repository_id 为唯一结构化输入锚点
+//   - ProjectContextService 是项目上下文读取的唯一 canonical transport owner
+func mountProjectContextConnect(r chi.Router, querySvc *projectcontextservice.QueryService) {
+	connectSvc := projectcontextconnect.NewServer(querySvc)
+	path, handler := projectcontextv1connect.NewProjectContextServiceHandler(connectSvc)
+	r.Handle(path+"*", http.StripPrefix("/api", handler))
+}
+
 // ============================================================================
 // phase06 模块构造器
 // ============================================================================
@@ -358,6 +374,17 @@ func buildReview(pool *pgxpool.Pool, dashboardQuerySvc *dashboardservice.QuerySe
 func buildTemplateReuse(pool *pgxpool.Pool, reuseSummaryQuerySvc *reusesummaryservice.QueryService) *templatereuseservice.QueryService {
 	candidateReaders := templatereusecandidate.NewTemplateCandidateReaders(pool)
 	return templatereuseservice.NewQueryService(candidateReaders, reuseSummaryQuerySvc)
+}
+
+// buildProjectContext 构造 Project Context 的 QueryService 并返回。
+//
+// phase11-07 新增：
+//   - 最小只读项目上下文聚合读取能力
+//   - 以 repository_id 为唯一结构化输入锚点
+//   - 不依赖消费侧目录结构或固定文件名
+func buildProjectContext(pool *pgxpool.Pool) *projectcontextservice.QueryService {
+	contextReaders := projectcontextcandidate.NewContextReaders(pool)
+	return projectcontextservice.NewQueryService(contextReaders)
 }
 
 // ============================================================================

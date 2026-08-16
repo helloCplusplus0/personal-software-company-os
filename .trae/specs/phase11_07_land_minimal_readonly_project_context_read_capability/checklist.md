@@ -1,0 +1,23 @@
+- [x] `spec.md` 已冻结最小只读项目上下文聚合读取能力的正式承接位（Go backend 的 `.proto + ConnectRPC` 正式主线）
+- [x] `spec.md` 已冻结 `repository_id` 作为唯一正式结构化输入锚点，并明确仓库不存在/绑定不完整失败语义
+- [x] `spec.md` 已冻结最小结构化只读输出边界与 canonical 一致性要求
+- [x] `spec.md` 已冻结"不依赖消费侧项目目录结构或固定文件名"的通用能力边界
+- [x] `spec.md` 已冻结不引入 agent 写回、第二套 canonical API 或新协议层的硬约束
+- [x] `spec.md` 已冻结 `phase11-07` 的成功标准、DoD 与收口口径
+- [x] `phase11_project_context_foundation_dev_plan.md` 已完成 `phase11-07` 对应正式承接位、输入合同、输出边界与 DoD 的正式冻结
+- [x] `phase11_project_context_foundation_architecture_plan.md` 已完成 `phase11-07` 对应结构化输出边界、输入合同与不做清单的正式冻结（§4.4 已存在，无需修改）
+- [x] `phase11_project_context_foundation_shared_baseline.md` 已完成 `phase11-07` 对应导出矩阵、字段边界、失败语义与非目标边界的正式冻结（§3.6 已存在，无需修改）
+- [x] 本 spec 包的验收对象已覆盖后续正式实现结果，而不是只检查 spec 包自身
+- [x] 本 spec 包已明确区分"最小只读读取能力正式承接"与"AGENTS 风格 Markdown 导出"的不同职责边界
+- [x] `proto/psco/project_context/v1/project_context.proto` 已创建，定义 `GetProjectContext` RPC 及 6 类输出消息
+- [x] `buf generate` 已执行，生成 Go proto 与 Connect 代码
+- [x] `backend/internal/projectcontext/types.go` 已创建（跨层共享 DTO）
+- [x] `backend/internal/projectcontext/errors.go` 已创建（业务错误哨兵）
+- [x] `backend/internal/projectcontext/candidate/context_readers.go` 已创建（跨模块 reader，含两类 module-link 派生命中 + 去重 + archived 过滤）
+- [x] `backend/internal/projectcontext/service/query_service.go` 已创建（只读聚合编排）
+- [x] `backend/internal/projectcontext/connect/server.go` 已创建（Connect handler + DTO→Proto 转换）
+- [x] `backend/internal/platform/router.go` 已添加 `buildProjectContext` / `mountProjectContextConnect`
+- [x] `backend/internal/platform/server.go` 的 `NewServer` 中已调用装配与挂载
+- [x] `backend/internal/connecterrors/connect_errors.go` 已注册仓库不存在/绑定不完整的正式错误映射
+- [x] `go build ./...` 编译通过
+- [x] 子代理独立复核已完成，阻断性问题已修复（`ReadRepository` 区分 `pgx.ErrNoRows` 与其他错误）
