@@ -1,0 +1,10 @@
+- [x] `spec.md` 已冻结 `Product / Repository / Module / Decision` 的正式语义说明
+- [x] `spec.md` 已明确 `phase11-03` 当前只做语义确认，不做 schema 重构、实体拆并或关系主线重写
+- [x] `spec.md` 已冻结 `Module` 与 `Decision` 的当前阶段解释
+- [x] `spec.md` 已冻结 `phase11-03` 的成功标准、DoD 与收口口径
+- [x] `phase11_project_context_foundation_dev_plan.md` 已完成 `phase11-03` 对应范围与 DoD 的正式冻结
+- [x] `phase11_project_context_foundation_architecture_plan.md` 已完成 `phase11-03` 对应四实体语义与非结构重构边界的正式冻结
+- [x] `phase11_project_context_foundation_shared_baseline.md` 已完成 `phase11-03` 对应四实体语义矩阵、`Module / Decision` 阶段解释与补充冻结口径的正式冻结
+- [x] 本 spec 包的验收对象已覆盖目标源文档实际回写结果，而不是只检查 spec 包自身
+- [x] `tasks.md` 已将本次 `/spec` 工作拆成可验证、可顺序执行的小任务
+- [x] `tasks.md` 已显式体现语义冻结、非结构重构边界冻结、`Module / Decision` 阶段解释冻结与三件套一致性校验

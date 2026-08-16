@@ -61,14 +61,21 @@ DoD：
 
 范围：
 
-- 明确 `Product / Repository / Module / Decision` 的正式语义说明
-- 明确四实体当前只做语义澄清，不做结构重构
-- 明确 `Module` 与 `Decision` 的当前阶段解释
+- 冻结 `Product / Repository / Module / Decision` 的正式语义说明：
+  - `Product`：经营目标与交付容器
+  - `Repository`：代码仓库身份对象与项目锚点
+  - `Module`：可复用能力资产，允许后置提炼
+  - `Decision`：规则、约束、选择与依据的索引对象
+- 冻结四实体当前只做语义澄清，不做结构重构、实体拆并或关系主线重写
+- 冻结 `Module` 与 `Decision` 的当前阶段解释：
+  - `Module` 当前代表可复用能力资产，允许在后续真实复用沉淀中继续提炼，当前阶段不要求重写其 schema、层级或注册主线
+  - `Decision` 当前代表规则、约束、选择与依据的索引对象，用于支撑项目上下文恢复与只读导出，不在本子任务内扩写为审批流、流程引擎或结构重构入口
 
 DoD：
 
-- 四实体语义可被写入 shared baseline
+- 四实体语义已在 `architecture_plan`、`dev_plan` 与 `shared_baseline` 中以单值口径冻结
 - 后续 `/spec` 与实现不会再把语义确认误解为 schema 重构
+- `Module` 与 `Decision` 的当前阶段解释已在三件套中可直接引用，不需要后续执行者二次解释
 
 ### 第二组：实现设计类子任务
 
