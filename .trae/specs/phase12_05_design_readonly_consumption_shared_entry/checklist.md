@@ -1,0 +1,32 @@
+- [x] `spec.md` 已冻结 `phase12-05` 的职责是"产出只读消费深化与共享入口设计"，而不是直接实现或重开 `phase12-03` 边界
+- [x] `spec.md` 已明确 `GetProjectContext` 为 L1 结构化 canonical owner
+- [x] `spec.md` 已明确 `ExportProjectContext` 为 L2 agent-facing Markdown 导出 owner
+- [x] `spec.md` 已明确 `frontend/src/features/project-context/` 为 L3 Web 跨切片共享只读 owner
+- [x] `spec.md` 已明确各 feature 的 `pages/`、`components/`、`data/` 为 L4 切片内展示 owner
+- [x] `spec.md` 已明确 `project-context/` 的启用条件、输入边界与禁止事项
+- [x] `spec.md` 已冻结 `repositories/$repositoryId` 为直接 repository-scoped 页面
+- [x] `spec.md` 已冻结 `products/$productId`、`modules/$moduleId`、`decisions/$decisionId` 为间接 repository-scoped 页面
+- [x] `spec.md` 已冻结 `dashboard`、`onboarding`、`reviews/daily`、`reviews/weekly` 为衍生消费页
+- [x] `spec.md` 已明确 `repository_id` 仍是唯一正式结构化输入锚点
+- [x] `spec.md` 已明确三类页面各自的输入、解析、复用与失败语义责任边界
+- [x] `spec.md` 已明确禁止页面内搜索、手工查询、工作区扫描等补锚点方案
+- [x] `spec.md` 已冻结"复用既有合同 vs 新增最小只读承接位"的判定规则
+- [x] `spec.md` 已明确任何新增承接位都必须写清输入锚点、回收逻辑与失败条件
+- [x] `spec.md` 已显式输出供 `phase12-07` 继续承接的共享摘要字段、入口定位字段与最小 resolver 需求
+- [x] `spec.md` 已明确区分“当前真实已覆盖”“可由 L3 单向派生”“仍需进入 phase12-07 候选评估”三类结果
+- [x] `spec.md` 已明确 Decision 页面必须独立写出 resolver 规则，不得与 Product / Module 合并成一句笼统结论
+- [x] `tasks.md` 已将共享入口矩阵、三类页面矩阵、复用判定与 `phase12-07` 输入需求拆成可验证任务
+- [x] `tasks.md` 已把与 `phase12-03`、`phase11-07 / 08`、三件套的一致性校验拆成独立任务
+- [x] `design.md` 已满足统一最小设计模板：影响对象清单、结论矩阵、承接位矩阵、共享语义来源 vs 切片内渲染矩阵、Before/After、明确不做清单（`design.md §1-§7`）
+- [x] `design.md` 已产出共享只读 owner 四层分层矩阵，含职责/输入/输出/最终承接位（`design.md §3.1`）
+- [x] `design.md` 已产出三类页面承接矩阵，含输入、解析链、复用方式、失败语义与最终承接位（`design.md §3.2`）
+- [x] `design.md` 已把 Product / Module / Decision 的 resolver 规则分别写清，并给出唯一候选条件（`design.md §2.2` / `§3.2-§3.3`）
+- [x] `design.md` 已把 Decision 页面链式回到 `repository_id` 的规则独立写清，而不是笼统写成“既有 detail read 已覆盖”（`design.md §2.2` / `§3.2-§3.3`）
+- [x] `design.md` 已按真实源码合同列出可直接复用的结构化字段，没有再把不存在字段写成“已覆盖”（`design.md §6.1`）
+- [x] `design.md` 已明确哪些共享结果只是 L3 单向派生，不冒充 L1 真实字段（`design.md §6.2`）
+- [x] `design.md` 已明确哪些字段或 resolver 只能进入 `phase12-07` 候选评估，而不是在 `phase12-05` 预支结论（`design.md §6.3-§6.4`）
+- [x] `design.md` 已产出禁止的过渡模式与明确不做清单（`design.md §7`）
+- [x] `design.md` 已产出设计推进顺序 05→07→06 与上游一致性声明（`design.md §8`）
+- [x] 本 spec 包已足以让后续执行者机械回答"这里该复用 phase11，还是该新增最小只读承接位"
+- [x] 本 spec 包已足以让后续执行者机械回答"这里该直接用 repository_id，还是先解析回 repository_id 再复用共享摘要"
+- [x] 本 spec 包已足以作为 `phase12-07` 与 `phase12-06` 的正式设计输入前提
