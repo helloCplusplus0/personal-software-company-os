@@ -33,6 +33,8 @@ interface ReviewPageShellProps {
   onRetry?: () => void
   /** 页面主体内容 */
   children: ReactNode
+  /** phase12-10：共享语义摘要或固定入口说明 */
+  semanticSummaryPanel?: ReactNode
   /** 底部动作区 */
   actionFooter: ReactNode
 }
@@ -44,6 +46,7 @@ export function ReviewPageShell({
   onBackToDashboard,
   onRetry,
   children,
+  semanticSummaryPanel,
   actionFooter,
 }: ReviewPageShellProps) {
   return (
@@ -113,6 +116,8 @@ export function ReviewPageShell({
       {/* 页面内容 + 底部动作区 */}
       {pageStatus === 'ready' && (
         <>
+          {semanticSummaryPanel}
+
           <div className="space-y-4">
             {children}
           </div>

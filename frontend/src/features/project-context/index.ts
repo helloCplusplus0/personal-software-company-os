@@ -8,6 +8,8 @@ export { useProjectContextRead } from './data/use-project-context-read'
 export type { ProjectContext, UseProjectContextRead } from './data/use-project-context-read'
 export { toEntryLocationView, toEntryLocationViews } from './data/entry-location-view-model'
 export type { EntryLocationView } from './data/entry-location-view-model'
+export { resolveUniqueRepositoryCandidate } from './data/repository-resolution'
+export type { RepositoryCandidateLike } from './data/repository-resolution'
 export {
   PRODUCT_SEMANTIC_LABEL,
   REPOSITORY_SEMANTIC_LABEL,
@@ -18,3 +20,5 @@ export {
   PHASE_ENTRY_LABEL,
   BOUNDARY_ENTRY_LABEL,
 } from './data/shared-semantic-constants'
+export { ProjectSemanticSummaryPanel } from './components/project-semantic-summary-panel'
+export { ProjectContextSection } from './components/project-context-section'

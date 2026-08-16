@@ -42,6 +42,7 @@ import type { TemplateCandidateSummary, DerivedInsightHint } from '@/gen/proto/p
 import { DerivedInsightHintType } from '@/gen/proto/psco/template_reuse/v1/template_reuse_pb'
 import { useDerivedHintHandoff } from '@/features/template-reuse/application/use-derived-hint-handoff'
 import { toast } from 'sonner'
+import { ProjectSemanticSummaryPanel } from '@/features/project-context'
 
 const WEEKLY_REVIEW_ACTION_SECTIONS = {
   decision: 'overview',
@@ -114,10 +115,16 @@ export function WeeklyReviewPage() {
   return (
     <ReviewPageShell
       title="Weekly Review"
-      subtitle="本周资产盘点与整理"
+      subtitle="本周经营回顾与能力整理"
       pageStatus={review.pageState.pageStatus}
       onBackToDashboard={handleBackToDashboard}
       onRetry={review.retry}
+        semanticSummaryPanel={
+          <ProjectSemanticSummaryPanel
+            title="Weekly Review 中的四实体角色"
+            description="Weekly Review 通过共享语义与固定入口回看本周资产、仓库、能力与决策留痕。"
+          />
+        }
       actionFooter={
         <ReviewActionFooter
           isPending={action.isPending}

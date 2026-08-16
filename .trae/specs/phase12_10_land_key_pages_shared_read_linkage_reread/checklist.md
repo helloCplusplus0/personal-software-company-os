@@ -1,0 +1,10 @@
+- [x] `spec.md` 已明确 `phase12-10` 只负责关键页面与共享读路径的联动回流，不新增结构化主锚点、第二解释链或第二写路径
+- [x] `spec.md` 已明确 `dashboard / onboarding / reviews/daily / reviews/weekly / detail pages` 的共享语义摘要、固定入口与受控派生摘要接入边界
+- [x] `spec.md` 已明确返回链、精确失效、reread 与局部降级必须继续遵守 `phase12-06 / 09` 的冻结口径
+- [x] `spec.md` 已明确关键页面若仍依赖切片内旧文案单独解释四实体角色，则不得视为完成
+- [x] `tasks.md` 已把关键页面现状盘点、共享摘要接入、reread/返回链收口与旧文案回收拆成可验证任务
+- [x] `tasks.md` 已把 `dashboard / onboarding / reviews/daily / reviews/weekly` 不得自长新锚点的校验写成显式任务
+- [x] `tasks.md` 已把"不能通过全量失效、页面私有补查询或额外扫描伪造闭环"写成显式任务
+- [x] `tasks.md` 已把最终前端校验与验收证据纳入任务
+- [x] 本 spec 包已足以让后续执行者机械回答"哪些页面只能消费共享语义摘要或固定入口，哪些页面允许接共享只读主线"
+- [x] 本 spec 包已足以让后续执行者机械回答"哪些 reread/返回链问题必须修，哪些旧文案和入口必须回收"

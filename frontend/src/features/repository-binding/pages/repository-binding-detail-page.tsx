@@ -94,6 +94,7 @@ export function RepositoryBindingDetailPage() {
 
   // phase04-06 绑定成功后重新读取详情结果（reread）
   // phase10-10：补齐 Dashboard / Review query 失效，确保返回后 reread 正确
+  // phase12-09/10：补齐 project-context 共享只读失效，确保共享摘要与入口定位不滞后
   const invalidateDetail = () => {
     queryClient.invalidateQueries({ queryKey: ['repository-detail', repositoryId] })
     queryClient.invalidateQueries({ queryKey: ['project-context', repositoryId] })
