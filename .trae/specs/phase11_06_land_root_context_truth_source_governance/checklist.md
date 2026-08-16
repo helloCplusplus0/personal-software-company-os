@@ -1,0 +1,10 @@
+- [x] `spec.md` 已冻结 `phase11-06` 仅针对 `PSCO` 自身仓库目标入口文件的实施范围
+- [x] `spec.md` 已冻结回收重复 phase 状态、重复目录落点与重复共识入口的实施要求
+- [x] `spec.md` 已冻结清理目标文件范围内 `PSCO-summarize-feedback.md` 悬空引用，并将当前有效最终共识入口单值化（当前时点为 `PSCO-mvp05-summarize-feedback.md`，但不作为未来固定合同）
+- [x] `spec.md` 已冻结逐文件审计与结果记录要求，包括 `已审计 / 是否修改 / 不修改原因`
+- [x] `spec.md` 已冻结 `phase11-06` 的成功标准、DoD 与收口口径
+- [x] `tasks.md` 已将目标根级文件的逐项审计、按需修改与验收拆成可顺序执行的小任务
+- [x] `tasks.md` 已显式体现目标文件范围内悬空引用清零、当前有效最终共识入口单值化与根级入口单值一致性校验
+- [x] 本 spec 包的验收对象已覆盖目标根级文件实际治理结果，而不是只检查 spec 包自身
+- [x] 目标文件范围已覆盖 `README.md / AGENTS.md / plan.md / architecture_map.md / docs/README.md / docs/phase/README.md / project_rules.md / global_skills.md / PSCO-mvp05-summarize-feedback.md`
+- [x] DoD 已明确要求目标文件全部完成逐项审计，不允许只改部分显眼入口后直接判定完成

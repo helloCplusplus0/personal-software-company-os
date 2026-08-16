@@ -80,25 +80,11 @@
 
 ## 4. 当前阶段状态
 
-- `phase02_module_registry_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
-- `Module Registry` 最小主线已形成可运行交付物
-- `phase03_decision_center_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
-- `Decision Center` 最小主线已形成可运行交付物，并已冻结正式规格与联调验收入口
-- `phase04_product_and_repository_binding_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
-- `Product Registry + Repository Binding` 最小主线已形成可运行交付物，并已冻结正式规格、`.proto` 合同与联调验收入口
-- `phase05_dashboard_feedback_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
-- `Dashboard + Feedback` 最小主线已形成可运行交付物，并已冻结正式规格、`.proto` 合同与联调验收入口
-- `phase06_onboarding_sovereignty_reuse_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
-- `phase07_transport_contract_mainline_migration` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
-- `phase08_operating_review_loop_foundation` 已完成 `/plan -> 实现 -> 验收 -> 收口`，并继续保留为已完成正式业务交付
-- `phase09_template_reuse_derived_intelligence_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，并冻结 `Template Reuse + Derived Intelligence Deepening` 为最近完成的正式支撑能力交付
-- `phase11_project_context_foundation` 已完成正式 `/plan` 并建立三件套，当前冻结的单一主交付能力为“根级上下文真相源治理 + 最小只读项目上下文导出”
-- `phase10_asset_action_closure_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，并冻结 `Asset-Action Closure` 为最近完成的正式业务交付
-- `phase09` 三件套当前只保留为最近完成正式支撑能力 phase 的规划与冻结记录；正式验收与收口入口收敛到 [phase09-11 acceptance_report](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase09_11_validate_template_reuse_derived_hint_integration_browser_regression_acceptance/acceptance_report.md)
-- `phase10` 三件套保留为最近完成正式业务 phase 的规划与冻结记录；正式验收与收口入口收敛到 [phase10-11 spec](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase10_11_complete_asset_action_closure_integration_browser_regression_validation/spec.md)，同目录 `tasks.md / checklist.md` 共同构成正式验收与收口证据
-- `phase08` 三件套保留为已完成正式业务 phase 的历史规划与冻结记录；正式验收与收口入口继续收敛到 [phase08-11 acceptance_report](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase08_11_validate_review_loop_integration_browser_regression_acceptance/acceptance_report.md)
-- `phase07` 三件套继续保留为最近完成前置基础阶段的规划与冻结记录；正式证据入口继续收敛到 [phase07-07 正式规格](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase07_07_formal_transport_mainline_cutover_spec/transport_mainline_cutover_spec_v0.1.md) 与 [phase07-11 验收结论](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase07_11_validate_phase01_phase06_regression_retirement_acceptance/acceptance_report.md)，但不再覆盖当前业务状态
-- `Real-Project Dry-Run` 的真实验证必须由真实使用者亲自执行；当前已补充 [使用手册](file:///home/dell/Projects/personal-software-company-os/docs/review/PSCO-real-project-dry-run-user-manual-GPT54.md)，用于指导标准操作路径、观察重点与反馈回收
-- `mvp0.3` `Real-Project Dry-Run` 第一轮暴露的 `fix_001 ~ fix_003` 阻断项已完成修复、聚焦 rerun 与收口；相关结论继续保留在 [收口记录](file:///home/dell/Projects/personal-software-company-os/docs/fix/fix_001_003_mvp03_dry_run_rerun_closure.md)，作为已被 `phase10` 正式承接的历史修复证据
-- `phase11` 已正式承接 `PSCO-mvp05-summarize-feedback.md`；在 `phase11` 正式收口前，不允许把更重的 agent 消费通道、MCP / CLI 或受控维护能力写成当前既成事实
-- `phase05` 三件套保留为上一已完成阶段的规划与冻结记录，不再覆盖根级当前阶段状态
+当前阶段状态与推进路线以 [plan.md](file:///home/dell/Projects/personal-software-company-os/plan.md) 为唯一正式承接位。以下仅保留摘要式入口：
+
+- `phase11_project_context_foundation` 已完成正式 `/plan` 并建立三件套，当前冻结的单一主交付能力为"根级上下文真相源治理 + 最小只读项目上下文导出"
+- `phase10_asset_action_closure_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，保留为最近完成正式业务 phase
+- `phase09_template_reuse_derived_intelligence_foundation` 已完成收口，保留为最近完成正式支撑能力 phase
+- `phase02 ~ phase08` 已完成收口，规划记录保留在 `docs/phase/`
+- 当前最终共识以 [PSCO-mvp05-summarize-feedback.md](file:///home/dell/Projects/personal-software-company-os/PSCO-mvp05-summarize-feedback.md) 为唯一正式入口
+- 在 `phase11` 正式收口前，不允许把更重的 agent 消费通道、MCP / CLI 或受控维护能力写成当前既成事实

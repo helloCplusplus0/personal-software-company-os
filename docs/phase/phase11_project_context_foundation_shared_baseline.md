@@ -140,7 +140,7 @@
 - `global_skills.md`：项目内通用方法映射说明
 - `docs/README.md`：workflow 总入口
 - `docs/phase/README.md`：phase 文档入口索引
-- `PSCO-mvp05-summarize-feedback.md`：当前最终共识
+- `PSCO-mvp05-summarize-feedback.md`：当前阶段 `PSCO` 自身仓库的有效最终共识文档
 
 补充冻结：
 
@@ -150,9 +150,10 @@
   - 悬空引用清理清单
   - 收口后的单一写者规则表
 - 其他根级入口文档不得重复承载以上主结论正文
-- 当前阶段必须清理指向不存在文件 `PSCO-summarize-feedback.md` 的引用
+- 当前阶段必须清理治理矩阵目标文件范围内指向不存在文件 `PSCO-summarize-feedback.md` 的引用
 - 当前阶段不做静态文件全量 backend 派生
 - 当前阶段的治理路线冻结为：一次性校准，而不是静态文件全量派生
+- 当前阶段有效最终共识入口的具体文件名只代表 `PSCO` 当前时点的有效文档，不上升为未来版本推进或其他项目的固定文件合同
 
 ### 3.6 项目上下文导出矩阵
 
