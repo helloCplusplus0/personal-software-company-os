@@ -1,0 +1,22 @@
+- [x] spec 已冻结 `Product / Repository / Module / Decision` 在 Web 端的正式解释口径
+- [x] spec 已明确 `Module` 不再作为普通模块登记对象解释，`Decision` 不再作为孤立文本卡片解释
+- [x] spec 已冻结四类详情页为四实体语义的 primary owner 页面
+- [x] spec 已冻结四类摘要卡片为 primary owner 摘要组件
+- [x] spec 已冻结 `dashboard / onboarding / reviews/daily / reviews/weekly` 页面及相关容器组件为跟随回归对象
+- [x] spec 已明确 route shell、list pages、toolbar 与搜索 store 不作为独立语义 primary owner
+- [x] spec 已冻结切片内承接位与 `frontend/src/features/project-context/` 之间的共享语义边界
+- [x] spec 已明确只有 `3+` 页面稳定复用时才允许晋升到跨切片共享只读承接位
+- [x] spec 已明确禁止页面本地拼出第二套跨切片语义摘要或第二套事实源
+- [x] spec 已冻结 `must-change / follow-regression / no-change` 三类分类口径
+- [x] spec 已明确 `no-change` 必须逐项留档并写明理由
+- [x] spec 已将空态（List 页空态 / Dashboard 无数据空态 / Review 无待处理项空态 / Onboarding 各步骤空态）纳入显式审计面，可逐项标记 `must-change / follow-regression / no-change`
+- [x] spec 已将提示文案（Onboarding WelcomeStep / Dashboard 区块说明 / Review 头部说明 / Detail 页描述性标题）纳入显式审计面，可逐项标记并留档
+- [x] spec 已将下一步动作说明（ModuleNextActionBar / Decision CTA / DashboardPrimaryActionPanel / OnboardingCtaButton / ReviewActionFooter）纳入显式审计面，可逐项标记并留档
+- [x] `tasks.md` 已把四实体语义、owner 矩阵、共享承接位与留档规则拆成可验证任务
+- [x] 本 spec 包已显式对齐 `dev_plan`、`architecture_plan` 与 `shared_baseline` 的上游口径
+- [x] 本 spec 包已足以让后续执行者机械回答"哪些页面必须展示什么语义、哪些页面是 primary owner、哪些只是跟随回归"
+- [x] `architecture_plan` §4.6 已冻结 primary owner / 跟随回归 / 非 primary owner 文件级清单，且与 `shared_baseline` §3.2 一致
+- [x] `shared_baseline` §3.2 已冻结四实体语义矩阵（`Product`=经营目标与交付容器 / `Repository`=代码仓库身份对象与项目锚点 / `Module`=可复用能力资产 / `Decision`=规则/约束/选择与依据的索引对象），且与 `architecture_plan` §4.3 一致
+- [x] `shared_baseline` §3.5 已冻结前端承接矩阵，且与 `architecture_plan` §4.6 一致
+- [x] `dev_plan` phase12-02 已显式承接 primary owner 分类，且与 `architecture_plan` / `shared_baseline` 一致
+- [x] 三件套对 `no-change` / `follow-regression` / `must-change` 三类留档规则已单值一致
