@@ -10,10 +10,11 @@
 
 当前阶段状态与推进路线以 [plan.md](file:///home/dell/Projects/personal-software-company-os/plan.md) 为唯一正式承接位。以下仅保留摘要式入口：
 
-- 当前阶段：`phase11_project_context_foundation` 已完成正式 `/plan` 并建立三件套
+- 当前阶段：`phase11_project_context_foundation` 已完成正式验收与收口
 - 最近完成正式业务 phase：`phase10_asset_action_closure_foundation`
 - 最近完成正式支撑能力 phase：`phase09_template_reuse_derived_intelligence_foundation`
 - 当前阶段直接上游：`PSCO-mvp05-summarize-feedback.md`、`phase10` 三件套与 `phase10-11` 验收入口
+- 当前阶段正式验收与收口入口：[phase11-09 acceptance_report.md](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase11_09_validate_project_context_foundation_dogfooding_regression/acceptance_report.md)
 - 当前项目技术路线：`Durable System Track`
 
 ## 2.1 最近完成正式支撑能力 phase 的规划记录
@@ -30,11 +31,12 @@
 - [phase10_asset_action_closure_foundation_shared_baseline.md](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase10_asset_action_closure_foundation_shared_baseline.md)
 - [phase10-11 正式验收与收口入口：spec](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase10_11_complete_asset_action_closure_integration_browser_regression_validation/spec.md)
 
-## 2.2A 当前正式 `/plan` 阶段的规划记录
+## 2.2A 当前最近完成阶段的规划与验收记录
 
 - [phase11_project_context_foundation_architecture_plan.md](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase11_project_context_foundation_architecture_plan.md)
 - [phase11_project_context_foundation_dev_plan.md](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase11_project_context_foundation_dev_plan.md)
 - [phase11_project_context_foundation_shared_baseline.md](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase11_project_context_foundation_shared_baseline.md)
+- [phase11-09 正式验收与收口入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase11_09_validate_project_context_foundation_dogfooding_regression/acceptance_report.md)
 - [mvp0.5 最终仲裁与规划基线](file:///home/dell/Projects/personal-software-company-os/PSCO-mvp05-summarize-feedback.md)
 
 ## 2.3 上一完成正式业务 phase 的规划记录
@@ -60,4 +62,4 @@
   - `phase*_shared_baseline.md`
 - `/plan` 通过后，才能继续 `/spec` 与实现
 - 已完成收口的 `phase`，后续实现应从正式 `/spec` 进入，而不是把三件套继续当作并列执行入口
-- 后续更重的 agent 消费通道、MCP / CLI 或受控维护能力在正式入口建立前，只允许以进入条件形式出现；当前不得把它们写成 `phase11` 的并列主交付
+- 只允许在 `phase11` 正式收口后，才讨论或进入下一阶段的更重能力（`MCP / CLI / agent 写回 / 更重消费通道 / 受控维护能力`）；当前不得把它们写成 `phase11` 的并列主交付
