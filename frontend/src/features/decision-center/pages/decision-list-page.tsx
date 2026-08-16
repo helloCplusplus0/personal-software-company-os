@@ -95,7 +95,7 @@ export function DecisionListPage() {
       ) : isEmpty && !isFiltered ? (
         // 空状态：主动作直接进入 Decision Create
         <div className="rounded-lg border border-dashed p-8 text-center">
-          <p className="text-muted-foreground mb-4">系统中尚无任何决策，先记录首条决策</p>
+          <p className="text-muted-foreground mb-4">暂无规则与决策记录</p>
           <Button asChild>
               <Link
                 to="/decisions/new"

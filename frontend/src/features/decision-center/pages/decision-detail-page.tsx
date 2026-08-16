@@ -34,6 +34,7 @@ import { useDecisionListSearchStore } from '../stores/decision-list-search-store
 import { BackToDashboardButton } from '@/features/dashboard/components/back-to-dashboard-button'
 import { mergeCurrentDashboardSource } from '@/features/dashboard/lib/dashboard-source'
 import type { DecisionStatus } from '../types'
+import { DECISION_SEMANTIC_CORE } from '@/features/project-context/data/shared-semantic-constants'
 
 export function DecisionDetailPage() {
   const { decisionId } = useParams({ from: '/decisions/$decisionId' })
@@ -129,6 +130,11 @@ export function DecisionDetailPage() {
           {pageRead.returnLabel}
         </Button>
       </div>
+
+      {/* phase12-08：页面级语义导语 */}
+      <p className="text-sm text-muted-foreground">
+        该 Decision 用于索引{DECISION_SEMANTIC_CORE}。
+      </p>
 
       {/* PC：分区式布局；移动端：垂直顺序重排 */}
       <div className="grid gap-4 lg:grid-cols-3">

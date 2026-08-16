@@ -1,0 +1,13 @@
+- [x] `spec.md` 已冻结 `phase12-08` 只负责前端表达层与只读呈现层收口，而不是结构重构
+- [x] `spec.md` 已明确四个 primary owner detail page 是本子任务的最低必达范围
+- [x] `spec.md` 已明确四个 summary card、Onboarding Welcome、四个列表页空态与 `ModuleNextActionBar` 是正式落地区
+- [x] `spec.md` 已明确共享语义来源只允许落到 `frontend/src/features/project-context/data/shared-semantic-constants.ts`
+- [x] `spec.md` 已明确 `phase12-08` 不实现 `use-project-context-read.ts`、`entry-location-view-model.ts` 或第二套共享 data owner
+- [x] `spec.md` 已明确不改写 query owner、mutation owner、路由结构、切片边界或后端合同
+- [x] `tasks.md` 已把四个 detail page 的页面级语义导语收口拆成可验证任务
+- [x] `tasks.md` 已把四个 summary card 与 Decision 语义框架说明拆成可验证任务
+- [x] `tasks.md` 已把 Onboarding、列表页空态与 `ModuleNextActionBar` 文案收口拆成可验证任务
+- [x] `tasks.md` 已把 follow-regression / no-change surface 验证与前端校验纳入任务
+- [x] 本 spec 包已足以让后续执行者机械回答"哪些 surface 必须改，哪些只跟随回归"
+- [x] 本 spec 包已足以让后续执行者机械回答"哪些共享语义可以抽成常量，哪些结构/读路径绝不能借机改"
+- [x] 本 spec 包已足以让后续执行者机械回答"如何证明 Module/Decision 的用户感知已被纠正"

@@ -32,6 +32,12 @@ import { useOnboardingRead, ONBOARDING_STATE_QUERY_KEY } from '../data/use-onboa
 import { useOnboardingAction } from '../application/use-onboarding-action'
 import type { OnboardingActionSuccess } from '../application/use-onboarding-action'
 import type { OnboardingStep } from '../types'
+import {
+  PRODUCT_SEMANTIC_LABEL,
+  REPOSITORY_SEMANTIC_LABEL,
+  MODULE_SEMANTIC_LABEL,
+  DECISION_SEMANTIC_LABEL,
+} from '@/features/project-context/data/shared-semantic-constants'
 
 /** 步骤顺序与标签 */
 const STEP_LABELS: Record<OnboardingStep, string> = {
@@ -274,16 +280,18 @@ function WelcomeStep({ onStart }: { onStart: () => void }) {
       <div>
         <h1 className="text-2xl font-bold">欢迎使用 PSCO</h1>
         <p className="mt-2 text-muted-foreground">
-          Personal Software Company OS 帮助你登记软件资产、记录决策并追踪复用反馈。
+            Personal Software Company OS 帮助你管理{PRODUCT_SEMANTIC_LABEL}、登记
+            {REPOSITORY_SEMANTIC_LABEL}、盘点{MODULE_SEMANTIC_LABEL}并记录
+            {DECISION_SEMANTIC_LABEL}。
         </p>
       </div>
       <div className="rounded-lg border bg-muted/50 p-4 space-y-2 text-sm">
         <p className="font-medium">首轮录入需要完成以下四步：</p>
         <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
-          <li>创建一个产品（Product）</li>
-          <li>创建一个仓库（Repository）</li>
-          <li>创建一个模块（Module）</li>
-          <li>记录一条决策（Decision）</li>
+          <li>登记一个{PRODUCT_SEMANTIC_LABEL}（Product）</li>
+          <li>登记一个{REPOSITORY_SEMANTIC_LABEL}（Repository）</li>
+          <li>登记一个{MODULE_SEMANTIC_LABEL}（Module）</li>
+          <li>记录一条{DECISION_SEMANTIC_LABEL}（Decision）</li>
         </ol>
         <p className="text-muted-foreground">
           每一步只需填写最小必填字段，其余可在后续补充。

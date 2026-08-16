@@ -23,6 +23,7 @@ import { RepositoryDecisionEntryPanel } from '../components/repository-decision-
 import { DAILY_REVIEW_QUERY_KEY, WEEKLY_REVIEW_QUERY_KEY } from '@/features/review/data/review-query-options'
 import { buildReviewReturnSearch, shouldReturnToReview } from '@/features/review/lib/review-source'
 import { useModuleDecisionLinksByModuleIds } from '@/features/module-registry/data/use-module-decision-links-by-module-ids'
+import { REPOSITORY_SEMANTIC_LABEL } from '@/features/project-context/data/shared-semantic-constants'
 
 /**
  * panelMode — phase04-06 互斥展开状态
@@ -241,6 +242,11 @@ export function RepositoryBindingDetailPage() {
           <span className="font-medium">{search.moduleName}</span>
         </div>
       )}
+
+      {/* phase12-08：页面级语义导语 */}
+      <p className="text-sm text-muted-foreground">
+        该 Repository 代表一个{REPOSITORY_SEMANTIC_LABEL}
+      </p>
 
       {/* phase10-10：页面级下一步动作区 */}
       <RepositoryNextActionBar

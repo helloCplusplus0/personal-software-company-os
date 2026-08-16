@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import type { Decision, DecisionStatus, SourceContext } from '../types'
 import type { DecisionDetailStatusAction } from '../data/use-decision-detail-page-read'
+import { DECISION_SEMANTIC_CORE } from '@/features/project-context/data/shared-semantic-constants'
 
 interface DecisionDetailSummaryCardProps {
   decision: Decision
@@ -58,6 +59,12 @@ export function DecisionDetailSummaryCard({
           </Badge>
         </div>
       </CardHeader>
+      {/* phase12-08：Decision 语义框架说明 */}
+      <div className="px-6 pb-1">
+        <p className="text-xs text-muted-foreground">
+          本条 Decision 记录了以下{DECISION_SEMANTIC_CORE}。
+        </p>
+      </div>
       <CardContent className="space-y-4">
         {/* 结构化模板字段 */}
         <div>

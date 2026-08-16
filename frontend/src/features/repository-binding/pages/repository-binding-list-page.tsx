@@ -146,7 +146,7 @@ export function RepositoryBindingListPage() {
       ) : isEmpty && !isFiltered ? (
         // phase04-06 空状态：主动作直接进入 Repository Create
         <div className="rounded-lg border border-dashed p-8 text-center">
-          <p className="text-muted-foreground mb-4">系统中尚无任何仓库，先完成首个仓库登记</p>
+          <p className="text-muted-foreground mb-4">暂无代码仓库身份对象与项目锚点</p>
           <Button asChild>
             <Link to="/repositories/new" search={createSearch}>
               <Plus className="mr-2 h-4 w-4" />

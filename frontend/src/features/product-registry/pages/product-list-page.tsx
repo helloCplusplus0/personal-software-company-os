@@ -114,7 +114,7 @@ export function ProductListPage() {
       ) : isEmpty && !isFiltered ? (
         // phase04-06 空状态：主动作直接进入 Product Create
         <div className="rounded-lg border border-dashed p-8 text-center">
-          <p className="text-muted-foreground mb-4">系统中尚无任何产品，先完成首个产品登记</p>
+          <p className="text-muted-foreground mb-4">暂无经营目标与交付容器</p>
           <Button asChild>
             <Link to="/products/new" search={createSearch}>
               <Plus className="mr-2 h-4 w-4" />

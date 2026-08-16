@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { ArrowRight, Boxes, GitBranch, ArrowLeft } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
+import { MODULE_SEMANTIC_LABEL, REPOSITORY_SEMANTIC_LABEL } from '@/features/project-context/data/shared-semantic-constants'
 
 interface ModuleNextActionBarProps {
   /** 是否有已绑定 Product */
@@ -37,7 +38,7 @@ export function ModuleNextActionBar({
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium">下一步：绑定产品</p>
           <p className="text-xs text-muted-foreground truncate">
-            将 "{moduleName}" 绑定到所属产品，建立模块归属关系
+            将{MODULE_SEMANTIC_LABEL} "{moduleName}" 绑定到所属经营目标（Product），建立资产归属关系
           </p>
         </div>
         <Button size="sm" asChild className="shrink-0">
@@ -61,7 +62,7 @@ export function ModuleNextActionBar({
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium">下一步：映射仓库</p>
           <p className="text-xs text-muted-foreground truncate">
-            将 "{moduleName}" 映射到代码仓库，建立可追溯关联
+            将{MODULE_SEMANTIC_LABEL} "{moduleName}" 映射到{REPOSITORY_SEMANTIC_LABEL}（Repository），建立可追溯关联
           </p>
         </div>
         <Button size="sm" asChild className="shrink-0">
@@ -86,7 +87,7 @@ export function ModuleNextActionBar({
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium">下一步：查看相关决策</p>
           <p className="text-xs text-muted-foreground truncate">
-            继续处理与 "{moduleName}" 相关的决策记录
+            继续处理与该{MODULE_SEMANTIC_LABEL}相关的规则与决策记录
           </p>
         </div>
         <Button size="sm" asChild className="shrink-0">
@@ -108,7 +109,7 @@ export function ModuleNextActionBar({
     <div className="flex items-center gap-3 rounded-lg border bg-muted/30 p-3">
       <ArrowLeft className="h-4 w-4 text-muted-foreground shrink-0" />
       <div className="flex-1 min-w-0">
-        <p className="text-sm text-muted-foreground">模块结构已完整</p>
+        <p className="text-sm text-muted-foreground">该{MODULE_SEMANTIC_LABEL}的关系已完整</p>
       </div>
       <Button size="sm" variant="outline" asChild className="shrink-0">
         <Link to="/dashboard">返回 Dashboard</Link>

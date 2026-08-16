@@ -146,7 +146,7 @@ export function ModuleListPage() {
       ) : isEmpty && !isFiltered ? (
         // §7.1 空状态：主动作直接进入 Module Create
         <div className="rounded-lg border border-dashed p-8 text-center">
-          <p className="text-muted-foreground mb-4">系统中尚无任何模块，先完成首个模块登记</p>
+          <p className="text-muted-foreground mb-4">暂无已登记的可复用能力资产</p>
           <Button asChild>
               <Link to="/modules/new" search={createSearch}>
               <Plus className="mr-2 h-4 w-4" />

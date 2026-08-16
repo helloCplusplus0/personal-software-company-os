@@ -18,6 +18,7 @@ import { useReuseSummaryRead } from '@/features/reuse-summary/data/use-reuse-sum
 import { ReuseSummaryInline } from '@/features/reuse-summary/components/reuse-summary-inline'
 import { ModuleNextActionBar } from '../components/module-next-action-bar'
 import { buildReviewReturnSearch, shouldReturnToReview } from '@/features/review/lib/review-source'
+import { MODULE_SEMANTIC_LABEL } from '@/features/project-context/data/shared-semantic-constants'
 
 /**
  * ModuleDetailPage — Module Detail
@@ -189,6 +190,11 @@ export function ModuleDetailPage() {
           {returnLabel}
         </Button>
       </div>
+
+      {/* phase12-08：页面级语义导语 */}
+      <p className="text-sm text-muted-foreground">
+        该 Module 代表一个{MODULE_SEMANTIC_LABEL}
+      </p>
 
       {/* phase10-10：页面级下一步动作区 */}
       <ModuleNextActionBar
