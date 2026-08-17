@@ -138,12 +138,13 @@ message GetGovernanceProfileResponse {
 
 // UpdateGovernanceProfileRequest 治理画像保存请求（手工维护优先）。
 //
-// 可写集合冻结（phase13-05 写边界）：
-//   - template_source / docs_workflow_layout
+// 可写集合冻结（phase13-09 前端写边界 + phase13-08 后端主线收口）：
+//   - template_source
 //   - canonical_root_files[]（file_name / role / required）
 //   - global_asset_bindings[]（name / kind / entry_ref / role / structured_summary）
 //
 // 显式排除（read-only，不由本请求携带）：
+//   - docs_workflow_layout（由服务端固定为根级正式上游冻结值；字段号保留为兼容位）
 //   - track_type / current_phase_name / current_phase_ref / current_phase_status
 //   - project_profile_version（由服务端固定为当前正式版本）
 //   - global_asset_bindings[].markdown_resolvable（由服务端按资产矩阵计算返回）
@@ -152,8 +153,9 @@ message UpdateGovernanceProfileRequest {
   string repository_id = 1;
   // 模板来源（optional，允许为空）
   optional string template_source = 2;
-  // docs workflow 结构布局（非空）
-  string docs_workflow_layout = 3;
+  // Deprecated compatibility field.
+  // 第一版不再接受客户端写入 docs workflow 布局；服务端始终使用冻结基线值。
+  optional string docs_workflow_layout = 3 [deprecated = true];
   // canonical 根级文件绑定集合（至少 1 项）
   repeated CanonicalRootFileBinding canonical_root_files = 4;
   // 全局规范资产绑定集合（至少 1 项，name 必须属于 8 项冻结矩阵）

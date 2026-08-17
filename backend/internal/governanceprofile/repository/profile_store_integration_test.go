@@ -39,9 +39,8 @@ func TestSaveProfileRefreshesRootFrozenReadOnlyProjection(t *testing.T) {
 	summary := "phase13 project rules summary"
 
 	firstResult, err := store.SaveProfile(ctx, governanceprofile.UpdateGovernanceProfileInput{
-		RepositoryID:       repositoryID,
-		TemplateSource:     stringPtr("manual://seed"),
-		DocsWorkflowLayout: "phase/fix/audit/review",
+		RepositoryID:   repositoryID,
+		TemplateSource: stringPtr("manual://seed"),
 		CanonicalRootFiles: []governanceprofile.CanonicalRootFileBinding{
 			{FileName: "plan.md", Role: "plan", Required: true},
 		},
@@ -77,9 +76,8 @@ func TestSaveProfileRefreshesRootFrozenReadOnlyProjection(t *testing.T) {
 
 	updatedSummary := "updated summary"
 	secondResult, err := store.SaveProfile(ctx, governanceprofile.UpdateGovernanceProfileInput{
-		RepositoryID:       repositoryID,
-		TemplateSource:     stringPtr("manual://updated"),
-		DocsWorkflowLayout: "phase/fix/audit/review",
+		RepositoryID:   repositoryID,
+		TemplateSource: stringPtr("manual://updated"),
 		CanonicalRootFiles: []governanceprofile.CanonicalRootFileBinding{
 			{FileName: "plan.md", Role: "plan", Required: true},
 		},
@@ -122,6 +120,9 @@ func assertRootFrozenProjection(t *testing.T, result *governanceprofile.Governan
 	}
 	if result.Record.CurrentPhaseStatus != governanceprofile.RootFrozenCurrentPhaseStatus {
 		t.Fatalf("expected current_phase_status %q, got %q", governanceprofile.RootFrozenCurrentPhaseStatus, result.Record.CurrentPhaseStatus)
+	}
+	if result.Record.DocsWorkflowLayout != governanceprofile.RootFrozenDocsWorkflowLayout {
+		t.Fatalf("expected docs_workflow_layout %q, got %q", governanceprofile.RootFrozenDocsWorkflowLayout, result.Record.DocsWorkflowLayout)
 	}
 }
 

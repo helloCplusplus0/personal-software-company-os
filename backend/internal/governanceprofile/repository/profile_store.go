@@ -60,7 +60,7 @@ func (s *ProfileStore) SaveProfile(ctx context.Context, input governanceprofile.
 	const upsertSQL = `
 		INSERT INTO governance_profiles (
 			repository_id, project_profile_version, track_type, template_source,
-			docs_workflow_layout, current_phase_name, current_phase_ref, current_phase_status
+                     docs_workflow_layout, current_phase_name, current_phase_ref, current_phase_status
 		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 		ON CONFLICT (repository_id) DO UPDATE SET
 			project_profile_version = EXCLUDED.project_profile_version,
@@ -81,7 +81,7 @@ func (s *ProfileStore) SaveProfile(ctx context.Context, input governanceprofile.
 		governanceprofile.CurrentProfileVersion,
 		string(governanceprofile.RootFrozenTrackType),
 		input.TemplateSource,
-		input.DocsWorkflowLayout,
+		governanceprofile.RootFrozenDocsWorkflowLayout,
 		governanceprofile.RootFrozenCurrentPhaseName,
 		governanceprofile.RootFrozenCurrentPhaseRef,
 		string(governanceprofile.RootFrozenCurrentPhaseStatus),

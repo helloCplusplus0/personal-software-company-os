@@ -54,6 +54,9 @@ const (
 	// RootFrozenTrackType PSCO 当前冻结技术路线。
 	RootFrozenTrackType = TrackTypeDurableSystem
 
+	// RootFrozenDocsWorkflowLayout PSCO 当前冻结 docs workflow 布局。
+	RootFrozenDocsWorkflowLayout = "phase/fix/audit/review"
+
 	// RootFrozenCurrentPhaseName PSCO 当前正式阶段名。
 	RootFrozenCurrentPhaseName = "phase13_project_governance_profile_foundation"
 
@@ -153,13 +156,12 @@ type GovernanceProfileReadResult struct {
 }
 
 // UpdateGovernanceProfileInput 治理画像保存输入。
-// 可写集合冻结（phase13-05 写边界）：template_source / docs_workflow_layout /
+// 可写集合冻结（phase13-09 / phase13-08 收口）：template_source /
 // canonical_root_files[] / global_asset_bindings[]。
 // 显式排除 read-only 字段（track_type / current_phase_*）与 project_profile_version。
 type UpdateGovernanceProfileInput struct {
 	RepositoryID        string                     `json:"repository_id"`
 	TemplateSource      *string                    `json:"template_source"`
-	DocsWorkflowLayout  string                     `json:"docs_workflow_layout"`
 	CanonicalRootFiles  []CanonicalRootFileBinding `json:"canonical_root_files"`
 	GlobalAssetBindings []GlobalAssetBinding       `json:"global_asset_bindings"`
 }

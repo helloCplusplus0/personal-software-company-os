@@ -20,7 +20,7 @@
  * - PC：分区式详情布局，概要、已关联目标、待关联目标与候选关联区同页可见
  * - 移动浏览器：按概要、已关联目标、待关联目标、候选读取与目标关联的垂直顺序重排
  */
-import { Link, useParams, useNavigate, useSearch } from '@tanstack/react-router'
+import { useParams, useNavigate, useSearch } from '@tanstack/react-router'
 import { useDecisionDetailPageRead } from '../data/use-decision-detail-page-read'
 import { useDecisionDetailActions } from '../application/use-decision-detail-actions'
 import { DecisionDetailSummaryCard } from '../components/decision-detail-summary-card'
@@ -117,23 +117,6 @@ export function DecisionDetailPage() {
   const hasPendingLinkTarget =
     pendingTargetModuleId !== '' &&
     !data.linked_modules.some((lm) => lm.module_id === pendingTargetModuleId)
-  const projectContextEntryModules = Array.from(
-    new Map(
-      [
-        ...data.linked_modules,
-        ...(hasPendingLinkTarget
-          ? [
-              {
-                module_id: pendingTargetModuleId,
-                module_name: data.source_context.source_module_name,
-              },
-            ]
-          : []),
-      ]
-        .filter((module) => module.module_id !== '')
-        .map((module) => [module.module_id, module]),
-    ).values(),
-  )
 
   return (
     <div className="space-y-4">
@@ -153,31 +136,8 @@ export function DecisionDetailPage() {
         该 Decision 用于索引{DECISION_SEMANTIC_CORE}。
       </p>
 
-      <div className="rounded-lg border bg-muted/30 p-4">
-        <h3 className="text-sm font-medium">共享项目上下文入口</h3>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {projectContextEntryModules.length === 0
-            ? '当前 Decision 还没有稳定的 Module 入口，请先在下方完成模块关联后，再从对应 Module 详情进入共享项目上下文。'
-            : projectContextEntryModules.length === 1
-              ? '当前 Decision 可通过下列固定入口回到唯一关联 Module，再查看对应 Repository 的共享项目上下文。'
-              : '当前 Decision 关联了多个 Module，请先选择一个固定入口进入对应 Module，再查看具体 Repository 的共享项目上下文。'}
-        </p>
-        {projectContextEntryModules.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-2">
-            {projectContextEntryModules.map((module) => (
-              <Button key={module.module_id} variant="outline" size="sm" asChild>
-                <Link
-                  to="/modules/$moduleId"
-                  params={{ moduleId: module.module_id }}
-                  search={moduleDetailSearch}
-                >
-                  查看 Module：{module.module_name}
-                </Link>
-              </Button>
-            ))}
-          </div>
-        )}
-      </div>
+      {/* phase13-09：phase12“共享项目上下文入口”卡片已按退出规则整体移除，
+          Decision detail 只保留自身业务主语义 */}
 
       {/* PC：分区式布局；移动端：垂直顺序重排 */}
       <div className="grid gap-4 lg:grid-cols-3">

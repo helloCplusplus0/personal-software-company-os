@@ -48,13 +48,12 @@ func (s *Server) GetGovernanceProfile(ctx context.Context, req *pb.GetGovernance
 
 // UpdateGovernanceProfile 承接治理画像保存（手工维护优先，单一事务边界）。
 //
-// 解包约束：请求不携带 read-only 字段（track_type / current_phase_*）与
+// 解包约束：请求不携带 read-only 字段（track_type / current_phase_* / docs_workflow_layout）与
 // project_profile_version（由服务端固定写入），字段排除在合同层即成立。
 func (s *Server) UpdateGovernanceProfile(ctx context.Context, req *pb.UpdateGovernanceProfileRequest) (*pb.UpdateGovernanceProfileResponse, error) {
 	input := governanceprofile.UpdateGovernanceProfileInput{
 		RepositoryID:        req.RepositoryId,
 		TemplateSource:      req.TemplateSource,
-		DocsWorkflowLayout:  req.DocsWorkflowLayout,
 		CanonicalRootFiles:  protoRootFilesToDomain(req.CanonicalRootFiles),
 		GlobalAssetBindings: protoAssetBindingsToDomain(req.GlobalAssetBindings),
 	}

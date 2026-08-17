@@ -72,7 +72,6 @@ func (s *CommandService) UpdateGovernanceProfile(ctx context.Context, input gove
 //
 // 校验规则：
 //   - repository_id 非空
-//   - docs_workflow_layout 非空（required）
 //   - canonical_root_files 至少 1 项（required）；file_name / role 非空；file_name 不重复
 //   - global_asset_bindings 至少 1 项（required）；name 必须属于 8 项冻结矩阵；
 //     kind / entry_ref / role 非空；name 不重复；前 5 项摘要型资产 structured_summary 必填
@@ -80,10 +79,6 @@ func (s *CommandService) UpdateGovernanceProfile(ctx context.Context, input gove
 func validateUpdateInput(input governanceprofile.UpdateGovernanceProfileInput) error {
 	if strings.TrimSpace(input.RepositoryID) == "" {
 		return fmt.Errorf("%w: repository_id is required", governanceprofile.ErrInvalidInput)
-	}
-
-	if strings.TrimSpace(input.DocsWorkflowLayout) == "" {
-		return fmt.Errorf("%w: docs_workflow_layout is required", governanceprofile.ErrInvalidInput)
 	}
 
 	// canonical_root_files：required 集合，至少 1 项

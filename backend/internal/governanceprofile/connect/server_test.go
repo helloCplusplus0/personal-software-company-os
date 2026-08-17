@@ -16,7 +16,7 @@ func TestDomainResultToProtoIncludesMarkdownResolvable(t *testing.T) {
 			RepositoryID:          "repo-1",
 			ProjectProfileVersion: governanceprofile.CurrentProfileVersion,
 			TrackType:             governanceprofile.RootFrozenTrackType,
-			DocsWorkflowLayout:    "phase/fix/audit/review",
+			DocsWorkflowLayout:    governanceprofile.RootFrozenDocsWorkflowLayout,
 			CurrentPhaseName:      governanceprofile.RootFrozenCurrentPhaseName,
 			CurrentPhaseRef:       governanceprofile.RootFrozenCurrentPhaseRef,
 			CurrentPhaseStatus:    governanceprofile.RootFrozenCurrentPhaseStatus,

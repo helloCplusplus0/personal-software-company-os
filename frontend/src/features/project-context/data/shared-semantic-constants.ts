@@ -14,7 +14,5 @@ export const ENTITY_SEMANTIC_LABEL_MAP: Record<string, string> = {
   Decision: DECISION_SEMANTIC_LABEL,
 }
 
-// 入口描述常量
-export const RULE_ENTRY_LABEL = "规则与约束"
-export const PHASE_ENTRY_LABEL = "当前阶段"
-export const BOUNDARY_ENTRY_LABEL = "当前阶段边界"
+// phase13-09：phase12 project-context 叙事入口常量（rules / phases / boundaries）
+// 已随“项目上下文”前端区块一并退出，不再保留

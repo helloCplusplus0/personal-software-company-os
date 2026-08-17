@@ -23,10 +23,7 @@ import { ProductDecisionEntryPanel } from '../components/product-decision-entry-
 import { DAILY_REVIEW_QUERY_KEY, WEEKLY_REVIEW_QUERY_KEY } from '@/features/review/data/review-query-options'
 import { buildReviewReturnSearch, shouldReturnToReview } from '@/features/review/lib/review-source'
 import { useModuleDecisionLinksByModuleIds } from '@/features/module-registry/data/use-module-decision-links-by-module-ids'
-import {
-  PRODUCT_SEMANTIC_LABEL,
-  resolveUniqueRepositoryCandidate,
-} from '@/features/project-context'
+import { PRODUCT_SEMANTIC_LABEL } from '@/features/project-context/data/shared-semantic-constants'
 
 /**
  * ProductDetailPage — Product Detail
@@ -73,9 +70,6 @@ export function ProductDetailPage() {
   const relatedDecisionLinksQuery = useModuleDecisionLinksByModuleIds(
     data?.bound_modules?.map((module) => module.module_id) ?? [],
   )
-  const resolvedRepositoryCandidate = resolveUniqueRepositoryCandidate(data?.bound_repositories ?? [])
-  const resolvedRepositoryId = resolvedRepositoryCandidate?.repository_id ?? ''
-
   // phase06-15 §"Module Detail 与 Product Detail 挂接位"：
   // Product Detail 只新增一个页面级 ReuseSummaryRead query（scope=product_detail）
   // 在已绑定模块相关区域附近挂接；失败不回退整页，只影响复用摘要内联组件
@@ -106,11 +100,9 @@ export function ProductDetailPage() {
 
   // phase04-06 BindModuleToProduct 成功后重新读取详情结果（reread）
   // phase10-10：补齐 Dashboard / Review query 失效，确保返回后 reread 正确
+  // phase13-09：phase12 project-context 前端消费已退出，不再失效该缓存键
   const invalidateDetail = () => {
     queryClient.invalidateQueries({ queryKey: ['product-detail', productId] })
-    if (resolvedRepositoryId) {
-      queryClient.invalidateQueries({ queryKey: ['project-context', resolvedRepositoryId] })
-    }
     queryClient.invalidateQueries({ queryKey: ['product-list'] })
     queryClient.invalidateQueries({ queryKey: ['product-module-candidates', productId] })
     queryClient.invalidateQueries({ queryKey: ['dashboard-feedback-signals'] })
