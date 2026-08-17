@@ -399,9 +399,14 @@ func buildTemplateReuse(pool *pgxpool.Pool, reuseSummaryQuerySvc *reusesummaryse
 //   - 最小只读项目上下文聚合读取能力
 //   - 以 repository_id 为唯一结构化输入锚点
 //   - 不依赖消费侧目录结构或固定文件名
-func buildProjectContext(pool *pgxpool.Pool) *projectcontextservice.QueryService {
+//
+// phase13-10 新增：
+//   - GetProjectBrief agent 项目简报读取主线
+//   - 治理画像读取通过 candidate.GovernanceProfileReader 接口注入，
+//     复用 governanceprofile 读取主线，不在 projectcontext 内复制治理画像 SQL
+func buildProjectContext(pool *pgxpool.Pool, governanceReader projectcontextcandidate.GovernanceProfileReader) *projectcontextservice.QueryService {
 	contextReaders := projectcontextcandidate.NewContextReaders(pool)
-	return projectcontextservice.NewQueryService(contextReaders)
+	return projectcontextservice.NewQueryService(contextReaders, governanceReader)
 }
 
 // buildGovernanceProfile 构造 Governance Profile 的 QueryService / CommandService 并返回。

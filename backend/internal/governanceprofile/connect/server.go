@@ -42,7 +42,7 @@ func (s *Server) GetGovernanceProfile(ctx context.Context, req *pb.GetGovernance
 	}
 
 	return &pb.GetGovernanceProfileResponse{
-		Profile: domainResultToProto(result),
+		Profile: DomainResultToProto(result),
 	}, nil
 }
 
@@ -64,13 +64,17 @@ func (s *Server) UpdateGovernanceProfile(ctx context.Context, req *pb.UpdateGove
 	}
 
 	return &pb.UpdateGovernanceProfileResponse{
-		Profile: domainResultToProto(result),
+		Profile: DomainResultToProto(result),
 	}, nil
 }
 
 // --- 领域结果 → proto 组装 ---
+//
+// 以下转换函数为导出函数：phase13-10 起 projectcontext/connect 的 GetProjectBrief
+// 复用同一份 domain → proto 映射，避免在消费方重写第二套治理画像字段映射。
 
-func domainResultToProto(result *governanceprofile.GovernanceProfileReadResult) *pb.GovernanceProfile {
+// DomainResultToProto 将治理画像聚合读取结果转换为 proto GovernanceProfile。
+func DomainResultToProto(result *governanceprofile.GovernanceProfileReadResult) *pb.GovernanceProfile {
 	rootFiles := make([]*pb.CanonicalRootFileBinding, 0, len(result.CanonicalRootFiles))
 	for _, f := range result.CanonicalRootFiles {
 		rootFiles = append(rootFiles, &pb.CanonicalRootFileBinding{
@@ -80,17 +84,7 @@ func domainResultToProto(result *governanceprofile.GovernanceProfileReadResult) 
 		})
 	}
 
-	assetBindings := make([]*pb.GlobalAssetBinding, 0, len(result.GlobalAssetBindings))
-	for _, b := range result.GlobalAssetBindings {
-		assetBindings = append(assetBindings, &pb.GlobalAssetBinding{
-			Name:               b.Name,
-			Kind:               b.Kind,
-			EntryRef:           b.EntryRef,
-			Role:               b.Role,
-			StructuredSummary:  b.StructuredSummary,
-			MarkdownResolvable: boolPtr(b.MarkdownResolvable),
-		})
-	}
+	assetBindings := DomainAssetBindingsToProto(result.GlobalAssetBindings)
 
 	return &pb.GovernanceProfile{
 		RepositoryId:          result.Record.RepositoryID,
@@ -100,12 +94,29 @@ func domainResultToProto(result *governanceprofile.GovernanceProfileReadResult) 
 		DocsWorkflowLayout:    result.Record.DocsWorkflowLayout,
 		CurrentPhaseName:      result.Record.CurrentPhaseName,
 		CurrentPhaseRef:       result.Record.CurrentPhaseRef,
-		CurrentPhaseStatus:    domainPhaseStatusToProto(result.Record.CurrentPhaseStatus),
+		CurrentPhaseStatus:    DomainPhaseStatusToProto(result.Record.CurrentPhaseStatus),
 		CanonicalRootFiles:    rootFiles,
 		GlobalAssetBindings:   assetBindings,
 		CreatedAt:             timestamppb.New(result.Record.CreatedAt),
 		UpdatedAt:             timestamppb.New(result.Record.UpdatedAt),
 	}
+}
+
+// DomainAssetBindingsToProto 将全局规范资产绑定数组转换为 proto GlobalAssetBinding 数组。
+// brief 的 global_assets 顶层块与治理画像同源，共用本函数。
+func DomainAssetBindingsToProto(bindings []governanceprofile.GlobalAssetBinding) []*pb.GlobalAssetBinding {
+	result := make([]*pb.GlobalAssetBinding, 0, len(bindings))
+	for _, b := range bindings {
+		result = append(result, &pb.GlobalAssetBinding{
+			Name:               b.Name,
+			Kind:               b.Kind,
+			EntryRef:           b.EntryRef,
+			Role:               b.Role,
+			StructuredSummary:  b.StructuredSummary,
+			MarkdownResolvable: boolPtr(b.MarkdownResolvable),
+		})
+	}
+	return result
 }
 
 // --- proto 请求 → 领域输入解包 ---
@@ -153,7 +164,9 @@ func domainTrackTypeToProto(t governanceprofile.TrackType) pb.TrackType {
 	}
 }
 
-func domainPhaseStatusToProto(s governanceprofile.PhaseStatus) pb.PhaseStatus {
+// DomainPhaseStatusToProto 将阶段状态受控枚举转换为 proto PhaseStatus。
+// brief 的 current_phase 顶层块从治理画像主记录派生，共用本函数。
+func DomainPhaseStatusToProto(s governanceprofile.PhaseStatus) pb.PhaseStatus {
 	switch s {
 	case governanceprofile.PhaseStatusPlanned:
 		return pb.PhaseStatus_PHASE_STATUS_PLANNED

@@ -17,7 +17,12 @@ import (
 	"github.com/joho/godotenv"
 
 	pbc "github.com/psco/backend/internal/gen/connect/psco/project_context/v1/project_contextv1connect"
+	gppb "github.com/psco/backend/internal/gen/proto/psco/governance_profile/v1"
 	pb "github.com/psco/backend/internal/gen/proto/psco/project_context/v1"
+	"github.com/psco/backend/internal/governanceprofile"
+	governanceprofilecandidate "github.com/psco/backend/internal/governanceprofile/candidate"
+	governanceprofilerepo "github.com/psco/backend/internal/governanceprofile/repository"
+	governanceprofileservice "github.com/psco/backend/internal/governanceprofile/service"
 	projectcontextcandidate "github.com/psco/backend/internal/projectcontext/candidate"
 	projectcontextservice "github.com/psco/backend/internal/projectcontext/service"
 )
@@ -159,6 +164,107 @@ func TestProjectContextAcceptanceScenarios(t *testing.T) {
 			}
 		}
 	})
+
+	t.Run("project brief repository not found returns not found", func(t *testing.T) {
+		h.resetFixture(t, "completed-bound")
+
+		_, err := h.client.GetProjectBrief(t.Context(), &pb.GetProjectBriefRequest{
+			RepositoryId: "00000000-0000-0000-0000-000000000001",
+		})
+		if err == nil {
+			t.Fatal("expected not found error")
+		}
+		if got := connectrpc.CodeOf(err); got != connectrpc.CodeNotFound {
+			t.Fatalf("expected CodeNotFound, got %v", got)
+		}
+	})
+
+	t.Run("project brief profile not found returns not found", func(t *testing.T) {
+		h.resetFixture(t, "completed-bound")
+
+		repositoryID := h.mustRepositoryIDByName(t, "main-repo")
+		_, err := h.client.GetProjectBrief(t.Context(), &pb.GetProjectBriefRequest{
+			RepositoryId: repositoryID,
+		})
+		if err == nil {
+			t.Fatal("expected not found error")
+		}
+		if got := connectrpc.CodeOf(err); got != connectrpc.CodeNotFound {
+			t.Fatalf("expected CodeNotFound, got %v", got)
+		}
+	})
+
+	t.Run("project brief returns full seven-block response when governance profile exists", func(t *testing.T) {
+		h.resetFixture(t, "completed-bound")
+
+		repositoryID := h.mustRepositoryIDByName(t, "main-repo")
+		h.mustSaveGovernanceProfile(t, repositoryID)
+
+		resp, err := h.client.GetProjectBrief(t.Context(), &pb.GetProjectBriefRequest{
+			RepositoryId: repositoryID,
+		})
+		if err != nil {
+			t.Fatalf("expected success, got %v", err)
+		}
+
+		if resp.GetRepository() == nil || resp.GetRepository().GetName() != "main-repo" {
+			t.Fatalf("expected repository main-repo, got %+v", resp.GetRepository())
+		}
+		if resp.GetGovernanceProfile() == nil {
+			t.Fatal("expected governance profile block")
+		}
+		if len(resp.GetGlobalAssets()) == 0 {
+			t.Fatal("expected global assets block")
+		}
+		if resp.GetCurrentPhase() == nil {
+			t.Fatal("expected current phase block")
+		}
+		if resp.GetCurrentPhase().GetStatus() != gppb.PhaseStatus_PHASE_STATUS_IN_PROGRESS {
+			t.Fatalf("expected current phase in progress, got %v", resp.GetCurrentPhase().GetStatus())
+		}
+		if len(resp.GetProducts()) != 1 {
+			t.Fatalf("expected products array length 1, got %d", len(resp.GetProducts()))
+		}
+		if len(resp.GetModules()) == 0 {
+			t.Fatal("expected modules array")
+		}
+		if len(resp.GetDecisions()) == 0 {
+			t.Fatal("expected decisions array")
+		}
+		if resp.GetGovernanceProfile().GetCurrentPhaseStatus() != gppb.PhaseStatus_PHASE_STATUS_IN_PROGRESS {
+			t.Fatalf("expected governance profile current phase status in progress, got %v", resp.GetGovernanceProfile().GetCurrentPhaseStatus())
+		}
+		if !resp.GetGlobalAssets()[0].GetMarkdownResolvable() {
+			t.Fatal("expected global assets to expose markdown_resolvable")
+		}
+	})
+
+	t.Run("project brief allows empty arrays when governance profile exists but bindings are incomplete", func(t *testing.T) {
+		h.resetFixture(t, "completed-unbound")
+
+		repositoryID := h.mustRepositoryIDByName(t, "main-repo")
+		h.mustSaveGovernanceProfile(t, repositoryID)
+
+		resp, err := h.client.GetProjectBrief(t.Context(), &pb.GetProjectBriefRequest{
+			RepositoryId: repositoryID,
+		})
+		if err != nil {
+			t.Fatalf("expected success with empty arrays, got %v", err)
+		}
+
+		if len(resp.GetProducts()) != 0 {
+			t.Fatalf("expected empty products array, got %d", len(resp.GetProducts()))
+		}
+		if len(resp.GetModules()) != 0 {
+			t.Fatalf("expected empty modules array, got %d", len(resp.GetModules()))
+		}
+		if len(resp.GetDecisions()) != 0 {
+			t.Fatalf("expected empty decisions array, got %d", len(resp.GetDecisions()))
+		}
+		if resp.GetGovernanceProfile() == nil || resp.GetCurrentPhase() == nil {
+			t.Fatalf("expected governance profile blocks to still be present, got %+v", resp)
+		}
+	})
 }
 
 type projectContextIntegrationHarness struct {
@@ -185,7 +291,12 @@ func newProjectContextIntegrationHarness(t *testing.T) *projectContextIntegratio
 	t.Cleanup(pool.Close)
 
 	readers := projectcontextcandidate.NewContextReaders(pool)
-	querySvc := projectcontextservice.NewQueryService(readers)
+	// phase13-10：注入治理画像读取主线作为 GetProjectBrief 的 candidate 依赖
+	governanceReader := governanceprofileservice.NewQueryService(
+		governanceprofilecandidate.NewRepositoryReader(pool),
+		governanceprofilerepo.NewProfileStore(pool),
+	)
+	querySvc := projectcontextservice.NewQueryService(readers, governanceReader)
 
 	mux := http.NewServeMux()
 	path, handler := pbc.NewProjectContextServiceHandler(NewServer(querySvc))
@@ -230,6 +341,40 @@ func (h *projectContextIntegrationHarness) mustRepositoryIDByName(t *testing.T, 
 		t.Fatalf("lookup repository %q: %v", name, err)
 	}
 	return repositoryID
+}
+
+func (h *projectContextIntegrationHarness) mustSaveGovernanceProfile(t *testing.T, repositoryID string) {
+	t.Helper()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	summary := "project rules summary for brief test"
+	store := governanceprofilerepo.NewProfileStore(h.pool)
+	_, err := store.SaveProfile(ctx, governanceprofile.UpdateGovernanceProfileInput{
+		RepositoryID:   repositoryID,
+		TemplateSource: stringPtr("manual://brief-test"),
+		CanonicalRootFiles: []governanceprofile.CanonicalRootFileBinding{
+			{FileName: "AGENTS.md", Role: "entry", Required: true},
+			{FileName: "plan.md", Role: "plan", Required: true},
+		},
+		GlobalAssetBindings: []governanceprofile.GlobalAssetBinding{
+			{
+				Name:              "project_rules.md",
+				Kind:              "rules",
+				EntryRef:          "project_rules.md",
+				Role:              "rules",
+				StructuredSummary: &summary,
+			},
+		},
+	})
+	if err != nil {
+		t.Fatalf("save governance profile: %v", err)
+	}
+}
+
+func stringPtr(value string) *string {
+	return &value
 }
 
 func mustBackendRoot(t *testing.T) string {

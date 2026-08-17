@@ -1,10 +1,12 @@
 // Package candidate — projectcontext 跨模块 reader 接口定义与实现（由 projectcontext 拥有）。
 //
-// 本文件承接 GetProjectContext 所需的全部跨模块读取：
+// 本文件承接 GetProjectContext / GetProjectBrief 所需的全部跨模块读取：
 //   - repository 身份读取
-//   - 关联 product 摘要读取（通过 product_repositories）
+//   - 关联 product 摘要读取（通过 product_repositories；兼容层 singular + brief 数组版）
 //   - 关联 module 摘要读取（通过 module_repositories）
 //   - 关联 decision 摘要读取（两类 module-link 派生命中）
+//   - 治理画像聚合读取（GovernanceProfileReader 接口，由 platform 装配点注入
+//     governanceprofile/service.QueryService 实现，phase13-10 冻结）
 //
 // 文件落点：backend/internal/projectcontext/candidate/context_readers.go
 package candidate
@@ -17,8 +19,21 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	"github.com/psco/backend/internal/governanceprofile"
 	"github.com/psco/backend/internal/projectcontext"
 )
+
+// GovernanceProfileReader 治理画像聚合读取接口（消费方拥有的 candidate 接口）。
+//
+// phase13-10 冻结：brief 对治理画像的读取必须通过本接口承接，
+// 由 platform 装配点注入 governanceprofile/service.QueryService 作为实现；
+// projectcontext 不得直接书写治理画像 SQL 或复制其存储读取逻辑。
+type GovernanceProfileReader interface {
+	// GetGovernanceProfile 读取治理画像聚合（主记录 + 两组 bindings）。
+	// 失败语义：repository 不存在或画像未创建 → ErrGovernanceProfileNotFound；
+	//           其他读取失败 → ErrGovernanceProfileReadFailed。
+	GetGovernanceProfile(ctx context.Context, repositoryID string) (*governanceprofile.GovernanceProfileReadResult, error)
+}
 
 // ContextReaders 承接 GetProjectContext 所需的全部跨模块 reader。
 //
@@ -83,6 +98,9 @@ func (r *ContextReaders) ValidateRepositoryBinding(ctx context.Context, reposito
 
 // ReadProduct 通过 product_repositories 读取关联 product 摘要。
 // 若无关联 product，返回 nil（非错误）。
+//
+// Deprecated: 兼容层专用（GetProjectContext singular 语义，LIMIT 1）。
+// brief 主线应使用 ReadProducts（数组语义，phase13-10 冻结）。
 func (r *ContextReaders) ReadProduct(ctx context.Context, repositoryID string) (*projectcontext.ProductSummary, error) {
 	var summary projectcontext.ProductSummary
 	err := r.pool.QueryRow(ctx, `
@@ -101,6 +119,36 @@ func (r *ContextReaders) ReadProduct(ctx context.Context, repositoryID string) (
 		return nil, fmt.Errorf("read product: %w", err)
 	}
 	return &summary, nil
+}
+
+// ReadProducts 通过 product_repositories 读取关联 product 摘要数组。
+// brief 主线（GetProjectBrief）专用：数组语义，即使长度为 1 也保持数组形式。
+// 若无关联 product，返回空列表（非错误）。
+func (r *ContextReaders) ReadProducts(ctx context.Context, repositoryID string) ([]projectcontext.ProductSummary, error) {
+	rows, err := r.pool.Query(ctx, `
+		SELECT p.id, p.name, COALESCE(p.description, ''), COALESCE(p.status, 'active')
+		FROM products p
+		INNER JOIN product_repositories pr ON pr.product_id = p.id
+		WHERE pr.repository_id = $1
+		ORDER BY p.name
+	`, repositoryID)
+	if err != nil {
+		return nil, fmt.Errorf("read products: %w", err)
+	}
+	defer rows.Close()
+
+	summaries := []projectcontext.ProductSummary{}
+	for rows.Next() {
+		var s projectcontext.ProductSummary
+		if err := rows.Scan(&s.ID, &s.Name, &s.Description, &s.Status); err != nil {
+			return nil, fmt.Errorf("scan product: %w", err)
+		}
+		summaries = append(summaries, s)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iter product rows: %w", err)
+	}
+	return summaries, nil
 }
 
 // ReadModules 通过 module_repositories 读取关联 module 摘要。

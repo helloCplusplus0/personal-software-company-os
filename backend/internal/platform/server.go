@@ -88,13 +88,14 @@ func NewServer(cfg Config, pool *pgxpool.Pool) *Server {
 		templateReuseQuerySvc := buildTemplateReuse(pool, reuseSummaryQuerySvc)
 		mountTemplateReuseConnect(r, templateReuseQuerySvc)
 
-		// phase11 project context 模块：最小只读项目上下文聚合读取
-		projectContextQuerySvc := buildProjectContext(pool)
-		mountProjectContextConnect(r, projectContextQuerySvc)
-
 		// phase13 governance profile 模块：项目治理画像结构化写读
 		governanceProfileQuerySvc, governanceProfileCommandSvc := buildGovernanceProfile(pool)
 		mountGovernanceProfileConnect(r, governanceProfileQuerySvc, governanceProfileCommandSvc)
+
+		// phase11 project context 模块：最小只读项目上下文聚合读取
+		// phase13-10：GetProjectBrief 通过 candidate 接口复用治理画像读取主线
+		projectContextQuerySvc := buildProjectContext(pool, governanceProfileQuerySvc)
+		mountProjectContextConnect(r, projectContextQuerySvc)
 	})
 
 	return &Server{

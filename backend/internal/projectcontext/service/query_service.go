@@ -1,9 +1,10 @@
 // Package service — projectcontext 只读聚合编排层。
 //
-// 单一 QueryService 承接 GetProjectContext 只读编排。
-// 对齐 phase11-07 已冻结的 query service owner 结论。
+// 单一 QueryService 承接 GetProjectContext / GetProjectBrief 只读编排。
+// 对齐 phase11-07 与 phase13-10 已冻结的 query service owner 结论。
 //
-// 跨模块读取全部通过 candidate/ 子包隔离，service 层不直接写跨模块 SQL。
+// 跨模块读取全部通过 candidate/ 子包隔离，service 层不直接写跨模块 SQL；
+// 治理画像读取通过 candidate.GovernanceProfileReader 接口注入（phase13-10）。
 //
 // 文件落点：backend/internal/projectcontext/service/query_service.go
 package service
@@ -12,6 +13,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/psco/backend/internal/governanceprofile"
 	"github.com/psco/backend/internal/projectcontext"
 	"github.com/psco/backend/internal/projectcontext/candidate"
 	"github.com/psco/backend/internal/projectcontext/renderer"
@@ -21,14 +23,18 @@ import (
 //
 // 依赖通过 platform 装配点注入：
 //   - contextReaders：跨模块 reader 集合
+//   - governanceReader：治理画像聚合读取接口（phase13-10，由
+//     governanceprofile/service.QueryService 实现）
 type QueryService struct {
-	contextReaders *candidate.ContextReaders
+	contextReaders  *candidate.ContextReaders
+	governanceReader candidate.GovernanceProfileReader
 }
 
 // NewQueryService 构造 QueryService。
-func NewQueryService(contextReaders *candidate.ContextReaders) *QueryService {
+func NewQueryService(contextReaders *candidate.ContextReaders, governanceReader candidate.GovernanceProfileReader) *QueryService {
 	return &QueryService{
-		contextReaders: contextReaders,
+		contextReaders:  contextReaders,
+		governanceReader: governanceReader,
 	}
 }
 
@@ -117,4 +123,99 @@ func (s *QueryService) ExportProjectContext(ctx context.Context, repositoryID st
 		return "", err
 	}
 	return renderer.RenderMarkdown(result), nil
+}
+
+// GetProjectBrief 编排跨模块读取，返回 agent 项目简报（phase13-10 正式主线）。
+//
+// 编排顺序（以 repository_id 为唯一锚点）：
+//  1. 读取 Repository 身份（不存在则返回 ErrRepositoryNotFound）
+//  2. 读取治理画像聚合（复用 governanceprofile 读取主线；
+//     画像未创建 → ErrGovernanceProfileNotFound，与 GetGovernanceProfile 单值一致）
+//  3. 读取 products[]（数组语义，通过 product_repositories）
+//  4. 读取 modules[]（通过 module_repositories）
+//  5. 读取 decisions[]（两类 module-link 派生命中 + 去重 + archived 过滤）
+//  6. current_phase 从步骤 2 的治理画像主记录派生
+//  7. global_assets 从步骤 2 的 global_asset_bindings 同源填充
+//
+// 失败语义（phase13-10 冻结）：
+//   - Repository 不存在 → ErrRepositoryNotFound（CodeNotFound）
+//   - 治理画像未创建 → ErrGovernanceProfileNotFound（CodeNotFound）
+//   - 数组为空是合法状态，不做 Repository Binding 完整性强制校验
+//   - 其他读取失败 → ErrProjectContextReadFailed（CodeInternal）
+func (s *QueryService) GetProjectBrief(ctx context.Context, repositoryID string) (*projectcontext.ProjectBriefReadResult, error) {
+	// 1. Repository 身份
+	repo, err := s.contextReaders.ReadRepository(ctx, repositoryID)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %w", projectcontext.ErrProjectContextReadFailed, err)
+	}
+
+	// 2. 治理画像聚合（candidate 接口承接，不复制治理画像 SQL）
+	profile, err := s.governanceReader.GetGovernanceProfile(ctx, repositoryID)
+	if err != nil {
+		return nil, err
+	}
+
+	// 3. products[]（数组语义）
+	products, err := s.contextReaders.ReadProducts(ctx, repositoryID)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %w", projectcontext.ErrProjectContextReadFailed, err)
+	}
+
+	// 4. modules[]
+	modules, err := s.contextReaders.ReadModules(ctx, repositoryID)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %w", projectcontext.ErrProjectContextReadFailed, err)
+	}
+	if modules == nil {
+		modules = []projectcontext.ModuleSummary{}
+	}
+
+	// 5. decisions[]
+	decisions, err := s.contextReaders.ReadDecisions(ctx, repositoryID)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %w", projectcontext.ErrProjectContextReadFailed, err)
+	}
+	if decisions == nil {
+		decisions = []projectcontext.DecisionSummary{}
+	}
+
+	// 6. current_phase 从治理画像主记录单向派生
+	currentPhase := projectcontext.BriefCurrentPhase{
+		Name:     profile.Record.CurrentPhaseName,
+		EntryRef: profile.Record.CurrentPhaseRef,
+		Status:   phaseStatusToString(profile.Record.CurrentPhaseStatus),
+	}
+
+	// 7. global_assets 从治理画像读取结果同源填充
+	globalAssets := profile.GlobalAssetBindings
+	if globalAssets == nil {
+		globalAssets = []governanceprofile.GlobalAssetBinding{}
+	}
+
+	return &projectcontext.ProjectBriefReadResult{
+		Repository:        repo,
+		GovernanceProfile: profile,
+		GlobalAssets:      globalAssets,
+		CurrentPhase:      currentPhase,
+		Products:          products,
+		Modules:           modules,
+		Decisions:         decisions,
+	}, nil
+}
+
+// phaseStatusToString 将治理画像阶段状态受控枚举转换为字符串形式。
+// 与 governanceprofile 受控枚举单值对齐，供 brief domain DTO 承载。
+func phaseStatusToString(s governanceprofile.PhaseStatus) string {
+	switch s {
+	case governanceprofile.PhaseStatusPlanned:
+		return "planned"
+	case governanceprofile.PhaseStatusInProgress:
+		return "in_progress"
+	case governanceprofile.PhaseStatusCompleted:
+		return "completed"
+	case governanceprofile.PhaseStatusBlocked:
+		return "blocked"
+	default:
+		return ""
+	}
 }

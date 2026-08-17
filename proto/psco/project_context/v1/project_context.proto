@@ -1,9 +1,12 @@
 // PSCO Project Context 最小只读协议合同源
 //
-// 文档定位：本文件是 phase11-07 最小只读项目上下文聚合读取能力的唯一合同定义入口。
+// 文档定位：本文件是 phase11-07 最小只读项目上下文聚合读取能力与
+// phase13-10 agent 项目简报读取主线的唯一合同定义入口。
 // 上游规格：
 //   - phase11-05 最小只读项目上下文聚合导出设计 Spec
 //   - phase11-07 落实最小只读项目上下文聚合读取能力 Spec
+//   - phase13-07 agent 项目简报输入与读取设计 Spec（brief schema 与本服务受控演进关系）
+//   - phase13-10 落实 agent 项目简报读取主线 Spec（GetProjectBrief 后端实现主线）
 //
 // 落点要求：
 //   - 本文件落地到现有 proto/ 工作区，复用同一 buf workspace
@@ -14,9 +17,10 @@
 //   - 该能力复用既有 .proto + ConnectRPC 正式主线
 //   - 该能力不得偷渡 MCP、CLI、前端对话式入口或任何第二协议层
 //   - repository_id 是唯一正式结构化输入锚点
-//   - 只承接"已完成 Repository Binding"的仓库上下文读取
-//   - "已完成 Repository Binding" 当前阶段明确解释为：
+//   - GetProjectContext 只承接"已完成 Repository Binding"的仓库上下文读取；
+//     "已完成 Repository Binding" 当前阶段明确解释为：
 //       至少已有一条 product_repositories 绑定，且至少已有一条 module_repositories 映射
+//   - GetProjectBrief 不做绑定完整性强制校验：数组为空是合法状态
 //   - Decision 聚合口径遵守 phase11-05 已冻结的两类 module-link 派生命中范围
 //   - 不依赖消费侧项目目录结构或固定文件名
 //
@@ -25,12 +29,14 @@
 //   生成产物：
 //     - Go:    backend/internal/gen/proto/psco/project_context/v1/
 //     - Go Connect: backend/internal/gen/connect/psco/project_context/v1/
+//     - TS:    frontend/src/gen/proto/psco/project_context/v1/
 
 syntax = "proto3";
 
 package psco.project_context.v1;
 
 import "google/protobuf/timestamp.proto";
+import "psco/governance_profile/v1/governance_profile.proto";
 
 // Go 包路径（生成代码落点）
 option go_package = "github.com/psco/backend/internal/gen/proto/psco/project_context/v1;projectcontextv1";
@@ -144,22 +150,89 @@ message ExportProjectContextResponse {
 }
 
 // ============================================================================
+// agent 项目简报（project brief for agent）
+// ============================================================================
+
+// BriefCurrentPhase — brief 顶层 current_phase 最小派生消息。
+// 从治理画像主记录的 current_phase_name / current_phase_ref /
+// current_phase_status 三个 read-only 字段单向派生，不引入第二套阶段语义。
+message BriefCurrentPhase {
+  // 当前阶段名称
+  string name = 1;
+  // 当前阶段正式入口引用
+  string entry_ref = 2;
+  // 当前阶段状态（复用治理画像受控枚举）
+  psco.governance_profile.v1.PhaseStatus status = 3;
+}
+
+// GetProjectBriefRequest — agent 项目简报读取请求。
+// repository_id 是唯一正式结构化输入锚点。
+message GetProjectBriefRequest {
+  string repository_id = 1;
+}
+
+// GetProjectBriefResponse — agent 项目简报读取响应。
+// phase13-07 冻结的 7 顶层字段 schema：
+//   1. repository          — 仓库身份摘要（复用既有 RepositorySummary）
+//   2. governance_profile  — 治理画像完整消息（复用 governance_profile.proto）
+//   3. global_assets       — 全局规范资产绑定数组（同源于治理画像读取结果）
+//   4. current_phase       — 当前阶段最小派生块
+//   5. products            — 关联产品摘要数组（即使长度 1 也保持数组形式）
+//   6. modules             — 关联模块摘要数组
+//   7. decisions           — 关联决策摘要数组
+//
+// 约束：
+//   - 不新增与上述并列的第 8 个顶层块
+//   - 不混入任何"给 agent 的自然语言指导词"字段
+//   - 数组为空是合法状态（不做绑定完整性强制校验）
+message GetProjectBriefResponse {
+  RepositorySummary repository = 1;
+  psco.governance_profile.v1.GovernanceProfile governance_profile = 2;
+  repeated psco.governance_profile.v1.GlobalAssetBinding global_assets = 3;
+  BriefCurrentPhase current_phase = 4;
+  repeated ProductSummary products = 5;
+  repeated ModuleSummary modules = 6;
+  repeated DecisionSummary decisions = 7;
+}
+
+// ============================================================================
 // 服务接口
 // ============================================================================
 
-// ProjectContextService — 最小只读项目上下文聚合读取与导出。
+// ProjectContextService — 最小只读项目上下文聚合读取、导出与 agent 项目简报。
 //
-// 当前阶段承接两个只读 RPC：
-//   - GetProjectContext：结构化项目上下文聚合读取
-//   - ExportProjectContext：AGENTS 风格 Markdown 导出，单向派生自 GetProjectContext 结构化结果
+// 当前阶段承接三个只读 RPC：
+//   - GetProjectBrief：agent 项目简报结构化读取（phase13-10 正式主线，
+//     以治理画像为准，不混入硬编码投影）
+//   - GetProjectContext：结构化项目上下文聚合读取（deprecated 兼容层）
+//   - ExportProjectContext：AGENTS 风格 Markdown 导出（deprecated 兼容层）
 //
 // 不承接任何业务写入、agent 写回或第二套 canonical API。
 //
-// 错误语义：
+// 错误语义（GetProjectBrief）：
 //   - 仓库不存在：返回 CodeNotFound
-//   - 仓库绑定不完整：返回 CodeFailedPrecondition，附带明确失败语义
+//   - 治理画像未创建：返回 CodeNotFound（与 GetGovernanceProfile 单值一致）
+//   - 数组为空是合法状态，不返回 FailedPrecondition
 //   - 内部读取失败：返回 CodeInternal
+//
+// 兼容窗口（phase13-10 冻结）：
+//   - GetProjectContext / ExportProjectContext 在 phase13 内继续保留，
+//     作为兼容读取层与兼容导出层；行为与响应结构保持不变（含硬编码投影）
+//   - 两个旧 RPC 不再承接新的演进需求，不得与 brief 并列演化为
+//     两套 canonical agent 输入协议
+//   - 退役讨论进入条件：phase13-11 验收确认 brief 读取主线稳定后，
+//     退役窗口作为下一阶段进入条件讨论
 service ProjectContextService {
-  rpc GetProjectContext(GetProjectContextRequest) returns (GetProjectContextResponse);
-  rpc ExportProjectContext(ExportProjectContextRequest) returns (ExportProjectContextResponse);
+  // agent 项目简报结构化读取（正式主线）。
+  rpc GetProjectBrief(GetProjectBriefRequest) returns (GetProjectBriefResponse);
+
+  // Deprecated: 兼容读取层。agent 消费侧应迁移到 GetProjectBrief。
+  rpc GetProjectContext(GetProjectContextRequest) returns (GetProjectContextResponse) {
+    option deprecated = true;
+  }
+
+  // Deprecated: 兼容导出层。单向派生自 GetProjectContext 结构化结果。
+  rpc ExportProjectContext(ExportProjectContextRequest) returns (ExportProjectContextResponse) {
+    option deprecated = true;
+  }
 }

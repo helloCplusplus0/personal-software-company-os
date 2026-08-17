@@ -10,6 +10,8 @@
 // 不直接暴露存储模型，不在 types.go 中新增 .proto 中不存在的业务字段语义。
 package projectcontext
 
+import "github.com/psco/backend/internal/governanceprofile"
+
 // ============================================================================
 // 核心消息 DTO
 // ============================================================================
@@ -96,4 +98,36 @@ type ProjectContextReadResult struct {
 	Rules      []RuleEntry        `json:"rules"`
 	Phases     []PhaseEntry       `json:"phases"`
         Boundaries []BoundaryEntry    `json:"boundaries"`
+}
+
+// ============================================================================
+// agent 项目简报 DTO（phase13-10）
+// ============================================================================
+
+// BriefCurrentPhase brief 顶层 current_phase 最小派生块。
+// 从治理画像主记录的 current_phase_name / current_phase_ref /
+// current_phase_status 三个 read-only 字段单向派生。
+// Status 使用字符串形式（planned / in_progress / completed / blocked）供
+// JSON domain DTO 消费；Connect handler 组装 proto 时直接从治理画像
+// PhaseStatus 受控枚举转换为 proto 枚举（不经字符串反解析）。
+type BriefCurrentPhase struct {
+	Name     string `json:"name"`
+	EntryRef string `json:"entry_ref"`
+	Status   string `json:"status"`
+}
+
+// ProjectBriefReadResult GetProjectBrief 的响应结构。
+// 对齐 proto GetProjectBriefResponse（phase13-07 冻结的 7 顶层字段 schema）。
+//
+// GovernanceProfile / GlobalAssets 由治理画像聚合读取结果同源填充；
+// 治理画像 domain 类型直接透传（GovernanceProfileReadResult），
+// proto 组装在 Connect handler 内复用 governanceprofile/connect 导出的转换函数。
+type ProjectBriefReadResult struct {
+	Repository        *RepositorySummary                             `json:"repository"`
+	GovernanceProfile *governanceprofile.GovernanceProfileReadResult `json:"governance_profile"`
+	GlobalAssets      []governanceprofile.GlobalAssetBinding         `json:"global_assets"`
+	CurrentPhase      BriefCurrentPhase                              `json:"current_phase"`
+	Products          []ProductSummary                               `json:"products"`
+	Modules           []ModuleSummary                                `json:"modules"`
+	Decisions         []DecisionSummary                              `json:"decisions"`
 }

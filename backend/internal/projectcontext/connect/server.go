@@ -1,6 +1,7 @@
 // Package connect — projectcontext Connect transport 实现。
 //
-// 本文件是 phase11-07 最小只读项目上下文能力的 Connect handler 实现。
+// 本文件是 phase11-07 最小只读项目上下文能力与 phase13-10 agent 项目简报
+// 读取主线的 Connect handler 实现。
 // 职责仅限于：proto request 解包 → service 调用 → proto response 组装 → 错误映射。
 //
 // 文件落点：backend/internal/projectcontext/connect/server.go
@@ -13,6 +14,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/psco/backend/internal/connecterrors"
+	gpconnect "github.com/psco/backend/internal/governanceprofile/connect"
 	pbc "github.com/psco/backend/internal/gen/connect/psco/project_context/v1/project_contextv1connect"
 	pb "github.com/psco/backend/internal/gen/proto/psco/project_context/v1"
 	"github.com/psco/backend/internal/projectcontext"
@@ -51,7 +53,8 @@ func (s *Server) GetProjectContext(ctx context.Context, req *pb.GetProjectContex
 
 // ExportProjectContext 承接 AGENTS 风格 Markdown 项目上下文导出。
 //
-// 单向派生自 GetProjectContext 结构化结果，不绕过结构化读取主线。
+// Deprecated: 兼容导出层（phase13-10 冻结兼容窗口）。单向派生自
+// GetProjectContext 结构化结果，不绕过结构化读取主线。
 func (s *Server) ExportProjectContext(ctx context.Context, req *pb.ExportProjectContextRequest) (*pb.ExportProjectContextResponse, error) {
 	markdown, err := s.querySvc.ExportProjectContext(ctx, req.GetRepositoryId())
 	if err != nil {
@@ -61,6 +64,50 @@ func (s *Server) ExportProjectContext(ctx context.Context, req *pb.ExportProject
 	return &pb.ExportProjectContextResponse{
 		Markdown: markdown,
 	}, nil
+}
+
+// GetProjectBrief 承接 agent 项目简报结构化读取（phase13-10 正式主线）。
+//
+// 组装约束（phase13-07 冻结的 7 顶层字段 schema）：
+//   - governance_profile / global_assets 复用 governanceprofile/connect
+//     导出的转换函数，与 GetGovernanceProfile 同源，不重写第二套映射
+//   - current_phase 从治理画像主记录 read-only 字段单向派生
+//   - products[] / modules[] / decisions[] 数组语义，空数组合法
+//   - 不混入硬编码投影、目录扫描或自然语言指导词
+func (s *Server) GetProjectBrief(ctx context.Context, req *pb.GetProjectBriefRequest) (*pb.GetProjectBriefResponse, error) {
+	result, err := s.querySvc.GetProjectBrief(ctx, req.GetRepositoryId())
+	if err != nil {
+		return nil, connecterrors.MapToConnectError(err)
+	}
+
+	return &pb.GetProjectBriefResponse{
+		Repository: domainRepositorySummaryToProto(result.Repository),
+		GovernanceProfile: gpconnect.DomainResultToProto(
+			result.GovernanceProfile),
+		GlobalAssets: gpconnect.DomainAssetBindingsToProto(result.GlobalAssets),
+		CurrentPhase: &pb.BriefCurrentPhase{
+			Name:     result.CurrentPhase.Name,
+			EntryRef: result.CurrentPhase.EntryRef,
+			Status:   gpconnect.DomainPhaseStatusToProto(result.GovernanceProfile.Record.CurrentPhaseStatus),
+		},
+		Products:  domainProductSummariesToProto(result.Products),
+		Modules:   domainModuleSummariesToProto(result.Modules),
+		Decisions: domainDecisionSummariesToProto(result.Decisions),
+	}, nil
+}
+
+// domainProductSummariesToProto 将产品摘要数组转换为 proto（brief 数组语义专用）。
+func domainProductSummariesToProto(items []projectcontext.ProductSummary) []*pb.ProductSummary {
+	result := make([]*pb.ProductSummary, 0, len(items))
+	for _, item := range items {
+		result = append(result, &pb.ProductSummary{
+			Id:          item.ID,
+			Name:        item.Name,
+			Description: item.Description,
+			Status:      item.Status,
+		})
+	}
+	return result
 }
 
 // --- 类型转换函数 ---

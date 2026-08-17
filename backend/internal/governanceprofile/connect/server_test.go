@@ -35,7 +35,7 @@ func TestDomainResultToProtoIncludesMarkdownResolvable(t *testing.T) {
 		},
 	}
 
-	profile := domainResultToProto(result)
+	profile := DomainResultToProto(result)
 	if profile == nil {
 		t.Fatal("expected governance profile proto")
 	}
