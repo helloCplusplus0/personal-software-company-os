@@ -75,7 +75,7 @@ DoD：
 
 范围：
 
-- 产出 `project_profile_version / track_type / template_source` 等核心字段设计
+- 产出 `project_profile_version / track_type / template_source / docs_workflow_layout` 等核心字段设计
 - 产出 `canonical_root_files / global_constraint_refs / current_phase_*` 等最小字段矩阵
 - 产出必填、可选、只读、后续可自动校验字段的分类
 

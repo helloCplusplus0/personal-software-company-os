@@ -110,7 +110,7 @@
 #### C. `Controlled synced projection`
 
 - Git 推进摘要
-- 模板来源与模板版本
+- 模板仓库接入状态与模板版本自动同步
 - 自动存在性校验
 - 自动状态建议
 
@@ -127,6 +127,7 @@
 - `project_profile_version`
 - `track_type`
 - `template_source`
+- `docs_workflow_layout`
 - `canonical_root_files[]`
   - `file_name`
   - `role`
@@ -143,6 +144,7 @@
 
 - 第一版优先手工维护，不默认自动推断
 - 第一版优先管理“合同”，不是先管理“扫描结果”
+- 同一概念不得跨 A / B / C 多层重复承接；`template_source` 作为第一版手工维护字段属于 A 层，不得再被解释为 C 层自动同步结果
 - 存在性校验、自动建议与同步增强属于后续受控进入项
 
 ### 3.4 当前项目范式 v1 矩阵

@@ -1,0 +1,8 @@
+- [x] 三层信息模型已明确冻结为 `PSCO-native facts / IDE-accessible context / Controlled synced projection`
+- [x] `PSCO-native facts` 的正式承接对象已明确到四实体信息与关系、全局规范资产、项目级治理画像
+- [x] `IDE-accessible context` 已明确冻结为继续由 IDE / agent 现场读取，不默认上升为 PSCO 正式事实
+- [x] `Controlled synced projection` 已明确冻结为后续受控进入项，而不是 `phase13` 起点默认实现内容
+- [x] 执行顺序已明确冻结为“先正式承接 `PSCO-native facts`，再保留现场读取，最后才讨论受控同步投影”
+- [x] 同一概念不会在 `PSCO-native facts / IDE-accessible context / Controlled synced projection` 多层重复承接
+- [x] 后续执行者已能机械回答“什么该先做，什么后做，什么本阶段明确不做”
+- [x] 本 spec 包与 `phase13` 三件套在三层边界、执行顺序与进入条件上保持单值一致
