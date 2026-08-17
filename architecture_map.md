@@ -108,6 +108,10 @@ docs/
   - `phase12_semantic_alignment_and_readonly_consumption_foundation_dev_plan.md`
   - `phase12_semantic_alignment_and_readonly_consumption_foundation_shared_baseline.md`
 - 当前已创建：
+  - `phase13_project_governance_profile_foundation_architecture_plan.md`
+  - `phase13_project_governance_profile_foundation_dev_plan.md`
+  - `phase13_project_governance_profile_foundation_shared_baseline.md`
+- 当前已创建：
   - `phase09_template_reuse_derived_intelligence_foundation_architecture_plan.md`
   - `phase09_template_reuse_derived_intelligence_foundation_dev_plan.md`
   - `phase09_template_reuse_derived_intelligence_foundation_shared_baseline.md`
@@ -141,6 +145,7 @@ docs/
   - `docs/phase/phase10_asset_action_closure_foundation_dev_plan.md`（最近完成正式业务 phase 的任务与 DoD 冻结记录）
   - `docs/phase/phase10_asset_action_closure_foundation_shared_baseline.md`（最近完成正式业务 phase 的共享基线冻结记录）
   - `.trae/specs/phase10_11_complete_asset_action_closure_integration_browser_regression_validation/spec.md`（`phase10-11` 正式验收入口；同目录 `tasks.md / checklist.md` 共同构成 `phase10` 正式验收与收口证据）
+  - `.trae/specs/phase12_11_validate_semantic_alignment_readonly_consumption_foundation/acceptance_report.md`（`phase12` 正式验收与收口入口）
 - 当前项目技术路线已冻结为 `Durable System Track`
 - `phase02_module_registry_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - `phase03_decision_center_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
@@ -167,8 +172,10 @@ docs/
 - `phase10` 三件套在收口后只承担最近完成正式业务 phase 的规划与冻结记录角色；正式验收与收口入口收敛到 `phase10-11` 规格目录
 - `phase11` 已直接承接 `PSCO-mvp05-summarize-feedback.md` 与 `phase10` 已完成的正式交付结论，并已完成“根级上下文真相源治理 + 最小只读项目上下文导出”的正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - `phase11` 三件套在收口后只承担最近完成阶段的规划与冻结记录角色；正式验收与收口入口收敛到 `phase11-09` acceptance_report
-- `phase12` 已直接承接 `PSCO-mvp05-summarize-feedback.md`、`audit_002` 审计结论与 `phase11` 已完成的正式交付结论，当前已建立 `/plan` 三件套，冻结“前端四实体语义一致性收口 + Web / agent 共享只读消费深化”为单一主交付能力
-- `phase12` 三件套在当前阶段承担下一正式 phase 的规划与冻结记录角色；正式执行前必须先完成三件套复核，再进入 `/spec`
+- `phase12` 已直接承接 `PSCO-mvp05-summarize-feedback.md`、`audit_002` 审计结论与 `phase11` 已完成的正式交付结论，并已完成“前端四实体语义一致性收口 + Web / agent 共享只读消费深化”的正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`
+- `phase12` 三件套在收口后只承担最近完成阶段的规划与冻结记录角色；正式验收与收口入口收敛到 `phase12-11` acceptance_report
+- `phase13` 已直接承接 `phase12` 已完成的正式交付结论与当前根级真相源文档，当前已建立 `/plan` 三件套，冻结“项目级治理画像 + 全局规范资产 + agent 项目简报输入”为单一主交付能力
+- `phase13` 三件套在当前阶段承担下一正式 phase 的规划与冻结记录角色；正式执行前必须先完成三件套复核，再进入 `/spec`
 
 ### 4.2 fix
 

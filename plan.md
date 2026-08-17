@@ -4,11 +4,11 @@
 
 ## 1. 当前状态
 
-- 当前阶段：`phase12_semantic_alignment_and_readonly_consumption_foundation`
-- 当前状态：`phase12` 已建立正式 `/plan` 入口；`phase11` 已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`；`phase10` 继续作为最近完成正式业务 phase，`phase09` 继续作为最近完成正式支撑能力 phase
-- 当前最近完成正式验收与收口入口：`.trae/specs/phase11_09_validate_project_context_foundation_dogfooding_regression/acceptance_report.md`
-- 当前目标：建立“前端四实体语义一致性收口 + Web / agent 共享只读消费深化”的正式 phase 规划，并冻结直接上游、边界与进入条件
-- 当前下一阶段进入条件：更重的 `MCP / CLI / agent 写回 / 更重消费通道 / 受控维护能力` 只允许在 `phase12` 正式收口后，再讨论或进入；当前不得写成既成事实
+- 当前阶段：`phase13_project_governance_profile_foundation`
+- 当前状态：`phase13` 已建立正式 `/plan` 入口；`phase12` 已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`；`phase10` 继续作为最近完成正式业务 phase，`phase09` 继续作为最近完成正式支撑能力 phase
+- 当前最近完成正式验收与收口入口：`.trae/specs/phase12_11_validate_semantic_alignment_readonly_consumption_foundation/acceptance_report.md`
+- 当前目标：建立“项目级治理画像 + 全局规范资产 + agent 项目简报输入”的正式 phase 规划，并冻结直接上游、边界与进入条件
+- 当前下一阶段进入条件：项目推进跟踪、模板仓库接入、自动同步与更重受控维护能力，只允许在 `phase13` 正式收口后，再依据新条件讨论或进入；当前不得写成既成事实
 
 ## 2. 当前进度概览
 
@@ -71,7 +71,9 @@
 - `.trae/specs/phase11_09_validate_project_context_foundation_dogfooding_regression/acceptance_report.md` 已冻结为 `phase11` 的正式验收与收口入口
 - `phase11_project_context_foundation` 已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`，并完成“根级上下文真相源治理 + 最小只读项目上下文导出”交付；下一阶段只允许在本阶段正式收口后，再讨论或进入更重的 `MCP / CLI / agent 写回 / 更重消费通道 / 受控维护能力`
 - `docs/audit/audit_002_phase11_post_closeout_direction_analysis.md` 已冻结为 `phase11` 收口后下一步方向的正式审计结论入口
-- `phase12_semantic_alignment_and_readonly_consumption_foundation` 已建立正式 `/plan` 入口，当前只承接“前端四实体语义一致性收口 + Web / agent 共享只读消费深化”，不提前混入 schema 重写、MCP / CLI 或 agent 写回
+- `.trae/specs/phase12_11_validate_semantic_alignment_readonly_consumption_foundation/acceptance_report.md` 已冻结为 `phase12` 的正式验收与收口入口
+- `phase12_semantic_alignment_and_readonly_consumption_foundation` 已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`，并完成“前端四实体语义一致性收口 + Web / agent 共享只读消费深化”交付；`Dashboard / Review / Onboarding / Detail pages` 的语义表达与共享只读消费已完成阶段收口
+- `phase13_project_governance_profile_foundation` 已建立正式 `/plan` 入口，当前只承接“项目级治理画像 + 全局规范资产 + agent 项目简报输入”的最小正式主线，不提前混入 Git 推进跟踪、模板仓库接入、自动同步或 agent 写回
 
 ## 3. Phase 路线预览
 
@@ -176,8 +178,17 @@
 - 进入条件：直接承接 `PSCO-mvp05-summarize-feedback.md`、`audit_002` 审计结论、`phase11` 三件套与 `phase11-09` 正式验收入口，以及当前前端四实体语义表达与只读消费入口尚未完全收口的已知差距
 - 范围约束：不得提前混入 MCP / CLI / agent 写回 / 前端对话式入口 / 四实体结构重构 / 第二套 canonical API；只允许推进“前端四实体语义一致性收口 + Web / agent 共享只读消费深化”
 - 交付要求：作为交付型 phase 推进，必须先完成 `/plan` 三件套复核，再按 `dev_plan` 子任务顺序进入 `/spec`、实现、验收与收口
+- 状态：`completed`
+- 当前收口结果：已完成“前端四实体语义一致性收口 + Web / agent 共享只读消费深化”正式交付；`.trae/specs/phase12_11_validate_semantic_alignment_readonly_consumption_foundation/acceptance_report.md` 为正式验收与收口入口；更重的项目推进跟踪、模板仓库接入、自动同步与受控维护能力只允许在 `phase13` 正式收口后，再作为下一阶段进入条件讨论或进入
+
+### phase13：`phase13_project_governance_profile_foundation`
+
+- 目标：交付 `Project Governance Profile Foundation`
+- 进入条件：直接承接 `phase12` 三件套、`phase12-11` 正式验收与收口入口、当前根级真相源文档，以及已形成的新共识：PSCO 优先管理四实体信息、全局规范资产与项目级治理画像，而不把 IDE 目录即时上下文默认上升为正式事实源
+- 范围约束：不得把本 phase 扩写为 Git 推进跟踪平台、模板仓库自动化、全量目录扫描器、MCP / CLI / agent 写回或 IDE 插件；只允许推进“项目级治理画像 + 全局规范资产 + agent 项目简报输入”的最小正式主线
+- 交付要求：作为交付型 phase 推进，必须先完成 `/plan` 三件套复核，再按 `dev_plan` 子任务顺序进入 `/spec`、实现、验收与收口
 - 状态：`planned`
-- 当前规划结果：已建立 `phase12` `/plan` 三件套；当前只冻结直接上游、单一主交付、边界与进入条件，后续执行必须继续遵守“先消费、后维护”
+- 当前规划结果：已建立 `phase13` `/plan` 三件套；当前只冻结直接上游、单一主交付、项目范式 v1、边界与进入条件，后续执行必须继续遵守“先收口 PSCO-native facts，再讨论更重同步”
 ## 4. 说明
 
 - 本文档只承载全局开发预览、phase 计划与进度
