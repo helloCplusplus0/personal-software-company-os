@@ -1,0 +1,14 @@
+- [x] `project brief for agent` 的第一版顶层 schema 已明确冻结为 7 个字段
+- [x] brief 各顶层块的最小子字段矩阵已明确冻结到可直接落 `.proto` 的程度
+- [x] `repository / governance_profile / global_assets / current_phase / products[] / modules[] / decisions[]` 的组合语义已明确冻结
+- [x] `repository_id` 已明确冻结为第一版唯一正式锚点
+- [x] 多 `Module / Decision` 已明确要求返回数组摘要，而不是伪造单一当前对象
+- [x] brief 与 IDE 目录读取能力的边界已明确冻结为协作关系，而不是替代关系
+- [x] brief 已明确禁止承接目录全文、源码全文或第二套目录扫描结果
+- [x] 后端、前端与 agent 消费侧已明确要求共享同一份 brief schema
+- [x] 后端已明确冻结为第一版 brief 的唯一正式生成来源
+- [x] brief 与现有 `ProjectContextService` 的关系已在 formal spec 中冻结为受控演进，而不是并列第二套只读聚合协议
+- [x] `GetProjectContext / ExportProjectContext` 的兼容层或退役策略已被要求在 brief 合同落地时显式声明
+- [x] 前端已明确不会承担 brief 主消费职责，也不会派生“前端理解版 brief”
+- [x] 第一版 brief 的非目标与禁止事项已明确冻结
+- [x] 本 spec 包与 `phase13-03 / 13-04 / 13-05 / 13-06` 的上游口径保持单值一致
