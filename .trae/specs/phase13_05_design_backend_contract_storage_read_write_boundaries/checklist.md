@@ -1,0 +1,12 @@
+- [x] 项目治理画像第一版后端唯一正式承接位已明确冻结为同一 `repository_id` 驱动的 repository-scoped governance aggregate
+- [x] 项目治理画像新增业务接口已明确要求以 `.proto` 为唯一长期合同源，并默认通过 `ConnectRPC` 暴露
+- [x] `chi + net/http` 已明确不得形成与治理画像 `.proto` 并列的第二套 canonical API
+- [x] 第一版存储分层已明确冻结为 `governance_profile_record / canonical_root_file_bindings[] / global_asset_bindings[]`
+- [x] 结构化治理字段、入口关系、角色与必要摘要的持久化边界已明确冻结
+- [x] `backend / database / frontend / proto` 的第一版后端承接结论已在 spec 正文单值冻结
+- [x] markdown 正文已明确只允许回源，不允许全文入库或形成数据库 canonical 副本
+- [x] 第一版写边界已明确坚持“手工维护优先、自动同步后置”
+- [x] `track_type / current_phase_name / current_phase_ref / current_phase_status` 已明确排除在治理画像写白名单之外
+- [x] 项目治理画像与四实体既有后端主线的关系已明确冻结，且不会复制第二套四实体事实源
+- [x] 8 份全局规范资产的逐项承接矩阵已明确单值冻结
+- [x] 后续执行者不再需要猜“哪份文件只做引用、哪份文件需要结构化摘要”
