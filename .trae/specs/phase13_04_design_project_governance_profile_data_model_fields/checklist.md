@@ -1,0 +1,11 @@
+- [x] 项目治理画像第一版核心字段集合已明确冻结为 `project_profile_version / track_type / template_source / docs_workflow_layout / canonical_root_files[] / global_constraint_refs[] / current_phase_name / current_phase_ref / current_phase_status`
+- [x] 每个核心字段的正式语义已明确，不再停留在名称猜测层
+- [x] 核心标量字段的结构形状、可空规则与受控取值已明确冻结
+- [x] `canonical_root_files[]` 的最小子字段集合已明确冻结为 `file_name / role / required`
+- [x] `global_constraint_refs[]` 的最小子字段集合已明确冻结为 `name / kind / entry_ref`
+- [x] 第一版字段分类矩阵已明确区分 `required / optional / read-only / future-auto-verifiable`
+- [x] `read-only` 已落实到具体字段集合，而不是只停留在抽象原则
+- [x] `template_source` 已明确保持为第一版手工维护字段，而不是自动同步结果
+- [x] 第一版未把存在性校验或自动建议偷渡成字段自动派生主线
+- [x] 当前项目范式 v1 已能通过该字段模型被结构化承接
+- [x] 后续执行 `phase13-05 ~ phase13-10` 时，不再需要重新判断“第一版到底先做哪些字段”
