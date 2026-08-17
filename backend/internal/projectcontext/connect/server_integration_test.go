@@ -234,6 +234,31 @@ func TestProjectContextAcceptanceScenarios(t *testing.T) {
 		if resp.GetGovernanceProfile().GetCurrentPhaseStatus() != gppb.PhaseStatus_PHASE_STATUS_IN_PROGRESS {
 			t.Fatalf("expected governance profile current phase status in progress, got %v", resp.GetGovernanceProfile().GetCurrentPhaseStatus())
 		}
+
+		// phase13-11 同源断言：brief 治理画像字段与画像写入口径 round-trip 一致。
+		profile := resp.GetGovernanceProfile()
+		if profile.GetTemplateSource() != "manual://brief-test" {
+			t.Fatalf("expected template_source round-trip, got %q", profile.GetTemplateSource())
+		}
+		if profile.GetTrackType() != gppb.TrackType_TRACK_TYPE_DURABLE_SYSTEM {
+			t.Fatalf("expected durable system track, got %v", profile.GetTrackType())
+		}
+		if !canonicalRootFilesContain(profile.GetCanonicalRootFiles(), "AGENTS.md", "entry", true) ||
+			!canonicalRootFilesContain(profile.GetCanonicalRootFiles(), "plan.md", "plan", true) {
+			t.Fatalf("expected canonical root files round-trip, got %+v", profile.GetCanonicalRootFiles())
+		}
+		if !globalAssetsContain(resp.GetGlobalAssets(), "project_rules.md", "rules", "project_rules.md", "rules", "project rules summary for brief test") {
+			t.Fatalf("expected global assets round-trip, got %+v", resp.GetGlobalAssets())
+		}
+		// current_phase 从治理画像主记录三 read-only 字段单向派生
+		if resp.GetCurrentPhase().GetName() != profile.GetCurrentPhaseName() ||
+			resp.GetCurrentPhase().GetEntryRef() != profile.GetCurrentPhaseRef() ||
+			resp.GetCurrentPhase().GetStatus() != profile.GetCurrentPhaseStatus() {
+			t.Fatalf(
+				"expected current phase derived from governance profile record, got brief=%+v record=(%s, %s, %v)",
+				resp.GetCurrentPhase(), profile.GetCurrentPhaseName(), profile.GetCurrentPhaseRef(), profile.GetCurrentPhaseStatus(),
+			)
+		}
 		if !resp.GetGlobalAssets()[0].GetMarkdownResolvable() {
 			t.Fatal("expected global assets to expose markdown_resolvable")
 		}
@@ -473,6 +498,27 @@ func containsAll(items []string, wants ...string) bool {
 		}
 	}
 	return true
+}
+
+// canonicalRootFilesContain 断言 canonical 根级文件绑定 round-trip 一致（phase13-11 同源取证）。
+func canonicalRootFilesContain(items []*gppb.CanonicalRootFileBinding, fileName, role string, required bool) bool {
+	for _, item := range items {
+		if item.GetFileName() == fileName && item.GetRole() == role && item.GetRequired() == required {
+			return true
+		}
+	}
+	return false
+}
+
+// globalAssetsContain 断言全局规范资产绑定 round-trip 一致（phase13-11 同源取证）。
+func globalAssetsContain(items []*gppb.GlobalAssetBinding, name, kind, entryRef, role, summary string) bool {
+	for _, item := range items {
+		if item.GetName() == name && item.GetKind() == kind && item.GetEntryRef() == entryRef &&
+			item.GetRole() == role && item.GetStructuredSummary() == summary {
+			return true
+		}
+	}
+	return false
 }
 
 func ruleSummariesContain(items []*pb.RuleEntry, summary string) bool {

@@ -6,11 +6,11 @@
 ## 1. 项目定位
 
 - 项目名称：`Personal Software Company OS`
-- 当前阶段：`phase13_project_governance_profile_foundation`（已建立正式 `/plan` 入口）
-- 当前主目标：建立“项目级治理画像 + 全局规范资产 + agent 项目简报输入”的正式 phase 规划；阶段状态仍只以 `plan.md` 为准
-- 当前直接上游：`PSCO-mvp05-summarize-feedback.md`、`phase12` 三件套与 `phase12-11` 正式验收入口、当前根级真相源文档与已形成的新共识
-- 当前下一阶段入口：项目推进跟踪、模板仓库接入、自动同步与更重受控维护能力，只允许在 `phase13` 正式收口后，再作为下一阶段进入条件讨论或进入；`phase12` 当前保留为最近完成阶段，`phase10` 继续作为最近完成正式业务 phase 保留，`phase09` 继续作为最近完成正式支撑能力 phase 保留
-- 当前最近完成正式验收入口：`.trae/specs/phase12_11_validate_semantic_alignment_readonly_consumption_foundation/acceptance_report.md`
+- 当前阶段：`phase13_project_governance_profile_foundation`（已完成正式收口）
+- 当前主目标：进入 `phase14 /plan` 前的五项裁决准备；阶段状态仍只以 `plan.md` 为准
+- 当前直接上游：`phase13-11` 正式验收入口、`phase13-12` 正式缺口记录（`phase14` 唯一规划上游）、`PSCO-mvp05-summarize-feedback.md` 与当前根级真相源文档
+- 当前下一阶段入口：`phase14 /plan` 必须优先完成五项裁决（信息维护颗粒度 / `Standard` 数据模型与 pg 承载 / `Standard` 与模板仓库内容边界 / 治理画像重叠承接位退役计划 / `Standard` 实体地位仲裁）；`phase10` 继续作为最近完成正式业务 phase 保留，`phase09` 继续作为最近完成正式支撑能力 phase 保留
+- 当前最近完成正式验收入口：`.trae/specs/phase13_11_validate_project_governance_profile_integration_dogfooding_regression/acceptance_report.md`
 - 当前定位：PSCO 是个人软件公司的经营与资产系统，不是代码管理工具，不是 AI Chat 产品，也不是自动扫描系统
 
 ## 2. 当前唯一上游
@@ -94,7 +94,8 @@
 - `docs/audit/audit_002_phase11_post_closeout_direction_analysis.md` 已冻结为 `phase11` 收口后下一步方向的正式审计结论入口
 - `.trae/specs/phase12_11_validate_semantic_alignment_readonly_consumption_foundation/acceptance_report.md` 已冻结为 `phase12` 的正式验收与收口入口
 - `phase12_semantic_alignment_and_readonly_consumption_foundation` 已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`，并完成“前端四实体语义一致性收口 + Web / agent 共享只读消费深化”交付
-- `phase13_project_governance_profile_foundation` 已建立正式 `/plan` 入口，当前只承接“项目级治理画像 + 全局规范资产 + agent 项目简报输入”，不提前混入 Git 推进跟踪、模板仓库接入、自动同步、MCP / CLI 或 agent 写回
+- `phase13_project_governance_profile_foundation` 已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`，并完成“项目级治理画像 + 全局规范资产 + agent 项目简报输入”交付；`phase13-11` 为正式验收与收口入口
+- `.trae/specs/phase13_12_sync_root_level_closeout_next_phase_entry_conditions/spec.md` 已冻结为 `phase13` 正式缺口记录（GAP-01 ~ GAP-07 + CON-01 ~ CON-09）与 `phase14 /plan` 的唯一直接上游
 
 ## 5. 推荐阅读顺序
 
@@ -142,7 +143,9 @@
 42. `.trae/specs/phase06_12_onboarding_sovereignty_reuse_formal_spec/spec.md`
 43. `.trae/specs/phase06_13_land_minimal_proto_contract_mainline/`
 44. `.trae/specs/phase06_16_integration_validation_acceptance/acceptance_report.md`
-45. 当前目标对应的 `phase / fix / audit` 文档
+45. `.trae/specs/phase13_11_validate_project_governance_profile_integration_dogfooding_regression/acceptance_report.md`
+46. `.trae/specs/phase13_12_sync_root_level_closeout_next_phase_entry_conditions/spec.md`
+47. 当前目标对应的 `phase / fix / audit` 文档
 
 ## 6. 接手提醒
 

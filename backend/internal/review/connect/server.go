@@ -204,12 +204,17 @@ func domainDecisionListItemsToProto(items []decisioncenter.DecisionListItem) []*
 func domainModuleReuseSummariesToProto(items []reusesummary.ModuleReuseSummary) []*rspb.ModuleReuseSummary {
 	result := make([]*rspb.ModuleReuseSummary, 0, len(items))
 	for _, item := range items {
-		result = append(result, &rspb.ModuleReuseSummary{
+		mrs := &rspb.ModuleReuseSummary{
 			ModuleId:          item.ModuleID,
 			ReuseProductCount: int32(item.ReuseProductCount),
-			LatestReuseAt:     timestamppb.New(*item.LatestReuseAt),
 			ExplanationText:   item.ExplanationText,
-		})
+		}
+		// LatestReuseAt 为 *time.Time 可空指针：从未被复用的模块该值为 nil，
+		// 直接解引用会 panic；与 reusesummary/connect 的 nil 保护口径对齐。
+		if item.LatestReuseAt != nil {
+			mrs.LatestReuseAt = timestamppb.New(*item.LatestReuseAt)
+		}
+		result = append(result, mrs)
 	}
 	return result
 }
@@ -217,13 +222,17 @@ func domainModuleReuseSummariesToProto(items []reusesummary.ModuleReuseSummary) 
 func domainCapabilitySummariesToProto(items []reusesummary.CapabilitySummary) []*rspb.CapabilitySummary {
 	result := make([]*rspb.CapabilitySummary, 0, len(items))
 	for _, item := range items {
-		result = append(result, &rspb.CapabilitySummary{
-			CapabilityKey:              item.CapabilityKey,
-			CapabilityLabel:            item.CapabilityLabel,
-			SupportingModuleCount:      int32(item.SupportingModuleCount),
-			LatestCapabilityUpdateAt:   timestamppb.New(*item.LatestCapabilityUpdateAt),
-			EmptyStateText:             item.EmptyStateText,
-		})
+		cap := &rspb.CapabilitySummary{
+			CapabilityKey:         item.CapabilityKey,
+			CapabilityLabel:       item.CapabilityLabel,
+			SupportingModuleCount: int32(item.SupportingModuleCount),
+			EmptyStateText:        item.EmptyStateText,
+		}
+		// LatestCapabilityUpdateAt 同为 *time.Time 可空指针，nil 时省略字段。
+		if item.LatestCapabilityUpdateAt != nil {
+			cap.LatestCapabilityUpdateAt = timestamppb.New(*item.LatestCapabilityUpdateAt)
+		}
+		result = append(result, cap)
 	}
 	return result
 }
