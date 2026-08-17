@@ -91,6 +91,10 @@ func NewServer(cfg Config, pool *pgxpool.Pool) *Server {
 		// phase11 project context 模块：最小只读项目上下文聚合读取
 		projectContextQuerySvc := buildProjectContext(pool)
 		mountProjectContextConnect(r, projectContextQuerySvc)
+
+		// phase13 governance profile 模块：项目治理画像结构化写读
+		governanceProfileQuerySvc, governanceProfileCommandSvc := buildGovernanceProfile(pool)
+		mountGovernanceProfileConnect(r, governanceProfileQuerySvc, governanceProfileCommandSvc)
 	})
 
 	return &Server{

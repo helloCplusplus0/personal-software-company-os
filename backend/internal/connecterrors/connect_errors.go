@@ -25,6 +25,7 @@ import (
 	"github.com/psco/backend/internal/dashboard"
 	"github.com/psco/backend/internal/decisioncenter"
 	"github.com/psco/backend/internal/export"
+	"github.com/psco/backend/internal/governanceprofile"
 	"github.com/psco/backend/internal/moduleregistry"
 	"github.com/psco/backend/internal/onboarding"
 	"github.com/psco/backend/internal/productregistry"
@@ -63,6 +64,8 @@ func MapToConnectError(err error) *connect.Error {
 		repositorybinding.ErrProductNotFound,
 		repositorybinding.ErrModuleNotFound,
 		projectcontext.ErrRepositoryNotFound,
+		governanceprofile.ErrRepositoryNotFound,
+		governanceprofile.ErrGovernanceProfileNotFound,
 	) {
 		return connect.NewError(connect.CodeNotFound, err)
 	}
@@ -96,6 +99,7 @@ func MapToConnectError(err error) *connect.Error {
 		repositorybinding.ErrInvalidStatus,
 		reusesummary.ErrInvalidScope,
 		templatereuse.ErrInvalidInput,
+		governanceprofile.ErrInvalidInput,
 	) {
 		return connect.NewError(connect.CodeInvalidArgument, err)
 	}
@@ -130,6 +134,8 @@ func MapToConnectError(err error) *connect.Error {
 	_ = backup.ErrSchemaVersionReadFailed
 	_ = reusesummary.ErrReuseSummaryReadFailed
 	_ = projectcontext.ErrProjectContextReadFailed
+	_ = governanceprofile.ErrGovernanceProfileReadFailed
+	_ = governanceprofile.ErrGovernanceProfileSaveFailed
 
 	return connect.NewError(connect.CodeInternal, err)
 }

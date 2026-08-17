@@ -66,6 +66,10 @@ import (
 	projectcontextcandidate "github.com/psco/backend/internal/projectcontext/candidate"
 	projectcontextconnect "github.com/psco/backend/internal/projectcontext/connect"
 	projectcontextservice "github.com/psco/backend/internal/projectcontext/service"
+	governanceprofilecandidate "github.com/psco/backend/internal/governanceprofile/candidate"
+	governanceprofileconnect "github.com/psco/backend/internal/governanceprofile/connect"
+	governanceprofilerepo "github.com/psco/backend/internal/governanceprofile/repository"
+	governanceprofileservice "github.com/psco/backend/internal/governanceprofile/service"
 	templatereusecandidate "github.com/psco/backend/internal/templatereuse/candidate"
 	templatereuseconnect "github.com/psco/backend/internal/templatereuse/connect"
 	templatereuseservice "github.com/psco/backend/internal/templatereuse/service"
@@ -83,6 +87,7 @@ import (
 	reviewv1connect "github.com/psco/backend/internal/gen/connect/psco/review/v1/reviewv1connect"
 	templatereusev1connect "github.com/psco/backend/internal/gen/connect/psco/template_reuse/v1/template_reusev1connect"
 	projectcontextv1connect "github.com/psco/backend/internal/gen/connect/psco/project_context/v1/project_contextv1connect"
+	governanceprofilev1connect "github.com/psco/backend/internal/gen/connect/psco/governance_profile/v1/governance_profilev1connect"
 )
 
 // ============================================================================
@@ -297,6 +302,18 @@ func mountProjectContextConnect(r chi.Router, querySvc *projectcontextservice.Qu
 	r.Handle(path+"*", http.StripPrefix("/api", handler))
 }
 
+// mountGovernanceProfileConnect 把 Governance Profile 的 canonical Connect handler 挂到 /api 下。
+//
+// phase13-08 新增：
+//   - 项目治理画像结构化写读能力（Get / Update）
+//   - 以 repository_id 为唯一结构化输入锚点
+//   - GovernanceProfileService 是治理画像写读的唯一 canonical transport owner
+func mountGovernanceProfileConnect(r chi.Router, querySvc *governanceprofileservice.QueryService, commandSvc *governanceprofileservice.CommandService) {
+	connectSvc := governanceprofileconnect.NewServer(querySvc, commandSvc)
+	path, handler := governanceprofilev1connect.NewGovernanceProfileServiceHandler(connectSvc)
+	r.Handle(path+"*", http.StripPrefix("/api", handler))
+}
+
 // ============================================================================
 // phase06 模块构造器
 // ============================================================================
@@ -385,6 +402,20 @@ func buildTemplateReuse(pool *pgxpool.Pool, reuseSummaryQuerySvc *reusesummaryse
 func buildProjectContext(pool *pgxpool.Pool) *projectcontextservice.QueryService {
 	contextReaders := projectcontextcandidate.NewContextReaders(pool)
 	return projectcontextservice.NewQueryService(contextReaders)
+}
+
+// buildGovernanceProfile 构造 Governance Profile 的 QueryService / CommandService 并返回。
+//
+// phase13-08 新增：
+//   - 项目治理画像结构化写读主线（repository_id 唯一锚点）
+//   - repository 存在性前提经 candidate 子包隔离（service 不直接写跨模块 SQL）
+//   - 主记录与两组 bindings 的持久化收敛在 ProfileStore 单一事务边界
+func buildGovernanceProfile(pool *pgxpool.Pool) (*governanceprofileservice.QueryService, *governanceprofileservice.CommandService) {
+	repositoryReader := governanceprofilecandidate.NewRepositoryReader(pool)
+	profileStore := governanceprofilerepo.NewProfileStore(pool)
+	querySvc := governanceprofileservice.NewQueryService(repositoryReader, profileStore)
+	commandSvc := governanceprofileservice.NewCommandService(repositoryReader, profileStore)
+	return querySvc, commandSvc
 }
 
 // ============================================================================
