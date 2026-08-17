@@ -160,9 +160,9 @@ export function OnboardingPage() {
   if (onboardingQuery.isError) {
     return (
       <div className="max-w-2xl mx-auto space-y-4">
-        <h1 className="text-2xl font-bold">首轮录入</h1>
-        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4">
-          <p className="text-sm text-destructive mb-3">
+        <h1 className="text-xl font-bold">首轮录入</h1>
+        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3">
+          <p className="text-xs text-destructive mb-2">
             读取首轮状态失败：{(onboardingQuery.error as Error)?.message ?? '未知错误'}
           </p>
           <Button
@@ -178,7 +178,7 @@ export function OnboardingPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="max-w-2xl mx-auto space-y-4">
       {/* 步骤进度条 */}
       <StepProgress currentStep={currentStep} />
 
@@ -233,18 +233,23 @@ export function OnboardingPage() {
 }
 
 // ============================================================================
-// 步骤进度条（保持不变）
+// 步骤进度条
+// 移动端适配基线：移动端仅显示圆点 + 弹性连接线（等分铺满），隐藏文字标签避免横向溢出；
+// sm 及以上恢复完整「圆点 + 标签 + 固定连接线」形态
 // ============================================================================
 
 function StepProgress({ currentStep }: { currentStep: OnboardingStep }) {
   const currentIndex = STEP_ORDER.indexOf(currentStep)
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1 sm:gap-2">
       {STEP_ORDER.map((step, index) => (
-        <div key={step} className="flex items-center gap-2">
+        <div
+          key={step}
+          className="flex min-w-0 flex-1 items-center gap-1 sm:flex-none sm:gap-2"
+        >
           <div
-            className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium ${
+            className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-medium sm:h-8 sm:w-8 sm:text-sm ${
               index < currentIndex
                 ? 'bg-primary text-primary-foreground'
                 : index === currentIndex
@@ -255,14 +260,18 @@ function StepProgress({ currentStep }: { currentStep: OnboardingStep }) {
             {index < currentIndex ? '✓' : index + 1}
           </div>
           <span
-            className={`text-sm ${
+            className={`hidden truncate text-xs sm:inline ${
               index === currentIndex ? 'font-semibold text-foreground' : 'text-muted-foreground'
             }`}
           >
             {STEP_LABELS[step]}
           </span>
           {index < STEP_ORDER.length - 1 && (
-            <div className={`h-px w-8 ${index < currentIndex ? 'bg-primary' : 'bg-muted'}`} />
+            <div
+              className={`h-px min-w-2 flex-1 sm:w-8 sm:flex-none sm:min-w-0 ${
+                index < currentIndex ? 'bg-primary' : 'bg-muted'
+              }`}
+            />
           )}
         </div>
       ))}
@@ -278,22 +287,22 @@ function WelcomeStep({ onStart }: { onStart: () => void }) {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-2xl font-bold">欢迎使用 PSCO</h1>
-        <p className="mt-2 text-muted-foreground">
+        <h1 className="text-xl font-bold">欢迎使用 PSCO</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
             Personal Software Company OS 帮助你管理{PRODUCT_SEMANTIC_LABEL}、登记
             {REPOSITORY_SEMANTIC_LABEL}、盘点{MODULE_SEMANTIC_LABEL}并记录
             {DECISION_SEMANTIC_LABEL}。
         </p>
       </div>
-      <div className="rounded-lg border bg-muted/50 p-4 space-y-2 text-sm">
+      <div className="rounded-lg border bg-muted/50 p-3 space-y-2 text-sm">
         <p className="font-medium">首轮录入需要完成以下四步：</p>
-        <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
+        <ol className="list-decimal list-inside space-y-1 text-xs text-muted-foreground">
           <li>登记一个{PRODUCT_SEMANTIC_LABEL}（Product）</li>
           <li>登记一个{REPOSITORY_SEMANTIC_LABEL}（Repository）</li>
           <li>登记一个{MODULE_SEMANTIC_LABEL}（Module）</li>
           <li>记录一条{DECISION_SEMANTIC_LABEL}（Decision）</li>
         </ol>
-        <p className="text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           每一步只需填写最小必填字段，其余可在后续补充。
         </p>
       </div>
@@ -632,12 +641,12 @@ function CompleteStep({
       <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground text-3xl">
         ✓
       </div>
-      <h1 className="text-2xl font-bold">首轮录入完成</h1>
-      <p className="text-muted-foreground">
+      <h1 className="text-xl font-bold">首轮录入完成</h1>
+      <p className="text-sm text-muted-foreground">
         你已完成产品、仓库、模块和决策的最小登记。现在可以进入 Dashboard 查看系统概览与复用反馈。
       </p>
       {chainState?.current_product_id && (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           当前产品 ID: {chainState.current_product_id}
         </p>
       )}
@@ -670,10 +679,10 @@ function DraftSummaryCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl">{title}</CardTitle>
+        <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
-        <p className="text-sm text-muted-foreground">{description}</p>
+        <p className="text-xs text-muted-foreground">{description}</p>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" onClick={onEdit}>
             {editLabel}

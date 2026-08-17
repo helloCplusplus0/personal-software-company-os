@@ -31,15 +31,15 @@ export function RepositorySummaryCard({ repository }: RepositorySummaryCardProps
           </span>
         </div>
         <div>
-          <p className="text-sm text-muted-foreground">URL</p>
+          <p className="text-xs text-muted-foreground">URL</p>
           <p className="break-all text-sm">{repository.url}</p>
         </div>
         <div>
-          <p className="text-sm text-muted-foreground">提供商</p>
+          <p className="text-xs text-muted-foreground">提供商</p>
           <p className="text-sm">{repository.provider}</p>
         </div>
         <div>
-          <p className="text-sm text-muted-foreground">创建时间</p>
+          <p className="text-xs text-muted-foreground">创建时间</p>
           <p className="text-sm">{new Date(repository.created_at).toLocaleDateString()}</p>
         </div>
       </CardContent>

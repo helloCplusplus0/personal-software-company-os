@@ -104,15 +104,15 @@ export function DecisionListContent({ items, isLoading, detailSearch }: Decision
         </Table>
       </div>
 
-      {/* 移动浏览器：单列卡片布局（md 以下） */}
-      <div className="space-y-3 md:hidden">
+      {/* 移动浏览器：单列卡片布局（md 以下，对齐 Dashboard 紧凑密度基线） */}
+      <div className="space-y-2 md:hidden">
         {items.map((item) => (
           <Link
             key={item.id}
             to="/decisions/$decisionId"
             params={{ decisionId: item.id }}
               search={detailSearch}
-            className="block rounded-md border p-3 hover:bg-accent transition-colors"
+            className="block rounded-lg border p-3 transition-colors hover:bg-muted/50"
           >
             <div className="flex items-center justify-between gap-2">
               <span className="font-medium">{item.title}</span>

@@ -31,11 +31,11 @@ export function ModuleSummaryCard({ module }: ModuleSummaryCardProps) {
           </span>
         </div>
         <div>
-          <p className="text-sm text-muted-foreground">能力描述</p>
+          <p className="text-xs text-muted-foreground">能力描述</p>
           <p className="text-sm">{module.description}</p>
         </div>
         <div>
-          <p className="text-sm text-muted-foreground">登记时间</p>
+          <p className="text-xs text-muted-foreground">登记时间</p>
           <p className="text-sm">{new Date(module.created_at).toLocaleDateString()}</p>
         </div>
       </CardContent>

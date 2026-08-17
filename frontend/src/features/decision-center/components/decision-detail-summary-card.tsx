@@ -53,31 +53,31 @@ export function DecisionDetailSummaryCard({
     <Card>
       <CardHeader>
         <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-lg">{decision.title}</CardTitle>
+          <CardTitle>{decision.title}</CardTitle>
           <Badge variant={STATUS_VARIANT[decision.status]}>
             {STATUS_LABEL[decision.status]}
           </Badge>
         </div>
       </CardHeader>
       {/* phase12-08：Decision 语义框架说明 */}
-      <div className="px-6 pb-1">
+      <div className="px-4 pb-1">
         <p className="text-xs text-muted-foreground">
           本条 Decision 记录了以下{DECISION_SEMANTIC_CORE}。
         </p>
       </div>
-      <CardContent className="space-y-4">
-        {/* 结构化模板字段 */}
+      <CardContent className="space-y-3">
+        {/* 结构化模板字段 — 对齐 Dashboard 字段标签字号基线（text-xs） */}
         <div>
-          <h4 className="text-sm font-medium text-muted-foreground mb-1">上下文</h4>
+          <h4 className="text-xs font-medium text-muted-foreground mb-1">上下文</h4>
           <p className="text-sm">{decision.context}</p>
         </div>
         <div>
-          <h4 className="text-sm font-medium text-muted-foreground mb-1">问题</h4>
+          <h4 className="text-xs font-medium text-muted-foreground mb-1">问题</h4>
           <p className="text-sm">{decision.problem}</p>
         </div>
         {decision.alternatives.length > 0 && (
           <div>
-            <h4 className="text-sm font-medium text-muted-foreground mb-1">备选方案</h4>
+            <h4 className="text-xs font-medium text-muted-foreground mb-1">备选方案</h4>
             <ol className="space-y-1">
               {decision.alternatives.map((alt, i) => (
                 <li key={i} className="text-sm">
@@ -89,16 +89,16 @@ export function DecisionDetailSummaryCard({
           </div>
         )}
         <div>
-          <h4 className="text-sm font-medium text-muted-foreground mb-1">选择</h4>
+          <h4 className="text-xs font-medium text-muted-foreground mb-1">选择</h4>
           <p className="text-sm">{decision.choice}</p>
         </div>
         <div>
-          <h4 className="text-sm font-medium text-muted-foreground mb-1">理由</h4>
+          <h4 className="text-xs font-medium text-muted-foreground mb-1">理由</h4>
           <p className="text-sm">{decision.reason}</p>
         </div>
         {decision.impact && (
           <div>
-            <h4 className="text-sm font-medium text-muted-foreground mb-1">影响</h4>
+            <h4 className="text-xs font-medium text-muted-foreground mb-1">影响</h4>
             <p className="text-sm">{decision.impact}</p>
           </div>
         )}
@@ -106,7 +106,7 @@ export function DecisionDetailSummaryCard({
         {/* 来源上下文 — §5.11 */}
         {sourceContext.source_module_id && (
           <div className="border-t pt-3">
-            <h4 className="text-sm font-medium text-muted-foreground mb-1">来源上下文</h4>
+            <h4 className="text-xs font-medium text-muted-foreground mb-1">来源上下文</h4>
             <p className="text-sm">
               从 <span className="font-medium">{sourceContext.source_module_name}</span> 发起
             </p>
@@ -116,13 +116,14 @@ export function DecisionDetailSummaryCard({
         {/* fix_002_003：状态推进 CTA，仅在非终态时展示 */}
         {hasTransitions && onStatusChange && (
           <div className="border-t pt-3">
-            <h4 className="text-sm font-medium text-muted-foreground mb-2">Status</h4>
+            <h4 className="text-xs font-medium text-muted-foreground mb-2">Status</h4>
             <div className="flex flex-wrap gap-2">
               {statusActions.map((t) => (
                 <Button
                   key={t.target}
                   variant="outline"
                   size="sm"
+                  className="h-7"
                   disabled={isUpdating}
                   onClick={() => onStatusChange(t.target)}
                 >

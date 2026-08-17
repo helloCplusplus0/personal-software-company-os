@@ -191,8 +191,8 @@ export function RepositoryBindingDetailPage() {
             {returnLabel}
           </Button>
         </div>
-        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4">
-          <p className="text-sm text-destructive">
+        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3">
+          <p className="text-xs text-destructive">
             {error instanceof Error && 'status' in error && (error as { status: number }).status === 404
               ? '仓库不存在'
               : `详情读取失败：${(error as Error).message}`}
@@ -231,22 +231,22 @@ export function RepositoryBindingDetailPage() {
         </Button>
       </div>
 
-      {/* phase04-06 来源上下文展示 */}
+      {/* phase04-06 来源上下文展示（对齐 Dashboard 元信息字号基线） */}
       {fromProductDetail && search.productName && (
-        <div className="rounded-lg border bg-muted/50 p-3 text-sm">
+        <div className="rounded-lg border bg-muted/50 p-3 text-xs">
           <span className="text-muted-foreground">来源产品：</span>
           <span className="font-medium">{search.productName}</span>
         </div>
       )}
       {fromModuleDetail && search.moduleName && (
-        <div className="rounded-lg border bg-muted/50 p-3 text-sm">
+        <div className="rounded-lg border bg-muted/50 p-3 text-xs">
           <span className="text-muted-foreground">来源模块：</span>
           <span className="font-medium">{search.moduleName}</span>
         </div>
       )}
 
-      {/* phase12-08：页面级语义导语 */}
-      <p className="text-sm text-muted-foreground">
+      {/* phase12-08：页面级语义导语 — 对齐 Dashboard 元信息字号基线 */}
+      <p className="text-xs text-muted-foreground">
         该 Repository 代表一个{REPOSITORY_SEMANTIC_LABEL}
       </p>
 

@@ -64,9 +64,9 @@ export function ProductListPage() {
       {/* phase05-13：从 Dashboard 进入时展示"返回 Dashboard"按钮 */}
       <BackToDashboardButton />
 
-      {/* 页面标题与创建入口 */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Product Registry</h1>
+      {/* 页面标题与创建入口 — 对齐 Dashboard 基线：标题 text-xl、移动端纵向堆叠 */}
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-xl font-bold">Product Registry</h1>
         <Button asChild>
           <Link
             to="/products/new"
@@ -78,9 +78,9 @@ export function ProductListPage() {
         </Button>
       </div>
 
-      {/* phase04-06 来源上下文展示 — 从 Module Detail 带上下文进入时 */}
+      {/* phase04-06 来源上下文展示 — 从 Module Detail 带上下文进入时（对齐 Dashboard 元信息字号基线） */}
       {hasModuleContext && (
-        <div className="rounded-lg border bg-muted/50 p-3 text-sm">
+        <div className="rounded-lg border bg-muted/50 p-3 text-xs">
           <span className="text-muted-foreground">来源模块：</span>
           <span className="font-medium">{search.moduleName}</span>
           <span className="ml-2 text-muted-foreground">（选择目标产品后进入详情完成绑定）</span>
@@ -104,18 +104,18 @@ export function ProductListPage() {
 
       {/* 内容区：根据读取结果派生视图状态 */}
       {isError ? (
-        // phase04-06 错误反馈停留在内容区域
-        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4">
-          <p className="text-sm text-destructive">列表读取失败：{(error as Error).message}</p>
-          <Button variant="outline" size="sm" className="mt-2" onClick={() => refetch()}>
+        // phase04-06 错误反馈停留在内容区域 — 对齐 Dashboard 紧凑错误区基线
+        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3">
+          <p className="text-xs text-destructive">列表读取失败：{(error as Error).message}</p>
+          <Button variant="outline" size="sm" className="mt-2 h-7" onClick={() => refetch()}>
             重试
           </Button>
         </div>
       ) : isEmpty && !isFiltered ? (
-        // phase04-06 空状态：主动作直接进入 Product Create
-        <div className="rounded-lg border border-dashed p-8 text-center">
-          <p className="text-muted-foreground mb-4">暂无经营目标与交付容器</p>
-          <Button asChild>
+        // phase04-06 空状态：主动作直接进入 Product Create — 对齐 Dashboard 紧凑空态基线
+        <div className="rounded-lg border border-dashed p-4 text-center">
+          <p className="text-xs text-muted-foreground mb-3">暂无经营目标与交付容器</p>
+          <Button asChild size="sm">
             <Link to="/products/new" search={createSearch}>
               <Plus className="mr-2 h-4 w-4" />
               完成首个产品登记
@@ -123,8 +123,8 @@ export function ProductListPage() {
           </Button>
         </div>
       ) : isEmpty && isFiltered ? (
-        <div className="rounded-lg border border-dashed p-8 text-center">
-          <p className="text-muted-foreground">没有匹配筛选条件的产品</p>
+        <div className="rounded-lg border border-dashed p-4 text-center">
+          <p className="text-xs text-muted-foreground">没有匹配筛选条件的产品</p>
         </div>
       ) : (
         <ProductListContent items={data ?? []} isLoading={isLoading} detailSearch={detailSearch} />

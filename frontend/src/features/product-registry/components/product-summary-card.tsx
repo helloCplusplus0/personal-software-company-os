@@ -31,11 +31,11 @@ export function ProductSummaryCard({ product }: ProductSummaryCardProps) {
           </span>
         </div>
         <div>
-          <p className="text-sm text-muted-foreground">描述</p>
+          <p className="text-xs text-muted-foreground">描述</p>
           <p className="text-sm">{product.description}</p>
         </div>
         <div>
-          <p className="text-sm text-muted-foreground">创建时间</p>
+          <p className="text-xs text-muted-foreground">创建时间</p>
           <p className="text-sm">{new Date(product.created_at).toLocaleDateString()}</p>
         </div>
       </CardContent>

@@ -82,15 +82,15 @@ export function ModuleListContent({ items, isLoading, detailSearch }: ModuleList
         </Table>
       </div>
 
-      {/* 移动：单列卡片重排 — §8.5 */}
-      <div className="space-y-3 md:hidden">
+      {/* 移动：单列卡片重排 — §8.5（对齐 Dashboard 紧凑密度基线） */}
+      <div className="space-y-2 md:hidden">
         {items.map((item) => (
           <Link
             key={item.id}
             to="/modules/$moduleId"
             params={{ moduleId: item.id }}
               search={detailSearch}
-            className="block rounded-lg border p-4 hover:bg-accent transition-colors"
+            className="block rounded-lg border p-3 transition-colors hover:bg-muted/50"
           >
             <div className="flex items-center justify-between">
               <span className="font-medium">{item.name}</span>

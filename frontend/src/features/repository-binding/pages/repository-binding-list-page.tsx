@@ -98,9 +98,9 @@ export function RepositoryBindingListPage() {
       {/* phase05-13：从 Dashboard 进入时展示"返回 Dashboard"按钮 */}
       <BackToDashboardButton />
 
-      {/* 页面标题与创建入口 */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Repository Binding</h1>
+      {/* 页面标题与创建入口 — 对齐 Dashboard 基线：标题 text-xl、移动端纵向堆叠 */}
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-xl font-bold">Repository Binding</h1>
         <Button asChild>
           <Link
             to="/repositories/new"
@@ -112,16 +112,16 @@ export function RepositoryBindingListPage() {
         </Button>
       </div>
 
-      {/* phase04-06 来源上下文展示 — 从 Product Detail / Module Detail 带上下文进入时 */}
+      {/* phase04-06 来源上下文展示 — 从 Product Detail / Module Detail 带上下文进入时（对齐 Dashboard 元信息字号基线） */}
       {hasProductContext && (
-        <div className="rounded-lg border bg-muted/50 p-3 text-sm">
+        <div className="rounded-lg border bg-muted/50 p-3 text-xs">
           <span className="text-muted-foreground">来源产品：</span>
           <span className="font-medium">{search.productName}</span>
           <span className="ml-2 text-muted-foreground">（选择目标仓库后进入详情完成绑定）</span>
         </div>
       )}
       {hasModuleContext && (
-        <div className="rounded-lg border bg-muted/50 p-3 text-sm">
+        <div className="rounded-lg border bg-muted/50 p-3 text-xs">
           <span className="text-muted-foreground">来源模块：</span>
           <span className="font-medium">{search.moduleName}</span>
           <span className="ml-2 text-muted-foreground">（选择目标仓库后进入详情完成映射）</span>
@@ -137,17 +137,18 @@ export function RepositoryBindingListPage() {
 
       {/* 内容区：根据读取结果派生视图状态 */}
       {isError ? (
-        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4">
-          <p className="text-sm text-destructive">列表读取失败：{(error as Error).message}</p>
-          <Button variant="outline" size="sm" className="mt-2" onClick={() => refetch()}>
+        // 对齐 Dashboard 紧凑错误区基线
+        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3">
+          <p className="text-xs text-destructive">列表读取失败：{(error as Error).message}</p>
+          <Button variant="outline" size="sm" className="mt-2 h-7" onClick={() => refetch()}>
             重试
           </Button>
         </div>
       ) : isEmpty && !isFiltered ? (
-        // phase04-06 空状态：主动作直接进入 Repository Create
-        <div className="rounded-lg border border-dashed p-8 text-center">
-          <p className="text-muted-foreground mb-4">暂无代码仓库身份对象与项目锚点</p>
-          <Button asChild>
+        // phase04-06 空状态：主动作直接进入 Repository Create — 对齐 Dashboard 紧凑空态基线
+        <div className="rounded-lg border border-dashed p-4 text-center">
+          <p className="text-xs text-muted-foreground mb-3">暂无代码仓库身份对象与项目锚点</p>
+          <Button asChild size="sm">
             <Link to="/repositories/new" search={createSearch}>
               <Plus className="mr-2 h-4 w-4" />
               完成首个仓库登记
@@ -155,8 +156,8 @@ export function RepositoryBindingListPage() {
           </Button>
         </div>
       ) : isEmpty && isFiltered ? (
-        <div className="rounded-lg border border-dashed p-8 text-center">
-          <p className="text-muted-foreground">没有匹配筛选条件的仓库</p>
+        <div className="rounded-lg border border-dashed p-4 text-center">
+          <p className="text-xs text-muted-foreground">没有匹配筛选条件的仓库</p>
         </div>
       ) : (
         <RepositoryBindingListContent items={data ?? []} isLoading={isLoading} detailSearch={detailSearch} />

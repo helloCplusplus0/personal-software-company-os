@@ -23,8 +23,8 @@ export const Route = createRootRouteWithContext()({
  * Dashboard 作为一级导航首项（phase05-13），其余为四大功能模块入口。
  */
 const NAV_ITEMS = [
-  { to: '/dashboard', label: 'Dashboard' },
-  { to: '/modules', label: 'PSCO Module Registry' },
+  { to: '/dashboard', label: 'PSCO' },
+  { to: '/modules', label: 'Module Registry' },
   { to: '/decisions', label: 'Decision Center' },
   { to: '/products', label: 'Product Registry' },
   { to: '/repositories', label: 'Repository Binding' },

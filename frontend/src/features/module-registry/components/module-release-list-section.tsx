@@ -31,7 +31,7 @@ export function ModuleReleaseListSection({ releases, moduleId }: ModuleReleaseLi
       </CardHeader>
       <CardContent>
         {releases.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-4 text-center">
+          <p className="text-xs text-muted-foreground py-3 text-center">
             尚无版本登记
           </p>
         ) : (
@@ -39,7 +39,7 @@ export function ModuleReleaseListSection({ releases, moduleId }: ModuleReleaseLi
             {releases.map((release) => (
               <div
                 key={release.id}
-                className="flex items-center justify-between rounded-md border p-3"
+                className="flex items-center justify-between rounded-md border px-3 py-2"
               >
                 <div className="flex items-center gap-3">
                   <span className="font-mono text-sm font-medium">{release.version}</span>

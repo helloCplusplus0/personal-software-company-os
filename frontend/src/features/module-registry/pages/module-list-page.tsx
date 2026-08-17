@@ -108,9 +108,9 @@ export function ModuleListPage() {
         )}
       </div>
 
-      {/* 页面标题与创建入口 */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Module Registry</h1>
+      {/* 页面标题与创建入口 — 对齐 Dashboard 基线：标题 text-xl、移动端纵向堆叠 */}
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-xl font-bold">Module Registry</h1>
         <Button asChild>
             <Link to="/modules/new" search={createSearch}>
             <Plus className="mr-2 h-4 w-4" />
@@ -136,18 +136,18 @@ export function ModuleListPage() {
 
       {/* 内容区：根据读取结果派生视图状态 */}
       {isError ? (
-        // §8.4 错误反馈停留在内容区域
-        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4">
-          <p className="text-sm text-destructive">列表读取失败：{(error as Error).message}</p>
-          <Button variant="outline" size="sm" className="mt-2" onClick={() => refetch()}>
+        // §8.4 错误反馈停留在内容区域 — 对齐 Dashboard 紧凑错误区基线
+        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3">
+          <p className="text-xs text-destructive">列表读取失败：{(error as Error).message}</p>
+          <Button variant="outline" size="sm" className="mt-2 h-7" onClick={() => refetch()}>
             重试
           </Button>
         </div>
       ) : isEmpty && !isFiltered ? (
-        // §7.1 空状态：主动作直接进入 Module Create
-        <div className="rounded-lg border border-dashed p-8 text-center">
-          <p className="text-muted-foreground mb-4">暂无已登记的可复用能力资产</p>
-          <Button asChild>
+        // §7.1 空状态：主动作直接进入 Module Create — 对齐 Dashboard 紧凑空态基线
+        <div className="rounded-lg border border-dashed p-4 text-center">
+          <p className="text-xs text-muted-foreground mb-3">暂无已登记的可复用能力资产</p>
+          <Button asChild size="sm">
               <Link to="/modules/new" search={createSearch}>
               <Plus className="mr-2 h-4 w-4" />
               完成首个模块登记
@@ -155,8 +155,8 @@ export function ModuleListPage() {
           </Button>
         </div>
       ) : isEmpty && isFiltered ? (
-        <div className="rounded-lg border border-dashed p-8 text-center">
-          <p className="text-muted-foreground">没有匹配筛选条件的模块</p>
+        <div className="rounded-lg border border-dashed p-4 text-center">
+          <p className="text-xs text-muted-foreground">没有匹配筛选条件的模块</p>
         </div>
       ) : (
           <ModuleListContent items={data ?? []} isLoading={isLoading} detailSearch={detailSearch} />

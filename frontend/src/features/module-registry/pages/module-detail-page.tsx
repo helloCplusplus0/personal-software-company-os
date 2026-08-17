@@ -156,8 +156,8 @@ export function ModuleDetailPage() {
             {returnLabel}
           </Button>
         </div>
-        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4">
-          <p className="text-sm text-destructive">详情读取失败：{(error as Error).message}</p>
+        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3">
+          <p className="text-xs text-destructive">详情读取失败：{(error as Error).message}</p>
         </div>
       </div>
     )
@@ -193,8 +193,8 @@ export function ModuleDetailPage() {
         </Button>
       </div>
 
-      {/* phase12-08：页面级语义导语 */}
-      <p className="text-sm text-muted-foreground">
+      {/* phase12-08：页面级语义导语 — 对齐 Dashboard 元信息字号基线 */}
+      <p className="text-xs text-muted-foreground">
         该 Module 代表一个{MODULE_SEMANTIC_LABEL}
       </p>
 
