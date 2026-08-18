@@ -2,12 +2,14 @@ package connect
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"sort"
 	"strings"
 	"testing"
 	"time"
@@ -15,12 +17,11 @@ import (
 	connectrpc "connectrpc.com/connect"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
+	"google.golang.org/protobuf/encoding/protojson"
 
 	pbc "github.com/psco/backend/internal/gen/connect/psco/project_context/v1/project_contextv1connect"
 	pb "github.com/psco/backend/internal/gen/proto/psco/project_context/v1"
 	standardpb "github.com/psco/backend/internal/gen/proto/psco/standard/v1"
-	governanceprofilerepo "github.com/psco/backend/internal/governanceprofile/repository"
-	governanceprofileservice "github.com/psco/backend/internal/governanceprofile/service"
 	projectcontextcandidate "github.com/psco/backend/internal/projectcontext/candidate"
 	projectcontextservice "github.com/psco/backend/internal/projectcontext/service"
 	"github.com/psco/backend/internal/standard"
@@ -181,26 +182,12 @@ func TestProjectContextAcceptanceScenarios(t *testing.T) {
 		}
 	})
 
-	t.Run("project brief profile not found returns not found", func(t *testing.T) {
+	// 2026-08-18 phase14-10 T7 裁决：原「画像未创建 → not_found」用例已删除
+	// （画像主表随 0012 迁移 drop，语义失效；brief 不再依赖画像主记录行）。
+	t.Run("project brief returns six top-level blocks without profile remnants", func(t *testing.T) {
 		h.resetFixture(t, "completed-bound")
 
 		repositoryID := h.mustRepositoryIDByName(t, "main-repo")
-		_, err := h.client.GetProjectBrief(t.Context(), &pb.GetProjectBriefRequest{
-			RepositoryId: repositoryID,
-		})
-		if err == nil {
-			t.Fatal("expected not found error")
-		}
-		if got := connectrpc.CodeOf(err); got != connectrpc.CodeNotFound {
-			t.Fatalf("expected CodeNotFound, got %v", got)
-		}
-	})
-
-	t.Run("project brief returns inline brief blocks when governance profile exists", func(t *testing.T) {
-		h.resetFixture(t, "completed-bound")
-
-		repositoryID := h.mustRepositoryIDByName(t, "main-repo")
-		h.mustSeedGovernanceProfileRow(t, repositoryID)
 
 		resp, err := h.client.GetProjectBrief(t.Context(), &pb.GetProjectBriefRequest{
 			RepositoryId: repositoryID,
@@ -212,15 +199,6 @@ func TestProjectContextAcceptanceScenarios(t *testing.T) {
 		if resp.GetRepository() == nil || resp.GetRepository().GetName() != "main-repo" {
 			t.Fatalf("expected repository main-repo, got %+v", resp.GetRepository())
 		}
-		if resp.GetGovernanceProfile() == nil {
-			t.Fatal("expected governance profile block")
-		}
-		if resp.GetCurrentPhase() == nil {
-			t.Fatal("expected current phase block")
-		}
-		if resp.GetCurrentPhase().GetStatus() != pb.BriefPhaseStatus_BRIEF_PHASE_STATUS_IN_PROGRESS {
-			t.Fatalf("expected current phase in progress, got %v", resp.GetCurrentPhase().GetStatus())
-		}
 		if len(resp.GetProducts()) != 1 {
 			t.Fatalf("expected products array length 1, got %d", len(resp.GetProducts()))
 		}
@@ -231,33 +209,15 @@ func TestProjectContextAcceptanceScenarios(t *testing.T) {
 			t.Fatal("expected decisions array")
 		}
 
-		// phase14-09 内联切换断言：BriefGovernanceProfile 三字段 round-trip
-		// （repository_id / track_type / template_source）。
-		profile := resp.GetGovernanceProfile()
-		if profile.GetRepositoryId() != repositoryID {
-			t.Fatalf("expected repository_id round-trip, got %q want %q", profile.GetRepositoryId(), repositoryID)
-		}
-		if profile.GetTemplateSource() != "manual://brief-test" {
-			t.Fatalf("expected template_source round-trip, got %q", profile.GetTemplateSource())
-		}
-		if profile.GetTrackType() != pb.BriefTrackType_BRIEF_TRACK_TYPE_DURABLE_SYSTEM {
-			t.Fatalf("expected durable system track, got %v", profile.GetTrackType())
-		}
-
-		// current_phase 从治理画像主记录 read-only 字段单向派生
-		// （fixture 固定投影：phase13 阶段名 / plan.md 入口 / in_progress）。
-		if resp.GetCurrentPhase().GetName() != "phase13_project_governance_profile_foundation" ||
-			resp.GetCurrentPhase().GetEntryRef() != "plan.md#phase13_project_governance_profile_foundation" ||
-			resp.GetCurrentPhase().GetStatus() != pb.BriefPhaseStatus_BRIEF_PHASE_STATUS_IN_PROGRESS {
-			t.Fatalf("expected current phase derived from governance profile record, got %+v", resp.GetCurrentPhase())
-		}
+		// 5 顶层块口径（2026-08-18 T7 裁决，槽位 2/3/4 reserved）：响应 JSON 序列化后不得再出现
+		// governanceProfile / currentPhase / globalAssets 任何画像残余字段。
+		assertNoProfileRemnants(t, resp)
 	})
 
 	t.Run("project brief returns standards with full directory tree when standard is bound to repository", func(t *testing.T) {
 		h.resetFixture(t, "completed-bound")
 
 		repositoryID := h.mustRepositoryIDByName(t, "main-repo")
-		h.mustSeedGovernanceProfileRow(t, repositoryID)
 		h.cleanupStandardFixtures(t)
 		created := h.mustCreateAndBindStandard(t, repositoryID)
 
@@ -324,17 +284,15 @@ func TestProjectContextAcceptanceScenarios(t *testing.T) {
 		}
 
 		// phase14-09：旧 global_assets 顶层块已移除，两组 bindings 信息唯一来自 standards[]；
-		// 内联画像块与 current_phase 保持装配不回退。
-		if resp.GetGovernanceProfile() == nil || resp.GetCurrentPhase() == nil {
-			t.Fatalf("expected governance profile blocks to remain populated, got %+v", resp)
-		}
+		// 2026-08-18 phase14-10 T7 裁决：governance_profile / current_phase 画像残余块
+		// 同步移除，brief 无画像前提不再 404，Standards 摘要经 brief 正常装配。
+		assertNoProfileRemnants(t, resp)
 	})
 
-	t.Run("project brief allows empty arrays when governance profile exists but bindings are incomplete", func(t *testing.T) {
+	t.Run("project brief allows empty arrays when bindings are incomplete", func(t *testing.T) {
 		h.resetFixture(t, "completed-unbound")
 
 		repositoryID := h.mustRepositoryIDByName(t, "main-repo")
-		h.mustSeedGovernanceProfileRow(t, repositoryID)
 		h.cleanupStandardFixtures(t)
 
 		resp, err := h.client.GetProjectBrief(t.Context(), &pb.GetProjectBriefRequest{
@@ -357,9 +315,9 @@ func TestProjectContextAcceptanceScenarios(t *testing.T) {
 		if len(resp.GetStandards()) != 0 {
 			t.Fatalf("expected empty standards array, got %d", len(resp.GetStandards()))
 		}
-		if resp.GetGovernanceProfile() == nil || resp.GetCurrentPhase() == nil {
-			t.Fatalf("expected governance profile blocks to still be present, got %+v", resp)
-		}
+		// 2026-08-18 phase14-10 T7 裁决：画像主表已 drop，brief 不再依赖画像行，
+		// 空 bindings 场景同样不得出现画像残余字段。
+		assertNoProfileRemnants(t, resp)
 	})
 }
 
@@ -387,13 +345,10 @@ func newProjectContextIntegrationHarness(t *testing.T) *projectContextIntegratio
 	t.Cleanup(pool.Close)
 
 	readers := projectcontextcandidate.NewContextReaders(pool)
-	// phase14-09：注入收缩后的画像主记录轻量读取主线（ReadProfileCore）
-	governanceReader := governanceprofileservice.NewQueryService(
-		governanceprofilerepo.NewProfileStore(pool),
-	)
+	// 2026-08-18 phase14-10 T7 裁决：画像残余彻底退役，不再注入画像 reader
 	// phase14-07：注入 standard 读取主线作为 GetProjectBrief.standards[] 的 candidate 依赖
 	standardReader := standardservice.NewQueryService(standardrepo.NewStandardStore(pool))
-	querySvc := projectcontextservice.NewQueryService(readers, governanceReader, standardReader)
+	querySvc := projectcontextservice.NewQueryService(readers, standardReader)
 
 	mux := http.NewServeMux()
 	path, handler := pbc.NewProjectContextServiceHandler(NewServer(querySvc))
@@ -440,38 +395,38 @@ func (h *projectContextIntegrationHarness) mustRepositoryIDByName(t *testing.T, 
 	return repositoryID
 }
 
-// mustSeedGovernanceProfileRow 直接经 SQL 写入画像主表 fixture
-// （phase14-09：画像写路径已退役，测试不再经 SaveProfile 写入；
-// 也不引用两张 bindings 表——集成测试与两表存废状态解耦）。
-func (h *projectContextIntegrationHarness) mustSeedGovernanceProfileRow(t *testing.T, repositoryID string) {
+// assertNoProfileRemnants 断言 brief 响应序列化后不含任何画像残余字段
+// （2026-08-18 phase14-10 T7 用户裁决：governance_profile / current_phase
+// 已从 proto 移除并 reserved，global_assets 已于 phase14-09 移除；
+// protojson 默认输出 camelCase key，因此按 camelCase 形态逐一排除）。
+func assertNoProfileRemnants(t *testing.T, resp *pb.GetProjectBriefResponse) {
 	t.Helper()
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	_, err := h.pool.Exec(ctx, `
-		INSERT INTO governance_profiles (
-			repository_id, project_profile_version, track_type, template_source,
-			docs_workflow_layout, current_phase_name, current_phase_ref, current_phase_status
-		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-		ON CONFLICT (repository_id) DO UPDATE SET
-			template_source      = EXCLUDED.template_source,
-			current_phase_name   = EXCLUDED.current_phase_name,
-			current_phase_ref    = EXCLUDED.current_phase_ref,
-			current_phase_status = EXCLUDED.current_phase_status,
-			updated_at           = NOW()
-	`, repositoryID,
-		"project_governance_profile_v1",
-		"durable_system",
-		"manual://brief-test",
-		"phase/fix/audit/review",
-		"phase13_project_governance_profile_foundation",
-		"plan.md#phase13_project_governance_profile_foundation",
-		"in_progress",
-	)
+	raw, err := protojson.Marshal(resp)
 	if err != nil {
-		t.Fatalf("seed governance profile row: %v", err)
+		t.Fatalf("marshal brief response: %v", err)
 	}
+
+	var decoded map[string]any
+	if err := json.Unmarshal(raw, &decoded); err != nil {
+		t.Fatalf("unmarshal brief response json: %v", err)
+	}
+
+	for _, key := range []string{"governanceProfile", "currentPhase", "globalAssets"} {
+		if _, ok := decoded[key]; ok {
+			t.Fatalf("expected brief response without profile remnant %q, got keys: %v", key, decodedKeys(decoded))
+		}
+	}
+}
+
+// decodedKeys 返回 map 中全部顶层 key（排序后），供失败信息定位。
+func decodedKeys(decoded map[string]any) []string {
+	keys := make([]string, 0, len(decoded))
+	for k := range decoded {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
 }
 
 // cleanupStandardFixtures 清理 standard 三表 fixture（按 fixture 名定位，

@@ -88,9 +88,8 @@ func NewServer(cfg Config, pool *pgxpool.Pool) *Server {
 		templateReuseQuerySvc := buildTemplateReuse(pool, reuseSummaryQuerySvc)
 		mountTemplateReuseConnect(r, templateReuseQuerySvc)
 
-		// phase13 governance profile 模块：phase14-09 已收缩为纯读
-		// （画像 RPC 挂载已退役；QueryService 仅作为 brief 的 candidate reader 注入）
-		governanceProfileQuerySvc := buildGovernanceProfile(pool)
+		// phase13 governance profile 模块：2026-08-18 phase14-10 T7 用户裁决
+		// 画像残余彻底退役，模块已整体删除（画像 RPC 挂载 phase14-09 已先行退役）。
 
 		// phase14 standard 模块：全局规范实体结构化写读。
 		// 装配顺序约束：standard 的 QueryService 必须先于 buildProjectContext
@@ -99,9 +98,10 @@ func NewServer(cfg Config, pool *pgxpool.Pool) *Server {
 		mountStandardConnect(r, standardQuerySvc, standardCommandSvc)
 
 		// phase11 project context 模块：最小只读项目上下文聚合读取
-		// phase13-10：GetProjectBrief 通过 candidate 接口复用治理画像读取主线
+		// phase13-10：GetProjectBrief agent 简报主线
 		// phase14-07：GetProjectBrief.standards[] 通过 candidate 接口复用 standard 读取主线
-		projectContextQuerySvc := buildProjectContext(pool, governanceProfileQuerySvc, standardQuerySvc)
+		// 2026-08-18 phase14-10 T7 裁决：画像残余彻底退役，不再注入画像 reader
+		projectContextQuerySvc := buildProjectContext(pool, standardQuerySvc)
 		mountProjectContextConnect(r, projectContextQuerySvc)
 	})
 

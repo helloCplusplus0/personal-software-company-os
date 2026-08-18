@@ -66,8 +66,6 @@ import (
 	projectcontextcandidate "github.com/psco/backend/internal/projectcontext/candidate"
 	projectcontextconnect "github.com/psco/backend/internal/projectcontext/connect"
 	projectcontextservice "github.com/psco/backend/internal/projectcontext/service"
-	governanceprofilerepo "github.com/psco/backend/internal/governanceprofile/repository"
-	governanceprofileservice "github.com/psco/backend/internal/governanceprofile/service"
 	standardcandidate "github.com/psco/backend/internal/standard/candidate"
 	standardconnect "github.com/psco/backend/internal/standard/connect"
 	standardrepo "github.com/psco/backend/internal/standard/repository"
@@ -403,16 +401,18 @@ func buildTemplateReuse(pool *pgxpool.Pool, reuseSummaryQuerySvc *reusesummaryse
 //
 // phase13-10 新增：
 //   - GetProjectBrief agent 项目简报读取主线
-//   - 治理画像读取通过 candidate.GovernanceProfileReader 接口注入，
-//     复用 governanceprofile 读取主线，不在 projectcontext 内复制治理画像 SQL
 //
 // phase14-07 新增：
 //   - brief 的 standards[] 读取通过 candidate.StandardReader 接口注入，
 //     复用 standard 读取主线（standard_bindings 反查），不在 projectcontext
 //     内复制 standard 表 SQL；调用方必须先构造 standard 的 QueryService
-func buildProjectContext(pool *pgxpool.Pool, governanceReader projectcontextcandidate.GovernanceProfileReader, standardReader projectcontextcandidate.StandardReader) *projectcontextservice.QueryService {
+//
+// 2026-08-18 phase14-10 T7 用户裁决：
+//   - 画像残余彻底退役，原 governanceReader 参数已随
+//     画像后端模块（governance profile internal 包）整体删除
+func buildProjectContext(pool *pgxpool.Pool, standardReader projectcontextcandidate.StandardReader) *projectcontextservice.QueryService {
 	contextReaders := projectcontextcandidate.NewContextReaders(pool)
-	return projectcontextservice.NewQueryService(contextReaders, governanceReader, standardReader)
+	return projectcontextservice.NewQueryService(contextReaders, standardReader)
 }
 
 // buildStandard 构造 Standard 的 QueryService / CommandService 并返回。
@@ -430,16 +430,9 @@ func buildStandard(pool *pgxpool.Pool) (*standardservice.QueryService, *standard
 	return querySvc, commandSvc
 }
 
-// buildGovernanceProfile 构造 Governance Profile 的 QueryService 并返回。
-//
-// phase13-08 新增；phase14-09 收缩（画像系统性退役）：
-//   - 写路径（CommandService）与画像 RPC 挂载已退役
-//   - 模块收敛为纯读，QueryService 仅作为 projectcontext brief
-//     candidate.GovernanceProfileReader 的实现注入（主表三组字段轻量读取）
-func buildGovernanceProfile(pool *pgxpool.Pool) *governanceprofileservice.QueryService {
-	profileStore := governanceprofilerepo.NewProfileStore(pool)
-	return governanceprofileservice.NewQueryService(profileStore)
-}
+// buildGovernanceProfile 已于 2026-08-18 phase14-10 T7 用户裁决删除：
+// 画像残余彻底退役，画像后端模块（governance profile internal 包）整体移除，
+// brief 不再注入画像 candidate reader（历史装配记录见 phase14-09 spec）。
 
 // ============================================================================
 // 非业务端点

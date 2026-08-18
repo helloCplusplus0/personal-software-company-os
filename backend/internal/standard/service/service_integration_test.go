@@ -1,6 +1,7 @@
 // Package service — standard 集成测试（phase14-07 Task 5）。
 //
-// 模式沿袭 backend/internal/governanceprofile/repository/profile_store_integration_test.go：
+// 模式沿袭画像后端模块（governance profile internal 包，phase14-10 T7 已删除）
+// 的 profile_store 集成测试：
 //   - 真实 PostgreSQL（进程环境变量 DATABASE_URL 优先，回落 backend/.env）
 //   - 每个测试独立 fixture（uuid 后缀 name / 独立 repositories 行）+ t.Cleanup 显式清理，
 //     测试之间互不依赖执行顺序
@@ -493,7 +494,7 @@ func TestBindingErrorSemantics(t *testing.T) {
 }
 
 // ============================================================================
-// DB 连接 helper（对齐 governanceprofile 既有集成测试模式）
+// DB 连接 helper（对齐画像后端模块既有集成测试模式）
 // ============================================================================
 
 // mustBackendRoot 自当前工作目录向上定位 backend 根（含 go.mod 的目录）。

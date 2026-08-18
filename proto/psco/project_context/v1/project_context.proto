@@ -23,6 +23,9 @@
 //   - GetProjectBrief 不做绑定完整性强制校验：数组为空是合法状态
 //   - Decision 聚合口径遵守 phase11-05 已冻结的两类 module-link 派生命中范围
 //   - 不依赖消费侧项目目录结构或固定文件名
+//   - 2026-08-18 phase14-10 T7 用户裁决：画像残余彻底退役，governance_profile/
+//     current_phase 移除并 reserved；template_source 语义由 standard_bindings
+//     (role=template_source) 承接；track_type/时间轴不保留，phase15 如进入另行新建
 //
 // 生成入口：
 //   在 proto/ 目录执行 make gen，或直接执行 buf generate。
@@ -153,28 +156,11 @@ message ExportProjectContextResponse {
 // agent 项目简报（project brief for agent）
 // ============================================================================
 
-// BriefTrackType 内联技术路线枚举（值域与退役的 TrackType 一致）
-enum BriefTrackType { BRIEF_TRACK_TYPE_UNSPECIFIED = 0; BRIEF_TRACK_TYPE_PRODUCT = 1; BRIEF_TRACK_TYPE_DURABLE_SYSTEM = 2; }
-// BriefPhaseStatus 内联阶段状态枚举（值域与退役的 PhaseStatus 一致）
-enum BriefPhaseStatus { BRIEF_PHASE_STATUS_UNSPECIFIED = 0; BRIEF_PHASE_STATUS_PLANNED = 1; BRIEF_PHASE_STATUS_IN_PROGRESS = 2; BRIEF_PHASE_STATUS_COMPLETED = 3; BRIEF_PHASE_STATUS_BLOCKED = 4; }
-// BriefGovernanceProfile 画像主记录轻量内联消息
-message BriefGovernanceProfile {
-  string repository_id = 1;            // 锚点保留
-  BriefTrackType track_type = 2;       // read-only
-  optional string template_source = 3; // 手工维护字段保留
-}
-
-// BriefCurrentPhase — brief 顶层 current_phase 最小派生消息。
-// 从治理画像主记录的 current_phase_name / current_phase_ref /
-// current_phase_status 三个 read-only 字段单向派生，不引入第二套阶段语义。
-message BriefCurrentPhase {
-  // 当前阶段名称
-  string name = 1;
-  // 当前阶段正式入口引用
-  string entry_ref = 2;
-  // 当前阶段状态（内联 BriefPhaseStatus 枚举，值域与退役的画像 PhaseStatus 一致）
-  BriefPhaseStatus status = 3;
-}
+// 2026-08-18 phase14-10 T7 用户裁决留痕：本节原有画像派生消息与枚举
+// （BriefGovernanceProfile / BriefCurrentPhase / BriefTrackType / BriefPhaseStatus）
+// 已随画像残余彻底退役删除；template_source 语义由 standard_bindings
+// (role=template_source) 承接；track_type/时间轴不保留，phase15 如进入
+// 时间轴另行新建正规字段，不复活画像派生形态。
 
 // GetProjectBriefRequest — agent 项目简报读取请求。
 // repository_id 是唯一正式结构化输入锚点。
@@ -183,29 +169,34 @@ message GetProjectBriefRequest {
 }
 
 // GetProjectBriefResponse — agent 项目简报读取响应。
-// phase13-07 冻结 7 顶层字段 schema；phase14-07 过渡态新增第 8 顶层块 standards[]
-// （phase14-02 冻结的正式演进；同一 Standard 消息直接引用，不另造 Summary）：
+// 2026-08-18 phase14-10 T7 用户裁决：画像残余彻底退役，governance_profile/
+// current_phase 移除并 reserved；template_source 语义由 standard_bindings
+// (role=template_source) 承接；track_type/时间轴不保留，phase15 如进入另行新建。
+// 当前字段面收敛为 5 顶层块（编号槽位 2/3/4 已 reserved；时间戳随各实体摘要承载）：
 //   1. repository          — 仓库身份摘要（复用既有 RepositorySummary）
-//   2. governance_profile  — 画像主记录轻量内联消息（phase14-09 切换；BriefGovernanceProfile）
-//   3. global_assets       — phase14-09 已移除（reserved 3；信息经 standards[].directory_tree 承接）
-//   4. current_phase       — 当前阶段最小派生块
+//   2. governance_profile  — 已移除（reserved 2；画像残余退役，见上裁决留痕）
+//   3. global_assets       — 已移除（reserved 3；phase14-09，信息经 standards[].directory_tree 承接）
+//   4. current_phase       — 已移除（reserved 4；时间轴不保留，见上裁决留痕）
 //   5. products            — 关联产品摘要数组（即使长度 1 也保持数组形式）
 //   6. modules             — 关联模块摘要数组
 //   7. decisions           — 关联决策摘要数组
-//   8. standards           — 该仓库关联的全局规范数组（含 directory_tree 全树）
+//   8. standards           — 该仓库关联的全局规范数组（含 directory_tree 全树；
+//                            template_source 语义经 role=template_source 绑定随本块消费）
 //
 // 约束：
-//   - standards = 8 为 phase14-02 冻结的正式演进，不视为违规新增顶层块
+//   - 5 顶层块口径：repository / products / modules / decisions / standards[]
+//     （+ 时间戳类随各实体摘要承载）；standards = 8 为 phase14-02 冻结的正式演进
 //   - 不混入任何"给 agent 的自然语言指导词"字段
 //   - 数组为空是合法状态（不做绑定完整性强制校验）
 message GetProjectBriefResponse {
   RepositorySummary repository = 1;
-  BriefGovernanceProfile governance_profile = 2;
-  // phase14-09 移除 global_assets（信息经 standards[].directory_tree 承接），
-  // 字段号与字段名同时 reserved 防复用（buf FIELD_NO_DELETE_UNLESS_NAME_RESERVED 要求）
-  reserved 3;
-  reserved "global_assets";
-  BriefCurrentPhase current_phase = 4;
+  // phase14-09 移除 global_assets（信息经 standards[].directory_tree 承接）；
+  // 2026-08-18 phase14-10 T7 裁决移除 governance_profile 与 current_phase
+  // （画像残余彻底退役：template_source 语义由 standard_bindings(role=template_source)
+  // 承接，track_type/时间轴不保留）。字段号与字段名同时 reserved 防复用
+  // （buf FIELD_NO_DELETE_UNLESS_NAME_RESERVED 要求）。
+  reserved 2, 3, 4;
+  reserved "governance_profile", "global_assets", "current_phase";
   repeated ProductSummary products = 5;
   repeated ModuleSummary modules = 6;
   repeated DecisionSummary decisions = 7;
@@ -220,7 +211,7 @@ message GetProjectBriefResponse {
 //
 // 当前阶段承接三个只读 RPC：
 //   - GetProjectBrief：agent 项目简报结构化读取（phase13-10 正式主线，
-//     以治理画像为准，不混入硬编码投影）
+//     5 顶层块口径；2026-08-18 phase14-10 T7 裁决后不再依赖画像，不混入硬编码投影）
 //   - GetProjectContext：结构化项目上下文聚合读取（deprecated 兼容层）
 //   - ExportProjectContext：AGENTS 风格 Markdown 导出（deprecated 兼容层）
 //
@@ -228,7 +219,6 @@ message GetProjectBriefResponse {
 //
 // 错误语义（GetProjectBrief）：
 //   - 仓库不存在：返回 CodeNotFound
-//   - 治理画像未创建：返回 CodeNotFound（与 GetGovernanceProfile 单值一致）
 //   - 数组为空是合法状态，不返回 FailedPrecondition
 //   - 内部读取失败：返回 CodeInternal
 //

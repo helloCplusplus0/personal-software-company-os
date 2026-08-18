@@ -1,0 +1,16 @@
+-- 0012_phase14_brief_profile_decoupling.sql — 治理画像主表退役（brief 画像残余解耦）
+--
+-- 文档定位：phase14-10 T7 裁决触发迁移——画像残余彻底退役的最后一步存储收口。
+-- 上游规格：
+--   - phase14-10 Validate Standard Entity Integration Dogfooding Regression Spec
+--     §"What Changes / 裁决触发（2026-08-18 用户指令）——brief 画像残余解耦（T7）"
+--   - phase14-06 画像退役与数据迁移设计 Spec（0011 已 drop 两张 bindings 表，主表保留）
+--
+-- 裁决留痕（2026-08-18 phase14-10 T7 用户裁决）：
+--   - 画像（governance profile）判定为错误设计并系统性退役；brief 的
+--     governance_profile / current_phase 顶层块已在 proto 层移除并 reserved，
+--     template_source 语义由 standard_bindings(role=template_source) 承接
+--   - 主表随 0011 两张 bindings 表之后 drop；brief 解耦后无任何读取方
+--
+-- 幂等性：DROP IF EXISTS，可安全重放。
+DROP TABLE IF EXISTS governance_profiles;

@@ -5,10 +5,11 @@
 //   - 关联 product 摘要读取（通过 product_repositories；兼容层 singular + brief 数组版）
 //   - 关联 module 摘要读取（通过 module_repositories）
 //   - 关联 decision 摘要读取（两类 module-link 派生命中）
-//   - 治理画像主记录轻量读取（GovernanceProfileReader 接口，由 platform 装配点注入
-//     governanceprofile/service.QueryService 实现，phase14-09 收缩为只读主表三组字段）
 //   - 全局规范资产读取（StandardReader 接口，由 platform 装配点注入
 //     standard/service.QueryService 实现，phase14-04 冻结）
+//
+// 2026-08-18 phase14-10 T7 用户裁决：画像残余彻底退役，原 GovernanceProfileReader
+// 接口已随画像后端模块（governance profile internal 包）整体删除；brief 不再读取画像主表。
 //
 // 文件落点：backend/internal/projectcontext/candidate/context_readers.go
 package candidate
@@ -21,23 +22,9 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/psco/backend/internal/governanceprofile"
 	"github.com/psco/backend/internal/projectcontext"
 	"github.com/psco/backend/internal/standard"
 )
-
-// GovernanceProfileReader 治理画像主记录轻量读取接口（消费方拥有的 candidate 接口）。
-//
-// phase14-06 冻结：接口随画像退役收缩为只读主表三组字段
-// （track_type / template_source / current_phase 三字段，服务 brief 内联装配）；
-// 两组 bindings 信息已迁移至 Standard（经 StandardReader 读取）。
-// 实现仍由 platform 装配点注入 governanceprofile/service.QueryService。
-type GovernanceProfileReader interface {
-	// ReadProfileCore 读取画像主记录核心字段（不含已退役的两组 bindings）。
-	// 失败语义：画像未创建 → ErrGovernanceProfileNotFound；
-	//           其他读取失败 → ErrGovernanceProfileReadFailed。
-	ReadProfileCore(ctx context.Context, repositoryID string) (*governanceprofile.GovernanceProfileCoreReadResult, error)
-}
 
 // StandardReader 全局规范读取接口（消费方拥有的 candidate 接口）。
 //

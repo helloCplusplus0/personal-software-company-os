@@ -17,7 +17,6 @@ import (
 	pbc "github.com/psco/backend/internal/gen/connect/psco/project_context/v1/project_contextv1connect"
 	pb "github.com/psco/backend/internal/gen/proto/psco/project_context/v1"
 	standardpb "github.com/psco/backend/internal/gen/proto/psco/standard/v1"
-	"github.com/psco/backend/internal/governanceprofile"
 	"github.com/psco/backend/internal/projectcontext"
 	"github.com/psco/backend/internal/projectcontext/service"
 	standardconnect "github.com/psco/backend/internal/standard/connect"
@@ -70,14 +69,12 @@ func (s *Server) ExportProjectContext(ctx context.Context, req *pb.ExportProject
 
 // GetProjectBrief 承接 agent 项目简报结构化读取（phase13-10 正式主线）。
 //
-// 组装约束（phase14-09 切换后的 8 顶层块字段面；旧 global_assets 已移除）：
-//   - governance_profile 组装为 project_context.proto 内联 BriefGovernanceProfile
-//     （repository_id / track_type / template_source 三字段，domain→gen 枚举映射）
-//   - current_phase 从治理画像主记录 read-only 字段单向派生，
-//     status 映射内联 BriefPhaseStatus
+// 组装约束（2026-08-18 phase14-10 T7 裁决后的 5 顶层块字段面（槽位 2/3/4 reserved）；
+// 旧 global_assets 与画像残余 governance_profile / current_phase 均已移除）：
 //   - products[] / modules[] / decisions[] 数组语义，空数组合法
 //   - standards[] 复用 standard/connect 导出的 DomainStandardToProto
-//     （含递归树转换），与 StandardService 读取同源，不重写第二套树映射
+//     （含递归树转换），与 StandardService 读取同源，不重写第二套树映射；
+//     template_source 语义经 role=template_source 绑定随 standards[] 消费
 //   - 不混入硬编码投影、目录扫描或自然语言指导词
 func (s *Server) GetProjectBrief(ctx context.Context, req *pb.GetProjectBriefRequest) (*pb.GetProjectBriefResponse, error) {
 	result, err := s.querySvc.GetProjectBrief(ctx, req.GetRepositoryId())
@@ -92,53 +89,11 @@ func (s *Server) GetProjectBrief(ctx context.Context, req *pb.GetProjectBriefReq
 
 	return &pb.GetProjectBriefResponse{
 		Repository: domainRepositorySummaryToProto(result.Repository),
-		GovernanceProfile: &pb.BriefGovernanceProfile{
-			RepositoryId:   result.Repository.ID,
-			TrackType:      domainTrackTypeToBriefProto(result.GovernanceProfile.TrackType),
-			TemplateSource: result.GovernanceProfile.TemplateSource,
-		},
-		CurrentPhase: &pb.BriefCurrentPhase{
-			Name:     result.CurrentPhase.Name,
-			EntryRef: result.CurrentPhase.EntryRef,
-			Status:   domainPhaseStatusToBriefProto(result.GovernanceProfile.CurrentPhaseStatus),
-		},
-		Products:  domainProductSummariesToProto(result.Products),
-		Modules:   domainModuleSummariesToProto(result.Modules),
-		Decisions: domainDecisionSummariesToProto(result.Decisions),
-		Standards: standards,
+		Products:   domainProductSummariesToProto(result.Products),
+		Modules:    domainModuleSummariesToProto(result.Modules),
+		Decisions:  domainDecisionSummariesToProto(result.Decisions),
+		Standards:  standards,
 	}, nil
-}
-
-// --- 治理画像 domain → gen 枚举映射（phase14-09 内联 brief 切换） ---
-
-// domainTrackTypeToBriefProto 将治理画像技术路线受控枚举转换为
-// project_context.proto 内联 BriefTrackType。
-func domainTrackTypeToBriefProto(t governanceprofile.TrackType) pb.BriefTrackType {
-	switch t {
-	case governanceprofile.TrackTypeProduct:
-		return pb.BriefTrackType_BRIEF_TRACK_TYPE_PRODUCT
-	case governanceprofile.TrackTypeDurableSystem:
-		return pb.BriefTrackType_BRIEF_TRACK_TYPE_DURABLE_SYSTEM
-	default:
-		return pb.BriefTrackType_BRIEF_TRACK_TYPE_UNSPECIFIED
-	}
-}
-
-// domainPhaseStatusToBriefProto 将治理画像阶段状态受控枚举转换为
-// project_context.proto 内联 BriefPhaseStatus（值域与画像 PhaseStatus 一致）。
-func domainPhaseStatusToBriefProto(s governanceprofile.PhaseStatus) pb.BriefPhaseStatus {
-	switch s {
-	case governanceprofile.PhaseStatusPlanned:
-		return pb.BriefPhaseStatus_BRIEF_PHASE_STATUS_PLANNED
-	case governanceprofile.PhaseStatusInProgress:
-		return pb.BriefPhaseStatus_BRIEF_PHASE_STATUS_IN_PROGRESS
-	case governanceprofile.PhaseStatusCompleted:
-		return pb.BriefPhaseStatus_BRIEF_PHASE_STATUS_COMPLETED
-	case governanceprofile.PhaseStatusBlocked:
-		return pb.BriefPhaseStatus_BRIEF_PHASE_STATUS_BLOCKED
-	default:
-		return pb.BriefPhaseStatus_BRIEF_PHASE_STATUS_UNSPECIFIED
-	}
 }
 
 // domainProductSummariesToProto 将产品摘要数组转换为 proto（brief 数组语义专用）。

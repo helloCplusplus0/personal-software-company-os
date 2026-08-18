@@ -93,7 +93,10 @@ function EditorSubtree({
         <div className="min-w-0 pl-4">
           {node.children.map((child, index) => (
             <EditorSubtree
-              key={`${child.name}-${index}`}
+              // key 必须稳定：若含 child.name，每敲一个字母 key 变化会导致
+              // React 卸载重建子树、input 焦点丢失（phase14-10 前置反馈缺陷修复）。
+              // 行组件为纯受控（状态全部在父级 draft tree），index key 安全。
+              key={index}
               node={child}
               depth={depth + 1}
               path={childPath(path, child.name)}

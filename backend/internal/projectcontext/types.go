@@ -11,7 +11,6 @@
 package projectcontext
 
 import (
-	"github.com/psco/backend/internal/governanceprofile"
 	"github.com/psco/backend/internal/standard"
 )
 
@@ -107,36 +106,20 @@ type ProjectContextReadResult struct {
 // agent 项目简报 DTO（phase13-10）
 // ============================================================================
 
-// BriefCurrentPhase brief 顶层 current_phase 最小派生块。
-// 从治理画像主记录的 current_phase_name / current_phase_ref /
-// current_phase_status 三个 read-only 字段单向派生。
-// Status 使用字符串形式（planned / in_progress / completed / blocked）供
-// JSON domain DTO 消费；Connect handler 组装 proto 时直接从治理画像
-// PhaseStatus 受控枚举转换为 proto 枚举（不经字符串反解析）。
-type BriefCurrentPhase struct {
-	Name     string `json:"name"`
-	EntryRef string `json:"entry_ref"`
-	Status   string `json:"status"`
-}
-
 // ProjectBriefReadResult GetProjectBrief 的响应结构。
-// 对齐 proto GetProjectBriefResponse（phase14-09 切换后的 8 顶层块字段面：
-// repository / governance_profile / current_phase / products[] / modules[] /
-// decisions[] / standards[]；旧 global_assets 顶层块已移除，两组 bindings
-// 信息唯一来自 standards[]）。
+// 对齐 proto GetProjectBriefResponse（2026-08-18 phase14-10 T7 裁决后的
+// 5 顶层块字段面：repository / products[] / modules[] / decisions[] /
+// standards[]；governance_profile / current_phase 画像残余块已随裁决移除
+// 并 reserved，global_assets 旧块 phase14-09 已移除，两组 bindings 信息
+// 唯一来自 standards[]）。
 //
-// GovernanceProfile 由治理画像主记录轻量读取结果（ReadProfileCore，
-// GovernanceProfileCoreReadResult）同源填充，proto 组装在 Connect handler
-// 内映射为内联 BriefGovernanceProfile（domain→gen 枚举映射）。
 // Standards 由 candidate.StandardReader 经 standard_bindings 反查同源填充
 // （phase14-07），standard domain 类型直接透传，proto 组装在 Connect handler
 // 内复用 standard/connect 导出的转换函数。
 type ProjectBriefReadResult struct {
-	Repository        *RepositorySummary                                  `json:"repository"`
-	GovernanceProfile *governanceprofile.GovernanceProfileCoreReadResult  `json:"governance_profile"`
-	CurrentPhase      BriefCurrentPhase                                   `json:"current_phase"`
-	Products          []ProductSummary                                    `json:"products"`
-	Modules           []ModuleSummary                                     `json:"modules"`
-	Decisions         []DecisionSummary                                   `json:"decisions"`
-	Standards         []standard.StandardReadResult                       `json:"standards"`
+	Repository *RepositorySummary            `json:"repository"`
+	Products   []ProductSummary              `json:"products"`
+	Modules    []ModuleSummary               `json:"modules"`
+	Decisions  []DecisionSummary             `json:"decisions"`
+	Standards  []standard.StandardReadResult `json:"standards"`
 }
