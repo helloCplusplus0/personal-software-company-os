@@ -24,7 +24,7 @@ import { DAILY_REVIEW_QUERY_KEY, WEEKLY_REVIEW_QUERY_KEY } from '@/features/revi
 import { buildReviewReturnSearch, shouldReturnToReview } from '@/features/review/lib/review-source'
 import { useModuleDecisionLinksByModuleIds } from '@/features/module-registry/data/use-module-decision-links-by-module-ids'
 import { REPOSITORY_SEMANTIC_LABEL } from '@/features/project-context/data/shared-semantic-constants'
-import { GovernanceProfileSection } from '@/features/governance-profile'
+import { StandardReadonlySummary } from '@/features/standard'
 
 /**
  * panelMode — phase04-06 互斥展开状态
@@ -302,8 +302,8 @@ export function RepositoryBindingDetailPage() {
         </div>
       </div>
 
-      {/* phase13-09：项目治理画像 — 唯一前端正式承接区（secondary governance 区） */}
-      <GovernanceProfileSection repositoryId={repositoryId} />
+      {/* phase14-08：画像区同位让位 — Standard 只读摘要（GetProjectBrief.standards[]，与 agent 消费同源） */}
+      <StandardReadonlySummary repositoryId={repositoryId} />
     </div>
   )
 }

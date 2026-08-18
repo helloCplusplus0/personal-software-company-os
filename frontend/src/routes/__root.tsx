@@ -28,6 +28,7 @@ const NAV_ITEMS = [
   { to: '/decisions', label: 'Decision Center' },
   { to: '/products', label: 'Product Registry' },
   { to: '/repositories', label: 'Repository Binding' },
+  { to: '/standards', label: 'Standards' },
 ] as const
 
 /** 根布局：全局导航 + 页面出口 + Toast 通知 */

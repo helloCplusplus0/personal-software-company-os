@@ -26,6 +26,10 @@ import { Route as RepositoriesRepositoryIdRouteImport } from './routes/repositor
 import { Route as RepositoriesNewRouteImport } from './routes/repositories/new'
 import { Route as ReviewsDailyRouteImport } from './routes/reviews/daily'
 import { Route as ReviewsWeeklyRouteImport } from './routes/reviews/weekly'
+import { Route as StandardsIndexRouteImport } from './routes/standards/index'
+import { Route as StandardsStandardIdRouteImport } from './routes/standards/$standardId'
+import { Route as StandardsNewRouteImport } from './routes/standards/new'
+import { Route as StandardsStandardIdEditRouteImport } from './routes/standards/$standardId.edit'
 import { Route as ModulesModuleIdReleasesNewRouteImport } from './routes/modules/$moduleId/releases/new'
 
 const IndexRoute = IndexRouteImport.update({
@@ -114,6 +118,26 @@ const ReviewsWeeklyRoute = ReviewsWeeklyRouteImport.update({
   path: '/reviews/weekly',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StandardsIndexRoute = StandardsIndexRouteImport.update({
+  id: '/standards/',
+  path: '/standards/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StandardsStandardIdRoute = StandardsStandardIdRouteImport.update({
+  id: '/standards/$standardId',
+  path: '/standards/$standardId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StandardsNewRoute = StandardsNewRouteImport.update({
+  id: '/standards/new',
+  path: '/standards/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StandardsStandardIdEditRoute = StandardsStandardIdEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => StandardsStandardIdRoute,
+} as any)
 const ModulesModuleIdReleasesNewRoute =
   ModulesModuleIdReleasesNewRouteImport.update({
     id: '/releases/new',
@@ -135,10 +159,14 @@ export interface FileRoutesByFullPath {
   '/repositories/new': typeof RepositoriesNewRoute
   '/reviews/daily': typeof ReviewsDailyRoute
   '/reviews/weekly': typeof ReviewsWeeklyRoute
+  '/standards/$standardId': typeof StandardsStandardIdRouteWithChildren
+  '/standards/new': typeof StandardsNewRoute
   '/decisions/': typeof DecisionsIndexRoute
   '/modules/': typeof ModulesIndexRoute
   '/products/': typeof ProductsIndexRoute
   '/repositories/': typeof RepositoriesIndexRoute
+  '/standards/': typeof StandardsIndexRoute
+  '/standards/$standardId/edit': typeof StandardsStandardIdEditRoute
   '/modules/$moduleId/releases/new': typeof ModulesModuleIdReleasesNewRoute
 }
 export interface FileRoutesByTo {
@@ -155,10 +183,14 @@ export interface FileRoutesByTo {
   '/repositories/new': typeof RepositoriesNewRoute
   '/reviews/daily': typeof ReviewsDailyRoute
   '/reviews/weekly': typeof ReviewsWeeklyRoute
+  '/standards/$standardId': typeof StandardsStandardIdRouteWithChildren
+  '/standards/new': typeof StandardsNewRoute
   '/decisions': typeof DecisionsIndexRoute
   '/modules': typeof ModulesIndexRoute
   '/products': typeof ProductsIndexRoute
   '/repositories': typeof RepositoriesIndexRoute
+  '/standards': typeof StandardsIndexRoute
+  '/standards/$standardId/edit': typeof StandardsStandardIdEditRoute
   '/modules/$moduleId/releases/new': typeof ModulesModuleIdReleasesNewRoute
 }
 export interface FileRoutesById {
@@ -176,10 +208,14 @@ export interface FileRoutesById {
   '/repositories/new': typeof RepositoriesNewRoute
   '/reviews/daily': typeof ReviewsDailyRoute
   '/reviews/weekly': typeof ReviewsWeeklyRoute
+  '/standards/$standardId': typeof StandardsStandardIdRouteWithChildren
+  '/standards/new': typeof StandardsNewRoute
   '/decisions/': typeof DecisionsIndexRoute
   '/modules/': typeof ModulesIndexRoute
   '/products/': typeof ProductsIndexRoute
   '/repositories/': typeof RepositoriesIndexRoute
+  '/standards/': typeof StandardsIndexRoute
+  '/standards/$standardId/edit': typeof StandardsStandardIdEditRoute
   '/modules/$moduleId/releases/new': typeof ModulesModuleIdReleasesNewRoute
 }
 export interface FileRouteTypes {
@@ -198,10 +234,14 @@ export interface FileRouteTypes {
     | '/repositories/new'
     | '/reviews/daily'
     | '/reviews/weekly'
+    | '/standards/$standardId'
+    | '/standards/new'
     | '/decisions/'
     | '/modules/'
     | '/products/'
     | '/repositories/'
+    | '/standards/'
+    | '/standards/$standardId/edit'
     | '/modules/$moduleId/releases/new'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -218,10 +258,14 @@ export interface FileRouteTypes {
     | '/repositories/new'
     | '/reviews/daily'
     | '/reviews/weekly'
+    | '/standards/$standardId'
+    | '/standards/new'
     | '/decisions'
     | '/modules'
     | '/products'
     | '/repositories'
+    | '/standards'
+    | '/standards/$standardId/edit'
     | '/modules/$moduleId/releases/new'
   id:
     | '__root__'
@@ -238,10 +282,14 @@ export interface FileRouteTypes {
     | '/repositories/new'
     | '/reviews/daily'
     | '/reviews/weekly'
+    | '/standards/$standardId'
+    | '/standards/new'
     | '/decisions/'
     | '/modules/'
     | '/products/'
     | '/repositories/'
+    | '/standards/'
+    | '/standards/$standardId/edit'
     | '/modules/$moduleId/releases/new'
   fileRoutesById: FileRoutesById
 }
@@ -259,10 +307,13 @@ export interface RootRouteChildren {
   RepositoriesNewRoute: typeof RepositoriesNewRoute
   ReviewsDailyRoute: typeof ReviewsDailyRoute
   ReviewsWeeklyRoute: typeof ReviewsWeeklyRoute
+  StandardsStandardIdRoute: typeof StandardsStandardIdRouteWithChildren
+  StandardsNewRoute: typeof StandardsNewRoute
   DecisionsIndexRoute: typeof DecisionsIndexRoute
   ModulesIndexRoute: typeof ModulesIndexRoute
   ProductsIndexRoute: typeof ProductsIndexRoute
   RepositoriesIndexRoute: typeof RepositoriesIndexRoute
+  StandardsIndexRoute: typeof StandardsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -386,6 +437,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReviewsWeeklyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/standards/': {
+      id: '/standards/'
+      path: '/standards'
+      fullPath: '/standards/'
+      preLoaderRoute: typeof StandardsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/standards/$standardId': {
+      id: '/standards/$standardId'
+      path: '/standards/$standardId'
+      fullPath: '/standards/$standardId'
+      preLoaderRoute: typeof StandardsStandardIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/standards/new': {
+      id: '/standards/new'
+      path: '/standards/new'
+      fullPath: '/standards/new'
+      preLoaderRoute: typeof StandardsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/standards/$standardId/edit': {
+      id: '/standards/$standardId/edit'
+      path: '/edit'
+      fullPath: '/standards/$standardId/edit'
+      preLoaderRoute: typeof StandardsStandardIdEditRouteImport
+      parentRoute: typeof StandardsStandardIdRoute
+    }
     '/modules/$moduleId/releases/new': {
       id: '/modules/$moduleId/releases/new'
       path: '/releases/new'
@@ -408,6 +487,17 @@ const ModulesModuleIdRouteWithChildren = ModulesModuleIdRoute._addFileChildren(
   ModulesModuleIdRouteChildren,
 )
 
+interface StandardsStandardIdRouteChildren {
+  StandardsStandardIdEditRoute: typeof StandardsStandardIdEditRoute
+}
+
+const StandardsStandardIdRouteChildren: StandardsStandardIdRouteChildren = {
+  StandardsStandardIdEditRoute: StandardsStandardIdEditRoute,
+}
+
+const StandardsStandardIdRouteWithChildren =
+  StandardsStandardIdRoute._addFileChildren(StandardsStandardIdRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
@@ -422,10 +512,13 @@ const rootRouteChildren: RootRouteChildren = {
   RepositoriesNewRoute: RepositoriesNewRoute,
   ReviewsDailyRoute: ReviewsDailyRoute,
   ReviewsWeeklyRoute: ReviewsWeeklyRoute,
+  StandardsStandardIdRoute: StandardsStandardIdRouteWithChildren,
+  StandardsNewRoute: StandardsNewRoute,
   DecisionsIndexRoute: DecisionsIndexRoute,
   ModulesIndexRoute: ModulesIndexRoute,
   ProductsIndexRoute: ProductsIndexRoute,
   RepositoriesIndexRoute: RepositoriesIndexRoute,
+  StandardsIndexRoute: StandardsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
