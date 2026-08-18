@@ -4,11 +4,11 @@
 
 ## 1. 当前状态
 
-- 当前阶段：`phase14_standard_entity_foundation`（已建立正式 `/plan` 入口，五项裁决已完成）
-- 当前状态：`phase13` 已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`；`phase10` 继续作为最近完成正式业务 phase，`phase09` 继续作为最近完成正式支撑能力 phase
-- 当前最近完成正式验收与收口入口：`.trae/specs/phase13_11_validate_project_governance_profile_integration_dogfooding_regression/acceptance_report.md`
-- 当前目标：按 `phase14` 三件套推进 `Standard` 全局规范实体最小主线 + 治理画像重叠承接位完整退役，从 `phase14-01` 开始执行
-- 当前下一阶段进入条件：五项裁决已于 `2026-08-17` 由用户结构化逐项拍板完成（①混合式颗粒度 / ②主表+jsonb树+多态绑定表 / ③PSCO=结构导航仓库=正文 / ④phase14 内完整退役 / ⑤全局规范资产实体），结论冻结于 `phase14` `shared_baseline` §2.2；`phase15` 进入条件在 `phase14-11` 收口时冻结
+- 当前阶段：`phase15` 进入条件已冻结，等待用户裁决开启 `phase15 /plan`
+- 当前状态：`phase14_standard_entity_foundation` 已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`；`phase13` 作为上一完成正式业务 phase 保留，`phase09` 继续作为最近完成正式支撑能力 phase
+- 当前最近完成正式验收与收口入口：`.trae/specs/phase14_10_validate_standard_entity_integration_dogfooding_regression/acceptance_report.md`
+- 当前目标：`phase15 /plan` 前须完成后续项排序裁决——候选池与边界冻结于 `phase14-11` spec（`CON-08` 时间轴〔T7 裁决后口径：新建正规承接，不复活画像派生形态〕/ `standard_bindings` 目标类型扩展 / agent 写回〔不自动解锁〕/ Git 推进跟踪 / 模板仓库自动接入 / 自动同步）
+- 当前下一阶段进入条件：已冻结于 `.trae/specs/phase14_11_sync_root_level_closeout_freeze_phase15_entry_conditions/spec.md`
 
 ## 2. 当前进度概览
 
@@ -64,7 +64,7 @@
 - `phase09` 已完成模板候选、`Product Create` 预填回流、派生提示展示与 handoff 的正式交付，并通过统一联调、浏览器验收与反回归验证收口
 - `phase09` 当前只承接 `Template Reuse + Derived Intelligence Deepening` 的最小支撑能力，不把 `Real-Project Dry-Run`、`Venture` 或 `AI Context Enhancement` 偷渡为并列主交付
 - `fix_001 ~ fix_003` 已完成修复、独立复核、聚焦 rerun 与 `mvp0.3` 收口，`docs/fix/fix_001_003_mvp03_dry_run_rerun_closure.md` 已形成进入 `mvp0.4` 首个正式 phase 的直接结论入口
-- `phase10_asset_action_closure_foundation` 三件套已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，当前作为最近完成正式业务 phase 的规划与冻结记录保留
+- `phase10_asset_action_closure_foundation` 三件套已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，保留为历史完成正式业务 phase 的规划与冻结记录
 - `.trae/specs/phase10_11_complete_asset_action_closure_integration_browser_regression_validation/spec.md` 已冻结为 `phase10-11` 的正式验收入口；同目录 `tasks.md / checklist.md` 共同构成 `phase10` 的正式验收与收口证据
 - `phase10` 已完成 `Onboarding` 首轮建链、`Decision` 生命周期闭环、关键 detail pages 动作承接矩阵，以及 `Current Focus / pending signals` 反回归验证；更重能力方向已统一顺延为 `phase11` 正式收口后的下一阶段进入条件
 - `PSCO-mvp05-summarize-feedback.md` 已冻结为 `mvp0.5` 的最终仲裁与 `phase11 / phase12` 的直接共识上游
@@ -76,7 +76,10 @@
 - `phase13_project_governance_profile_foundation` 已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`，并完成“项目级治理画像 + 全局规范资产 + agent 项目简报输入”交付
 - `.trae/specs/phase13_11_validate_project_governance_profile_integration_dogfooding_regression/acceptance_report.md` 已冻结为 `phase13` 的正式验收与收口入口
 - `.trae/specs/phase13_12_sync_root_level_closeout_next_phase_entry_conditions/spec.md` 已冻结为 `phase13` 正式缺口记录（GAP-01 ~ GAP-07 + CON-01 ~ CON-09）与 `phase14 /plan` 的唯一直接上游
-- `phase14_standard_entity_foundation` 三件套已建立并完成独立复核：五项裁决结论、`Standard` 实体设计（主表+jsonb树+多态绑定）、画像退役映射与 11 个子任务已冻结，待从 `phase14-01` 开始执行
+- `phase14_standard_entity_foundation` 三件套已建立并完成独立复核：五项裁决结论、`Standard` 实体设计（主表+jsonb树+多态绑定）、画像退役映射与 11 个子任务已冻结
+- `phase14_standard_entity_foundation` 已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`，并完成“`Standard` 全局规范实体最小主线 + 治理画像系统性退役 + brief 画像残余解耦（T7 用户裁决）”交付；`phase14` 现为最近完成正式业务 phase
+- `.trae/specs/phase14_10_validate_standard_entity_integration_dogfooding_regression/acceptance_report.md` 已冻结为 `phase14` 的正式验收与收口入口
+- `.trae/specs/phase14_11_sync_root_level_closeout_freeze_phase15_entry_conditions/spec.md` 已冻结为 `phase15` 进入条件（T7 裁决后口径）与 `phase15 /plan` 的唯一直接上游；`phase13-12` 缺口记录退位为历史输入
 
 ## 3. Phase 路线预览
 
@@ -164,7 +167,7 @@
 - 范围约束：不得提前混入 `Agent Consumption Layer`、`Cross-Project Convention Asset`、新实体主线、第五态 `DecisionStatus`、AI 工作台或真实连接重型集成
 - 交付要求：作为交付型 phase 推进，必须完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - 状态：`completed`
-- 当前收口结果：已完成 `Onboarding` 首轮建链引导、`Decision` 最小真实生命周期、Dashboard / Review / Detail pages 下一步动作承接矩阵，以及 `Current Focus / pending signals` 真实经营语义回归；`.trae/specs/phase10_11_complete_asset_action_closure_integration_browser_regression_validation/spec.md` 为正式验收入口，三件套保留为最近完成正式业务 phase 的规划与冻结记录；更重能力方向已统一顺延为 `phase11` 正式收口后的下一阶段进入条件
+- 当前收口结果：已完成 `Onboarding` 首轮建链引导、`Decision` 最小真实生命周期、Dashboard / Review / Detail pages 下一步动作承接矩阵，以及 `Current Focus / pending signals` 真实经营语义回归；`.trae/specs/phase10_11_complete_asset_action_closure_integration_browser_regression_validation/spec.md` 为正式验收入口，三件套保留为历史完成正式业务 phase 的规划与冻结记录；更重能力方向已统一顺延为 `phase11` 正式收口后的下一阶段进入条件
 
 ### phase11：`phase11_project_context_foundation`
 
@@ -199,8 +202,8 @@
 - 进入条件：`phase13-12` 正式缺口记录（唯一直接上游）+ 五项裁决已完成（2026-08-17 用户结构化逐项拍板）
 - 范围约束：单一主交付 = `Standard` 全局规范实体最小主线（合同 → 存储 → 后端 → 前端 → agent 消费）+ 治理画像重叠承接位完整退役；`CON-08` 时间轴、agent 写回、MCP / CLI、Git 推进跟踪、模板仓库自动接入、自动同步均为非目标
 - 交付要求：作为交付型 phase 推进，按 `dev_plan` 11 个子任务（phase14-01 ~ phase14-11）顺序进入 `/spec`、实现、验收与收口
-- 状态：`planned`
-- 当前规划结果：三件套已冻结五项裁决结论、`Standard` 数据模型（`standards` + `standard_revisions` + `standard_bindings` 三表、jsonb 树形目录、双清单合一）、画像退役五触点映射与 `GetProjectBrief` 演进；待从 `phase14-01` 边界收敛子任务开始执行
+- 状态：`completed`
+- 当前收口结果：已完成 `Standard` 全局规范实体最小主线（`standards` + `standard_revisions` + `standard_bindings` 三表与 jsonb 树形目录、`/standards` 前端四页、`StandardService` 8 RPC、brief `standards[]` agent 直读）+ 治理画像七触点系统性退役；期间按用户裁决完成 brief 画像残余解耦（brief 收敛为 5 顶层块，槽位 2/3/4 reserved）；`phase14-10` 为正式验收与收口入口（固定 6 问 6/6 + 八项裁决门禁全绿 + 16 页反回归矩阵 + 独立复核 PASS），`phase14-11` 为根级收口与 `phase15` 进入条件冻结入口；三件套保留为该阶段 `/plan` 的规划与冻结记录
 
 ## 4. 说明
 
