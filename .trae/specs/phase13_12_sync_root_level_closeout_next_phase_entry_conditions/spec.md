@@ -56,7 +56,7 @@
 #### Scenario: 缺口逐条可定位
 
 - **WHEN** 后续执行者需要核对任一缺口在当前实现中的证据
-- **THEN** 每条 GAP 均能映射到 `governance_profile.proto` 字段面、`00010_phase13_governance_profile.sql` 存储结构或 Repository detail 承接位
+- **THEN** 每条 GAP 均能映射到 `governance_profile.proto` 字段面、`0010_phase13_governance_profile.sql` 存储结构或 Repository detail 承接位
 - **AND** 不存在无法定位证据的抽象抱怨
 
 ### Requirement: 方向结论 CON-01 ~ CON-09 必须冻结为 phase14 输入

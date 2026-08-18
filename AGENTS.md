@@ -6,10 +6,10 @@
 ## 1. 项目定位
 
 - 项目名称：`Personal Software Company OS`
-- 当前阶段：`phase13_project_governance_profile_foundation`（已完成正式收口）
-- 当前主目标：进入 `phase14 /plan` 前的五项裁决准备；阶段状态仍只以 `plan.md` 为准
-- 当前直接上游：`phase13-11` 正式验收入口、`phase13-12` 正式缺口记录（`phase14` 唯一规划上游）、`PSCO-mvp05-summarize-feedback.md` 与当前根级真相源文档
-- 当前下一阶段入口：`phase14 /plan` 必须优先完成五项裁决（信息维护颗粒度 / `Standard` 数据模型与 pg 承载 / `Standard` 与模板仓库内容边界 / 治理画像重叠承接位退役计划 / `Standard` 实体地位仲裁）；`phase10` 继续作为最近完成正式业务 phase 保留，`phase09` 继续作为最近完成正式支撑能力 phase 保留
+- 当前阶段：`phase14_standard_entity_foundation`（已建立正式 `/plan` 入口，五项裁决已完成）
+- 当前主目标：推进 `Standard` 全局规范实体最小主线 + 治理画像重叠承接位完整退役；阶段状态仍只以 `plan.md` 为准
+- 当前直接上游：`phase13-12` 正式缺口记录（唯一直接规划上游）、`phase14` 三件套（architecture_plan / dev_plan / shared_baseline）与当前根级真相源文档
+- 当前下一阶段入口：`phase14` 子任务执行（phase14-01 ~ phase14-11）；五项裁决已完成并冻结于 `phase14` `shared_baseline` §2.2；`phase10` 继续作为最近完成正式业务 phase 保留，`phase09` 继续作为最近完成正式支撑能力 phase 保留
 - 当前最近完成正式验收入口：`.trae/specs/phase13_11_validate_project_governance_profile_integration_dogfooding_regression/acceptance_report.md`
 - 当前定位：PSCO 是个人软件公司的经营与资产系统，不是代码管理工具，不是 AI Chat 产品，也不是自动扫描系统
 
@@ -96,6 +96,7 @@
 - `phase12_semantic_alignment_and_readonly_consumption_foundation` 已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`，并完成“前端四实体语义一致性收口 + Web / agent 共享只读消费深化”交付
 - `phase13_project_governance_profile_foundation` 已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`，并完成“项目级治理画像 + 全局规范资产 + agent 项目简报输入”交付；`phase13-11` 为正式验收与收口入口
 - `.trae/specs/phase13_12_sync_root_level_closeout_next_phase_entry_conditions/spec.md` 已冻结为 `phase13` 正式缺口记录（GAP-01 ~ GAP-07 + CON-01 ~ CON-09）与 `phase14 /plan` 的唯一直接上游
+- `phase14_standard_entity_foundation` 三件套已建立并完成独立复核：五项裁决结论（混合式颗粒度 / 主表+jsonb树+多态绑定表 / PSCO=结构导航仓库=正文 / phase14 内完整退役 / 全局规范资产实体）、`Standard` 实体设计、画像退役映射与 11 个子任务已冻结，待从 `phase14-01` 开始执行
 
 ## 5. 推荐阅读顺序
 
@@ -145,7 +146,10 @@
 44. `.trae/specs/phase06_16_integration_validation_acceptance/acceptance_report.md`
 45. `.trae/specs/phase13_11_validate_project_governance_profile_integration_dogfooding_regression/acceptance_report.md`
 46. `.trae/specs/phase13_12_sync_root_level_closeout_next_phase_entry_conditions/spec.md`
-47. 当前目标对应的 `phase / fix / audit` 文档
+47. `docs/phase/phase14_standard_entity_foundation_architecture_plan.md`
+48. `docs/phase/phase14_standard_entity_foundation_dev_plan.md`
+49. `docs/phase/phase14_standard_entity_foundation_shared_baseline.md`
+50. 当前目标对应的 `phase / fix / audit` 文档
 
 ## 6. 接手提醒
 

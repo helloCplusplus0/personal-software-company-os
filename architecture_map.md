@@ -111,6 +111,9 @@ docs/
   - `phase13_project_governance_profile_foundation_architecture_plan.md`
   - `phase13_project_governance_profile_foundation_dev_plan.md`
   - `phase13_project_governance_profile_foundation_shared_baseline.md`
+  - `phase14_standard_entity_foundation_architecture_plan.md`
+  - `phase14_standard_entity_foundation_dev_plan.md`
+  - `phase14_standard_entity_foundation_shared_baseline.md`
 - 当前已创建：
   - `phase09_template_reuse_derived_intelligence_foundation_architecture_plan.md`
   - `phase09_template_reuse_derived_intelligence_foundation_dev_plan.md`
@@ -178,6 +181,7 @@ docs/
 - `phase12` 三件套在收口后只承担最近完成阶段的规划与冻结记录角色；正式验收与收口入口收敛到 `phase12-11` acceptance_report
 - `phase13` 已直接承接 `phase12` 已完成的正式交付结论与当前根级真相源文档，并已完成“项目级治理画像 + 全局规范资产 + agent 项目简报输入”的正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - `phase13` 三件套在收口后只承担该阶段 `/plan` 的规划与冻结记录角色；正式验收与收口入口收敛到 `phase13-11` acceptance_report，`phase13-12` 为正式缺口记录与 `phase14` 进入条件冻结入口
+- `phase14_standard_entity_foundation` 三件套已建立并完成独立复核，承担当前阶段的规划与冻结记录角色；五项裁决结论、`Standard` 实体设计与画像退役映射已冻结，待按 `dev_plan` 子任务顺序进入 `/spec` 与实现
 
 ### 4.2 fix
 

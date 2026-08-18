@@ -26,7 +26,7 @@
 - [阶段路线图](file:///home/dell/Projects/personal-software-company-os/plan.md)
 - [项目规则](file:///home/dell/Projects/personal-software-company-os/project_rules.md)
 - [目录与迁移落点](file:///home/dell/Projects/personal-software-company-os/architecture_map.md)
-- 当前根级阶段状态：`phase13_project_governance_profile_foundation` 已完成正式验收与收口；`phase10_asset_action_closure_foundation` 继续保留为最近完成正式业务 phase，`phase09_template_reuse_derived_intelligence_foundation` 继续保留为最近完成正式支撑能力 phase
+- 当前根级阶段状态：`phase13_project_governance_profile_foundation` 已完成正式验收与收口，`phase14_standard_entity_foundation` 已建立正式 `/plan` 入口（五项裁决已完成）；`phase10_asset_action_closure_foundation` 继续保留为最近完成正式业务 phase，`phase09_template_reuse_derived_intelligence_foundation` 继续保留为最近完成正式支撑能力 phase
 - 当前 docs 入口重点：稳定指向 [plan.md](file:///home/dell/Projects/personal-software-company-os/plan.md) 的 canonical 状态、`phase13` 三件套、[phase13 正式验收与收口入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase13_11_validate_project_governance_profile_integration_dogfooding_regression/acceptance_report.md)、[phase13-12 正式缺口记录](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase13_12_sync_root_level_closeout_next_phase_entry_conditions/spec.md)（`phase14` 唯一规划上游）与 `PSCO-mvp05-summarize-feedback.md`
 - [mvp0.5 最终仲裁与规划基线](file:///home/dell/Projects/personal-software-company-os/PSCO-mvp05-summarize-feedback.md)
 - [phase13 规划与冻结记录：architecture_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase13_project_governance_profile_foundation_architecture_plan.md)
@@ -34,6 +34,9 @@
 - [phase13 规划与冻结记录：shared_baseline](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase13_project_governance_profile_foundation_shared_baseline.md)
 - [phase13 正式验收与收口入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase13_11_validate_project_governance_profile_integration_dogfooding_regression/acceptance_report.md)
 - [phase13-12 正式缺口记录与 phase14 进入条件](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase13_12_sync_root_level_closeout_next_phase_entry_conditions/spec.md)
+- [phase14 规划与冻结记录：architecture_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase14_standard_entity_foundation_architecture_plan.md)
+- [phase14 规划与冻结记录：dev_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase14_standard_entity_foundation_dev_plan.md)
+- [phase14 规划与冻结记录：shared_baseline](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase14_standard_entity_foundation_shared_baseline.md)
 - [phase12 正式验收与收口入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase12_11_validate_semantic_alignment_readonly_consumption_foundation/acceptance_report.md)
 - [phase12 规划与冻结记录：architecture_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase12_semantic_alignment_and_readonly_consumption_foundation_architecture_plan.md)
 - [phase12 规划与冻结记录：dev_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase12_semantic_alignment_and_readonly_consumption_foundation_dev_plan.md)
@@ -96,6 +99,7 @@
 
 - `phase13_project_governance_profile_foundation` 已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`，正式验收与收口入口为 [phase13-11 acceptance_report.md](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase13_11_validate_project_governance_profile_integration_dogfooding_regression/acceptance_report.md)
 - `.trae/specs/phase13_12_sync_root_level_closeout_next_phase_entry_conditions/spec.md` 已冻结为 `phase13` 正式缺口记录（GAP-01 ~ GAP-07 + CON-01 ~ CON-09）与 `phase14 /plan` 的唯一直接上游
+- `phase14_standard_entity_foundation` 三件套已建立并完成独立复核，五项裁决结论与 `Standard` 实体设计已冻结；当前待从 `phase14-01` 开始执行子任务
 - `phase12_semantic_alignment_and_readonly_consumption_foundation` 已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`，当前正式验收与收口入口为 [phase12-11 acceptance_report.md](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase12_11_validate_semantic_alignment_readonly_consumption_foundation/acceptance_report.md)
 - `phase10_asset_action_closure_foundation` 已完成 `/plan -> /spec -> 实现 -> 验收 -> 收口`，保留为最近完成正式业务 phase
 - `phase09_template_reuse_derived_intelligence_foundation` 已完成收口，保留为最近完成正式支撑能力 phase

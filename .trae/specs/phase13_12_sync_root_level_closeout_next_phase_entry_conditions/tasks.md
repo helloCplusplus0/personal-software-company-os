@@ -2,7 +2,7 @@
 
 - [x] Task 1: 建立正式缺口记录工件（本阶段核心交付）
   - [x] SubTask 1.1: 创建本 spec 目录三件套，在 `spec.md` 中冻结缺口清单（GAP-01 ~ GAP-07）、方向结论（CON-01 ~ CON-09）与 phase14 进入条件
-    - 执行记录：`spec.md` 已产出。缺口清单 7 条逐条附实现定位证据（proto 字段面 / 00010 迁移存储 / Repository detail 承接位）；方向结论 9 条冻结为 phase14 /plan 强制上游，含用户明确澄清的边界（CON-02 关联不设限、CON-04 取代不并存、CON-05 颗粒度三选项、CON-07 反假大空效率底线）；phase14 进入条件含五项必须优先完成的裁决（颗粒度 / Standard 数据模型与 pg 承载 / Standard 与模板仓库内容边界 / 画像退役计划 / 实体地位仲裁）。
+    - 执行记录：`spec.md` 已产出。缺口清单 7 条逐条附实现定位证据（proto 字段面 / 0010 迁移存储 / Repository detail 承接位）；方向结论 9 条冻结为 phase14 /plan 强制上游，含用户明确澄清的边界（CON-02 关联不设限、CON-04 取代不并存、CON-05 颗粒度三选项、CON-07 反假大空效率底线）；phase14 进入条件含五项必须优先完成的裁决（颗粒度 / Standard 数据模型与 pg 承载 / Standard 与模板仓库内容边界 / 画像退役计划 / 实体地位仲裁）。
   - [x] SubTask 1.2: 完成与既有规则文档的衔接声明（dev_plan §4 非目标第 8 条时效、shared_baseline 治理层约束时效、画像已验收交付物地位、mvp05 共识地位）
     - 执行记录：衔接声明 4 条已写入 `spec.md`（"与既有规则文档的衔接声明" Requirement），明确 phase13 旧约束与 phase14 新方向的时效边界，预防规则冲突误读。
   - [x] SubTask 1.3: 核对缺口记录与上游文档口径一致（phase13-11 验收报告结论、dev_plan L254-266、architecture_plan / shared_baseline 能力矩阵）
