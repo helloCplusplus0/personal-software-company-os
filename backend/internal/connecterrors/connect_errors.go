@@ -65,7 +65,6 @@ func MapToConnectError(err error) *connect.Error {
 		repositorybinding.ErrProductNotFound,
 		repositorybinding.ErrModuleNotFound,
 		projectcontext.ErrRepositoryNotFound,
-		governanceprofile.ErrRepositoryNotFound,
 		governanceprofile.ErrGovernanceProfileNotFound,
 		standard.ErrStandardNotFound,
 		standard.ErrBindingNotFound,
@@ -102,7 +101,6 @@ func MapToConnectError(err error) *connect.Error {
 		repositorybinding.ErrInvalidStatus,
 		reusesummary.ErrInvalidScope,
 		templatereuse.ErrInvalidInput,
-		governanceprofile.ErrInvalidInput,
 		standard.ErrInvalidInput,
 	) {
 		return connect.NewError(connect.CodeInvalidArgument, err)
@@ -140,7 +138,6 @@ func MapToConnectError(err error) *connect.Error {
 	_ = reusesummary.ErrReuseSummaryReadFailed
 	_ = projectcontext.ErrProjectContextReadFailed
 	_ = governanceprofile.ErrGovernanceProfileReadFailed
-	_ = governanceprofile.ErrGovernanceProfileSaveFailed
 	_ = standard.ErrStandardReadFailed
 	_ = standard.ErrStandardSaveFailed
 

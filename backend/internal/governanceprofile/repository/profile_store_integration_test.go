@@ -15,7 +15,12 @@ import (
 	"github.com/psco/backend/internal/governanceprofile"
 )
 
-func TestSaveProfileRefreshesRootFrozenReadOnlyProjection(t *testing.T) {
+// phase14-09 收缩：画像保存写路径与两组 bindings 读取已退役，
+// 本文件只保留主表读路径覆盖（ReadProfile 三组字段 + 未创建语义）。
+// fixture 通过直接 SQL 写入 governance_profiles 主表（不依赖已删除的写方法，
+// 也不引用两张 bindings 表——集成测试与两表存废状态解耦）。
+
+func TestReadProfileReturnsCoreFieldsOnly(t *testing.T) {
 	backendRoot := mustBackendRoot(t)
 	databaseURL := mustDatabaseURL(t, backendRoot)
 
@@ -35,94 +40,111 @@ func TestSaveProfileRefreshesRootFrozenReadOnlyProjection(t *testing.T) {
 		cleanupTestRepository(t, pool, repositoryID)
 	})
 
+	templateSource := "manual://core-read"
+	insertTestGovernanceProfile(t, pool, repositoryID, templateSource)
+
 	store := NewProfileStore(pool)
-	summary := "phase13 project rules summary"
-
-	firstResult, err := store.SaveProfile(ctx, governanceprofile.UpdateGovernanceProfileInput{
-		RepositoryID:   repositoryID,
-		TemplateSource: stringPtr("manual://seed"),
-		CanonicalRootFiles: []governanceprofile.CanonicalRootFileBinding{
-			{FileName: "plan.md", Role: "plan", Required: true},
-		},
-		GlobalAssetBindings: []governanceprofile.GlobalAssetBinding{
-			{
-				Name:              "project_rules.md",
-				Kind:              "rules",
-				EntryRef:          "project_rules.md",
-				Role:              "rules",
-				StructuredSummary: &summary,
-			},
-		},
-	})
+	result, err := store.ReadProfile(ctx, repositoryID)
 	if err != nil {
-		t.Fatalf("first save profile: %v", err)
-	}
-	assertRootFrozenProjection(t, firstResult)
-	if len(firstResult.GlobalAssetBindings) != 1 || !firstResult.GlobalAssetBindings[0].MarkdownResolvable {
-		t.Fatalf("expected markdown_resolvable to be true after readback, got %+v", firstResult.GlobalAssetBindings)
+		t.Fatalf("read profile: %v", err)
 	}
 
-	_, err = pool.Exec(ctx, `
-		UPDATE governance_profiles
-		SET track_type = 'product',
-		    current_phase_name = 'stale_phase',
-		    current_phase_ref = 'stale.md',
-		    current_phase_status = 'blocked'
-		WHERE repository_id = $1
-	`, repositoryID)
-	if err != nil {
-		t.Fatalf("inject stale read-only projection: %v", err)
+	if result.TrackType != governanceprofile.TrackTypeDurableSystem {
+		t.Fatalf("expected track_type %q, got %q", governanceprofile.TrackTypeDurableSystem, result.TrackType)
 	}
-
-	updatedSummary := "updated summary"
-	secondResult, err := store.SaveProfile(ctx, governanceprofile.UpdateGovernanceProfileInput{
-		RepositoryID:   repositoryID,
-		TemplateSource: stringPtr("manual://updated"),
-		CanonicalRootFiles: []governanceprofile.CanonicalRootFileBinding{
-			{FileName: "plan.md", Role: "plan", Required: true},
-		},
-		GlobalAssetBindings: []governanceprofile.GlobalAssetBinding{
-			{
-				Name:              "project_rules.md",
-				Kind:              "rules",
-				EntryRef:          "project_rules.md",
-				Role:              "rules",
-				StructuredSummary: &updatedSummary,
-			},
-		},
-	})
-	if err != nil {
-		t.Fatalf("second save profile: %v", err)
+	if result.TemplateSource == nil || *result.TemplateSource != templateSource {
+		t.Fatalf("expected template_source %q, got %+v", templateSource, result.TemplateSource)
 	}
-	assertRootFrozenProjection(t, secondResult)
-
-	readBack, err := store.ReadProfile(ctx, repositoryID)
-	if err != nil {
-		t.Fatalf("read profile after update: %v", err)
+	if result.CurrentPhaseName != "phase13_project_governance_profile_foundation" {
+		t.Fatalf("unexpected current_phase_name: %q", result.CurrentPhaseName)
 	}
-	assertRootFrozenProjection(t, readBack)
-	if len(readBack.GlobalAssetBindings) != 1 || !readBack.GlobalAssetBindings[0].MarkdownResolvable {
-		t.Fatalf("expected markdown_resolvable to remain true after persisted read, got %+v", readBack.GlobalAssetBindings)
+	if result.CurrentPhaseRef != "plan.md#phase13_project_governance_profile_foundation" {
+		t.Fatalf("unexpected current_phase_ref: %q", result.CurrentPhaseRef)
+	}
+	if result.CurrentPhaseStatus != governanceprofile.PhaseStatusInProgress {
+		t.Fatalf("expected current_phase_status %q, got %q", governanceprofile.PhaseStatusInProgress, result.CurrentPhaseStatus)
 	}
 }
 
-func assertRootFrozenProjection(t *testing.T, result *governanceprofile.GovernanceProfileReadResult) {
+func TestReadProfileAllowsNullTemplateSource(t *testing.T) {
+	backendRoot := mustBackendRoot(t)
+	databaseURL := mustDatabaseURL(t, backendRoot)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+
+	pool, err := newTestDBPool(ctx, databaseURL)
+	if err != nil {
+		t.Fatalf("open db pool: %v", err)
+	}
+	t.Cleanup(pool.Close)
+
+	repositoryID := uuid.NewString()
+	repositoryName := "governance-profile-test-" + repositoryID[:8]
+	insertTestRepository(t, pool, repositoryID, repositoryName)
+	t.Cleanup(func() {
+		cleanupTestRepository(t, pool, repositoryID)
+	})
+
+	insertTestGovernanceProfile(t, pool, repositoryID, "")
+
+	store := NewProfileStore(pool)
+	result, err := store.ReadProfile(ctx, repositoryID)
+	if err != nil {
+		t.Fatalf("read profile: %v", err)
+	}
+	if result.TemplateSource != nil {
+		t.Fatalf("expected nil template_source, got %+v", result.TemplateSource)
+	}
+}
+
+func TestReadProfileNotCreatedReturnsNotFound(t *testing.T) {
+	backendRoot := mustBackendRoot(t)
+	databaseURL := mustDatabaseURL(t, backendRoot)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+
+	pool, err := newTestDBPool(ctx, databaseURL)
+	if err != nil {
+		t.Fatalf("open db pool: %v", err)
+	}
+	t.Cleanup(pool.Close)
+
+	store := NewProfileStore(pool)
+	_, err = store.ReadProfile(ctx, uuid.NewString())
+	if err == nil {
+		t.Fatal("expected not found error")
+	}
+	if err != governanceprofile.ErrGovernanceProfileNotFound {
+		t.Fatalf("expected ErrGovernanceProfileNotFound, got %v", err)
+	}
+}
+
+// insertTestGovernanceProfile 直接经 SQL 写入主表 fixture
+// （templateSource 为空串时写入 NULL，覆盖 optional 语义）。
+func insertTestGovernanceProfile(t *testing.T, pool *pgxpool.Pool, repositoryID, templateSource string) {
 	t.Helper()
 
-	if result.Record.TrackType != governanceprofile.RootFrozenTrackType {
-		t.Fatalf("expected track_type %q, got %q", governanceprofile.RootFrozenTrackType, result.Record.TrackType)
-	}
-	if result.Record.CurrentPhaseName != governanceprofile.RootFrozenCurrentPhaseName {
-		t.Fatalf("expected current_phase_name %q, got %q", governanceprofile.RootFrozenCurrentPhaseName, result.Record.CurrentPhaseName)
-	}
-	if result.Record.CurrentPhaseRef != governanceprofile.RootFrozenCurrentPhaseRef {
-		t.Fatalf("expected current_phase_ref %q, got %q", governanceprofile.RootFrozenCurrentPhaseRef, result.Record.CurrentPhaseRef)
-	}
-	if result.Record.CurrentPhaseStatus != governanceprofile.RootFrozenCurrentPhaseStatus {
-		t.Fatalf("expected current_phase_status %q, got %q", governanceprofile.RootFrozenCurrentPhaseStatus, result.Record.CurrentPhaseStatus)
-	}
-	if result.Record.DocsWorkflowLayout != governanceprofile.RootFrozenDocsWorkflowLayout {
-		t.Fatalf("expected docs_workflow_layout %q, got %q", governanceprofile.RootFrozenDocsWorkflowLayout, result.Record.DocsWorkflowLayout)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	_, err := pool.Exec(ctx, `
+		INSERT INTO governance_profiles (
+			repository_id, project_profile_version, track_type, template_source,
+			docs_workflow_layout, current_phase_name, current_phase_ref, current_phase_status
+		) VALUES ($1, $2, $3, NULLIF($4, ''), $5, $6, $7, $8)
+	`, repositoryID,
+		"project_governance_profile_v1",
+		string(governanceprofile.TrackTypeDurableSystem),
+		templateSource,
+		"phase/fix/audit/review",
+		"phase13_project_governance_profile_foundation",
+		"plan.md#phase13_project_governance_profile_foundation",
+		string(governanceprofile.PhaseStatusInProgress),
+	)
+	if err != nil {
+		t.Fatalf("insert test governance profile: %v", err)
 	}
 }
 
@@ -147,12 +169,6 @@ func cleanupTestRepository(t *testing.T, pool *pgxpool.Pool, repositoryID string
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	if _, err := pool.Exec(ctx, `DELETE FROM governance_canonical_root_file_bindings WHERE governance_profile_id IN (SELECT id FROM governance_profiles WHERE repository_id = $1)`, repositoryID); err != nil {
-		t.Fatalf("cleanup canonical root file bindings: %v", err)
-	}
-	if _, err := pool.Exec(ctx, `DELETE FROM governance_global_asset_bindings WHERE governance_profile_id IN (SELECT id FROM governance_profiles WHERE repository_id = $1)`, repositoryID); err != nil {
-		t.Fatalf("cleanup global asset bindings: %v", err)
-	}
 	if _, err := pool.Exec(ctx, `DELETE FROM governance_profiles WHERE repository_id = $1`, repositoryID); err != nil {
 		t.Fatalf("cleanup governance profile: %v", err)
 	}
@@ -219,8 +235,4 @@ func newTestDBPool(ctx context.Context, databaseURL string) (*pgxpool.Pool, erro
 	}
 
 	return pool, nil
-}
-
-func stringPtr(value string) *string {
-	return &value
 }

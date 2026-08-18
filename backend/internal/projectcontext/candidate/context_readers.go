@@ -5,8 +5,8 @@
 //   - 关联 product 摘要读取（通过 product_repositories；兼容层 singular + brief 数组版）
 //   - 关联 module 摘要读取（通过 module_repositories）
 //   - 关联 decision 摘要读取（两类 module-link 派生命中）
-//   - 治理画像聚合读取（GovernanceProfileReader 接口，由 platform 装配点注入
-//     governanceprofile/service.QueryService 实现，phase13-10 冻结）
+//   - 治理画像主记录轻量读取（GovernanceProfileReader 接口，由 platform 装配点注入
+//     governanceprofile/service.QueryService 实现，phase14-09 收缩为只读主表三组字段）
 //   - 全局规范资产读取（StandardReader 接口，由 platform 装配点注入
 //     standard/service.QueryService 实现，phase14-04 冻结）
 //
@@ -26,16 +26,17 @@ import (
 	"github.com/psco/backend/internal/standard"
 )
 
-// GovernanceProfileReader 治理画像聚合读取接口（消费方拥有的 candidate 接口）。
+// GovernanceProfileReader 治理画像主记录轻量读取接口（消费方拥有的 candidate 接口）。
 //
-// phase13-10 冻结：brief 对治理画像的读取必须通过本接口承接，
-// 由 platform 装配点注入 governanceprofile/service.QueryService 作为实现；
-// projectcontext 不得直接书写治理画像 SQL 或复制其存储读取逻辑。
+// phase14-06 冻结：接口随画像退役收缩为只读主表三组字段
+// （track_type / template_source / current_phase 三字段，服务 brief 内联装配）；
+// 两组 bindings 信息已迁移至 Standard（经 StandardReader 读取）。
+// 实现仍由 platform 装配点注入 governanceprofile/service.QueryService。
 type GovernanceProfileReader interface {
-	// GetGovernanceProfile 读取治理画像聚合（主记录 + 两组 bindings）。
-	// 失败语义：repository 不存在或画像未创建 → ErrGovernanceProfileNotFound；
+	// ReadProfileCore 读取画像主记录核心字段（不含已退役的两组 bindings）。
+	// 失败语义：画像未创建 → ErrGovernanceProfileNotFound；
 	//           其他读取失败 → ErrGovernanceProfileReadFailed。
-	GetGovernanceProfile(ctx context.Context, repositoryID string) (*governanceprofile.GovernanceProfileReadResult, error)
+	ReadProfileCore(ctx context.Context, repositoryID string) (*governanceprofile.GovernanceProfileCoreReadResult, error)
 }
 
 // StandardReader 全局规范读取接口（消费方拥有的 candidate 接口）。

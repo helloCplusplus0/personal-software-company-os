@@ -25,8 +25,8 @@ import (
 //
 // 依赖通过 platform 装配点注入：
 //   - contextReaders：跨模块 reader 集合
-//   - governanceReader：治理画像聚合读取接口（phase13-10，由
-//     governanceprofile/service.QueryService 实现）
+//   - governanceReader：治理画像主记录轻量读取接口（phase13-10 引入，
+//     phase14-09 收缩为 ReadProfileCore，由 governanceprofile/service.QueryService 实现）
 //   - standardReader：全局规范读取接口（phase14-04，由
 //     standard/service.QueryService 实现）
 type QueryService struct {
@@ -135,15 +135,15 @@ func (s *QueryService) ExportProjectContext(ctx context.Context, repositoryID st
 //
 // 编排顺序（以 repository_id 为唯一锚点）：
 //  1. 读取 Repository 身份（不存在则返回 ErrRepositoryNotFound）
-//  2. 读取治理画像聚合（复用 governanceprofile 读取主线；
-//     画像未创建 → ErrGovernanceProfileNotFound，与 GetGovernanceProfile 单值一致）
+//  2. 读取治理画像主记录核心字段（phase14-09 收缩为 ReadProfileCore
+//     主表三组字段；画像未创建 → ErrGovernanceProfileNotFound）
 //  3. 读取 products[]（数组语义，通过 product_repositories）
 //  4. 读取 modules[]（通过 module_repositories）
 //  5. 读取 decisions[]（两类 module-link 派生命中 + 去重 + archived 过滤）
 //  6. current_phase 从步骤 2 的治理画像主记录派生
-//  7. global_assets 从步骤 2 的 global_asset_bindings 同源填充
-//  8. 读取 standards[]（通过 candidate.StandardReader 经 standard_bindings
-//     任意 role 反查，含 directory_tree 全树；phase14-07 新增）
+//  7. 读取 standards[]（通过 candidate.StandardReader 经 standard_bindings
+//     任意 role 反查，含 directory_tree 全树；phase14-07 新增）——
+//     旧 global_assets 顶层块已移除，两组 bindings 信息唯一来自 standards[]
 //
 // 失败语义（phase13-10 冻结）：
 //   - Repository 不存在 → ErrRepositoryNotFound（CodeNotFound）
@@ -159,8 +159,8 @@ func (s *QueryService) GetProjectBrief(ctx context.Context, repositoryID string)
 		return nil, fmt.Errorf("%w: %w", projectcontext.ErrProjectContextReadFailed, err)
 	}
 
-	// 2. 治理画像聚合（candidate 接口承接，不复制治理画像 SQL）
-	profile, err := s.governanceReader.GetGovernanceProfile(ctx, repositoryID)
+	// 2. 治理画像主记录核心字段（candidate 接口承接，不复制治理画像 SQL）
+	profile, err := s.governanceReader.ReadProfileCore(ctx, repositoryID)
 	if err != nil {
 		return nil, err
 	}
@@ -191,18 +191,12 @@ func (s *QueryService) GetProjectBrief(ctx context.Context, repositoryID string)
 
 	// 6. current_phase 从治理画像主记录单向派生
 	currentPhase := projectcontext.BriefCurrentPhase{
-		Name:     profile.Record.CurrentPhaseName,
-		EntryRef: profile.Record.CurrentPhaseRef,
-		Status:   phaseStatusToString(profile.Record.CurrentPhaseStatus),
+		Name:     profile.CurrentPhaseName,
+		EntryRef: profile.CurrentPhaseRef,
+		Status:   phaseStatusToString(profile.CurrentPhaseStatus),
 	}
 
-	// 7. global_assets 从治理画像读取结果同源填充
-	globalAssets := profile.GlobalAssetBindings
-	if globalAssets == nil {
-		globalAssets = []governanceprofile.GlobalAssetBinding{}
-	}
-
-	// 8. standards[]（candidate 接口承接，不复制 standard 表 SQL；
+	// 7. standards[]（candidate 接口承接，不复制 standard 表 SQL；
 	//    失败按 reader 冻结语义透传 wrapped ErrStandardReadFailed）
 	standards, err := s.standardReader.ListStandardsByRepository(ctx, repositoryID)
 	if err != nil {
@@ -215,7 +209,6 @@ func (s *QueryService) GetProjectBrief(ctx context.Context, repositoryID string)
 	return &projectcontext.ProjectBriefReadResult{
 		Repository:        repo,
 		GovernanceProfile: profile,
-		GlobalAssets:      globalAssets,
 		CurrentPhase:      currentPhase,
 		Products:          products,
 		Modules:           modules,

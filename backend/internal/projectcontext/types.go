@@ -120,22 +120,23 @@ type BriefCurrentPhase struct {
 }
 
 // ProjectBriefReadResult GetProjectBrief 的响应结构。
-// 对齐 proto GetProjectBriefResponse（phase13-07 冻结的 7 顶层字段 schema，
-// phase14-07 扩展 standards = 8 第 8 顶层字段）。
+// 对齐 proto GetProjectBriefResponse（phase14-09 切换后的 8 顶层块字段面：
+// repository / governance_profile / current_phase / products[] / modules[] /
+// decisions[] / standards[]；旧 global_assets 顶层块已移除，两组 bindings
+// 信息唯一来自 standards[]）。
 //
-// GovernanceProfile / GlobalAssets 由治理画像聚合读取结果同源填充；
-// 治理画像 domain 类型直接透传（GovernanceProfileReadResult），
-// proto 组装在 Connect handler 内复用 governanceprofile/connect 导出的转换函数。
+// GovernanceProfile 由治理画像主记录轻量读取结果（ReadProfileCore，
+// GovernanceProfileCoreReadResult）同源填充，proto 组装在 Connect handler
+// 内映射为内联 BriefGovernanceProfile（domain→gen 枚举映射）。
 // Standards 由 candidate.StandardReader 经 standard_bindings 反查同源填充
 // （phase14-07），standard domain 类型直接透传，proto 组装在 Connect handler
 // 内复用 standard/connect 导出的转换函数。
 type ProjectBriefReadResult struct {
-	Repository        *RepositorySummary                             `json:"repository"`
-	GovernanceProfile *governanceprofile.GovernanceProfileReadResult `json:"governance_profile"`
-	GlobalAssets      []governanceprofile.GlobalAssetBinding         `json:"global_assets"`
-	CurrentPhase      BriefCurrentPhase                              `json:"current_phase"`
-	Products          []ProductSummary                               `json:"products"`
-	Modules           []ModuleSummary                                `json:"modules"`
-	Decisions         []DecisionSummary                              `json:"decisions"`
-	Standards         []standard.StandardReadResult                  `json:"standards"`
+	Repository        *RepositorySummary                                  `json:"repository"`
+	GovernanceProfile *governanceprofile.GovernanceProfileCoreReadResult  `json:"governance_profile"`
+	CurrentPhase      BriefCurrentPhase                                   `json:"current_phase"`
+	Products          []ProductSummary                                    `json:"products"`
+	Modules           []ModuleSummary                                     `json:"modules"`
+	Decisions         []DecisionSummary                                   `json:"decisions"`
+	Standards         []standard.StandardReadResult                       `json:"standards"`
 }

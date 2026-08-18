@@ -36,7 +36,6 @@ syntax = "proto3";
 package psco.project_context.v1;
 
 import "google/protobuf/timestamp.proto";
-import "psco/governance_profile/v1/governance_profile.proto";
 import "psco/standard/v1/standard.proto";
 
 // Go 包路径（生成代码落点）
@@ -154,6 +153,17 @@ message ExportProjectContextResponse {
 // agent 项目简报（project brief for agent）
 // ============================================================================
 
+// BriefTrackType 内联技术路线枚举（值域与退役的 TrackType 一致）
+enum BriefTrackType { BRIEF_TRACK_TYPE_UNSPECIFIED = 0; BRIEF_TRACK_TYPE_PRODUCT = 1; BRIEF_TRACK_TYPE_DURABLE_SYSTEM = 2; }
+// BriefPhaseStatus 内联阶段状态枚举（值域与退役的 PhaseStatus 一致）
+enum BriefPhaseStatus { BRIEF_PHASE_STATUS_UNSPECIFIED = 0; BRIEF_PHASE_STATUS_PLANNED = 1; BRIEF_PHASE_STATUS_IN_PROGRESS = 2; BRIEF_PHASE_STATUS_COMPLETED = 3; BRIEF_PHASE_STATUS_BLOCKED = 4; }
+// BriefGovernanceProfile 画像主记录轻量内联消息
+message BriefGovernanceProfile {
+  string repository_id = 1;            // 锚点保留
+  BriefTrackType track_type = 2;       // read-only
+  optional string template_source = 3; // 手工维护字段保留
+}
+
 // BriefCurrentPhase — brief 顶层 current_phase 最小派生消息。
 // 从治理画像主记录的 current_phase_name / current_phase_ref /
 // current_phase_status 三个 read-only 字段单向派生，不引入第二套阶段语义。
@@ -162,8 +172,8 @@ message BriefCurrentPhase {
   string name = 1;
   // 当前阶段正式入口引用
   string entry_ref = 2;
-  // 当前阶段状态（复用治理画像受控枚举）
-  psco.governance_profile.v1.PhaseStatus status = 3;
+  // 当前阶段状态（内联 BriefPhaseStatus 枚举，值域与退役的画像 PhaseStatus 一致）
+  BriefPhaseStatus status = 3;
 }
 
 // GetProjectBriefRequest — agent 项目简报读取请求。
@@ -176,8 +186,8 @@ message GetProjectBriefRequest {
 // phase13-07 冻结 7 顶层字段 schema；phase14-07 过渡态新增第 8 顶层块 standards[]
 // （phase14-02 冻结的正式演进；同一 Standard 消息直接引用，不另造 Summary）：
 //   1. repository          — 仓库身份摘要（复用既有 RepositorySummary）
-//   2. governance_profile  — 治理画像完整消息（复用 governance_profile.proto；过渡态保留）
-//   3. global_assets       — 全局规范资产绑定数组（过渡态保留；phase14-09 移除并 reserved）
+//   2. governance_profile  — 画像主记录轻量内联消息（phase14-09 切换；BriefGovernanceProfile）
+//   3. global_assets       — phase14-09 已移除（reserved 3；信息经 standards[].directory_tree 承接）
 //   4. current_phase       — 当前阶段最小派生块
 //   5. products            — 关联产品摘要数组（即使长度 1 也保持数组形式）
 //   6. modules             — 关联模块摘要数组
@@ -190,8 +200,11 @@ message GetProjectBriefRequest {
 //   - 数组为空是合法状态（不做绑定完整性强制校验）
 message GetProjectBriefResponse {
   RepositorySummary repository = 1;
-  psco.governance_profile.v1.GovernanceProfile governance_profile = 2;
-  repeated psco.governance_profile.v1.GlobalAssetBinding global_assets = 3;
+  BriefGovernanceProfile governance_profile = 2;
+  // phase14-09 移除 global_assets（信息经 standards[].directory_tree 承接），
+  // 字段号与字段名同时 reserved 防复用（buf FIELD_NO_DELETE_UNLESS_NAME_RESERVED 要求）
+  reserved 3;
+  reserved "global_assets";
   BriefCurrentPhase current_phase = 4;
   repeated ProductSummary products = 5;
   repeated ModuleSummary modules = 6;

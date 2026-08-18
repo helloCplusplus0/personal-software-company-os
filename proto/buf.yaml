@@ -18,3 +18,15 @@ breaking:
   use:
     - WIRE_JSON
   # 当前阶段允许新增字段（向后兼容），但禁止删除或修改已有字段编号
+  ignore:
+    # phase14-09（T1）：治理画像包整体退役，豁免其删除的 breaking 检测。
+    # 决策留痕：phase14_06 spec（画像退役六触点 T1）；phase14-02 冻结退役边界。
+    # 该项长期保留：豁免决策可追溯；变更合入 main 形成新基准后 ignore 无实际作用但无害。
+    - psco/governance_profile/v1/governance_profile.proto
+  # phase14-09（T1 修正留痕）：brief 内联切换（governance_profile 字段类型切换 +
+  # BriefCurrentPhase.status 枚举切换）是 phase14-02/06 冻结的刻意 BREAKING 变更，
+  # 在 main 基准重置前必然触发 FIELD_WIRE_JSON_COMPATIBLE_TYPE。
+  # 规则级 + 单文件豁免（比整文件 ignore 更窄）：合入 main 形成新基准后成为无实际作用的留痕。
+  ignore_only:
+    FIELD_WIRE_JSON_COMPATIBLE_TYPE:
+      - psco/project_context/v1/project_context.proto

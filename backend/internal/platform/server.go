@@ -88,9 +88,9 @@ func NewServer(cfg Config, pool *pgxpool.Pool) *Server {
 		templateReuseQuerySvc := buildTemplateReuse(pool, reuseSummaryQuerySvc)
 		mountTemplateReuseConnect(r, templateReuseQuerySvc)
 
-		// phase13 governance profile 模块：项目治理画像结构化写读
-		governanceProfileQuerySvc, governanceProfileCommandSvc := buildGovernanceProfile(pool)
-		mountGovernanceProfileConnect(r, governanceProfileQuerySvc, governanceProfileCommandSvc)
+		// phase13 governance profile 模块：phase14-09 已收缩为纯读
+		// （画像 RPC 挂载已退役；QueryService 仅作为 brief 的 candidate reader 注入）
+		governanceProfileQuerySvc := buildGovernanceProfile(pool)
 
 		// phase14 standard 模块：全局规范实体结构化写读。
 		// 装配顺序约束：standard 的 QueryService 必须先于 buildProjectContext

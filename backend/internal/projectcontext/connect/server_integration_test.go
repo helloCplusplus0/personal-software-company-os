@@ -17,11 +17,8 @@ import (
 	"github.com/joho/godotenv"
 
 	pbc "github.com/psco/backend/internal/gen/connect/psco/project_context/v1/project_contextv1connect"
-	gppb "github.com/psco/backend/internal/gen/proto/psco/governance_profile/v1"
 	pb "github.com/psco/backend/internal/gen/proto/psco/project_context/v1"
 	standardpb "github.com/psco/backend/internal/gen/proto/psco/standard/v1"
-	"github.com/psco/backend/internal/governanceprofile"
-	governanceprofilecandidate "github.com/psco/backend/internal/governanceprofile/candidate"
 	governanceprofilerepo "github.com/psco/backend/internal/governanceprofile/repository"
 	governanceprofileservice "github.com/psco/backend/internal/governanceprofile/service"
 	projectcontextcandidate "github.com/psco/backend/internal/projectcontext/candidate"
@@ -199,11 +196,11 @@ func TestProjectContextAcceptanceScenarios(t *testing.T) {
 		}
 	})
 
-	t.Run("project brief returns full seven-block response when governance profile exists", func(t *testing.T) {
+	t.Run("project brief returns inline brief blocks when governance profile exists", func(t *testing.T) {
 		h.resetFixture(t, "completed-bound")
 
 		repositoryID := h.mustRepositoryIDByName(t, "main-repo")
-		h.mustSaveGovernanceProfile(t, repositoryID)
+		h.mustSeedGovernanceProfileRow(t, repositoryID)
 
 		resp, err := h.client.GetProjectBrief(t.Context(), &pb.GetProjectBriefRequest{
 			RepositoryId: repositoryID,
@@ -218,13 +215,10 @@ func TestProjectContextAcceptanceScenarios(t *testing.T) {
 		if resp.GetGovernanceProfile() == nil {
 			t.Fatal("expected governance profile block")
 		}
-		if len(resp.GetGlobalAssets()) == 0 {
-			t.Fatal("expected global assets block")
-		}
 		if resp.GetCurrentPhase() == nil {
 			t.Fatal("expected current phase block")
 		}
-		if resp.GetCurrentPhase().GetStatus() != gppb.PhaseStatus_PHASE_STATUS_IN_PROGRESS {
+		if resp.GetCurrentPhase().GetStatus() != pb.BriefPhaseStatus_BRIEF_PHASE_STATUS_IN_PROGRESS {
 			t.Fatalf("expected current phase in progress, got %v", resp.GetCurrentPhase().GetStatus())
 		}
 		if len(resp.GetProducts()) != 1 {
@@ -236,36 +230,26 @@ func TestProjectContextAcceptanceScenarios(t *testing.T) {
 		if len(resp.GetDecisions()) == 0 {
 			t.Fatal("expected decisions array")
 		}
-		if resp.GetGovernanceProfile().GetCurrentPhaseStatus() != gppb.PhaseStatus_PHASE_STATUS_IN_PROGRESS {
-			t.Fatalf("expected governance profile current phase status in progress, got %v", resp.GetGovernanceProfile().GetCurrentPhaseStatus())
-		}
 
-		// phase13-11 同源断言：brief 治理画像字段与画像写入口径 round-trip 一致。
+		// phase14-09 内联切换断言：BriefGovernanceProfile 三字段 round-trip
+		// （repository_id / track_type / template_source）。
 		profile := resp.GetGovernanceProfile()
+		if profile.GetRepositoryId() != repositoryID {
+			t.Fatalf("expected repository_id round-trip, got %q want %q", profile.GetRepositoryId(), repositoryID)
+		}
 		if profile.GetTemplateSource() != "manual://brief-test" {
 			t.Fatalf("expected template_source round-trip, got %q", profile.GetTemplateSource())
 		}
-		if profile.GetTrackType() != gppb.TrackType_TRACK_TYPE_DURABLE_SYSTEM {
+		if profile.GetTrackType() != pb.BriefTrackType_BRIEF_TRACK_TYPE_DURABLE_SYSTEM {
 			t.Fatalf("expected durable system track, got %v", profile.GetTrackType())
 		}
-		if !canonicalRootFilesContain(profile.GetCanonicalRootFiles(), "AGENTS.md", "entry", true) ||
-			!canonicalRootFilesContain(profile.GetCanonicalRootFiles(), "plan.md", "plan", true) {
-			t.Fatalf("expected canonical root files round-trip, got %+v", profile.GetCanonicalRootFiles())
-		}
-		if !globalAssetsContain(resp.GetGlobalAssets(), "project_rules.md", "rules", "project_rules.md", "rules", "project rules summary for brief test") {
-			t.Fatalf("expected global assets round-trip, got %+v", resp.GetGlobalAssets())
-		}
-		// current_phase 从治理画像主记录三 read-only 字段单向派生
-		if resp.GetCurrentPhase().GetName() != profile.GetCurrentPhaseName() ||
-			resp.GetCurrentPhase().GetEntryRef() != profile.GetCurrentPhaseRef() ||
-			resp.GetCurrentPhase().GetStatus() != profile.GetCurrentPhaseStatus() {
-			t.Fatalf(
-				"expected current phase derived from governance profile record, got brief=%+v record=(%s, %s, %v)",
-				resp.GetCurrentPhase(), profile.GetCurrentPhaseName(), profile.GetCurrentPhaseRef(), profile.GetCurrentPhaseStatus(),
-			)
-		}
-		if !resp.GetGlobalAssets()[0].GetMarkdownResolvable() {
-			t.Fatal("expected global assets to expose markdown_resolvable")
+
+		// current_phase 从治理画像主记录 read-only 字段单向派生
+		// （fixture 固定投影：phase13 阶段名 / plan.md 入口 / in_progress）。
+		if resp.GetCurrentPhase().GetName() != "phase13_project_governance_profile_foundation" ||
+			resp.GetCurrentPhase().GetEntryRef() != "plan.md#phase13_project_governance_profile_foundation" ||
+			resp.GetCurrentPhase().GetStatus() != pb.BriefPhaseStatus_BRIEF_PHASE_STATUS_IN_PROGRESS {
+			t.Fatalf("expected current phase derived from governance profile record, got %+v", resp.GetCurrentPhase())
 		}
 	})
 
@@ -273,7 +257,7 @@ func TestProjectContextAcceptanceScenarios(t *testing.T) {
 		h.resetFixture(t, "completed-bound")
 
 		repositoryID := h.mustRepositoryIDByName(t, "main-repo")
-		h.mustSaveGovernanceProfile(t, repositoryID)
+		h.mustSeedGovernanceProfileRow(t, repositoryID)
 		h.cleanupStandardFixtures(t)
 		created := h.mustCreateAndBindStandard(t, repositoryID)
 
@@ -339,8 +323,9 @@ func TestProjectContextAcceptanceScenarios(t *testing.T) {
 			t.Fatalf("expected file node without children, got %d", len(readme.GetChildren()))
 		}
 
-		// global_assets 过渡态行为不回退（phase14-09 前保持同源填充）
-		if len(resp.GetGlobalAssets()) == 0 || resp.GetGovernanceProfile() == nil || resp.GetCurrentPhase() == nil {
+		// phase14-09：旧 global_assets 顶层块已移除，两组 bindings 信息唯一来自 standards[]；
+		// 内联画像块与 current_phase 保持装配不回退。
+		if resp.GetGovernanceProfile() == nil || resp.GetCurrentPhase() == nil {
 			t.Fatalf("expected governance profile blocks to remain populated, got %+v", resp)
 		}
 	})
@@ -349,7 +334,7 @@ func TestProjectContextAcceptanceScenarios(t *testing.T) {
 		h.resetFixture(t, "completed-unbound")
 
 		repositoryID := h.mustRepositoryIDByName(t, "main-repo")
-		h.mustSaveGovernanceProfile(t, repositoryID)
+		h.mustSeedGovernanceProfileRow(t, repositoryID)
 		h.cleanupStandardFixtures(t)
 
 		resp, err := h.client.GetProjectBrief(t.Context(), &pb.GetProjectBriefRequest{
@@ -402,9 +387,8 @@ func newProjectContextIntegrationHarness(t *testing.T) *projectContextIntegratio
 	t.Cleanup(pool.Close)
 
 	readers := projectcontextcandidate.NewContextReaders(pool)
-	// phase13-10：注入治理画像读取主线作为 GetProjectBrief 的 candidate 依赖
+	// phase14-09：注入收缩后的画像主记录轻量读取主线（ReadProfileCore）
 	governanceReader := governanceprofileservice.NewQueryService(
-		governanceprofilecandidate.NewRepositoryReader(pool),
 		governanceprofilerepo.NewProfileStore(pool),
 	)
 	// phase14-07：注入 standard 读取主线作为 GetProjectBrief.standards[] 的 candidate 依赖
@@ -456,38 +440,38 @@ func (h *projectContextIntegrationHarness) mustRepositoryIDByName(t *testing.T, 
 	return repositoryID
 }
 
-func (h *projectContextIntegrationHarness) mustSaveGovernanceProfile(t *testing.T, repositoryID string) {
+// mustSeedGovernanceProfileRow 直接经 SQL 写入画像主表 fixture
+// （phase14-09：画像写路径已退役，测试不再经 SaveProfile 写入；
+// 也不引用两张 bindings 表——集成测试与两表存废状态解耦）。
+func (h *projectContextIntegrationHarness) mustSeedGovernanceProfileRow(t *testing.T, repositoryID string) {
 	t.Helper()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	summary := "project rules summary for brief test"
-	store := governanceprofilerepo.NewProfileStore(h.pool)
-	_, err := store.SaveProfile(ctx, governanceprofile.UpdateGovernanceProfileInput{
-		RepositoryID:   repositoryID,
-		TemplateSource: stringPtr("manual://brief-test"),
-		CanonicalRootFiles: []governanceprofile.CanonicalRootFileBinding{
-			{FileName: "AGENTS.md", Role: "entry", Required: true},
-			{FileName: "plan.md", Role: "plan", Required: true},
-		},
-		GlobalAssetBindings: []governanceprofile.GlobalAssetBinding{
-			{
-				Name:              "project_rules.md",
-				Kind:              "rules",
-				EntryRef:          "project_rules.md",
-				Role:              "rules",
-				StructuredSummary: &summary,
-			},
-		},
-	})
+	_, err := h.pool.Exec(ctx, `
+		INSERT INTO governance_profiles (
+			repository_id, project_profile_version, track_type, template_source,
+			docs_workflow_layout, current_phase_name, current_phase_ref, current_phase_status
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+		ON CONFLICT (repository_id) DO UPDATE SET
+			template_source      = EXCLUDED.template_source,
+			current_phase_name   = EXCLUDED.current_phase_name,
+			current_phase_ref    = EXCLUDED.current_phase_ref,
+			current_phase_status = EXCLUDED.current_phase_status,
+			updated_at           = NOW()
+	`, repositoryID,
+		"project_governance_profile_v1",
+		"durable_system",
+		"manual://brief-test",
+		"phase/fix/audit/review",
+		"phase13_project_governance_profile_foundation",
+		"plan.md#phase13_project_governance_profile_foundation",
+		"in_progress",
+	)
 	if err != nil {
-		t.Fatalf("save governance profile: %v", err)
+		t.Fatalf("seed governance profile row: %v", err)
 	}
-}
-
-func stringPtr(value string) *string {
-	return &value
 }
 
 // cleanupStandardFixtures 清理 standard 三表 fixture（按 fixture 名定位，
@@ -665,27 +649,6 @@ func containsAll(items []string, wants ...string) bool {
 		}
 	}
 	return true
-}
-
-// canonicalRootFilesContain 断言 canonical 根级文件绑定 round-trip 一致（phase13-11 同源取证）。
-func canonicalRootFilesContain(items []*gppb.CanonicalRootFileBinding, fileName, role string, required bool) bool {
-	for _, item := range items {
-		if item.GetFileName() == fileName && item.GetRole() == role && item.GetRequired() == required {
-			return true
-		}
-	}
-	return false
-}
-
-// globalAssetsContain 断言全局规范资产绑定 round-trip 一致（phase13-11 同源取证）。
-func globalAssetsContain(items []*gppb.GlobalAssetBinding, name, kind, entryRef, role, summary string) bool {
-	for _, item := range items {
-		if item.GetName() == name && item.GetKind() == kind && item.GetEntryRef() == entryRef &&
-			item.GetRole() == role && item.GetStructuredSummary() == summary {
-			return true
-		}
-	}
-	return false
 }
 
 func ruleSummariesContain(items []*pb.RuleEntry, summary string) bool {
