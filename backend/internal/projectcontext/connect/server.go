@@ -17,8 +17,10 @@ import (
 	gpconnect "github.com/psco/backend/internal/governanceprofile/connect"
 	pbc "github.com/psco/backend/internal/gen/connect/psco/project_context/v1/project_contextv1connect"
 	pb "github.com/psco/backend/internal/gen/proto/psco/project_context/v1"
+	standardpb "github.com/psco/backend/internal/gen/proto/psco/standard/v1"
 	"github.com/psco/backend/internal/projectcontext"
 	"github.com/psco/backend/internal/projectcontext/service"
+	standardconnect "github.com/psco/backend/internal/standard/connect"
 )
 
 // Server 实现 ProjectContextServiceHandler 接口。
@@ -68,16 +70,23 @@ func (s *Server) ExportProjectContext(ctx context.Context, req *pb.ExportProject
 
 // GetProjectBrief 承接 agent 项目简报结构化读取（phase13-10 正式主线）。
 //
-// 组装约束（phase13-07 冻结的 7 顶层字段 schema）：
+// 组装约束（phase13-07 冻结的 7 顶层字段 schema，phase14-07 扩展 standards = 8）：
 //   - governance_profile / global_assets 复用 governanceprofile/connect
 //     导出的转换函数，与 GetGovernanceProfile 同源，不重写第二套映射
 //   - current_phase 从治理画像主记录 read-only 字段单向派生
 //   - products[] / modules[] / decisions[] 数组语义，空数组合法
+//   - standards[] 复用 standard/connect 导出的 DomainStandardToProto
+//     （含递归树转换），与 StandardService 读取同源，不重写第二套树映射
 //   - 不混入硬编码投影、目录扫描或自然语言指导词
 func (s *Server) GetProjectBrief(ctx context.Context, req *pb.GetProjectBriefRequest) (*pb.GetProjectBriefResponse, error) {
 	result, err := s.querySvc.GetProjectBrief(ctx, req.GetRepositoryId())
 	if err != nil {
 		return nil, connecterrors.MapToConnectError(err)
+	}
+
+	standards := make([]*standardpb.Standard, 0, len(result.Standards))
+	for _, item := range result.Standards {
+		standards = append(standards, standardconnect.DomainStandardToProto(item))
 	}
 
 	return &pb.GetProjectBriefResponse{
@@ -93,6 +102,7 @@ func (s *Server) GetProjectBrief(ctx context.Context, req *pb.GetProjectBriefReq
 		Products:  domainProductSummariesToProto(result.Products),
 		Modules:   domainModuleSummariesToProto(result.Modules),
 		Decisions: domainDecisionSummariesToProto(result.Decisions),
+		Standards: standards,
 	}, nil
 }
 

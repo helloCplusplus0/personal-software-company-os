@@ -37,6 +37,7 @@ package psco.project_context.v1;
 
 import "google/protobuf/timestamp.proto";
 import "psco/governance_profile/v1/governance_profile.proto";
+import "psco/standard/v1/standard.proto";
 
 // Go 包路径（生成代码落点）
 option go_package = "github.com/psco/backend/internal/gen/proto/psco/project_context/v1;projectcontextv1";
@@ -172,17 +173,19 @@ message GetProjectBriefRequest {
 }
 
 // GetProjectBriefResponse — agent 项目简报读取响应。
-// phase13-07 冻结的 7 顶层字段 schema：
+// phase13-07 冻结 7 顶层字段 schema；phase14-07 过渡态新增第 8 顶层块 standards[]
+// （phase14-02 冻结的正式演进；同一 Standard 消息直接引用，不另造 Summary）：
 //   1. repository          — 仓库身份摘要（复用既有 RepositorySummary）
-//   2. governance_profile  — 治理画像完整消息（复用 governance_profile.proto）
-//   3. global_assets       — 全局规范资产绑定数组（同源于治理画像读取结果）
+//   2. governance_profile  — 治理画像完整消息（复用 governance_profile.proto；过渡态保留）
+//   3. global_assets       — 全局规范资产绑定数组（过渡态保留；phase14-09 移除并 reserved）
 //   4. current_phase       — 当前阶段最小派生块
 //   5. products            — 关联产品摘要数组（即使长度 1 也保持数组形式）
 //   6. modules             — 关联模块摘要数组
 //   7. decisions           — 关联决策摘要数组
+//   8. standards           — 该仓库关联的全局规范数组（含 directory_tree 全树）
 //
 // 约束：
-//   - 不新增与上述并列的第 8 个顶层块
+//   - standards = 8 为 phase14-02 冻结的正式演进，不视为违规新增顶层块
 //   - 不混入任何"给 agent 的自然语言指导词"字段
 //   - 数组为空是合法状态（不做绑定完整性强制校验）
 message GetProjectBriefResponse {
@@ -193,6 +196,7 @@ message GetProjectBriefResponse {
   repeated ProductSummary products = 5;
   repeated ModuleSummary modules = 6;
   repeated DecisionSummary decisions = 7;
+  repeated psco.standard.v1.Standard standards = 8;
 }
 
 // ============================================================================

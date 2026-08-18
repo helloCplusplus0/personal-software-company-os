@@ -4,7 +4,8 @@
 // 对齐 phase11-07 与 phase13-10 已冻结的 query service owner 结论。
 //
 // 跨模块读取全部通过 candidate/ 子包隔离，service 层不直接写跨模块 SQL；
-// 治理画像读取通过 candidate.GovernanceProfileReader 接口注入（phase13-10）。
+// 治理画像读取通过 candidate.GovernanceProfileReader 接口注入（phase13-10）；
+// 全局规范读取通过 candidate.StandardReader 接口注入（phase14-07）。
 //
 // 文件落点：backend/internal/projectcontext/service/query_service.go
 package service
@@ -17,6 +18,7 @@ import (
 	"github.com/psco/backend/internal/projectcontext"
 	"github.com/psco/backend/internal/projectcontext/candidate"
 	"github.com/psco/backend/internal/projectcontext/renderer"
+	"github.com/psco/backend/internal/standard"
 )
 
 // QueryService 承接 projectcontext 只读聚合编排。
@@ -25,16 +27,20 @@ import (
 //   - contextReaders：跨模块 reader 集合
 //   - governanceReader：治理画像聚合读取接口（phase13-10，由
 //     governanceprofile/service.QueryService 实现）
+//   - standardReader：全局规范读取接口（phase14-04，由
+//     standard/service.QueryService 实现）
 type QueryService struct {
-	contextReaders  *candidate.ContextReaders
+	contextReaders   *candidate.ContextReaders
 	governanceReader candidate.GovernanceProfileReader
+	standardReader   candidate.StandardReader
 }
 
 // NewQueryService 构造 QueryService。
-func NewQueryService(contextReaders *candidate.ContextReaders, governanceReader candidate.GovernanceProfileReader) *QueryService {
+func NewQueryService(contextReaders *candidate.ContextReaders, governanceReader candidate.GovernanceProfileReader, standardReader candidate.StandardReader) *QueryService {
 	return &QueryService{
-		contextReaders:  contextReaders,
+		contextReaders:   contextReaders,
 		governanceReader: governanceReader,
+		standardReader:   standardReader,
 	}
 }
 
@@ -136,12 +142,16 @@ func (s *QueryService) ExportProjectContext(ctx context.Context, repositoryID st
 //  5. 读取 decisions[]（两类 module-link 派生命中 + 去重 + archived 过滤）
 //  6. current_phase 从步骤 2 的治理画像主记录派生
 //  7. global_assets 从步骤 2 的 global_asset_bindings 同源填充
+//  8. 读取 standards[]（通过 candidate.StandardReader 经 standard_bindings
+//     任意 role 反查，含 directory_tree 全树；phase14-07 新增）
 //
 // 失败语义（phase13-10 冻结）：
 //   - Repository 不存在 → ErrRepositoryNotFound（CodeNotFound）
 //   - 治理画像未创建 → ErrGovernanceProfileNotFound（CodeNotFound）
 //   - 数组为空是合法状态，不做 Repository Binding 完整性强制校验
 //   - 其他读取失败 → ErrProjectContextReadFailed（CodeInternal）
+//   - standards[] 读取失败 → standard.ErrStandardReadFailed（CodeInternal，
+//     phase14-04 冻结 reader 失败语义，由 connecterrors 统一映射）
 func (s *QueryService) GetProjectBrief(ctx context.Context, repositoryID string) (*projectcontext.ProjectBriefReadResult, error) {
 	// 1. Repository 身份
 	repo, err := s.contextReaders.ReadRepository(ctx, repositoryID)
@@ -192,6 +202,16 @@ func (s *QueryService) GetProjectBrief(ctx context.Context, repositoryID string)
 		globalAssets = []governanceprofile.GlobalAssetBinding{}
 	}
 
+	// 8. standards[]（candidate 接口承接，不复制 standard 表 SQL；
+	//    失败按 reader 冻结语义透传 wrapped ErrStandardReadFailed）
+	standards, err := s.standardReader.ListStandardsByRepository(ctx, repositoryID)
+	if err != nil {
+		return nil, err
+	}
+	if standards == nil {
+		standards = []standard.StandardReadResult{}
+	}
+
 	return &projectcontext.ProjectBriefReadResult{
 		Repository:        repo,
 		GovernanceProfile: profile,
@@ -200,6 +220,7 @@ func (s *QueryService) GetProjectBrief(ctx context.Context, repositoryID string)
 		Products:          products,
 		Modules:           modules,
 		Decisions:         decisions,
+		Standards:         standards,
 	}, nil
 }
 

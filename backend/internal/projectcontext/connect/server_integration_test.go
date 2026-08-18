@@ -19,12 +19,17 @@ import (
 	pbc "github.com/psco/backend/internal/gen/connect/psco/project_context/v1/project_contextv1connect"
 	gppb "github.com/psco/backend/internal/gen/proto/psco/governance_profile/v1"
 	pb "github.com/psco/backend/internal/gen/proto/psco/project_context/v1"
+	standardpb "github.com/psco/backend/internal/gen/proto/psco/standard/v1"
 	"github.com/psco/backend/internal/governanceprofile"
 	governanceprofilecandidate "github.com/psco/backend/internal/governanceprofile/candidate"
 	governanceprofilerepo "github.com/psco/backend/internal/governanceprofile/repository"
 	governanceprofileservice "github.com/psco/backend/internal/governanceprofile/service"
 	projectcontextcandidate "github.com/psco/backend/internal/projectcontext/candidate"
 	projectcontextservice "github.com/psco/backend/internal/projectcontext/service"
+	"github.com/psco/backend/internal/standard"
+	standardcandidate "github.com/psco/backend/internal/standard/candidate"
+	standardrepo "github.com/psco/backend/internal/standard/repository"
+	standardservice "github.com/psco/backend/internal/standard/service"
 )
 
 func TestProjectContextAcceptanceScenarios(t *testing.T) {
@@ -264,11 +269,88 @@ func TestProjectContextAcceptanceScenarios(t *testing.T) {
 		}
 	})
 
+	t.Run("project brief returns standards with full directory tree when standard is bound to repository", func(t *testing.T) {
+		h.resetFixture(t, "completed-bound")
+
+		repositoryID := h.mustRepositoryIDByName(t, "main-repo")
+		h.mustSaveGovernanceProfile(t, repositoryID)
+		h.cleanupStandardFixtures(t)
+		created := h.mustCreateAndBindStandard(t, repositoryID)
+
+		resp, err := h.client.GetProjectBrief(t.Context(), &pb.GetProjectBriefRequest{
+			RepositoryId: repositoryID,
+		})
+		if err != nil {
+			t.Fatalf("expected success, got %v", err)
+		}
+
+		standards := resp.GetStandards()
+		if len(standards) != 1 {
+			t.Fatalf("expected standards array length 1, got %d", len(standards))
+		}
+
+		// 主记录字段 round-trip（与 standard service 写入口径一致）
+		got := standards[0]
+		if got.GetId() != created.ID {
+			t.Fatalf("expected standard id round-trip, got %q want %q", got.GetId(), created.ID)
+		}
+		if got.GetName() != "brief-standards-roundtrip" {
+			t.Fatalf("expected standard name round-trip, got %q", got.GetName())
+		}
+		if got.GetDescription() != "phase14-07 brief standards round-trip fixture" {
+			t.Fatalf("expected standard description round-trip, got %q", got.GetDescription())
+		}
+		if got.GetStatus() != standardpb.StandardStatus_STANDARD_STATUS_ACTIVE {
+			t.Fatalf("expected active status round-trip, got %v", got.GetStatus())
+		}
+		if got.GetCreatedAt() == nil || got.GetUpdatedAt() == nil {
+			t.Fatal("expected standard timestamps round-trip")
+		}
+
+		// directory_tree 全树节点字段逐项断言（根 → docs → README.md）
+		root := got.GetDirectoryTree()
+		if root == nil {
+			t.Fatal("expected directory tree round-trip")
+		}
+		if root.GetName() != "." || root.GetNodeType() != standardpb.NodeType_NODE_TYPE_DIRECTORY ||
+			root.GetRole() != "" || root.GetSummary() != "" || root.GetRef() != "" {
+			t.Fatalf("unexpected root node fields: %+v", root)
+		}
+		if len(root.GetChildren()) != 1 {
+			t.Fatalf("expected root children length 1, got %d", len(root.GetChildren()))
+		}
+
+		docs := root.GetChildren()[0]
+		if docs.GetName() != "docs" || docs.GetNodeType() != standardpb.NodeType_NODE_TYPE_DIRECTORY ||
+			docs.GetRole() != "" || docs.GetSummary() != "规范正文目录" || docs.GetRef() != "" {
+			t.Fatalf("unexpected docs node fields: %+v", docs)
+		}
+		if len(docs.GetChildren()) != 1 {
+			t.Fatalf("expected docs children length 1, got %d", len(docs.GetChildren()))
+		}
+
+		readme := docs.GetChildren()[0]
+		if readme.GetName() != "README.md" || readme.GetNodeType() != standardpb.NodeType_NODE_TYPE_FILE ||
+			readme.GetRole() != "standard-entry" || readme.GetSummary() != "规范入口说明" ||
+			readme.GetRef() != "/docs/README.md" {
+			t.Fatalf("unexpected README.md node fields: %+v", readme)
+		}
+		if len(readme.GetChildren()) != 0 {
+			t.Fatalf("expected file node without children, got %d", len(readme.GetChildren()))
+		}
+
+		// global_assets 过渡态行为不回退（phase14-09 前保持同源填充）
+		if len(resp.GetGlobalAssets()) == 0 || resp.GetGovernanceProfile() == nil || resp.GetCurrentPhase() == nil {
+			t.Fatalf("expected governance profile blocks to remain populated, got %+v", resp)
+		}
+	})
+
 	t.Run("project brief allows empty arrays when governance profile exists but bindings are incomplete", func(t *testing.T) {
 		h.resetFixture(t, "completed-unbound")
 
 		repositoryID := h.mustRepositoryIDByName(t, "main-repo")
 		h.mustSaveGovernanceProfile(t, repositoryID)
+		h.cleanupStandardFixtures(t)
 
 		resp, err := h.client.GetProjectBrief(t.Context(), &pb.GetProjectBriefRequest{
 			RepositoryId: repositoryID,
@@ -285,6 +367,10 @@ func TestProjectContextAcceptanceScenarios(t *testing.T) {
 		}
 		if len(resp.GetDecisions()) != 0 {
 			t.Fatalf("expected empty decisions array, got %d", len(resp.GetDecisions()))
+		}
+		// 未绑定任何 Standard 时 standards 为空数组（phase14-07 冻结语义）
+		if len(resp.GetStandards()) != 0 {
+			t.Fatalf("expected empty standards array, got %d", len(resp.GetStandards()))
 		}
 		if resp.GetGovernanceProfile() == nil || resp.GetCurrentPhase() == nil {
 			t.Fatalf("expected governance profile blocks to still be present, got %+v", resp)
@@ -321,7 +407,9 @@ func newProjectContextIntegrationHarness(t *testing.T) *projectContextIntegratio
 		governanceprofilecandidate.NewRepositoryReader(pool),
 		governanceprofilerepo.NewProfileStore(pool),
 	)
-	querySvc := projectcontextservice.NewQueryService(readers, governanceReader)
+	// phase14-07：注入 standard 读取主线作为 GetProjectBrief.standards[] 的 candidate 依赖
+	standardReader := standardservice.NewQueryService(standardrepo.NewStandardStore(pool))
+	querySvc := projectcontextservice.NewQueryService(readers, governanceReader, standardReader)
 
 	mux := http.NewServeMux()
 	path, handler := pbc.NewProjectContextServiceHandler(NewServer(querySvc))
@@ -400,6 +488,85 @@ func (h *projectContextIntegrationHarness) mustSaveGovernanceProfile(t *testing.
 
 func stringPtr(value string) *string {
 	return &value
+}
+
+// cleanupStandardFixtures 清理 standard 三表 fixture（按 fixture 名定位，
+// 先删 bindings / revisions 再删主记录，规避外键与 UNIQUE(name) 残留）。
+func (h *projectContextIntegrationHarness) cleanupStandardFixtures(t *testing.T) {
+	t.Helper()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// pgx 带参 Exec 走 prepared statement，不支持多命令，逐条删除
+	statements := []string{
+		`DELETE FROM standard_bindings WHERE standard_id IN (SELECT id FROM standards WHERE name = $1)`,
+		`DELETE FROM standard_revisions WHERE standard_id IN (SELECT id FROM standards WHERE name = $1)`,
+		`DELETE FROM standards WHERE name = $1`,
+	}
+	for _, stmt := range statements {
+		if _, err := h.pool.Exec(ctx, stmt, "brief-standards-roundtrip"); err != nil {
+			t.Fatalf("cleanup standard fixtures (%q): %v", stmt, err)
+		}
+	}
+}
+
+// mustCreateAndBindStandard 经 standard service 写入 fixture：
+// 创建 active 规范（含 docs/README.md 两层树）并按 adopts role 绑定到仓库，
+// 返回创建结果供 round-trip 断言对齐写入口径（phase14-07）。
+func (h *projectContextIntegrationHarness) mustCreateAndBindStandard(t *testing.T, repositoryID string) *standard.StandardReadResult {
+	t.Helper()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	commandSvc := standardservice.NewCommandService(
+		standardcandidate.NewTargetReader(h.pool),
+		standardrepo.NewStandardStore(h.pool),
+	)
+
+	tree := &standard.DirectoryTreeNode{
+		Name:     ".",
+		NodeType: string(standard.NodeTypeDirectory),
+		Children: []*standard.DirectoryTreeNode{
+			{
+				Name:     "docs",
+				NodeType: string(standard.NodeTypeDirectory),
+				Summary:  "规范正文目录",
+				Children: []*standard.DirectoryTreeNode{
+					{
+						Name:     "README.md",
+						NodeType: string(standard.NodeTypeFile),
+						Role:     "standard-entry",
+						Summary:  "规范入口说明",
+						Ref:      "/docs/README.md",
+					},
+				},
+			},
+		},
+	}
+
+	created, err := commandSvc.CreateStandard(ctx, standard.CreateStandardInput{
+		Name:          "brief-standards-roundtrip",
+		Description:   "phase14-07 brief standards round-trip fixture",
+		DirectoryTree: tree,
+		Status:        standard.StandardStatusActive,
+	})
+	if err != nil {
+		t.Fatalf("create standard fixture: %v", err)
+	}
+
+	note := "bound via phase14-07 brief round-trip"
+	if _, err := commandSvc.BindStandard(ctx, standard.BindStandardInput{
+		StandardID: created.ID,
+		TargetType: standard.BindingTargetRepository,
+		TargetID:   repositoryID,
+		Role:       standard.BindingRoleAdopts,
+		Note:       &note,
+	}); err != nil {
+		t.Fatalf("bind standard fixture: %v", err)
+	}
+	return created
 }
 
 func mustBackendRoot(t *testing.T) string {

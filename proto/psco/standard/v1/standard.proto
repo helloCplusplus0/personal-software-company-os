@@ -1,0 +1,279 @@
+// PSCO Standard 全局规范协议合同源
+//
+// 文档定位：本文件是 phase14 Standard 全局规范实体结构化写读能力的唯一合同定义入口。
+// 上游规格：
+//   - phase14-03 Standard 数据模型与目录树设计 Spec（三表 DDL / DirectoryTreeNode jsonb 规范 / 8 条树校验规则）
+//   - phase14-04 Standard 后端合同、存储与读写边界设计 Spec（消息与 8 RPC 三要素 / 模块分层 / StandardReader）
+//   - phase14-07 落实 Standard 后端主线 Spec（唯一后端实现主线）
+//
+// 合同约束：
+//   - Standard 是全局规范资产实体（全局作用域，无 repository 锚点——裁决⑤）
+//   - directory_tree 是整树原子承载（单根 directory、根 name="."）；
+//     写路径为整树校验 + 整树替换 + revision 追加，不做部分更新
+//   - 绑定关系多态（repository / product / decision / module），组合合法性按
+//     phase14-02 八格矩阵：template_source 仅 repository 合法
+//   - 写路径唯一归 web 维护（/standards 前端切片，裁决⑦）；agent 只读消费
+//     （ListStandards / GetStandard / GetProjectBrief.standards[]）
+//   - ListStandards / ListStandardRevisions 不分页（单用户系统数量级，反假大空）
+//   - 错误语义三类归一：NotFound / InvalidArgument / Internal；重复绑定归
+//     InvalidArgument 且错误信息含 "already bound"
+//
+// 生成入口：
+//   在 proto/ 目录执行 make gen，或直接执行 buf generate。
+//   生成产物：
+//     - Go:    backend/internal/gen/proto/psco/standard/v1/
+//     - Go Connect: backend/internal/gen/connect/psco/standard/v1/
+//     - TS:    frontend/src/gen/proto/psco/standard/v1/
+
+syntax = "proto3";
+
+package psco.standard.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// Go 包路径（生成代码落点）
+option go_package = "github.com/psco/backend/internal/gen/proto/psco/standard/v1;standardv1";
+
+// ============================================================================
+// 枚举
+// ============================================================================
+
+// StandardStatus 规范生命周期（对齐 DDL status CHECK 枚举）。
+enum StandardStatus {
+  STANDARD_STATUS_UNSPECIFIED = 0;
+  STANDARD_STATUS_DRAFT = 1;
+  STANDARD_STATUS_ACTIVE = 2;
+  STANDARD_STATUS_RETIRED = 3;
+}
+
+// NodeType 目录树节点类型（值序冻结于 phase14-03 proto 对齐表）。
+enum NodeType {
+  NODE_TYPE_UNSPECIFIED = 0;
+  NODE_TYPE_DIRECTORY = 1;
+  NODE_TYPE_FILE = 2;
+}
+
+// BindingTargetType 绑定目标类型（可扩展：扩 enum + 登记 phase14-02 八格矩阵）。
+enum BindingTargetType {
+  BINDING_TARGET_TYPE_UNSPECIFIED = 0;
+  BINDING_TARGET_TYPE_REPOSITORY = 1;
+  BINDING_TARGET_TYPE_PRODUCT = 2;
+  BINDING_TARGET_TYPE_DECISION = 3;
+  BINDING_TARGET_TYPE_MODULE = 4;
+}
+
+// BindingRole 绑定角色（可扩展；组合合法性按 phase14-02 八格矩阵）。
+enum BindingRole {
+  BINDING_ROLE_UNSPECIFIED = 0;
+  BINDING_ROLE_TEMPLATE_SOURCE = 1;
+  BINDING_ROLE_ADOPTS = 2;
+}
+
+// ============================================================================
+// 核心消息
+// ============================================================================
+
+// DirectoryTreeNode 目录树节点（与 directory_tree jsonb 单值映射，phase14-03 冻结结构）。
+message DirectoryTreeNode {
+  // 根固定 "."；非根 ^[A-Za-z0-9._-]{1,64}$
+  string name = 1;
+  NodeType node_type = 2;
+  // file 必填（校验层保证）；directory 可空
+  string role = 3;
+  // 结构化摘要 ≤2000
+  string summary = 4;
+  // "/..." 树内绝对路径或 https:// URL
+  string ref = 5;
+  // file 节点必须为空
+  repeated DirectoryTreeNode children = 6;
+}
+
+// Standard 全局规范（主表投影 + 整树）。
+// List/Get/brief 统一使用本消息——不另造 StandardSummary（phase14-04 设计决策）。
+message Standard {
+  string id = 1;
+  // 全局唯一
+  string name = 2;
+  // 可空
+  string description = 3;
+  StandardStatus status = 4;
+  // 整树原子承载（单根）
+  DirectoryTreeNode directory_tree = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}
+
+// StandardBinding 多态绑定关系（standard_bindings 表投影）。
+message StandardBinding {
+  string id = 1;
+  string standard_id = 2;
+  BindingTargetType target_type = 3;
+  // UUID；存在性由应用层校验
+  string target_id = 4;
+  BindingRole role = 5;
+  // 可空
+  string note = 6;
+  google.protobuf.Timestamp created_at = 7;
+}
+
+// StandardRevision 演进留痕（standard_revisions 表投影，只追加）。
+message StandardRevision {
+  string id = 1;
+  string standard_id = 2;
+  // 必填，人工一句话
+  string change_summary = 3;
+  google.protobuf.Timestamp created_at = 4;
+}
+
+// ============================================================================
+// 请求 / 响应
+// ============================================================================
+
+// CreateStandardRequest 创建规范请求。
+// status 允许 DRAFT（默认）/ ACTIVE（树必须含至少一个 file 节点）；拒绝 RETIRED。
+message CreateStandardRequest {
+  // 必填
+  string name = 1;
+  // 可选
+  string description = 2;
+  // 必填，允许单根空树（仅 draft 合法）
+  DirectoryTreeNode directory_tree = 3;
+  // 可选，未设置默认 DRAFT
+  optional StandardStatus status = 4;
+}
+
+// CreateStandardResponse 创建响应，返回创建后的完整 Standard。
+message CreateStandardResponse {
+  Standard standard = 1;
+}
+
+// ListStandardsRequest 全量列表请求（无参数，不分页）。
+message ListStandardsRequest {}
+
+// ListStandardsResponse 全量列表响应（按 updated_at DESC）。
+message ListStandardsResponse {
+  repeated Standard standards = 1;
+}
+
+// GetStandardRequest 详情读取请求。
+message GetStandardRequest {
+  string standard_id = 1;
+}
+
+// GetStandardResponse 详情响应（含绑定集合，绑定管理区直接消费）。
+message GetStandardResponse {
+  Standard standard = 1;
+  repeated StandardBinding bindings = 2;
+}
+
+// UpdateStandardRequest 更新请求（整树原子替换语义，无部分更新）。
+// name / description / status 为 optional：未设置不变更；
+// directory_tree 必带（仅改 status 时前端同样读后写全量）。
+message UpdateStandardRequest {
+  string standard_id = 1;
+  optional string name = 2;
+  optional string description = 3;
+  optional StandardStatus status = 4;
+  // 必带：整树原子替换
+  DirectoryTreeNode directory_tree = 5;
+  // 必填：本次调整的人工一句话说明（追加 revision）
+  string change_summary = 6;
+}
+
+// UpdateStandardResponse 更新响应，返回更新后的完整 Standard。
+message UpdateStandardResponse {
+  Standard standard = 1;
+}
+
+// DeleteStandardRequest 删除请求。
+message DeleteStandardRequest {
+  string standard_id = 1;
+}
+
+// DeleteStandardResponse 删除响应（空）。
+message DeleteStandardResponse {}
+
+// BindStandardRequest 绑定请求。
+message BindStandardRequest {
+  string standard_id = 1;
+  BindingTargetType target_type = 2;
+  string target_id = 3;
+  BindingRole role = 4;
+  // 可选
+  string note = 5;
+}
+
+// BindStandardResponse 绑定响应。
+message BindStandardResponse {
+  StandardBinding binding = 1;
+}
+
+// UnbindStandardRequest 解绑请求（四元组定位，note 不参与）。
+message UnbindStandardRequest {
+  string standard_id = 1;
+  BindingTargetType target_type = 2;
+  string target_id = 3;
+  BindingRole role = 4;
+}
+
+// UnbindStandardResponse 解绑响应（空）。
+message UnbindStandardResponse {}
+
+// ListStandardRevisionsRequest revision 回看请求（不分页）。
+message ListStandardRevisionsRequest {
+  string standard_id = 1;
+}
+
+// ListStandardRevisionsResponse revision 回看响应（按 created_at DESC）。
+message ListStandardRevisionsResponse {
+  repeated StandardRevision revisions = 1;
+}
+
+// ============================================================================
+// 服务
+// ============================================================================
+
+// StandardService 全局规范结构化写读服务。
+//
+// 职责边界（phase14-04 冻结）：
+//   - 本服务是 Standard 结构化写读的唯一正式承接位
+//   - 写路径唯一归 web 维护；agent 只读消费（无 agent 写回承接位）
+//   - 树校验 R1-R8 在写路径统一执行（创建 / 整树替换 / 状态变更）
+service StandardService {
+  // 创建规范。创建不记 revision（创建时间由 created_at 承接）。
+  // 失败语义：name 重复 / 树校验 R1-R8 失败 / status=RETIRED /
+  //           status=ACTIVE 且空树 → InvalidArgument；创建失败 → Internal。
+  rpc CreateStandard(CreateStandardRequest) returns (CreateStandardResponse);
+
+  // 全量列表（按 updated_at DESC，不分页）。
+  // 失败语义：读取失败 → Internal。
+  rpc ListStandards(ListStandardsRequest) returns (ListStandardsResponse);
+
+  // 读取规范详情与绑定集合。
+  // 失败语义：id 非法 UUID → InvalidArgument；不存在 → NotFound；读取失败 → Internal。
+  rpc GetStandard(GetStandardRequest) returns (GetStandardResponse);
+
+  // 更新规范（整树原子替换 + revision 追加，单一事务边界，不写半套状态）。
+  // 失败语义：不存在 → NotFound；change_summary 空 / 树校验失败 / name 重复 /
+  //           目标状态非 DRAFT 且树空 → InvalidArgument；事务失败 → Internal。
+  rpc UpdateStandard(UpdateStandardRequest) returns (UpdateStandardResponse);
+
+  // 删除规范（CASCADE 连带删除 bindings 与 revisions）。
+  // 失败语义：不存在 → NotFound；status=ACTIVE → InvalidArgument
+  //           （防误删，先经 Update 置 RETIRED）；删除失败 → Internal。
+  rpc DeleteStandard(DeleteStandardRequest) returns (DeleteStandardResponse);
+
+  // 建立绑定。校验顺序：standard 存在 → 枚举合法 → 八格矩阵
+  // （template_source 仅 repository）→ target 存在 → 唯一约束。
+  // 失败语义：standard 不存在 → NotFound；枚举非法 / 矩阵非法 / target 不存在 /
+  //           四元组重复绑定（"already bound"）→ InvalidArgument；写入失败 → Internal。
+  rpc BindStandard(BindStandardRequest) returns (BindStandardResponse);
+
+  // 解除绑定（四元组定位）。
+  // 失败语义：绑定不存在 → NotFound；删除失败 → Internal。
+  rpc UnbindStandard(UnbindStandardRequest) returns (UnbindStandardResponse);
+
+  // revision 回看（按 created_at DESC，不分页）。
+  // 失败语义：不存在 → NotFound；读取失败 → Internal。
+  rpc ListStandardRevisions(ListStandardRevisionsRequest) returns (ListStandardRevisionsResponse);
+}

@@ -92,9 +92,16 @@ func NewServer(cfg Config, pool *pgxpool.Pool) *Server {
 		governanceProfileQuerySvc, governanceProfileCommandSvc := buildGovernanceProfile(pool)
 		mountGovernanceProfileConnect(r, governanceProfileQuerySvc, governanceProfileCommandSvc)
 
+		// phase14 standard 模块：全局规范实体结构化写读。
+		// 装配顺序约束：standard 的 QueryService 必须先于 buildProjectContext
+		// 构造完成，作为 brief standards[] 的 candidate.StandardReader 实现注入。
+		standardQuerySvc, standardCommandSvc := buildStandard(pool)
+		mountStandardConnect(r, standardQuerySvc, standardCommandSvc)
+
 		// phase11 project context 模块：最小只读项目上下文聚合读取
 		// phase13-10：GetProjectBrief 通过 candidate 接口复用治理画像读取主线
-		projectContextQuerySvc := buildProjectContext(pool, governanceProfileQuerySvc)
+		// phase14-07：GetProjectBrief.standards[] 通过 candidate 接口复用 standard 读取主线
+		projectContextQuerySvc := buildProjectContext(pool, governanceProfileQuerySvc, standardQuerySvc)
 		mountProjectContextConnect(r, projectContextQuerySvc)
 	})
 

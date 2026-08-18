@@ -70,6 +70,10 @@ import (
 	governanceprofileconnect "github.com/psco/backend/internal/governanceprofile/connect"
 	governanceprofilerepo "github.com/psco/backend/internal/governanceprofile/repository"
 	governanceprofileservice "github.com/psco/backend/internal/governanceprofile/service"
+	standardcandidate "github.com/psco/backend/internal/standard/candidate"
+	standardconnect "github.com/psco/backend/internal/standard/connect"
+	standardrepo "github.com/psco/backend/internal/standard/repository"
+	standardservice "github.com/psco/backend/internal/standard/service"
 	templatereusecandidate "github.com/psco/backend/internal/templatereuse/candidate"
 	templatereuseconnect "github.com/psco/backend/internal/templatereuse/connect"
 	templatereuseservice "github.com/psco/backend/internal/templatereuse/service"
@@ -88,6 +92,7 @@ import (
 	templatereusev1connect "github.com/psco/backend/internal/gen/connect/psco/template_reuse/v1/template_reusev1connect"
 	projectcontextv1connect "github.com/psco/backend/internal/gen/connect/psco/project_context/v1/project_contextv1connect"
 	governanceprofilev1connect "github.com/psco/backend/internal/gen/connect/psco/governance_profile/v1/governance_profilev1connect"
+	standardv1connect "github.com/psco/backend/internal/gen/connect/psco/standard/v1/standardv1connect"
 )
 
 // ============================================================================
@@ -314,6 +319,17 @@ func mountGovernanceProfileConnect(r chi.Router, querySvc *governanceprofileserv
 	r.Handle(path+"*", http.StripPrefix("/api", handler))
 }
 
+// mountStandardConnect 把 Standard 的 canonical Connect handler 挂到 /api 下。
+//
+// phase14-07 新增：
+//   - 全局规范实体结构化写读能力（CRUD + 绑定 + revision 回看）
+//   - StandardService 是全局规范写读的唯一 canonical transport owner
+func mountStandardConnect(r chi.Router, querySvc *standardservice.QueryService, commandSvc *standardservice.CommandService) {
+	connectSvc := standardconnect.NewServer(querySvc, commandSvc)
+	path, handler := standardv1connect.NewStandardServiceHandler(connectSvc)
+	r.Handle(path+"*", http.StripPrefix("/api", handler))
+}
+
 // ============================================================================
 // phase06 模块构造器
 // ============================================================================
@@ -404,9 +420,29 @@ func buildTemplateReuse(pool *pgxpool.Pool, reuseSummaryQuerySvc *reusesummaryse
 //   - GetProjectBrief agent 项目简报读取主线
 //   - 治理画像读取通过 candidate.GovernanceProfileReader 接口注入，
 //     复用 governanceprofile 读取主线，不在 projectcontext 内复制治理画像 SQL
-func buildProjectContext(pool *pgxpool.Pool, governanceReader projectcontextcandidate.GovernanceProfileReader) *projectcontextservice.QueryService {
+//
+// phase14-07 新增：
+//   - brief 的 standards[] 读取通过 candidate.StandardReader 接口注入，
+//     复用 standard 读取主线（standard_bindings 反查），不在 projectcontext
+//     内复制 standard 表 SQL；调用方必须先构造 standard 的 QueryService
+func buildProjectContext(pool *pgxpool.Pool, governanceReader projectcontextcandidate.GovernanceProfileReader, standardReader projectcontextcandidate.StandardReader) *projectcontextservice.QueryService {
 	contextReaders := projectcontextcandidate.NewContextReaders(pool)
-	return projectcontextservice.NewQueryService(contextReaders, governanceReader)
+	return projectcontextservice.NewQueryService(contextReaders, governanceReader, standardReader)
+}
+
+// buildStandard 构造 Standard 的 QueryService / CommandService 并返回。
+//
+// phase14-07 新增：
+//   - 全局规范实体写读主线（standards / standard_revisions / standard_bindings 三表）
+//   - 绑定目标存在性校验经 candidate.TargetReader 隔离（service 不直接写跨模块 SQL）
+//   - QueryService 同时作为 projectcontext brief standards[] 的
+//     candidate.StandardReader 实现注入（phase14-04 冻结装配接线）
+func buildStandard(pool *pgxpool.Pool) (*standardservice.QueryService, *standardservice.CommandService) {
+	targetReader := standardcandidate.NewTargetReader(pool)
+	store := standardrepo.NewStandardStore(pool)
+	querySvc := standardservice.NewQueryService(store)
+	commandSvc := standardservice.NewCommandService(targetReader, store)
+	return querySvc, commandSvc
 }
 
 // buildGovernanceProfile 构造 Governance Profile 的 QueryService / CommandService 并返回。

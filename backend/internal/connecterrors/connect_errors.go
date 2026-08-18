@@ -32,6 +32,7 @@ import (
 	"github.com/psco/backend/internal/projectcontext"
 	"github.com/psco/backend/internal/repositorybinding"
 	"github.com/psco/backend/internal/reusesummary"
+	"github.com/psco/backend/internal/standard"
 	"github.com/psco/backend/internal/templatereuse"
 )
 
@@ -66,6 +67,8 @@ func MapToConnectError(err error) *connect.Error {
 		projectcontext.ErrRepositoryNotFound,
 		governanceprofile.ErrRepositoryNotFound,
 		governanceprofile.ErrGovernanceProfileNotFound,
+		standard.ErrStandardNotFound,
+		standard.ErrBindingNotFound,
 	) {
 		return connect.NewError(connect.CodeNotFound, err)
 	}
@@ -100,6 +103,7 @@ func MapToConnectError(err error) *connect.Error {
 		reusesummary.ErrInvalidScope,
 		templatereuse.ErrInvalidInput,
 		governanceprofile.ErrInvalidInput,
+		standard.ErrInvalidInput,
 	) {
 		return connect.NewError(connect.CodeInvalidArgument, err)
 	}
@@ -120,6 +124,7 @@ func MapToConnectError(err error) *connect.Error {
 	// export.ErrAssetReadFailed, export.ErrExportPersistFailed, export.ErrExportSnapshotReadFailed,
 	// backup.ErrAssetReadFailed, backup.ErrBackupPersistFailed, backup.ErrBackupSnapshotReadFailed,
 	// backup.ErrSchemaVersionReadFailed, reusesummary.ErrReuseSummaryReadFailed,
+	// standard.ErrStandardReadFailed, standard.ErrStandardSaveFailed,
 	// 以及所有未分类错误。
 	_ = dashboard.ErrOverviewReadFailed
 	_ = dashboard.ErrFeedbackSignalReadFailed
@@ -136,6 +141,8 @@ func MapToConnectError(err error) *connect.Error {
 	_ = projectcontext.ErrProjectContextReadFailed
 	_ = governanceprofile.ErrGovernanceProfileReadFailed
 	_ = governanceprofile.ErrGovernanceProfileSaveFailed
+	_ = standard.ErrStandardReadFailed
+	_ = standard.ErrStandardSaveFailed
 
 	return connect.NewError(connect.CodeInternal, err)
 }

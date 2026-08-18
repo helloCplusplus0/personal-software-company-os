@@ -10,7 +10,10 @@
 // 不直接暴露存储模型，不在 types.go 中新增 .proto 中不存在的业务字段语义。
 package projectcontext
 
-import "github.com/psco/backend/internal/governanceprofile"
+import (
+	"github.com/psco/backend/internal/governanceprofile"
+	"github.com/psco/backend/internal/standard"
+)
 
 // ============================================================================
 // 核心消息 DTO
@@ -117,11 +120,15 @@ type BriefCurrentPhase struct {
 }
 
 // ProjectBriefReadResult GetProjectBrief 的响应结构。
-// 对齐 proto GetProjectBriefResponse（phase13-07 冻结的 7 顶层字段 schema）。
+// 对齐 proto GetProjectBriefResponse（phase13-07 冻结的 7 顶层字段 schema，
+// phase14-07 扩展 standards = 8 第 8 顶层字段）。
 //
 // GovernanceProfile / GlobalAssets 由治理画像聚合读取结果同源填充；
 // 治理画像 domain 类型直接透传（GovernanceProfileReadResult），
 // proto 组装在 Connect handler 内复用 governanceprofile/connect 导出的转换函数。
+// Standards 由 candidate.StandardReader 经 standard_bindings 反查同源填充
+// （phase14-07），standard domain 类型直接透传，proto 组装在 Connect handler
+// 内复用 standard/connect 导出的转换函数。
 type ProjectBriefReadResult struct {
 	Repository        *RepositorySummary                             `json:"repository"`
 	GovernanceProfile *governanceprofile.GovernanceProfileReadResult `json:"governance_profile"`
@@ -130,4 +137,5 @@ type ProjectBriefReadResult struct {
 	Products          []ProductSummary                               `json:"products"`
 	Modules           []ModuleSummary                                `json:"modules"`
 	Decisions         []DecisionSummary                              `json:"decisions"`
+	Standards         []standard.StandardReadResult                  `json:"standards"`
 }

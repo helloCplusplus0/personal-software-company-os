@@ -7,6 +7,8 @@
 //   - 关联 decision 摘要读取（两类 module-link 派生命中）
 //   - 治理画像聚合读取（GovernanceProfileReader 接口，由 platform 装配点注入
 //     governanceprofile/service.QueryService 实现，phase13-10 冻结）
+//   - 全局规范资产读取（StandardReader 接口，由 platform 装配点注入
+//     standard/service.QueryService 实现，phase14-04 冻结）
 //
 // 文件落点：backend/internal/projectcontext/candidate/context_readers.go
 package candidate
@@ -21,6 +23,7 @@ import (
 
 	"github.com/psco/backend/internal/governanceprofile"
 	"github.com/psco/backend/internal/projectcontext"
+	"github.com/psco/backend/internal/standard"
 )
 
 // GovernanceProfileReader 治理画像聚合读取接口（消费方拥有的 candidate 接口）。
@@ -33,6 +36,19 @@ type GovernanceProfileReader interface {
 	// 失败语义：repository 不存在或画像未创建 → ErrGovernanceProfileNotFound；
 	//           其他读取失败 → ErrGovernanceProfileReadFailed。
 	GetGovernanceProfile(ctx context.Context, repositoryID string) (*governanceprofile.GovernanceProfileReadResult, error)
+}
+
+// StandardReader 全局规范读取接口（消费方拥有的 candidate 接口）。
+//
+// phase14-04 冻结：brief 对 Standard 的读取必须通过本接口承接，
+// 由 platform 装配点注入 standard/service.QueryService 作为实现；
+// projectcontext 不得直接书写 standard 表 SQL 或复制其存储读取逻辑。
+type StandardReader interface {
+	// ListStandardsByRepository 经 standard_bindings（任意 role）反查
+	// 该仓库关联的全部 Standard（含 directory_tree 全树）。
+	// 失败语义：读取失败 → standard.ErrStandardReadFailed；
+	//           仓库无关联 Standard → 返回空列表（非错误）。
+	ListStandardsByRepository(ctx context.Context, repositoryID string) ([]standard.StandardReadResult, error)
 }
 
 // ContextReaders 承接 GetProjectContext 所需的全部跨模块 reader。
