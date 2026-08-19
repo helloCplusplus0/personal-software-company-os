@@ -1,0 +1,22 @@
+# phase15-05 Checklist
+
+- [x] DP-1 裁决单值冻结：当前卡数据通道唯一 = `use-repository-progress-read`（GetProjectBrief → progress 投影，与 agent 同源，沿 brief 投影 owner 模式）；前端不自 ListProgressEvents 结果派生；空值两情形统一文案"暂无进行中 phase"不区分（Obs-1 闭环）；"完结态"承接口径留档（当前卡空态 + 时间轴 phase_completed 事件可见）；web 端不重复消费 recent_events
+- [x] DP-3 裁决单值冻结：datetime-local 控件（分钟粒度）；默认值 = 表单挂载与提交成功重置时浏览器本地当前时刻；提交本地解析 → UTC pb Timestamp；展示一律浏览器本地时区；不校验未来时间；dogfooding 附件时区口径显式归 phase15-08 不越界
+- [x] 切片结构冻结（11 文件）：data 3（connect-client / use-progress-events-read〔query key 含 filter 段〕/ use-repository-progress-read）+ application 2（use-create-progress-event / use-delete-progress-event）+ components 4（progress-section / progress-current-phase-card / progress-event-form / progress-timeline-list）+ types.ts + index.ts（barrel 仅导出 ProgressSection）
+- [x] mutation 失效矩阵冻结：Create 与 Delete 成功后均失效 `['progress-events', repositoryId]` 前缀 + `['repository-progress', repositoryId]`；query 层零写动作；页面与组件不内联 useMutation（project_rules §2.5）
+- [x] 挂载与分区关系冻结：ProgressSection 挂载 repository-binding-detail-page.tsx 的 StandardReadonlySummary 之后（页面级第三全宽区块，不进 grid 三列区）；内部子区域 border-t pt-2 分隔
+- [x] 无独立路由与导航项声明冻结（裁决⑥）：零 routes 文件新增、零 NAV_ITEMS 改动、零 Dashboard 卡片改动；进度区唯一入口 = Repository detail 内嵌
+- [x] 录入表单字段清单冻结：workflow_type（默认 phase）/ event_kind（记忆默认）/ task_key（矩阵必填）/ title（必填）/ detail（可选）/ evidence_ref（可选）/ occurred_at（默认 now）；source 无输入位（请求不设置 → 后端归一 manual，裁决⑧）
+- [x] 联动禁用矩阵冻结：audit / fix 轨下 phase_started / phase_completed 选项 disabled；切换为非法时 event_kind 自动重置 task_completed；与 phase15-02 合法矩阵 12 格单值（UI 投影零漂移）
+- [x] task_key placeholder 矩阵冻结：phaseNN / phaseNN-MM / audit_NNN / fix_NNN / note 自由标注可留空——与 K-1~K-4 正则一一对应
+- [x] event_kind 记忆机制冻结：localStorage key `psco.progress.last-event-kind`；Create 成功后写入；挂载时读取；非法值回退 task_completed；纯 UX 偏好不构成数据事实源
+- [x] 校验反馈双层模型冻结：前端轻量行内提示（不阻断）+ 后端权威错误行内回显（normalizeError 提取 ConnectError message；前端不做 repository 存在性预校验）
+- [x] 提交回流与重置语义冻结：成功后 title/task_key/detail/evidence_ref 清空 + occurred_at 重置 now + workflow_type/event_kind 保持当前选择；成功不弹窗不跳转（内嵌区就地刷新）；失败保留已填值
+- [x] 时间轴交互规格冻结：三轨过滤（'all' 默认，纯组件 state 无路由参数）；事件行紧凑结构（Badge / task_key code / occurred_at 本地时区 / source Badge / 删除按钮 + title truncate + detail line-clamp-2 + evidence_ref 链接规则〔https:// 外链 target=_blank；/ 内链 href〕）；created_at 不展示；前端不重排序不过滤
+- [x] 删除确认文案逐字冻结：`window.confirm`（沿 standard-detail-page 先例）+ 文案 `确认删除事件「{title}」？删除仅用于修正误录，操作不可撤销。`；无软删除（裁决⑨）
+- [x] 空态文案冻结：全量空 `暂无推进事件，从上方表单录入第一条。`；过滤空 `该轨暂无事件。`；当前卡空态 `暂无进行中 phase`；加载 / 错误态沿内嵌区四态模式
+- [x] 移动端适配基线冻结：表单 grid-cols-1 sm:grid-cols-2；时间轴行 flex-wrap + min-w-0 truncate；过滤按钮组 flex-wrap；紧凑化规范（text-xs / border-t pt-2 / 容器仅 :focus-visible）
+- [x] 与 phase15-02/03/04 及 shared_baseline §3.6 单值一致；无 phase15-06/07/08 偷渡（无实现代码 / 无后端与 proto 改动 / 无 dogfooding 附件明细）
+- [x] 独立复核通过（0 阻断；复核维度：DP-1 自洽与 Obs-1 闭环 / DP-3 时区闭环 / 联动矩阵零漂移 / 切片纪律合规 / 组件树可直接实现 / 交互规格完备性 / 上游零漂移 / 无偷渡 / 勾选真实性）
+- [x] tasks.md / checklist.md 全部勾选并附执行记录
+- [x] 变更未提交，待用户最终确认后手动提交
