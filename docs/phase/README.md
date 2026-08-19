@@ -10,10 +10,10 @@
 
 当前阶段状态与推进路线以 [plan.md](file:///home/dell/Projects/personal-software-company-os/plan.md) 为唯一正式承接位。以下仅保留摘要式入口：
 
-- 当前阶段：`phase14_standard_entity_foundation` 已完成正式收口，`phase15` 进入条件已冻结（等待用户裁决开启 `phase15 /plan`）
+- 当前阶段：`phase15_project_progress_timeline_foundation` 已建立正式 `/plan` 入口（三件套已建立，排序裁决已于 2026-08-19 完成：项目进度时间轴第一优先级），待从 `phase15-01` 开始执行
 - 最近完成正式业务 phase：`phase14_standard_entity_foundation`
 - 最近完成正式支撑能力 phase：`phase09_template_reuse_derived_intelligence_foundation`
-- 当前阶段直接上游：[phase14-10 acceptance_report.md](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase14_10_validate_standard_entity_integration_dogfooding_regression/acceptance_report.md)（阶段交付实况）与 [phase14-11 spec](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase14_11_sync_root_level_closeout_freeze_phase15_entry_conditions/spec.md)（`phase15` 进入条件）
+- 当前阶段直接上游：[phase14-11 spec](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase14_11_sync_root_level_closeout_freeze_phase15_entry_conditions/spec.md)（`phase15` 进入条件，T7 裁决后口径）与 [phase14-10 acceptance_report.md](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase14_10_validate_standard_entity_integration_dogfooding_regression/acceptance_report.md)（阶段交付实况）；2026-08-19 用户排序裁决为规划输入，`phase15` 三件套为本阶段 `/plan` 规划与冻结记录
 - 当前最近完成正式验收与收口入口：[phase14-10 acceptance_report.md](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase14_10_validate_standard_entity_integration_dogfooding_regression/acceptance_report.md)
 - 当前项目技术路线：`Durable System Track`
 - [phase13_project_governance_profile_foundation_architecture_plan.md](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase13_project_governance_profile_foundation_architecture_plan.md)
@@ -24,6 +24,9 @@
 - [phase14_standard_entity_foundation_dev_plan.md](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase14_standard_entity_foundation_dev_plan.md)
 - [phase14_standard_entity_foundation_shared_baseline.md](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase14_standard_entity_foundation_shared_baseline.md)
 - [phase14 正式验收与收口入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase14_10_validate_standard_entity_integration_dogfooding_regression/acceptance_report.md)
+- [phase15_project_progress_timeline_foundation_architecture_plan.md](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase15_project_progress_timeline_foundation_architecture_plan.md)
+- [phase15_project_progress_timeline_foundation_dev_plan.md](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase15_project_progress_timeline_foundation_dev_plan.md)
+- [phase15_project_progress_timeline_foundation_shared_baseline.md](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase15_project_progress_timeline_foundation_shared_baseline.md)
 - [phase15 进入条件冻结入口（phase14-11）](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase14_11_sync_root_level_closeout_freeze_phase15_entry_conditions/spec.md)
 - [phase12_semantic_alignment_and_readonly_consumption_foundation_architecture_plan.md](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase12_semantic_alignment_and_readonly_consumption_foundation_architecture_plan.md)
 - [phase12_semantic_alignment_and_readonly_consumption_foundation_dev_plan.md](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase12_semantic_alignment_and_readonly_consumption_foundation_dev_plan.md)
@@ -75,4 +78,4 @@
   - `phase*_shared_baseline.md`
 - `/plan` 通过后，才能继续 `/spec` 与实现
 - 已完成收口的 `phase`，后续实现应从正式 `/spec` 进入，而不是把三件套继续当作并列执行入口
-- `phase14` 已正式收口（`phase14-10` 为验收与收口入口，`phase14-11` 为 `phase15` 进入条件冻结入口）；`CON-08` 时间轴（T7 裁决后口径：另行新建正规承接，不复活画像派生形态）、agent 写回、Git 推进跟踪、模板仓库自动接入、自动同步继续为非目标，进入 `phase15 /plan` 前须完成后续项排序裁决
+- `phase14` 已正式收口（`phase14-10` 为验收与收口入口，`phase14-11` 为 `phase15` 进入条件冻结入口）；后续项排序裁决已于 2026-08-19 完成（项目进度时间轴第一优先级），`phase15` 三件套已建立并冻结为该阶段全部 `/spec` 子任务的强制边界上游；`CON-08` 时间轴按 T7 裁决后口径由 `phase15` 正式承接（新建正规承接，不复活画像派生形态）；agent 写回（自动解锁）、Git 推进跟踪、模板仓库自动接入、自动同步在 `phase15` 中继续为非目标

@@ -4,11 +4,11 @@
 
 ## 1. 当前状态
 
-- 当前阶段：`phase15` 进入条件已冻结，等待用户裁决开启 `phase15 /plan`
-- 当前状态：`phase14_standard_entity_foundation` 已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`；`phase13` 作为上一完成正式业务 phase 保留，`phase09` 继续作为最近完成正式支撑能力 phase
+- 当前阶段：`phase15_project_progress_timeline_foundation`（已建立 `/plan` 入口，待从 `phase15-01` 开始执行）
+- 当前状态：`phase14_standard_entity_foundation` 已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`；排序裁决已完成（2026-08-19 用户拍板：项目进度时间轴第一优先级）；`phase14` 作为最近完成正式业务 phase 保留，`phase09` 继续作为最近完成正式支撑能力 phase
 - 当前最近完成正式验收与收口入口：`.trae/specs/phase14_10_validate_standard_entity_integration_dogfooding_regression/acceptance_report.md`
-- 当前目标：`phase15 /plan` 前须完成后续项排序裁决——候选池与边界冻结于 `phase14-11` spec（`CON-08` 时间轴〔T7 裁决后口径：新建正规承接，不复活画像派生形态〕/ `standard_bindings` 目标类型扩展 / agent 写回〔不自动解锁〕/ Git 推进跟踪 / 模板仓库自动接入 / 自动同步）
-- 当前下一阶段进入条件：已冻结于 `.trae/specs/phase14_11_sync_root_level_closeout_freeze_phase15_entry_conditions/spec.md`
+- 当前目标：执行 `phase15` 子任务（phase15-01 ~ phase15-09），交付"项目推进时间轴最小主线"（三轨 append-only 事件流 + Repository detail 维护展示 + brief `progress` 块 + `ListProgressEvents` agent 直读完整流）
+- 当前下一阶段进入条件：`phase14-11` spec（T7 裁决后口径）+ 2026-08-19 排序裁决已满足；`phase15` 三件套已冻结为执行层边界上游
 
 ## 2. 当前进度概览
 
@@ -80,6 +80,8 @@
 - `phase14_standard_entity_foundation` 已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`，并完成“`Standard` 全局规范实体最小主线 + 治理画像系统性退役 + brief 画像残余解耦（T7 用户裁决）”交付；`phase14` 现为最近完成正式业务 phase
 - `.trae/specs/phase14_10_validate_standard_entity_integration_dogfooding_regression/acceptance_report.md` 已冻结为 `phase14` 的正式验收与收口入口
 - `.trae/specs/phase14_11_sync_root_level_closeout_freeze_phase15_entry_conditions/spec.md` 已冻结为 `phase15` 进入条件（T7 裁决后口径）与 `phase15 /plan` 的唯一直接上游；`phase13-12` 缺口记录退位为历史输入
+- `phase15` 排序裁决已完成（2026-08-19 用户两轮结构化拍板）：项目进度时间轴第一优先级（接管高频提示词"进度说明"段，与 `standards[]` 合成 agent"背景 + 进度"一次调用）；候选池其余项（`standard_bindings` 扩展 / agent 写回 / Git 推进跟踪 / 模板仓库自动接入 / 自动同步）顺延为后续进入条件
+- `phase15_project_progress_timeline_foundation` 三件套已建立并完成独立复核：十一项裁决（8 主裁决 + 3 补裁）、`progress_events` 事件流模型（三轨 `phase/audit/fix` + 任务项级颗粒度 + append-only + "当前"派生值不落库）、brief `progress = 9` 演进与 9 个子任务已冻结
 
 ## 3. Phase 路线预览
 
@@ -204,6 +206,15 @@
 - 交付要求：作为交付型 phase 推进，按 `dev_plan` 11 个子任务（phase14-01 ~ phase14-11）顺序进入 `/spec`、实现、验收与收口
 - 状态：`completed`
 - 当前收口结果：已完成 `Standard` 全局规范实体最小主线（`standards` + `standard_revisions` + `standard_bindings` 三表与 jsonb 树形目录、`/standards` 前端四页、`StandardService` 8 RPC、brief `standards[]` agent 直读）+ 治理画像七触点系统性退役；期间按用户裁决完成 brief 画像残余解耦（brief 收敛为 5 顶层块，槽位 2/3/4 reserved）；`phase14-10` 为正式验收与收口入口（固定 6 问 6/6 + 八项裁决门禁全绿 + 16 页反回归矩阵 + 独立复核 PASS），`phase14-11` 为根级收口与 `phase15` 进入条件冻结入口；三件套保留为该阶段 `/plan` 的规划与冻结记录
+
+### phase15：`phase15_project_progress_timeline_foundation`
+
+- 目标：交付项目推进时间轴最小主线（三轨 append-only 事件流 + Repository detail 维护展示 + brief 进度块 + agent 直读完整流）
+- 进入条件：`phase14-11` spec 冻结的进入条件（T7 裁决后口径）+ 排序裁决完成（2026-08-19 用户两轮结构化拍板：项目进度时间轴第一优先级，接管高频提示词"进度说明"段）
+- 范围约束：单一主交付 = 项目推进时间轴最小主线；git 自动采集、agent 写回、MCP / CLI、模板仓库自动接入、自动同步、`standard_bindings` 目标类型扩展、进度事件与 Decision 互链均为非目标（`source` 字段预留 `manual/git/agent` 但仅实现 `manual`）
+- 交付要求：作为交付型 phase 推进，按 `dev_plan` 9 个子任务（phase15-01 ~ phase15-09）顺序进入 `/spec`、实现、验收与收口
+- 状态：`planned`
+- 规划要点：十一项裁决（8 主裁决 + 3 补裁）为强制边界——repository 锚定、append-only 事件流（信息流非单点，"当前"为派生值不落库）、三轨 workflow（`phase/audit/fix` 对齐三推进链）、任务项级颗粒度（`phaseNN-MM` / `audit_NNN` / `fix_NNN`）、web 手动维护于 Repository detail、`evidence_ref` 导航零托管、3 RPC 无 Update、brief `progress = 9` 摘要 + `ListProgressEvents` 完整流分层、与 plan.md / `PhaseEntry` / Decision 三重边界分离
 
 ## 4. 说明
 

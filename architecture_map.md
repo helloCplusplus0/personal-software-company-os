@@ -114,6 +114,9 @@ docs/
   - `phase14_standard_entity_foundation_architecture_plan.md`
   - `phase14_standard_entity_foundation_dev_plan.md`
   - `phase14_standard_entity_foundation_shared_baseline.md`
+  - `phase15_project_progress_timeline_foundation_architecture_plan.md`
+  - `phase15_project_progress_timeline_foundation_dev_plan.md`
+  - `phase15_project_progress_timeline_foundation_shared_baseline.md`
 - 当前已创建：
   - `phase09_template_reuse_derived_intelligence_foundation_architecture_plan.md`
   - `phase09_template_reuse_derived_intelligence_foundation_dev_plan.md`
@@ -184,6 +187,7 @@ docs/
 - `phase13` 已直接承接 `phase12` 已完成的正式交付结论与当前根级真相源文档，并已完成“项目级治理画像 + 全局规范资产 + agent 项目简报输入”的正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`
 - `phase13` 三件套在收口后只承担该阶段 `/plan` 的规划与冻结记录角色；正式验收与收口入口收敛到 `phase13-11` acceptance_report，`phase13-12` 缺口记录已随 `phase14` 收口退位为历史输入
 - `phase14_standard_entity_foundation` 已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`，三件套在收口后只承担该阶段 `/plan` 的规划与冻结记录角色；正式验收与收口入口收敛到 `phase14-10` acceptance_report，`phase14-11` 为 `phase15` 进入条件冻结入口
+- `phase15_project_progress_timeline_foundation` 三件套已建立（排序裁决 2026-08-19 完成：项目进度时间轴第一优先级），当前处于子任务执行前状态；三件套承担该阶段 `/plan` 的规划与冻结记录角色，全部 `/spec` 子任务以三件套为强制边界上游
 
 ### 4.2 fix
 

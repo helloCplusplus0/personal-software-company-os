@@ -6,10 +6,10 @@
 ## 1. 项目定位
 
 - 项目名称：`Personal Software Company OS`
-- 当前阶段：`phase14_standard_entity_foundation`（已完成正式收口）
-- 当前主目标：`phase15` 进入条件已冻结，等待用户裁决开启 `phase15 /plan`；阶段状态仍只以 `plan.md` 为准
-- 当前直接上游：`phase14-10` acceptance_report（阶段交付实况）与 `phase14-11` spec（`phase15` 进入条件）；`phase13-12` 缺口记录退位为历史输入
-- 当前下一阶段入口：`phase15 /plan`（进入前须完成后续项排序裁决，候选池与边界冻结于 `phase14-11` spec）；`phase13` 作为上一完成正式业务 phase 保留，`phase09` 继续作为最近完成正式支撑能力 phase 保留
+- 当前阶段：`phase15_project_progress_timeline_foundation`（已建立正式 `/plan` 入口，待从 `phase15-01` 开始执行）
+- 当前主目标：推进"项目推进时间轴最小主线"（三轨 append-only 事件流 + Repository detail 维护展示 + brief `progress` 块 + agent 直读完整流）；排序裁决已完成（2026-08-19 用户拍板：项目进度时间轴第一优先级）；阶段状态仍只以 `plan.md` 为准
+- 当前直接上游：`phase14-11` spec（`phase15` 进入条件，T7 裁决后口径）与 `phase14-10` acceptance_report（阶段交付实况）；2026-08-19 用户排序裁决为规划输入
+- 当前下一阶段入口：`phase15` 子任务执行（phase15-01 ~ phase15-09，见 `phase15` 三件套）；`phase14` 作为最近完成正式业务 phase 保留，`phase09` 继续作为最近完成正式支撑能力 phase 保留
 - 当前最近完成正式验收入口：`.trae/specs/phase14_10_validate_standard_entity_integration_dogfooding_regression/acceptance_report.md`
 - 当前定位：PSCO 是个人软件公司的经营与资产系统，不是代码管理工具，不是 AI Chat 产品，也不是自动扫描系统
 
@@ -100,6 +100,7 @@
 - `phase14_standard_entity_foundation` 已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`，并完成“`Standard` 全局规范实体最小主线（合同 → 存储 → 后端 → 前端 → agent 消费）+ 治理画像七触点系统性退役”交付；期间按用户裁决完成 brief 画像残余解耦（移除 `governance_profile` / `current_phase` 块，brief 收敛为 5 顶层块，槽位 2/3/4 reserved，画像派生消息删除、主表 drop）
 - `.trae/specs/phase14_10_validate_standard_entity_integration_dogfooding_regression/acceptance_report.md` 已冻结为 `phase14` 的正式验收与收口入口（固定 6 问 6/6 + 八项裁决门禁全绿 + 16 页反回归矩阵 + 独立复核 PASS）
 - `.trae/specs/phase14_11_sync_root_level_closeout_freeze_phase15_entry_conditions/spec.md` 已冻结为 `phase15` 进入条件与 `phase15 /plan` 的唯一直接上游（含 `CON-08` 时间轴 T7 裁决后口径：另行新建正规承接，不复活画像派生形态）；`phase13-12` 缺口记录退位为历史输入
+- `phase15_project_progress_timeline_foundation` 三件套已建立：排序裁决完成（2026-08-19，项目进度时间轴第一优先级，接管高频提示词"进度说明"段），十一项裁决（8 主裁决 + 3 补裁）、`progress_events` 事件流模型（三轨 workflow `phase/audit/fix` + 任务项级颗粒度 + append-only + "当前"为派生值）、brief `progress = 9` 演进与 9 个子任务（phase15-01 ~ phase15-09）已冻结，待从 `phase15-01` 开始执行
 
 ## 5. 推荐阅读顺序
 
@@ -154,7 +155,10 @@
 49. `docs/phase/phase14_standard_entity_foundation_shared_baseline.md`
 50. `.trae/specs/phase14_10_validate_standard_entity_integration_dogfooding_regression/acceptance_report.md`
 51. `.trae/specs/phase14_11_sync_root_level_closeout_freeze_phase15_entry_conditions/spec.md`
-52. 当前目标对应的 `phase / fix / audit` 文档
+52. `docs/phase/phase15_project_progress_timeline_foundation_architecture_plan.md`
+53. `docs/phase/phase15_project_progress_timeline_foundation_dev_plan.md`
+54. `docs/phase/phase15_project_progress_timeline_foundation_shared_baseline.md`
+55. 当前目标对应的 `phase / fix / audit` 文档
 
 ## 6. 接手提醒
 

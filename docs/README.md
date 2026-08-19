@@ -26,8 +26,8 @@
 - [阶段路线图](file:///home/dell/Projects/personal-software-company-os/plan.md)
 - [项目规则](file:///home/dell/Projects/personal-software-company-os/project_rules.md)
 - [目录与迁移落点](file:///home/dell/Projects/personal-software-company-os/architecture_map.md)
-- 当前根级阶段状态：`phase14_standard_entity_foundation` 已完成正式验收与收口，`phase15` 进入条件已冻结；`phase13_project_governance_profile_foundation` 作为上一完成正式业务 phase 保留，`phase09_template_reuse_derived_intelligence_foundation` 继续保留为最近完成正式支撑能力 phase
-- 当前 docs 入口重点：稳定指向 [plan.md](file:///home/dell/Projects/personal-software-company-os/plan.md) 的 canonical 状态、`phase14` 三件套、[phase14 正式验收与收口入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase14_10_validate_standard_entity_integration_dogfooding_regression/acceptance_report.md)、[phase15 进入条件冻结入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase14_11_sync_root_level_closeout_freeze_phase15_entry_conditions/spec.md)（`phase15 /plan` 唯一直接上游）与 `PSCO-mvp05-summarize-feedback.md`
+- 当前根级阶段状态：`phase15_project_progress_timeline_foundation` 已建立正式 `/plan` 入口（三件套已建立，排序裁决已于 2026-08-19 完成：项目进度时间轴第一优先级），待从 `phase15-01` 开始执行；`phase14_standard_entity_foundation` 作为最近完成正式业务 phase 保留，`phase09_template_reuse_derived_intelligence_foundation` 继续保留为最近完成正式支撑能力 phase
+- 当前 docs 入口重点：稳定指向 [plan.md](file:///home/dell/Projects/personal-software-company-os/plan.md) 的 canonical 状态、`phase15` 三件套（本阶段 `/plan` 规划与冻结记录）、[phase14 正式验收与收口入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase14_10_validate_standard_entity_integration_dogfooding_regression/acceptance_report.md)、[phase15 进入条件冻结入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase14_11_sync_root_level_closeout_freeze_phase15_entry_conditions/spec.md)（`phase15` 进入条件直接上游）与 `PSCO-mvp05-summarize-feedback.md`
 - [mvp0.5 最终仲裁与规划基线](file:///home/dell/Projects/personal-software-company-os/PSCO-mvp05-summarize-feedback.md)
 - [phase13 规划与冻结记录：architecture_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase13_project_governance_profile_foundation_architecture_plan.md)
 - [phase13 规划与冻结记录：dev_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase13_project_governance_profile_foundation_dev_plan.md)
@@ -38,6 +38,9 @@
 - [phase14 规划与冻结记录：dev_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase14_standard_entity_foundation_dev_plan.md)
 - [phase14 规划与冻结记录：shared_baseline](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase14_standard_entity_foundation_shared_baseline.md)
 - [phase14 正式验收与收口入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase14_10_validate_standard_entity_integration_dogfooding_regression/acceptance_report.md)
+- [phase15 规划与冻结记录：architecture_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase15_project_progress_timeline_foundation_architecture_plan.md)
+- [phase15 规划与冻结记录：dev_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase15_project_progress_timeline_foundation_dev_plan.md)
+- [phase15 规划与冻结记录：shared_baseline](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase15_project_progress_timeline_foundation_shared_baseline.md)
 - [phase15 进入条件冻结入口（phase14-11）](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase14_11_sync_root_level_closeout_freeze_phase15_entry_conditions/spec.md)
 - [phase12 正式验收与收口入口](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase12_11_validate_semantic_alignment_readonly_consumption_foundation/acceptance_report.md)
 - [phase12 规划与冻结记录：architecture_plan](file:///home/dell/Projects/personal-software-company-os/docs/phase/phase12_semantic_alignment_and_readonly_consumption_foundation_architecture_plan.md)
@@ -99,6 +102,7 @@
 
 当前阶段状态与推进路线以 [plan.md](file:///home/dell/Projects/personal-software-company-os/plan.md) 为唯一正式承接位。以下仅保留摘要式入口：
 
+- `phase15_project_progress_timeline_foundation` 已建立正式 `/plan` 入口（三件套已建立并冻结：三轨 append-only 推进事件流 + Repository detail 维护展示 + brief `progress` 块 + `ListProgressEvents` agent 直读完整流）；排序裁决已于 2026-08-19 完成（项目进度时间轴第一优先级），待从 `phase15-01` 开始执行
 - `phase14_standard_entity_foundation` 已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`，并完成“`Standard` 全局规范实体最小主线 + 治理画像系统性退役 + brief 画像残余解耦（T7 用户裁决）”交付，当前保留为最近完成正式业务 phase；正式验收与收口入口为 [phase14-10 acceptance_report.md](file:///home/dell/Projects/personal-software-company-os/.trae/specs/phase14_10_validate_standard_entity_integration_dogfooding_regression/acceptance_report.md)
 - `.trae/specs/phase14_11_sync_root_level_closeout_freeze_phase15_entry_conditions/spec.md` 已冻结为 `phase15` 进入条件（`CON-08` 时间轴按 T7 裁决后口径：另行新建正规承接，不复活画像派生形态）与 `phase15 /plan` 的唯一直接上游
 - `phase13_project_governance_profile_foundation` 已完成正式 `/plan -> /spec -> 实现 -> 验收 -> 收口`，作为上一完成正式业务 phase 保留；`phase13-12` 缺口记录退位为历史输入（其未完成项已由 `phase14-11` spec 承接）
@@ -107,4 +111,4 @@
 - `phase09_template_reuse_derived_intelligence_foundation` 已完成收口，保留为最近完成正式支撑能力 phase
 - `phase02 ~ phase08` 已完成收口，规划记录保留在 `docs/phase/`
 - 当前最终共识以 [PSCO-mvp05-summarize-feedback.md](file:///home/dell/Projects/personal-software-company-os/PSCO-mvp05-summarize-feedback.md) 为唯一正式入口
-- `phase14` 已正式收口；`phase15 /plan` 必须以 `phase14-11` spec（`phase15` 进入条件）+ `phase14-10` acceptance_report 为直接上游，进入实现拆分前先完成后续项排序裁决
+- `phase15 /plan` 已建立（排序裁决已完成）；`phase15` 子任务执行（`phase15-01 ~ phase15-09`）以 `phase15` 三件套为强制边界上游，`phase14-11` spec（`phase15` 进入条件）+ `phase14-10` acceptance_report 保留为规划直接上游
