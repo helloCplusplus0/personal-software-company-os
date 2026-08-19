@@ -11,6 +11,7 @@
 package projectcontext
 
 import (
+	"github.com/psco/backend/internal/progress"
 	"github.com/psco/backend/internal/standard"
 )
 
@@ -108,18 +109,24 @@ type ProjectContextReadResult struct {
 
 // ProjectBriefReadResult GetProjectBrief 的响应结构。
 // 对齐 proto GetProjectBriefResponse（2026-08-18 phase14-10 T7 裁决后的
-// 5 顶层块字段面：repository / products[] / modules[] / decisions[] /
-// standards[]；governance_profile / current_phase 画像残余块已随裁决移除
-// 并 reserved，global_assets 旧块 phase14-09 已移除，两组 bindings 信息
-// 唯一来自 standards[]）。
+// 5 顶层块字段面 + phase15 progress 摘要块：repository / products[] /
+// modules[] / decisions[] / standards[] + progress；governance_profile /
+// current_phase 画像残余块已随裁决移除并 reserved，global_assets 旧块
+// phase14-09 已移除，两组 bindings 信息唯一来自 standards[]）。
 //
 // Standards 由 candidate.StandardReader 经 standard_bindings 反查同源填充
 // （phase14-07），standard domain 类型直接透传，proto 组装在 Connect handler
 // 内复用 standard/connect 导出的转换函数。
+//
+// Progress 由 candidate.ProgressReader 派生同源填充（phase15），progress
+// domain 摘要值类型直接透传（空态恒构造零值——0 事件时零值字段 + 空
+// RecentEvents，非 nil），proto 组装在 Connect handler 内复用
+// progress/connect 导出的转换函数。
 type ProjectBriefReadResult struct {
 	Repository *RepositorySummary            `json:"repository"`
 	Products   []ProductSummary              `json:"products"`
 	Modules    []ModuleSummary               `json:"modules"`
 	Decisions  []DecisionSummary             `json:"decisions"`
 	Standards  []standard.StandardReadResult `json:"standards"`
+	Progress   progress.ProgressSummary      `json:"progress"`
 }

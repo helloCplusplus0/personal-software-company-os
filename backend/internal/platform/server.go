@@ -97,11 +97,19 @@ func NewServer(cfg Config, pool *pgxpool.Pool) *Server {
 		standardQuerySvc, standardCommandSvc := buildStandard(pool)
 		mountStandardConnect(r, standardQuerySvc, standardCommandSvc)
 
+		// phase15 progress 模块：项目推进时间轴事件流写读（三轨 append-only）。
+		// 装配顺序约束：progress 的 QueryService 必须先于 buildProjectContext
+		// 构造完成，作为 brief progress 摘要块的 candidate.ProgressReader 实现注入
+		// （phase15-04 冻结装配接线）。
+		progressQuerySvc, progressCommandSvc := buildProgress(pool)
+		mountProgressConnect(r, progressQuerySvc, progressCommandSvc)
+
 		// phase11 project context 模块：最小只读项目上下文聚合读取
 		// phase13-10：GetProjectBrief agent 简报主线
 		// phase14-07：GetProjectBrief.standards[] 通过 candidate 接口复用 standard 读取主线
+		// phase15-06：GetProjectBrief.progress 通过 candidate 接口复用 progress 派生摘要主线
 		// 2026-08-18 phase14-10 T7 裁决：画像残余彻底退役，不再注入画像 reader
-		projectContextQuerySvc := buildProjectContext(pool, standardQuerySvc)
+		projectContextQuerySvc := buildProjectContext(pool, standardQuerySvc, progressQuerySvc)
 		mountProjectContextConnect(r, projectContextQuerySvc)
 	})
 

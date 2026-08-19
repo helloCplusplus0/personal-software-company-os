@@ -22,6 +22,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	"github.com/psco/backend/internal/progress"
 	"github.com/psco/backend/internal/projectcontext"
 	"github.com/psco/backend/internal/standard"
 )
@@ -37,6 +38,19 @@ type StandardReader interface {
 	// 失败语义：读取失败 → standard.ErrStandardReadFailed；
 	//           仓库无关联 Standard → 返回空列表（非错误）。
 	ListStandardsByRepository(ctx context.Context, repositoryID string) ([]standard.StandardReadResult, error)
+}
+
+// ProgressReader 项目进度派生摘要读取接口（消费方拥有的 candidate 接口）。
+//
+// phase15-04 冻结：brief 对 Progress 摘要的读取必须通过本接口承接，
+// 由 platform 装配点注入 progress/service.QueryService 作为实现；
+// projectcontext 不得直接书写 progress_events 表 SQL 或复制其派生逻辑。
+type ProgressReader interface {
+	// GetProgressSummary 读取该仓库进度派生摘要（当前 phase + 最新任务 +
+	// 最近事件；三键链倒序派生，算法沿 phase15-03 冻结）。
+	// 失败语义：读取失败 → progress.ErrProgressReadFailed；
+	//           仓库无事件 → 零值摘要 + 空 RecentEvents（非错误，空态恒构造）。
+	GetProgressSummary(ctx context.Context, repositoryID string) (progress.ProgressSummary, error)
 }
 
 // ContextReaders 承接 GetProjectContext 所需的全部跨模块 reader。

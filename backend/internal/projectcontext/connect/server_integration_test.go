@@ -15,6 +15,7 @@ import (
 	"time"
 
 	connectrpc "connectrpc.com/connect"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -24,6 +25,10 @@ import (
 	standardpb "github.com/psco/backend/internal/gen/proto/psco/standard/v1"
 	projectcontextcandidate "github.com/psco/backend/internal/projectcontext/candidate"
 	projectcontextservice "github.com/psco/backend/internal/projectcontext/service"
+	"github.com/psco/backend/internal/progress"
+	progresscandidate "github.com/psco/backend/internal/progress/candidate"
+	progressrepo "github.com/psco/backend/internal/progress/repository"
+	progressservice "github.com/psco/backend/internal/progress/service"
 	"github.com/psco/backend/internal/standard"
 	standardcandidate "github.com/psco/backend/internal/standard/candidate"
 	standardrepo "github.com/psco/backend/internal/standard/repository"
@@ -319,6 +324,137 @@ func TestProjectContextAcceptanceScenarios(t *testing.T) {
 		// 空 bindings 场景同样不得出现画像残余字段。
 		assertNoProfileRemnants(t, resp)
 	})
+
+	// ========================================================================
+	// phase15-06：brief progress 块（字段 9）三场景
+	// （独立 repository fixture + 事件经 progress CommandService 写入，
+	//   不经 resetFixture，不破坏既有共享 fixture 场景）
+	// ========================================================================
+
+	t.Run("project brief progress round-trip derives current phase from events", func(t *testing.T) {
+		repositoryID := h.insertProgressFixtureRepository(t)
+		now := time.Now().UTC()
+
+		startedTitle := "phase15 项目推进时间轴基座"
+		h.mustCreateProgressEvent(t, repositoryID, progress.WorkflowTypePhase, progress.EventKindPhaseStarted,
+			"phase15", startedTitle, now.Add(-2*time.Hour))
+		h.mustCreateProgressEvent(t, repositoryID, progress.WorkflowTypePhase, progress.EventKindTaskCompleted,
+			"phase15-06", "后端主线落地", now.Add(-1*time.Hour))
+
+		resp, err := h.client.GetProjectBrief(t.Context(), &pb.GetProjectBriefRequest{
+			RepositoryId: repositoryID,
+		})
+		if err != nil {
+			t.Fatalf("expected success, got %v", err)
+		}
+
+		progressBlock := resp.GetProgress()
+		if progressBlock == nil {
+			t.Fatal("expected progress block always constructed")
+		}
+		if progressBlock.GetCurrentPhaseKey() != "phase15" {
+			t.Fatalf("expected current_phase_key %q, got %q", "phase15", progressBlock.GetCurrentPhaseKey())
+		}
+		if progressBlock.GetCurrentPhaseLabel() != startedTitle {
+			t.Fatalf("expected current_phase_label %q, got %q", startedTitle, progressBlock.GetCurrentPhaseLabel())
+		}
+
+		// recent_events：三键链倒序含全部录入事件（最新 task_completed 在前）。
+		recent := progressBlock.GetRecentEvents()
+		if len(recent) != 2 {
+			t.Fatalf("expected 2 recent events, got %d", len(recent))
+		}
+		if recent[0].GetTaskKey() != "phase15-06" || recent[0].GetTitle() != "后端主线落地" {
+			t.Fatalf("unexpected latest recent event: %+v", recent[0])
+		}
+		if recent[1].GetTaskKey() != "phase15" || recent[1].GetTitle() != startedTitle {
+			t.Fatalf("unexpected second recent event: %+v", recent[1])
+		}
+
+		// latest_task_completed：最新的 task_completed 事件。
+		latest := progressBlock.GetLatestTaskCompleted()
+		if latest == nil {
+			t.Fatal("expected latest_task_completed set")
+		}
+		if latest.GetTaskKey() != "phase15-06" || latest.GetTitle() != "后端主线落地" {
+			t.Fatalf("unexpected latest_task_completed: %+v", latest)
+		}
+	})
+
+	t.Run("project brief progress current phase empty after phase_completed", func(t *testing.T) {
+		repositoryID := h.insertProgressFixtureRepository(t)
+		now := time.Now().UTC()
+
+		// round-trip 基础状态：phase_started + task_completed（同场景①）。
+		h.mustCreateProgressEvent(t, repositoryID, progress.WorkflowTypePhase, progress.EventKindPhaseStarted,
+			"phase15", "phase15 项目推进时间轴基座", now.Add(-3*time.Hour))
+		h.mustCreateProgressEvent(t, repositoryID, progress.WorkflowTypePhase, progress.EventKindTaskCompleted,
+			"phase15-06", "后端主线落地", now.Add(-2*time.Hour))
+		// 再录入 phase_completed（同 task_key）→ 当前 phase 派生为空（DoD 冻结断言）。
+		h.mustCreateProgressEvent(t, repositoryID, progress.WorkflowTypePhase, progress.EventKindPhaseCompleted,
+			"phase15", "phase15 阶段收口", now.Add(-1*time.Hour))
+
+		resp, err := h.client.GetProjectBrief(t.Context(), &pb.GetProjectBriefRequest{
+			RepositoryId: repositoryID,
+		})
+		if err != nil {
+			t.Fatalf("expected success, got %v", err)
+		}
+
+		progressBlock := resp.GetProgress()
+		if progressBlock == nil {
+			t.Fatal("expected progress block always constructed")
+		}
+		// phase_completed 后当前 phase 为空（三态判定：全部完结 → 空值，与从未开始同型零值）。
+		if progressBlock.GetCurrentPhaseKey() != "" {
+			t.Fatalf("expected empty current_phase_key after phase_completed, got %q", progressBlock.GetCurrentPhaseKey())
+		}
+		if progressBlock.GetCurrentPhaseLabel() != "" {
+			t.Fatalf("expected empty current_phase_label after phase_completed, got %q", progressBlock.GetCurrentPhaseLabel())
+		}
+
+		// recent_events 仍含全部 3 条录入事件（phase_completed 同样入流）。
+		if len(progressBlock.GetRecentEvents()) != 3 {
+			t.Fatalf("expected 3 recent events, got %d", len(progressBlock.GetRecentEvents()))
+		}
+
+		// latest_task_completed 不受 phase_completed 影响（仍为最新 task_completed）。
+		latest := progressBlock.GetLatestTaskCompleted()
+		if latest == nil || latest.GetTaskKey() != "phase15-06" {
+			t.Fatalf("expected latest_task_completed phase15-06, got %+v", latest)
+		}
+	})
+
+	t.Run("project brief progress block always constructed for repository without events", func(t *testing.T) {
+		// 空态恒构造：0 事件仓库的 progress 块非 nil + 空数组 + 零值字段。
+		repositoryID := h.insertProgressFixtureRepository(t)
+
+		resp, err := h.client.GetProjectBrief(t.Context(), &pb.GetProjectBriefRequest{
+			RepositoryId: repositoryID,
+		})
+		if err != nil {
+			t.Fatalf("expected success, got %v", err)
+		}
+
+		progressBlock := resp.GetProgress()
+		if progressBlock == nil {
+			t.Fatal("expected progress block non-nil for repository without events")
+		}
+		if progressBlock.GetCurrentPhaseKey() != "" {
+			t.Fatalf("expected empty current_phase_key, got %q", progressBlock.GetCurrentPhaseKey())
+		}
+		if progressBlock.GetCurrentPhaseLabel() != "" {
+			t.Fatalf("expected empty current_phase_label, got %q", progressBlock.GetCurrentPhaseLabel())
+		}
+		if progressBlock.GetLatestTaskCompleted() != nil {
+			t.Fatalf("expected latest_task_completed unset, got %+v", progressBlock.GetLatestTaskCompleted())
+		}
+		// recent_events 空数组：proto wire 语义下空 repeated 不编码，客户端零值
+		// len==0 即空数组（服务端组装侧恒构造非 nil 空切片，见 connect/server.go）。
+		if recent := progressBlock.GetRecentEvents(); len(recent) != 0 {
+			t.Fatalf("expected empty recent_events array, got %d events", len(recent))
+		}
+	})
 }
 
 type projectContextIntegrationHarness struct {
@@ -348,7 +484,13 @@ func newProjectContextIntegrationHarness(t *testing.T) *projectContextIntegratio
 	// 2026-08-18 phase14-10 T7 裁决：画像残余彻底退役，不再注入画像 reader
 	// phase14-07：注入 standard 读取主线作为 GetProjectBrief.standards[] 的 candidate 依赖
 	standardReader := standardservice.NewQueryService(standardrepo.NewStandardStore(pool))
-	querySvc := projectcontextservice.NewQueryService(readers, standardReader)
+	// phase15-06：注入 progress 派生摘要主线作为 GetProjectBrief.progress 的 candidate 依赖
+	// （签名演进编译最小适配；progress 集成断言归 phase15-06 Task 7）
+	progressReader := progressservice.NewQueryService(
+		progressrepo.NewProgressEventStore(pool),
+		progresscandidate.NewRepositoryReader(pool),
+	)
+	querySvc := projectcontextservice.NewQueryService(readers, standardReader, progressReader)
 
 	mux := http.NewServeMux()
 	path, handler := pbc.NewProjectContextServiceHandler(NewServer(querySvc))
@@ -504,6 +646,74 @@ func (h *projectContextIntegrationHarness) mustCreateAndBindStandard(t *testing.
 		Note:       &note,
 	}); err != nil {
 		t.Fatalf("bind standard fixture: %v", err)
+	}
+	return created
+}
+
+// insertProgressFixtureRepository 建立独立 repository fixture 行（uuid 后缀，
+// phase15-06 brief progress 场景专用；不经 resetFixture，不触碰共享 fixture），
+// 返回 repository id。注册 cleanup：先删 progress_events 行再删 repositories 行
+// （progress_events.repository_id FK ON DELETE RESTRICT，逆序清理）。
+func (h *projectContextIntegrationHarness) insertProgressFixtureRepository(t *testing.T) string {
+	t.Helper()
+
+	repositoryID := uuid.NewString()
+	repositoryName := "brief-progress-it-" + repositoryID[:8]
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if _, err := h.pool.Exec(ctx, `
+		INSERT INTO repositories (id, name, url, provider, status)
+		VALUES ($1, $2, $3, $4, $5)
+	`, repositoryID, repositoryName, "https://example.com/"+repositoryName, "github", "active"); err != nil {
+		t.Fatalf("insert progress fixture repository: %v", err)
+	}
+
+	t.Cleanup(func() {
+		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cleanupCancel()
+		if _, err := h.pool.Exec(cleanupCtx, `DELETE FROM progress_events WHERE repository_id = $1`, repositoryID); err != nil {
+			t.Fatalf("cleanup progress events: %v", err)
+		}
+		if _, err := h.pool.Exec(cleanupCtx, `DELETE FROM repositories WHERE id = $1`, repositoryID); err != nil {
+			t.Fatalf("cleanup repository: %v", err)
+		}
+	})
+	return repositoryID
+}
+
+// mustCreateProgressEvent 经 progress CommandService 创建推进事件 fixture
+// （brief progress 场景的事件插入路径：直连 harness 同一 pool 的 service 写入，
+// 与既有 mustCreateAndBindStandard 的 service 写入模式一致）。
+func (h *projectContextIntegrationHarness) mustCreateProgressEvent(
+	t *testing.T,
+	repositoryID string,
+	workflowType progress.WorkflowType,
+	eventKind progress.EventKind,
+	taskKey, title string,
+	occurredAt time.Time,
+) *progress.ProgressEventReadResult {
+	t.Helper()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	commandSvc := progressservice.NewCommandService(
+		progresscandidate.NewRepositoryReader(h.pool),
+		progressrepo.NewProgressEventStore(h.pool),
+	)
+	created, err := commandSvc.CreateProgressEvent(ctx, &progress.CreateProgressEventInput{
+		RepositoryID: repositoryID,
+		WorkflowType: workflowType,
+		EventKind:    eventKind,
+		TaskKey:      taskKey,
+		Title:        title,
+		Source:       progress.ProgressSourceManual,
+		OccurredAt:   occurredAt,
+	})
+	if err != nil {
+		t.Fatalf("create progress event %q: %v", title, err)
 	}
 	return created
 }

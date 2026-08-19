@@ -40,6 +40,7 @@ package psco.project_context.v1;
 
 import "google/protobuf/timestamp.proto";
 import "psco/standard/v1/standard.proto";
+import "psco/progress/v1/progress.proto";
 
 // Go 包路径（生成代码落点）
 option go_package = "github.com/psco/backend/internal/gen/proto/psco/project_context/v1;projectcontextv1";
@@ -162,6 +163,22 @@ message ExportProjectContextResponse {
 // (role=template_source) 承接；track_type/时间轴不保留，phase15 如进入
 // 时间轴另行新建正规字段，不复活画像派生形态。
 
+// BriefProgress — agent 项目简报进度摘要块（phase15 裁决⑩）。
+// 定义于 project_context.proto（内联轻量消息）；latest_task_completed 与
+// recent_events 元素同型复用 psco.progress.v1.ProgressEvent（不建第二套摘要消息）。
+// 空态语义：Go 装配侧恒构造本块（非 nil）——0 事件时字段为零值、
+// recent_events 为空数组，前端进度区与 agent 单值消费，无双套判空逻辑。
+message BriefProgress {
+  // 当前 phase 的 task_key（phaseNN）；空值含从未开始 / 全部完结两种情形（同型零值）
+  string current_phase_key = 1;
+  // 当前 phase 标题（该最新 phase_started 的 title）
+  string current_phase_label = 2;
+  // 最新完成任务项事件（三轨同序取最新；无任务完成时不设置）
+  psco.progress.v1.ProgressEvent latest_task_completed = 3;
+  // 最近 N=10 条三轨混合事件（三键链倒序）
+  repeated psco.progress.v1.ProgressEvent recent_events = 4;
+}
+
 // GetProjectBriefRequest — agent 项目简报读取请求。
 // repository_id 是唯一正式结构化输入锚点。
 message GetProjectBriefRequest {
@@ -172,7 +189,8 @@ message GetProjectBriefRequest {
 // 2026-08-18 phase14-10 T7 用户裁决：画像残余彻底退役，governance_profile/
 // current_phase 移除并 reserved；template_source 语义由 standard_bindings
 // (role=template_source) 承接；track_type/时间轴不保留，phase15 如进入另行新建。
-// 当前字段面收敛为 5 顶层块（编号槽位 2/3/4 已 reserved；时间戳随各实体摘要承载）：
+// 当前字段面收敛为 5 顶层块 + progress 摘要块（编号槽位 2/3/4 已 reserved；
+// 时间戳随各实体摘要承载）：
 //   1. repository          — 仓库身份摘要（复用既有 RepositorySummary）
 //   2. governance_profile  — 已移除（reserved 2；画像残余退役，见上裁决留痕）
 //   3. global_assets       — 已移除（reserved 3；phase14-09，信息经 standards[].directory_tree 承接）
@@ -182,10 +200,13 @@ message GetProjectBriefRequest {
 //   7. decisions           — 关联决策摘要数组
 //   8. standards           — 该仓库关联的全局规范数组（含 directory_tree 全树；
 //                            template_source 语义经 role=template_source 绑定随本块消费）
+//   9. progress            — 项目进度派生摘要块（phase15 冻结演进；另行新建正规
+//                            承接，不复活画像派生形态）
 //
 // 约束：
-//   - 5 顶层块口径：repository / products / modules / decisions / standards[]
-//     （+ 时间戳类随各实体摘要承载）；standards = 8 为 phase14-02 冻结的正式演进
+//   - 5 顶层块 + progress 摘要块口径：repository / products / modules / decisions /
+//     standards[] + progress（+ 时间戳类随各实体摘要承载）；standards = 8 为
+//     phase14-02 冻结的正式演进；progress = 9 为 phase15 冻结的正式演进
 //   - 不混入任何"给 agent 的自然语言指导词"字段
 //   - 数组为空是合法状态（不做绑定完整性强制校验）
 message GetProjectBriefResponse {
@@ -201,6 +222,8 @@ message GetProjectBriefResponse {
   repeated ModuleSummary modules = 6;
   repeated DecisionSummary decisions = 7;
   repeated psco.standard.v1.Standard standards = 8;
+  // 项目进度派生摘要块（phase15；空态恒构造，见 BriefProgress 注释）
+  BriefProgress progress = 9;
 }
 
 // ============================================================================

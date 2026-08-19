@@ -1,0 +1,190 @@
+// PSCO Progress 项目推进时间轴协议合同源
+//
+// 文档定位：本文件是 phase15 项目推进时间轴（三轨 append-only 事件流）的唯一合同定义入口。
+// 上游规格：
+//   - phase15-02 事件模型语义边界与 brief 演进对照 Spec（合法矩阵 / K-1~K-5 / 派生语义）
+//   - phase15-03 数据模型与校验派生设计 Spec（DDL / 9+2 错误码 / 派生算法实现序）
+//   - phase15-04 后端合同与读写边界设计 Spec（本文件逐字源）
+//
+// 合同约束：
+//   - Progress 是 repository 锚定的治理层信息流，不是第六业务主实体（裁决②⑥）
+//   - append-only：无 UpdateProgressEvent RPC，事件一经录入只有整条删除一种
+//     修正路径（裁决⑨；service 定义处显式声明）
+//   - "当前 phase / 最新任务"为读取侧派生值，不落库、不缓存（裁决③）；
+//     派生摘要经 brief progress 块消费（BriefProgress），完整流经 ListProgressEvents
+//   - ListProgressEvents 不分页（个人规模，反假大空；裁决⑨）
+//   - source 预留 manual / git / agent 三值，创建入口仅开放 manual（裁决⑧）
+//   - 错误语义三类归一：NotFound / InvalidArgument / Internal（沿 standard 合同约束）
+//   - task_key / detail / evidence_ref 可空字段 proto 侧以空串承接"未填"，
+//     DB 侧 NULL 与空串读取等价（NULL → 空串，转换在 repository 层）
+//
+// 生成入口：
+//   在 proto/ 目录执行 make gen，或直接执行 buf generate。
+//   生成产物：
+//     - Go:    backend/internal/gen/proto/psco/progress/v1/
+//     - Go Connect: backend/internal/gen/connect/psco/progress/v1/
+//     - TS:    frontend/src/gen/proto/psco/progress/v1/
+
+syntax = "proto3";
+
+package psco.progress.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// Go 包路径（生成代码落点）
+option go_package = "github.com/psco/backend/internal/gen/proto/psco/progress/v1;progressv1";
+
+// ============================================================================
+// 枚举
+// ============================================================================
+
+// WorkflowType 三轨 workflow（对齐 docs/ 三目录与三推进链，裁决④）。
+// 与 DDL workflow_type CHECK 单值映射。
+enum WorkflowType {
+  WORKFLOW_TYPE_UNSPECIFIED = 0;
+  WORKFLOW_TYPE_PHASE = 1;
+  WORKFLOW_TYPE_AUDIT = 2;
+  WORKFLOW_TYPE_FIX = 3;
+}
+
+// EventKind 事件类型（裁决⑤：audit/fix 轨禁止 phase 边界标记——
+// 组合合法性由应用层 V7 承接，DB 不建组合约束）。
+enum EventKind {
+  EVENT_KIND_UNSPECIFIED = 0;
+  EVENT_KIND_PHASE_STARTED = 1;
+  EVENT_KIND_PHASE_COMPLETED = 2;
+  EVENT_KIND_TASK_COMPLETED = 3;
+  EVENT_KIND_NOTE = 4;
+}
+
+// ProgressSource 事件来源（预留 manual/git/agent 三值；本阶段创建入口仅 manual，裁决⑧）。
+enum ProgressSource {
+  PROGRESS_SOURCE_UNSPECIFIED = 0;
+  PROGRESS_SOURCE_MANUAL = 1;
+  PROGRESS_SOURCE_GIT = 2;
+  PROGRESS_SOURCE_AGENT = 3;
+}
+
+// ============================================================================
+// 核心消息
+// ============================================================================
+
+// ProgressEvent 推进事件（progress_events 表投影）。
+// List / Create 响应与 brief progress 块统一使用本消息——
+// 不另造 ProgressEventSummary（沿 standard "不另造 StandardSummary" 模式）。
+message ProgressEvent {
+  string id = 1;
+  // 锚点：进度事实唯一归属仓库（裁决②）
+  string repository_id = 2;
+  WorkflowType workflow_type = 3;
+  EventKind event_kind = 4;
+  // 任务项标识；可空：空串 = 未填（note 轨）
+  string task_key = 5;
+  // 一句话标题（非空上限 200，应用层承接）
+  string title = 6;
+  // 展开说明；可空：空串 = 未填（上限 2000，应用层承接）
+  string detail = 7;
+  // 证据导航引用；可空：空串 = 未填（/ 或 https:// 前缀，裁决⑦）
+  string evidence_ref = 8;
+  ProgressSource source = 9;
+  // 用户声明发生时间（允许补录历史，与 created_at 分离）
+  google.protobuf.Timestamp occurred_at = 10;
+  // 系统录入时间
+  google.protobuf.Timestamp created_at = 11;
+}
+
+// ============================================================================
+// 请求 / 响应
+// ============================================================================
+
+// ListProgressEventsRequest 完整事件流读取请求。
+// workflow_type 为过滤参数：UNSPECIFIED（零值/未设置）= 不过滤（三轨全量）。
+message ListProgressEventsRequest {
+  // 必填：读取锚点
+  string repository_id = 1;
+  // 可选过滤：设置三值之一 = 只读该轨；UNSPECIFIED = 三轨全量
+  WorkflowType workflow_type = 2;
+}
+
+// ListProgressEventsResponse 完整事件流响应（不分页，裁决⑨）。
+// events 按三键链倒序（occurred_at DESC, created_at DESC, id DESC）排列。
+message ListProgressEventsResponse {
+  repeated ProgressEvent events = 1;
+}
+
+// CreateProgressEventRequest 创建事件请求。
+// source 为 optional：未设置 → 服务端归一 manual（与 DDL DEFAULT 对齐）；
+// 显式设置非 MANUAL（UNSPECIFIED/GIT/AGENT）→ INVALID_SOURCE（V9d）。
+message CreateProgressEventRequest {
+  // 必填：写入目标锚点（不存在 → InvalidArgument，shared_baseline §3.2 冻结）
+  string repository_id = 1;
+  // 必填：UNSPECIFIED → INVALID_WORKFLOW_TYPE（V1a）
+  WorkflowType workflow_type = 2;
+  // 必填：UNSPECIFIED → INVALID_EVENT_KIND（V1b）
+  EventKind event_kind = 3;
+  // 按矩阵可空：必填格空串 → TASK_KEY_REQUIRED；格式不符 → TASK_KEY_FORMAT_INVALID
+  string task_key = 4;
+  // 必填：空串或超 200 字符 → INVALID_TITLE
+  string title = 5;
+  // 可选：上限 2000 字符 → INVALID_DETAIL
+  string detail = 6;
+  // 可选：非 / 或 https:// 前缀 → INVALID_EVIDENCE_REF
+  string evidence_ref = 7;
+  // 可选：未设置归一 manual
+  optional ProgressSource source = 8;
+  // 必填：nil → INVALID_OCCURRED_AT（envelope 前置；用户声明时间无合法零值）
+  google.protobuf.Timestamp occurred_at = 9;
+}
+
+// CreateProgressEventResponse 创建响应，返回创建后的完整 ProgressEvent
+// （含服务端生成的 id / source 归一值 / created_at；沿 CreateStandard 模式）。
+message CreateProgressEventResponse {
+  ProgressEvent event = 1;
+}
+
+// DeleteProgressEventRequest 删除请求（误录修正；整条删除是唯一修正路径）。
+message DeleteProgressEventRequest {
+  string id = 1;
+}
+
+// DeleteProgressEventResponse 删除响应（空；沿 DeleteStandard 模式）。
+message DeleteProgressEventResponse {}
+
+// ============================================================================
+// 服务
+// ============================================================================
+
+// ProgressService 项目推进时间轴写读服务。
+//
+// 职责边界（phase15-04 冻结）：
+//   - 本服务是 Progress 事件流写读的唯一正式承接位（canonical owner）
+//   - append-only 纯净性（裁决⑨）：无 UpdateProgressEvent RPC——
+//     事件一经录入只有整条删除一种修正路径，任何设计不得使历史事件
+//     因新事件而消失或变形
+//   - 9 条校验规则（V1-V9）+ envelope 前置 + repository 存在性校验
+//     在写路径统一执行（执行序沿 phase15-03 冻结 6 步）
+//   - web 写路径与 agent 读路径同包同 service，不出现第二套 canonical API
+service ProgressService {
+  // 读取完整事件流（三键链倒序，不分页；workflow_type 可选过滤）。
+  // 失败语义：repository_id 非法 UUID → InvalidArgument；仓库不存在 →
+  //           NotFound（读锚点语义，沿 GetProjectBrief）；无事件或过滤后
+  //           为空 → 空列表（非错误）；读取失败 → Internal。
+  rpc ListProgressEvents(ListProgressEventsRequest) returns (ListProgressEventsResponse);
+
+  // 创建推进事件（校验执行序 6 步：envelope 前置 → V1a → V1b → V7 →
+  // task_key 矩阵分支 → V9 文本顺序 → repository 存在性）。
+  // 失败语义：任一校验失败（INVALID_REPOSITORY_ID / INVALID_OCCURRED_AT /
+  //           INVALID_WORKFLOW_TYPE / INVALID_EVENT_KIND /
+  //           EVENT_KIND_NOT_ALLOWED / TASK_KEY_REQUIRED /
+  //           TASK_KEY_FORMAT_INVALID / INVALID_TITLE / INVALID_DETAIL /
+  //           INVALID_EVIDENCE_REF / INVALID_SOURCE / REPOSITORY_NOT_FOUND）
+  //           → InvalidArgument；写入失败 → Internal。
+  rpc CreateProgressEvent(CreateProgressEventRequest) returns (CreateProgressEventResponse);
+
+  // 删除推进事件（误录修正；无软删除、无 Update）。
+  // 失败语义：id 非法 UUID → InvalidArgument；不存在 → NotFound；删除失败 → Internal。
+  rpc DeleteProgressEvent(DeleteProgressEventRequest) returns (DeleteProgressEventResponse);
+
+  // 显式声明：本服务不提供 UpdateProgressEvent（append-only 语义纯净，裁决⑨）。
+  // 误录修正 = Delete + 重新 Create；本注释为合同级声明，勿删。
+}

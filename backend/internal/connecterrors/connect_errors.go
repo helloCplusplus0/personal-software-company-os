@@ -28,6 +28,7 @@ import (
 	"github.com/psco/backend/internal/moduleregistry"
 	"github.com/psco/backend/internal/onboarding"
 	"github.com/psco/backend/internal/productregistry"
+	"github.com/psco/backend/internal/progress"
 	"github.com/psco/backend/internal/projectcontext"
 	"github.com/psco/backend/internal/repositorybinding"
 	"github.com/psco/backend/internal/reusesummary"
@@ -66,6 +67,8 @@ func MapToConnectError(err error) *connect.Error {
 		projectcontext.ErrRepositoryNotFound,
 		standard.ErrStandardNotFound,
 		standard.ErrBindingNotFound,
+		progress.ErrProgressEventNotFound,
+		progress.ErrRepositoryNotFound,
 	) {
 		return connect.NewError(connect.CodeNotFound, err)
 	}
@@ -100,6 +103,7 @@ func MapToConnectError(err error) *connect.Error {
 		reusesummary.ErrInvalidScope,
 		templatereuse.ErrInvalidInput,
 		standard.ErrInvalidInput,
+		progress.ErrInvalidInput,
 	) {
 		return connect.NewError(connect.CodeInvalidArgument, err)
 	}
@@ -121,6 +125,7 @@ func MapToConnectError(err error) *connect.Error {
 	// backup.ErrAssetReadFailed, backup.ErrBackupPersistFailed, backup.ErrBackupSnapshotReadFailed,
 	// backup.ErrSchemaVersionReadFailed, reusesummary.ErrReuseSummaryReadFailed,
 	// standard.ErrStandardReadFailed, standard.ErrStandardSaveFailed,
+	// progress.ErrProgressReadFailed, progress.ErrProgressWriteFailed,
 	// 以及所有未分类错误。
 	_ = dashboard.ErrOverviewReadFailed
 	_ = dashboard.ErrFeedbackSignalReadFailed
@@ -137,6 +142,8 @@ func MapToConnectError(err error) *connect.Error {
 	_ = projectcontext.ErrProjectContextReadFailed
 	_ = standard.ErrStandardReadFailed
 	_ = standard.ErrStandardSaveFailed
+	_ = progress.ErrProgressReadFailed
+	_ = progress.ErrProgressWriteFailed
 
 	return connect.NewError(connect.CodeInternal, err)
 }

@@ -16,9 +16,11 @@ import (
 	"github.com/psco/backend/internal/connecterrors"
 	pbc "github.com/psco/backend/internal/gen/connect/psco/project_context/v1/project_contextv1connect"
 	pb "github.com/psco/backend/internal/gen/proto/psco/project_context/v1"
+	progresspb "github.com/psco/backend/internal/gen/proto/psco/progress/v1"
 	standardpb "github.com/psco/backend/internal/gen/proto/psco/standard/v1"
 	"github.com/psco/backend/internal/projectcontext"
 	"github.com/psco/backend/internal/projectcontext/service"
+	progressconnect "github.com/psco/backend/internal/progress/connect"
 	standardconnect "github.com/psco/backend/internal/standard/connect"
 )
 
@@ -69,12 +71,17 @@ func (s *Server) ExportProjectContext(ctx context.Context, req *pb.ExportProject
 
 // GetProjectBrief 承接 agent 项目简报结构化读取（phase13-10 正式主线）。
 //
-// 组装约束（2026-08-18 phase14-10 T7 裁决后的 5 顶层块字段面（槽位 2/3/4 reserved）；
-// 旧 global_assets 与画像残余 governance_profile / current_phase 均已移除）：
+// 组装约束（2026-08-18 phase14-10 T7 裁决后的 5 顶层块字段面（槽位 2/3/4 reserved）
+// + phase15 progress 摘要块（字段 9）；旧 global_assets 与画像残余
+// governance_profile / current_phase 均已移除）：
 //   - products[] / modules[] / decisions[] 数组语义，空数组合法
 //   - standards[] 复用 standard/connect 导出的 DomainStandardToProto
 //     （含递归树转换），与 StandardService 读取同源，不重写第二套树映射；
 //     template_source 语义经 role=template_source 绑定随 standards[] 消费
+//   - progress（phase15-06 新增）复用 progress/connect 导出的
+//     DomainProgressEventToProto 组装 latest_task_completed / recent_events
+//     元素，与 ProgressService 读取同源，不重写第二套事件映射；
+//     BriefProgress 恒构造（空态零值字段 + 空数组非 nil）
 //   - 不混入硬编码投影、目录扫描或自然语言指导词
 func (s *Server) GetProjectBrief(ctx context.Context, req *pb.GetProjectBriefRequest) (*pb.GetProjectBriefResponse, error) {
 	result, err := s.querySvc.GetProjectBrief(ctx, req.GetRepositoryId())
@@ -87,12 +94,28 @@ func (s *Server) GetProjectBrief(ctx context.Context, req *pb.GetProjectBriefReq
 		standards = append(standards, standardconnect.DomainStandardToProto(item))
 	}
 
+	// progress 摘要块（phase15-06）：恒构造非 nil；RecentEvents 空态组装为
+	// 空数组（非 nil 切片）；LatestTaskCompleted 为 nil 时不设置（零值不设置语义）
+	recentEvents := make([]*progresspb.ProgressEvent, 0, len(result.Progress.RecentEvents))
+	for _, item := range result.Progress.RecentEvents {
+		recentEvents = append(recentEvents, progressconnect.DomainProgressEventToProto(item))
+	}
+	briefProgress := &pb.BriefProgress{
+		CurrentPhaseKey:   result.Progress.CurrentPhaseKey,
+		CurrentPhaseLabel: result.Progress.CurrentPhaseLabel,
+		RecentEvents:      recentEvents,
+	}
+	if result.Progress.LatestTaskCompleted != nil {
+		briefProgress.LatestTaskCompleted = progressconnect.DomainProgressEventToProto(*result.Progress.LatestTaskCompleted)
+	}
+
 	return &pb.GetProjectBriefResponse{
 		Repository: domainRepositorySummaryToProto(result.Repository),
 		Products:   domainProductSummariesToProto(result.Products),
 		Modules:    domainModuleSummariesToProto(result.Modules),
 		Decisions:  domainDecisionSummariesToProto(result.Decisions),
 		Standards:  standards,
+		Progress:   briefProgress,
 	}, nil
 }
 

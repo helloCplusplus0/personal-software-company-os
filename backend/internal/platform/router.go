@@ -52,6 +52,10 @@ import (
 	prconnect "github.com/psco/backend/internal/productregistry/connect"
 	productrepo "github.com/psco/backend/internal/productregistry/repository"
 	productservice "github.com/psco/backend/internal/productregistry/service"
+	progresscandidate "github.com/psco/backend/internal/progress/candidate"
+	progressconnect "github.com/psco/backend/internal/progress/connect"
+	progressrepo "github.com/psco/backend/internal/progress/repository"
+	progressservice "github.com/psco/backend/internal/progress/service"
 	"github.com/psco/backend/internal/repositorybinding"
 	repocandidate "github.com/psco/backend/internal/repositorybinding/candidate"
 	rbconnect "github.com/psco/backend/internal/repositorybinding/connect"
@@ -88,6 +92,7 @@ import (
 	templatereusev1connect "github.com/psco/backend/internal/gen/connect/psco/template_reuse/v1/template_reusev1connect"
 	projectcontextv1connect "github.com/psco/backend/internal/gen/connect/psco/project_context/v1/project_contextv1connect"
 	standardv1connect "github.com/psco/backend/internal/gen/connect/psco/standard/v1/standardv1connect"
+	progressv1connect "github.com/psco/backend/internal/gen/connect/psco/progress/v1/progressv1connect"
 )
 
 // ============================================================================
@@ -313,6 +318,18 @@ func mountStandardConnect(r chi.Router, querySvc *standardservice.QueryService, 
 	r.Handle(path+"*", http.StripPrefix("/api", handler))
 }
 
+// mountProgressConnect 把 Progress 的 canonical Connect handler 挂到 /api 下。
+//
+// phase15-06 新增：
+//   - 项目推进时间轴事件流写读能力（List / Create / Delete；append-only，
+//     无 Update——误录修正 = Delete + 重新 Create）
+//   - ProgressService 是项目推进事件流写读的唯一 canonical transport owner
+func mountProgressConnect(r chi.Router, querySvc *progressservice.QueryService, commandSvc *progressservice.CommandService) {
+	connectSvc := progressconnect.NewServer(querySvc, commandSvc)
+	path, handler := progressv1connect.NewProgressServiceHandler(connectSvc)
+	r.Handle(path+"*", http.StripPrefix("/api", handler))
+}
+
 // ============================================================================
 // phase06 模块构造器
 // ============================================================================
@@ -410,9 +427,14 @@ func buildTemplateReuse(pool *pgxpool.Pool, reuseSummaryQuerySvc *reusesummaryse
 // 2026-08-18 phase14-10 T7 用户裁决：
 //   - 画像残余彻底退役，原 governanceReader 参数已随
 //     画像后端模块（governance profile internal 包）整体删除
-func buildProjectContext(pool *pgxpool.Pool, standardReader projectcontextcandidate.StandardReader) *projectcontextservice.QueryService {
+//
+// phase15-06 新增：
+//   - brief 的 progress 摘要块读取通过 candidate.ProgressReader 接口注入，
+//     复用 progress 读取主线（progress_events 派生摘要），不在 projectcontext
+//     内复制 progress_events 表 SQL；调用方必须先构造 progress 的 QueryService
+func buildProjectContext(pool *pgxpool.Pool, standardReader projectcontextcandidate.StandardReader, progressReader projectcontextcandidate.ProgressReader) *projectcontextservice.QueryService {
 	contextReaders := projectcontextcandidate.NewContextReaders(pool)
-	return projectcontextservice.NewQueryService(contextReaders, standardReader)
+	return projectcontextservice.NewQueryService(contextReaders, standardReader, progressReader)
 }
 
 // buildStandard 构造 Standard 的 QueryService / CommandService 并返回。
@@ -427,6 +449,21 @@ func buildStandard(pool *pgxpool.Pool) (*standardservice.QueryService, *standard
 	store := standardrepo.NewStandardStore(pool)
 	querySvc := standardservice.NewQueryService(store)
 	commandSvc := standardservice.NewCommandService(targetReader, store)
+	return querySvc, commandSvc
+}
+
+// buildProgress 构造 Progress 的 QueryService / CommandService 并返回。
+//
+// phase15-06 新增：
+//   - 项目推进时间轴事件流写读主线（progress_events 单表，三轨 append-only）
+//   - repository 存在性校验经 candidate.RepositoryReader 隔离（DP-2 承接位）
+//   - QueryService 同时作为 projectcontext brief progress 摘要块的
+//     candidate.ProgressReader 实现注入（phase15-04 冻结装配接线）
+func buildProgress(pool *pgxpool.Pool) (*progressservice.QueryService, *progressservice.CommandService) {
+	repositoryReader := progresscandidate.NewRepositoryReader(pool)
+	store := progressrepo.NewProgressEventStore(pool)
+	querySvc := progressservice.NewQueryService(store, repositoryReader)
+	commandSvc := progressservice.NewCommandService(repositoryReader, store)
 	return querySvc, commandSvc
 }
 

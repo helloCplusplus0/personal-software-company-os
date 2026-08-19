@@ -29,16 +29,20 @@ import (
 //   - contextReaders：跨模块 reader 集合
 //   - standardReader：全局规范读取接口（phase14-04，由
 //     standard/service.QueryService 实现）
+//   - progressReader：项目进度派生摘要读取接口（phase15-04，由
+//     progress/service.QueryService 实现）
 type QueryService struct {
 	contextReaders *candidate.ContextReaders
 	standardReader candidate.StandardReader
+	progressReader candidate.ProgressReader
 }
 
 // NewQueryService 构造 QueryService。
-func NewQueryService(contextReaders *candidate.ContextReaders, standardReader candidate.StandardReader) *QueryService {
+func NewQueryService(contextReaders *candidate.ContextReaders, standardReader candidate.StandardReader, progressReader candidate.ProgressReader) *QueryService {
 	return &QueryService{
 		contextReaders: contextReaders,
 		standardReader: standardReader,
+		progressReader: progressReader,
 	}
 }
 
@@ -139,6 +143,8 @@ func (s *QueryService) ExportProjectContext(ctx context.Context, repositoryID st
 //  5. 读取 standards[]（通过 candidate.StandardReader 经 standard_bindings
 //     任意 role 反查，含 directory_tree 全树；phase14-07 新增）——
 //     旧 global_assets 顶层块已移除，两组 bindings 信息唯一来自 standards[]
+//  6. 读取 progress 摘要（通过 candidate.ProgressReader 派生同源填充；
+//     phase15-06 新增）——brief progress = 9 摘要块唯一填充位
 //
 // 2026-08-18 phase14-10 T7 用户裁决：画像残余彻底退役，原步骤"读取治理画像
 // 主记录核心字段"与"current_phase 从画像派生"已删除；template_source 语义由
@@ -150,6 +156,8 @@ func (s *QueryService) ExportProjectContext(ctx context.Context, repositoryID st
 //   - 其他读取失败 → ErrProjectContextReadFailed（CodeInternal）
 //   - standards[] 读取失败 → standard.ErrStandardReadFailed（CodeInternal，
 //     phase14-04 冻结 reader 失败语义，由 connecterrors 统一映射）
+//   - progress 读取失败 → progress.ErrProgressReadFailed（CodeInternal，
+//     phase15-04 冻结 reader 失败语义，由 connecterrors 统一映射）
 func (s *QueryService) GetProjectBrief(ctx context.Context, repositoryID string) (*projectcontext.ProjectBriefReadResult, error) {
 	// 1. Repository 身份
 	repo, err := s.contextReaders.ReadRepository(ctx, repositoryID)
@@ -191,11 +199,20 @@ func (s *QueryService) GetProjectBrief(ctx context.Context, repositoryID string)
 		standards = []standard.StandardReadResult{}
 	}
 
+	// 6. progress 摘要（candidate 接口承接，不复制 progress_events 表 SQL；
+	//    失败按 reader 冻结语义透传 wrapped ErrProgressReadFailed；
+	//    空态恒构造：0 事件时零值摘要 + 空 RecentEvents，非 nil）
+	progressSummary, err := s.progressReader.GetProgressSummary(ctx, repositoryID)
+	if err != nil {
+		return nil, err
+	}
+
 	return &projectcontext.ProjectBriefReadResult{
 		Repository: repo,
 		Products:   products,
 		Modules:    modules,
 		Decisions:  decisions,
 		Standards:  standards,
+		Progress:   progressSummary,
 	}, nil
 }
