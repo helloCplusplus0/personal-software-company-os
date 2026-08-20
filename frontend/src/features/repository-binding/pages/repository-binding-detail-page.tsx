@@ -25,6 +25,8 @@ import { buildReviewReturnSearch, shouldReturnToReview } from '@/features/review
 import { useModuleDecisionLinksByModuleIds } from '@/features/module-registry/data/use-module-decision-links-by-module-ids'
 import { REPOSITORY_SEMANTIC_LABEL } from '@/features/project-context/data/shared-semantic-constants'
 import { StandardReadonlySummary } from '@/features/standard'
+// phase15-07：项目进度区挂载入口（phase15-05 冻结挂载位）
+import { ProgressSection } from '@/features/progress'
 
 /**
  * panelMode — phase04-06 互斥展开状态
@@ -299,10 +301,15 @@ export function RepositoryBindingDetailPage() {
             isLoading={relatedDecisionLinksQuery.isLoading}
             isError={relatedDecisionLinksQuery.isError}
           />
+          {/* phase15-07：项目进度区 — 工作台右列第四卡片（2026-08-19 用户 UI 反馈：
+              与已绑定产品/已映射模块/相关决策同列堆叠保持风格一致性，
+              不再作为独立全宽区块游离于 Standard 注释区之后） */}
+          <ProgressSection repositoryId={repositoryId} />
         </div>
       </div>
 
-      {/* phase14-08：画像区同位让位 — Standard 只读摘要（GetProjectBrief.standards[]，与 agent 消费同源） */}
+      {/* phase14-08：画像区同位让位 — Standard 只读摘要（GetProjectBrief.standards[]，与 agent 消费同源）；
+          外部关联以注释风格收尾于页面底部（2026-08-19 用户裁决保持） */}
       <StandardReadonlySummary repositoryId={repositoryId} />
     </div>
   )
