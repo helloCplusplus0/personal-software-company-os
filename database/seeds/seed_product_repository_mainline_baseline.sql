@@ -60,6 +60,7 @@ DELETE FROM product_repositories;
 DELETE FROM product_modules;
 DELETE FROM module_repositories;
 DELETE FROM products;
+DELETE FROM progress_events;
 DELETE FROM repositories;
 
 -- ============================================================================

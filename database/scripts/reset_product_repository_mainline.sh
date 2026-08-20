@@ -143,6 +143,7 @@ case "$MODE" in
       -c "DELETE FROM product_modules;" \
       -c "DELETE FROM module_repositories;" \
       -c "DELETE FROM products;" \
+      -c "DELETE FROM progress_events;" \
       -c "DELETE FROM repositories;"
     echo "[reset_product_repository_mainline] 清空完成。当前数据量："
     "${PSQL[@]}" -d "$PSCO_DB" -tAc \
